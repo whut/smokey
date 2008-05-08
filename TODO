@@ -1,0 +1,346 @@
+.NET Framework Security
+
+nant -nologo -targetframework:mono-2.0 -D:debug=true test
+
+https://home.comcast.net/~jesse98/public/Smokey
+
+https://home.comcast.net/~jesse98/public/Mono.Cecil.dll
+https://home.comcast.net/~jesse98/public/smokey-0.4.0.0.tar.gz
+https://home.comcast.net/~jesse98/public/System.Xml.dll.txt
+
+mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.1/mscorlib.dll > tmp.txt
+mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.1/System.Core.dll > tmp.txt
+mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.1/System.Xml.Core.dll > tmp.txt
+mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.0/System.Windows.Forms.dll > tmp.txt
+
+mono bin/smokey.exe bin/smokey.exe
+	27.065				1.1
+	24.194				1.0
+	31.63 seconds		
+	2.818 seconds		
+	
+mono bin/smokey.exe -set:ignoreList:SysIgnore.txt /ex6/lib/mono/gac/System/2.0.0.0__b77a5c561934e089/System.dll > tmp.txt
+	87.082 				1.0
+	19.159			
+	20.247
+	32.081
+mono bin/smokey.exe -set:ignoreList:SysIgnore.txt /ex6/lib/mono/gac/System/2.0.0.0__b77a5c561934e089/System.dll > tmp.txt
+	62.015
+					
+<http://msdn2.microsoft.com/en-us/library/ee1hzekz(VS.80).aspx>
+Essential .NET Volume 1, The Common Language Runtime - Don Box
+
+/cast [target=mouseover,exists] Spirit Lance; Spirit Lance
+
+* Move to sourcesafe or google.
+* NoStaticRemove
+	- static and private collection
+	- non-ctor does an add
+	- elements are ref types, but not WeakReference
+	- need to special case dict c[k] = v syntax?
+	Mime	
+		Matches80Plus		no removes
+		MatchesBelow80		no removes
+		
+	MimeIconEngine
+		MimeIconIndex		no removes
+		
+	TextBoxTextRenderer
+		measure_cache		no removes
+				
+	XplatUICarbon
+		WindowMapping		no removes
+		HandleMapping		no removes
+		
+	XplatUIX11	
+		Hashtable			no removes
+* DisposeDoesStaticRemove
+	- Dispose or Disposing directly or indirectly removes a reference type from
+	  a collection
+	- Dispose should be used for determinsitic finalization, not to enable objects
+	  to be GCed => carefully examine code (threading issues too)
+	Hwnd
+		windows				only via Hwnd::Dispose
+	ToolStripManager
+		toolstrips			RemoveToolStrip (indirect call from dispose)
+		menu_items			RemoveToolStripMenuItem (indirect call from dispose)
+* UseHashSet
+	- look for the standard List usage
+* Try built-in profiler again.
+* ThreadedAttribute
+	- has mandatory id, id can be "*", or "Foo1, Foo2"
+	- allow id = "Main" and "Finalizer"
+	- disllow just "Main"
+	- update xml, eg finalizers
+* MarkThreadedRule
+	- all assembly methods called by a [Threaded] method must also be [Threaded]
+	- all methods called must have id "*" or the id must include the callers id
+	- methods called via an unmarked method must have id "*" or include "Main"
+* MutableAttribute
+* ProtectMutators
+	- non-trivial [Threaded] or method called from a thread root doesnt have a lock 
+	  and either does a stfld or is [Mutable]
+	- don't count ctors
+* ImmutableAttribute
+* DefineEmptyRule
+	- immutable, instantiable, and has public default ctor
+* May be able to define other rules using mutable and immutable
+* WrongNamespace
+	- namespace matches another directory (ie not the one the class is defined in)
+	- note that we want to catch wrong usage so it's ok to have namespaces like
+	  dir1.dir2.foo
+* Using Parse instead of TryParse?
+* Mention the MD addon in the readme, maybe on the web page as well.
+	http://code.google.com/p/smokeyaddin/
+* MMC has been renamed.
+* Mention heapbuddy/shot and the clr profiler.
+* Need profiles like fxcop?
+	- "public API review" profile, a "bug review" profile, a "full analysis review" profile
+	- maybe a system profile
+	- should be able to make custom profiles
+	- need to be able to undo most switches
+	- add --ignore-resource and add a SysIgnore resource
+	- ignore files should be unioned
+	- proile could just be a string prepended to command line
+	- does it make sense to support profile merging?
+	- profile-help should show a blurb about installed profiles
+* Look at other fxcop options and stuff.
+* Look at gendarme options again.
+* UseHashSetRule
+	- performance rule
+	- list is used but all adds are preceded by an existence check
+	- only if targeting .net 3.0 or 3.5 (which ever added hashset)
+* IdenticalMethods isn't determinstic.
+* StructNullDeref
+	- on entry to methods private fields are assumed to be null
+	- transitive? call to method which sets a field reset field
+	- probably don't want to use dataflow
+* A mutable struct is stored in a collection
+	- verify that we can't get refs to collection elements
+	- build a set of mutable structs
+	- build a set of structs in containers
+	- get the intersection
+	- ignore methods called only by ctors? or ignore privates?
+* Add a few more fxcop rules.
+* Do a release.
+
+* Add a few more fxcop rules.
+* Implement more FxCop rules:
+	- Globalization Warnings
+		Specify CultureInfo, once find references works in visisect
+		Specify IFormatProvider, once find references works in visisect
+	- Maintainability Warnings
+	- Naming Warnings
+* Foreign key but no update rule.
+* AssemblyResolver.Resolver.Resolve can be used to get a definition from a reference.
+  a list of violations without messing with System.Process or external files.
+* Can create a package using: mcs -pkg:gtk-sharp,pango-sharp sample.cs
+   See <http://www.mono-project.com/Assemblies_and_the_GAC#Public_Key_Token_Remapping>
+  Also see  Libraries with Unstable APIs, <http://www.mono-project.com/Assemblies_and_the_GAC>
+* Look for apple stack crawl code.
+* Unit tests take too long to run. Maybe we can cleanup better?
+* Look at C# 3.0:
+	- extension methods
+			public static class Extensions 
+			{ 
+				public static int ToInt32(this string s) 
+				{ 
+					return Int32.Parse(s); 
+				}
+			}
+			could add Push, Pop, Front, and Back to List<>
+	- automatically generated properties, no manual writing of getters and setters
+			public string Name {get; set;}
+	- implicitly typed arrays
+			var a = new[] { 1, 10, 100, 1000 };    // int[]
+	- implicitly typed local variables
+			var orders = new Dictionary<int,Order>();
+			foreach (var n in numbers) Console.WriteLine(n);
+	- lambda expressions, this will make DoubleDisatch::Register nicer (once type inference is in)?
+			x => x + 1       // Implicitly typed, expression body
+			x => { return x + 1; }   // Implicitly typed, statement body
+			(int x) => x + 1     // Explicitly typed, expression body
+	- null coalescing operator
+  		string fileName = tempFileName ?? "Untitled"
+* Add a rejected file. Mention possibility of a (disabled by default) nitpicky level.
+* Might want to have a useful classes page. (equal too)
+* Add a script to update doc comments with DBC info (including invariants).
+* Can we use CompilerServices to get local variable names?
+* Could use threading to improve performance on multi-processors.
+* Probably should have an authors section in files.
+* Create table but no primary key.
+* If --html is specified colorize example code. Should also support wiki formatting...
+  already using * for bulleted lists.
+* Would be nice if we smoked the xml.
+* as not followed by a null check (null deref should catch this). What about asserts?
+* Framework needs to be in its own assembly so that it can be separately
+  versioned (so custom rules don't have to be recompiled if core changes),
+* Using stuff like demand FileIOPermission from non-system code
+	- don't need to do this if you're just calling into the system libs
+	- http://msdn2.microsoft.com/en-us/library/9kc0c6st(VS.80).aspx
+	- make this informational
+* Assembly description should include an overall version number.
+* Review all the rules. Look for stuff like a rule that can also be done on private types.
+* Equals is called with a null argument.
+* A method that throws an exception on a null argument is called with null:
+	- could do this with a --inter-procedural option
+	- or cache null methods for assembly strong names
+	- or do a prepass on the system assemblies and hope they dont change much
+* UnimplementedRule
+	- call to a method which throws NotImplementedException
+* http://semmle.com/documentation/
+* ObsoleteRule
+	- code calls an obsolete method
+* Unbounded collection add 
+	- list/dict, later hashset
+	- check for adds in non-ctors
+	- check for remove, clear, store field
+	- be sure to check 3.5 methods
+* There are cyclic assembly references (transitive).
+* Can we make use of extra type or spec info? For example units.
+* Public dispose + threads
+	- http://blogs.msdn.com/cbrumme/archive/2003/04/19/51365.aspx
+* http://msdn2.microsoft.com/en-us/library/ms182293(VS.80).aspx
+* If file/line can't be shown then show offset instead.
+* VisitEnd methods should null fields or clear collections.
+* Would be nice if ftest worked in release.
+* MarshalStringsInPInvokeDeclarationsRule
+* UseManagedAlternativesToPInvokeRule
+	- might want to do a google code search for p/invoke
+* Call GetLastError immediately after P/Invoke
+* A temporary is modified but not used
+	- the local is overwritten or not used after the method call
+	- probably need to check the method body for a store
+	- can do this lazily and cache result for reasonable efficiency
+* Not implemented
+		  Avoid excessive parameters on generic types
+		  Avoid namespaces with few types
+		  Avoid out parameters
+		  Default parameters should not be used
+		  Do not catch general exception types (we do warn if this is done with an empty catch block)
+		  Do not declare protected members in sealed types (compiler warns (at level 4))
+		  Do not declare static members on generic types
+		  Do not declare virtual members in sealed types (compiler catches)
+		  Do not expose generic lists
+		  Do not nest generic types in member signatures
+		  Do not overload operator equals on reference types
+		  Do not pass types by reference
+		  Enum Storage should be Int32
+		  Generic methods should provide type parameter
+		  Indexers should not be multidimensional
+		  Interface methods should be callable by child types
+		  Members should not expose certain concrete types
+		  Override operator equals on overloading add and subtract
+		  Properties should not be write only
+		  Replace repetitive arguments with params array
+		  String uri overloads call system uri overloads
+		  Uri parameters should not be strings
+		  Uri properties should not be strings
+		  Uri return values should not be strings
+		  Use events where appropriate
+		  Use generics where appropriate
+		  Use integral or string argument for indexers
+		  Use properties where appropriate
+		  Do not hardcode locale specific strings
+		  most of the Interoperability rules
+		  mobility warnings
+		  Identifiers should not match keywords
+		  Review unused parameters
+		  Use managed equivalents of win
+		  Secure Serialization Constructors
+		  Specify marshaling for pinvoke string arguments
+* TextReport isn't localizable.
+* Get the FXCop rules working.
+	<http://msdn2.microsoft.com/en-us/library/ee1hzekz(VS.80).aspx>
+* Possible new rules:
+	- http://mono-soc-2007.googlecode.com/svn/trunk/lukasz/
+	- http://mono-soc-2007.googlecode.com/svn/trunk/nestor/
+	- http://mono-soc-2007.googlecode.com/svn/trunk/nidhi/rules/
+	- http://msdn.microsoft.com/msdnmag/issues/04/09/Bugslayer/
+	- <http://msdn2.microsoft.com/en-us/library/ee1hzekz(VS.80).aspx>
+	- names diff by case, property with same name as result type, maybe these should be nitpicky level
+	- IFormattable.ToString that doesn't call ICustomFormatter.Format
+	- too many public methods in a class
+	- switch (or if) covers all enum values w/o a default
+	- no classes with only nested types
+	- deadcode nitpick (use callgraph)
+	- deadlock? (use callgraph), erasor algorithm
+	- check event for null before using it
+	- maybe some GetOptions rules such as missing attributes
+	- publicly visible const field (breaking change if it's changed)?
+	- prefer no null events? http://blogs.msdn.com/jaybaz_ms/archive/2004/09/16/230681.aspx
+	- all classes are public and there are more than five classes
+	- do not ignore return values (or only non value type returns?)
+	- argument isn't used
+* Bogus Gendarme rules:
+	- DoubleCheckLockingRule, just use a singleton class
+	  maybe we can have a rule for custom singleton class?
+	
+* Release checklist:
+	- search for TODO
+	- use mono --debug bin/smokey_d.exe -check-xml>tmp.txt
+	- profile
+		rm bin/smokey.exe
+		nant -D:profile=true app
+		look at stdout
+	- nant -D:debug=true smoke>tmp.txt
+	- nant -D:debug=true test
+	- nant -D:debug=true ftest
+	- nant -D:optimize=true smoke>tmp.txt
+	- nant -D:optimize=true test
+	- nant -D:optimize=true ftest (doesnt work)
+	- review severity of new rules
+	- make sure custom lib builds
+	- make sure custom test runs
+	- make sure custom test smokes
+	- try on .net (smoke fxcop)
+	- smoke a mono assembly, eg mscorlib.dll
+	- smoke reflector
+	- make sure everything is checked in
+	- use svn log -r 141:HEAD > CHANGE_LOG
+	- update CHANGES file
+	- make sure AssemblyVersion number is ok (for all the assemblies)
+	- update version number in nant file
+	- install
+	- update README
+	- upload useful files, include revision number in the source (or a version)
+	- mono --debug bin/smokey_d.exe -generate-html-violations:violations
+	- mono bin/smokey.exe -html -out:report.html -set:ignoreList:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/net_2_1/System.Core.dll 
+	- upload
+		report.html
+		violations
+		smokey_bin
+		smokey_src
+	- update index.html (eg prepend new downloads)
+	- send an announcement
+	- make sure everything is checked in
+	- do the following (be sure to fix the versions):
+		svn copy file:///Users/jessejones/projects/Smokey file:///Users/jessejones/projects/releases/smokey-1.X.0.0 -m "Tagging 1.X.0.0"
+	
+* Write a xxx rule:	
+	- update the xml
+	- add a rule which always return success
+	- update the config file
+	- add a test
+	- implement the rule
+	- update functional test 
+
+./configure --prefix=/Library/Frameworks/Mono.framework/Versions/1.2.5 
+sudo make install
+ln -s 1.2.5 Current
+
+
+
+Opcode			Operand Type
+Call			MethodReference
+Callvirt		MethodReference
+Castclass		TypeDefinition or TypeReference
+Isinst			TypeDefinition or GenericInstanceType 
+Ldarg			int
+Ldloc			int or VariableDefinition
+Ldloca			VariableDefinition
+Ldarga			ParameterDefinition 
+Newobj			MethodReference
+Switch			Instruction[]
+Unbox			TypeDefinition or TypeReference
+
