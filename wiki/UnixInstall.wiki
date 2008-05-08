@@ -1,0 +1,18 @@
+#summary Installing and running on Unix.
+#labels Featured,Phase-Deploy
+
+== Installation ==
+
+You can run Smokey without doing any installation at all, but it's usually simpler to use the provided install.sh script. The install.sh script will copy smokey.exe to /usr/local/bin, make a config file, and create a little script to launch smokey. To run the installer execute something like `sudo ./install.sh` from a shell.
+
+
+== Running ==
+
+If you installed with the script you can smoke an assembly by executing `smoke Cool.dll` from a shell. If not you can use `mono /path/to/smokey.exe Cool.dll`. This will write a report to stdout listing all of the problems that were found with the file. You can also exclude types and methods from being tested. See `smoke -usage` for more details on this.
+
+You can change the default behavior of Smokey with the ConfigureFile. You can also include SmokeyAttributes within your assembly to affect the way Smokey processes your types and methods.
+
+
+== Uninstall ==
+
+There's a provided uninstall.sh script which will undo the affects of the install.sh script. It removes smokey.exe, the config file, the smoke script, and smokey's log file. To run it execute something like `sudo ./uninstall.sh` from a shell.
