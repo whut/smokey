@@ -65,13 +65,80 @@ For example Smokey's !LoadArg type represents the Ldarg_0, Ldarg_1, Ldarg_2, and
 
 == Framework.Support ==
 
+This namespace contains the classes which are commonly used by rules. The key classes are:
+ * Rule - this is the base class for rules. It has a few properties the most important of which allows rules to access the !AssemblyCache.
+ * !RuleDispatcher - rules register their methods with this class to visit things like assemblies, types, fields, events, properties, methods, and instructions.
+ * !AssemblyCache - this caches information about the assembly being tested and the assemblies it depends upon. This is most commonly used to find the definition of types that are referenced in the assembly being tested.
+ * !CecilExtensions - extension methods for various Cecil classes. This includes things like checking for DisableRuleAttribute, finding where methods were first declared, and subclass testing.
+
 == Framework.Support.Advanced ==
+
+This contains classes which most rules will not have to use. The key classes are:
+ * Values.Tracker - this class contains the values of arguments, locals, and the stack at each instruction in a method. The values are of type long? and may be 0 for 0/0.0/null, 1 for non-zero, and null for unknown.
+ * !CallGraph - a table of all the methods each method in the assembly being tested calls.
 
 == Internal ==
 
+This namespace contains classes which are not used by rules or external driver tools. It includes the classes used to emit the various report types, options processing, and the xml rule parser.
+
 == Internal.Rules ==
+
+This namespace contains the built-in Smokey rules. Note that it's also possible to write CustomRules.
 
 == Tests ==
 
+This namespace contains [http://www.nunit.org/index.php nunit] unit tests for the built-in rules. There are additional functional tests which test Smokey as a whole and those rules which are not easy to test via a unit test.
+
 
 = XML =
+
+Each rule must be accompanied by an associated Violation element in an xml file (these files are resources in the Smokey or custom assemblies). Rules are uniquely defined by a checkID. The XML of the rule above looks like this:
+
+{{{
+<Violation checkID = "G1001" severity = "Warning" breaking = "false">
+    <Translation lang = "en" typeName = "MessageBoxOptions" category = "Globalization">            
+        <Cause>
+        A method calls System.Windows.Forms.MessageBox.Show without specifying MessageBoxOptions.
+        </Cause>
+
+        <Description>
+        To display the text properly for cultures that use a right to left reading order the RightAlign 
+        and RtlReading members of MessageBoxOptions must be used.
+        </Description>
+
+        <Fix>
+        Use the Show overload that takes a MessageBoxOptions and set RightAlign and RtlReading 
+        using the containing control.
+        </Fix>
+
+        <CSharp>
+        using System.Globalization;
+        using System.Windows.Forms;
+        
+        public static class Dialogs
+        {                
+            public static DialogResult ShowMessageBox(Control owner, string text, string caption)
+            {
+                MessageBoxOptions options = 0;
+                if (owner != null)
+                {
+                    if (owner.RightToLeft == RightToLeft.Yes)
+                        options |= MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign;
+                }
+                else if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)
+                    options |= MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign;
+                
+                return MessageBox.Show(
+                    owner, 
+                    text, 
+                    caption,
+                    MessageBoxButtons.OK, 
+                    MessageBoxIcon.Information, 
+                    MessageBoxDefaultButton.Button1, 
+                    options);
+            }
+        }
+        </CSharp>
+    </Translation>
+</Violation>
+}}}
