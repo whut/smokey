@@ -1,0 +1,11 @@
+#summary Attributes used to affect the way Smokey processes types and methods.
+#labels Phase-Deploy
+
+== Introduction ==
+
+Add your content here.
+
+
+== Attributes ==
+
+ * DisableRuleAttribute is used to disable a particular Smokey rule for a type or method.
