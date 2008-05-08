@@ -1,4 +1,4 @@
-#summary Installing and runing on Windows.
+#summary Installing and running on Windows.
 #labels Featured,Phase-Deploy
 
 == Installation ==
