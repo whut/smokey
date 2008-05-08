@@ -1,4 +1,6 @@
+#summary Installing and runing on Windows.
 #labels Featured,Phase-Deploy
+
 == Installation ==
 
 Currently there's no installer on Windows, but for now you can simply drop the smokey.exe assembly into the C:\WINDOWS directory. You will also need to ensure Mono.Cecil.dll is in the same directory as smokey.exe. You can download Cecil [https://home.comcast.net/~jesse98/public/Mono.Cecil.dll here].
