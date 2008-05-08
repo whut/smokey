@@ -1,0 +1,27 @@
+#summary Internal Smokey class design.
+
+= Overview =
+
+Add your content here.
+
+
+= Namespaces =
+
+== App ==
+
+== Framework ==
+
+== Framework.Instructions ==
+
+== Framework.Support ==
+
+== Framework.Support.Advanced ==
+
+== Internal ==
+
+== Internal.Rules ==
+
+== Tests ==
+
+
+= XML =
