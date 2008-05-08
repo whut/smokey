@@ -1,0 +1,60 @@
+#summary Disables a Smokey rule for a type or method.
+#labels Phase-Deploy
+
+== Introduction ==
+
+You can disable rules using the Smokey command line, but it's often much nicer to disable them within the code itself using !DisableRuleAttribute. To do this you need to define the attribute and then use it to decorate one of your types or methods.
+
+
+== Defining the Attribute ==
+
+Add the following to your assembly or export it from an assembly you reference.
+
+{{{
+[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | 
+AttributeTargets.Constructor | AttributeTargets.Enum | AttributeTargets.Interface | 
+AttributeTargets.Method | AttributeTargets.Struct, AllowMultiple = true)]
+internal sealed class DisableRuleAttribute : Attribute
+{      
+    public DisableRuleAttribute(string id, string name) 
+    {
+        this.id = id;
+        this.name = name;
+    }
+
+    public string ID
+    {
+        get {return id;}
+    }
+    
+    public string Name
+    {
+        get {return name;}
+    }
+    
+    private string id;
+    private string name;
+}
+}}}
+
+
+== Using the Attribute ==
+
+Then you can disable rules like so:
+
+{{{
+[DisableRule("P1008", "StructOverrides")]
+[DisableRule("MS1019", "LargeStruct")]
+[StructLayout(LayoutKind.Sequential, Pack = 2)]
+internal struct ControlFontStyleRec    
+{
+    public Int16        flags;
+    public Int16        font;
+    public Int16        size;
+    public Int16        style;
+    public Int16        mode;
+    public Int16        just;
+    public QdColor      foreColor;
+    public QdColor      backColor;
+}
+}}}
