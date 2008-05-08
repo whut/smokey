@@ -59,7 +59,7 @@ The framework namespace contains classes which are used by Smokey itself and may
 
 == Framework.Instructions ==
 
-This namespace contains typed wrappers around the Cecil Instruction class (Cecil is the mono assembly reader and writer tool). These typed wrappers allow !RuleDispatcher to dispatch via the types and are substantially easier to use than the raw Instruction type.
+This namespace contains typed wrappers around the [http://www.mono-project.com/Cecil Cecil] Instruction class (Cecil is the mono assembly reader and writer tool). These typed wrappers allow !RuleDispatcher to dispatch via the types and are substantially easier to use than the raw Instruction type.
 
 For example Smokey's !LoadArg type represents the Ldarg_0, Ldarg_1, Ldarg_2, and Ldarg_3, Ldarg, and Ldarg_S opcodes and provides Arg, Name, and Type properties which are rather painful to retrieve from the Cecil instruction.
 
