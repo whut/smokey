@@ -1,0 +1,10 @@
+<Expectations>
+	<Expected checkID = "D1004" typeName = "UseStrongName" fullName = "NoSecurity_d"/>
+	<Expected checkID = "D1028" typeName = "DeclareSecurity" fullName = "NoSecurity_d"/>
+	<Expected checkID = "MS1000" typeName = "AssemblyInfo" fullName = "NoSecurity_d"/>
+	<Expected checkID = "R1015" typeName = "STAThread" fullName = "NoSecurity_d"/>
+	<Expected checkID = "G1001" typeName = "MessageBoxOptions" fullName = "System.Int32 Unsecure.Program::Main(System.String[])"/>
+	<Expected checkID = "PO1007" typeName = "ExitCode" fullName = "System.Int32 Unsecure.Program::Main(System.String[])"/>
+	<Expected checkID = "D1048" typeName = "GuiUsesConsole" fullName = "System.Void Unsecure.Program::DumpState2()"/>
+	<Expected checkID = "PO1008" typeName = "WinExe" fullName = "NoSecurity_d"/>
+</Expectations>

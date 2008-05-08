@@ -1,0 +1,797 @@
+<Violations>
+	<Violation checkID = "S1000" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "APTCA1" category = "Security">			
+			<Cause>
+			An assembly is decorated with System.Security.AllowPartiallyTrustedCallersAttribute
+			and a method in the assembly calls a method in another assembly but that assembly
+			does not allow partially trusted callers.
+			</Cause>
+	
+			<Description>
+			By default, public and protected methods in assemblies with strong names
+			are implicitly protected by a link demand for full trust so assemblies
+			with partial trust cannot call them (such as code executing from the
+			Internet). If you need to call into the assembly from a partially
+			trusted assembly you can decorate the assembly with AllowPartiallyTrustedCallersAttribute.
+			
+			However this opens up a potential vulnerability: the link demand only checks 
+			permissions for the immediate caller so an untrusted
+			assembly may now call a APTCA assembly which can then call a fully trusted 
+			assembly. But this means that the untrusted code can now perform operations
+			it should not be able to do (but note that operations like deleting files
+			are protected by security demands which do perform full stack walks). See
+			&lt;http://msdn2.microsoft.com/en-us/library/e942ksxt%28VS.80%29.aspx&gt;
+			for more details.
+			</Description>
+	
+			<Fix>
+			If the APTCA attribute is required then all methods which call into a fully
+			trusted assembly must demand FullTrust from their callers (see the code below).
+			</Fix>
+	
+			<CSharp>
+			// --------------------------------------------------------
+			// This is our untrusted application. 
+			using APTCALibrary;
+			using System.Security;
+			using System.Security.Permissions;
+			
+			// Code run from the local computer defaults to full trust
+			// so we'll explicitly remove full trust.
+			[assembly: PermissionSetAttribute(SecurityAction.RequestRefuse, Name = "FullTrust")]
+			
+			namespace PartialTrustApp
+			{
+				class Program
+				{
+					internal static void Main()
+					{
+						APTCA.Work1(1);
+						APTCA.Work2();
+						APTCA.Work3();
+					}
+				}
+			}
+			
+			// --------------------------------------------------------
+			// This is the assembly which allows partially trusted callers 
+			// (APTCA). Because it is running on the local machine it has
+			// full trust and can therefore call into any assembly it chooses.
+			using System.Security;
+			using System.Security.Permissions;
+			using System.Reflection;
+			using FullTrustLibrary;
+			
+			[assembly: AllowPartiallyTrustedCallers]  
+			
+			namespace APTCALibrary
+			{
+				public static class APTCA
+				{
+					// This method doesn't do anything dangerous so we don't
+					// care about the trust level of our caller.
+					public static int Work1(int x)
+					{    
+						return x + x;
+					}
+
+					// This method calls into an assembly which requires full
+					// trust so we have to ensure that each method in our call
+					// chain has full trust. Note that this typically performs a full
+					// stack walk.
+					[PermissionSet(SecurityAction.Demand, Unrestricted = true)]
+					public static void Work2()
+					{    
+						FullTrust.RevertDocument();
+					}
+
+					// Like the above except that we programatically demand full trust.
+					// Note that this typically performs a full stack walk.
+					public static void Work3()
+					{    
+						NamedPermissionSet permissions = new NamedPermissionSet("FullTrust");
+					
+						// This will throw SecurityException if our callers do
+						// not have full trust.
+						permissions.Demand();		
+					
+						FullTrust.RevertDocument();
+					}
+				}
+			}
+			
+			// --------------------------------------------------------
+			// This is an assembly with full trust and can only be called
+			// from assemblies which also have full trust.
+			namespace FullTrustLibrary
+			{
+				public static class FullTrust
+				{
+					// Because we have full trust we can perform destructive 
+					// actions like wiping any changes the user has made to
+					// the current document. Note that this only operates on
+					// our internal state so the only security checks performed
+					// are link demands which don't perform full stack walks.
+					public static void RevertDocument()
+					{    
+					}
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1001" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "APTCA2" category = "Security">			
+			<Cause>
+			An assembly is decorated with System.Security.AllowPartiallyTrustedCallersAttribute
+			and a class in that assembly derives from a class in another assembly but that 
+			assembly does not allow partially trusted callers.
+			</Cause>
+	
+			<Description>
+			By default, public and protected methods in assemblies with strong names
+			are implicitly protected by a link demand for full trust so assemblies
+			with partial trust cannot call them (such as code executing from the
+			Internet). If you need to call into the assembly from a partially
+			trusted assembly you can decorate the assembly with AllowPartiallyTrustedCallersAttribute.
+			
+			However this opens up a potential vulnerability: the APTCA class may provide
+			access to methods or fields in the fully trusted assembly which should not
+			be accessible to untrusted code in another assembly.
+			</Description>
+	
+			<Fix>
+			If the APTCA attribute is required then add an inheritance demand for full trust
+			to the class in the APTCA assembly.
+			</Fix>
+	
+			<CSharp>
+			// --------------------------------------------------------
+			// This is our untrusted application. 
+			using APTCALibrary;
+			using System.Security;
+			using System.Security.Permissions;
+			
+			// Code run from the local computer defaults to full trust
+			// so we'll explicitly remove full trust.
+			[assembly: PermissionSetAttribute(SecurityAction.RequestRefuse, Name = "FullTrust")]
+			
+			namespace PartialTrustApp
+			{
+				class Program
+				{
+					internal static void Main()
+					{
+						try
+						{
+							APTCAClass instance = new APTCAClass();
+							Console.WriteLine("The secret is '{0}'", instance);
+						}
+						catch (SecurityException)
+						{
+							Console.WriteLine("couldn't get the secret");
+						}
+					}
+				}
+			}
+			
+			// --------------------------------------------------------
+			// This is the assembly which allows partially trusted callers 
+			// (APTCA). Because it is running on the local machine it has
+			// full trust and can therefore call into any assembly it chooses.
+			using System.Security;
+			using System.Security.Permissions;
+			using System.Reflection;
+			using FullTrustLibrary;
+			
+			[assembly: AllowPartiallyTrustedCallers]  
+			
+			namespace APTCALibrary
+			{
+				[PermissionSet(SecurityAction.Demand, Unrestricted = true)]
+				public class APTCAClass : FullTrust
+				{
+					// If the link demand on the class was absent then this
+					// would leak sensitive information to partially trusted
+					// callers.
+					public override string ToString()
+					{
+						return m_name + "/" + m_secret;
+					}
+				}
+			}
+			
+			// --------------------------------------------------------
+			// This is an assembly with full trust and can only be called
+			// from assemblies which also have full trust.
+			namespace FullTrustLibrary
+			{
+				public class FullTrust
+				{
+					public string Name
+					{
+						get {return m_name;}
+						set {m_name = value;}
+					}
+					
+					// This is sensitive data and should not be exposed to
+					// partially trusted callers.
+					public string Secret
+					{
+						get {return m_secret;}
+						set {m_secret = value;}
+					}
+					
+					protected string m_name = "Bob";
+					protected string m_secret = "credit history: xxx";
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1002" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "ReadOnlyArray" category = "Security">			
+			<Cause>
+			A public or protected array field is declared readonly.
+			</Cause>
+	
+			<Description>
+			A readonly array cannot be reseated to point to a different array, but the
+			elements may be changed. This opens up a potential security vulnerability
+			because external code may now change the array values.
+			</Description>
+	
+			<Fix>
+			Add a method that returns a cloned copy of the array.
+			</Fix>
+	
+			<CSharp>
+			class Cost
+			{
+				// This is OK because external code can't change the value.
+				// Note that it's not const because we may want to change the value
+				// later which would break binary compatibility if it was const.
+				public readonly float BaseCost = 100.0f;
+				
+				public float Compute(float bandwidth, float bytes, float latency)
+				{
+					float cost = BaseCost;
+					
+					cost += bandwidth * m_scaling[0];
+					cost += bytes * m_scaling[1];
+					cost += latency * m_scaling[2];
+					
+					return cost;
+				}
+
+				// This is the preferred way to expose an array. Note that we
+				// don't use a property because Clone is relatively expensive
+				// and users don't expect properties to do anything expensive.
+				public float[] Scaling()
+				{
+					return (float[]) m_scaling.Clone();
+				}
+
+				// If this was public external code could change the element
+				// values which could cause problems.
+				private readonly float[] m_scaling = {1.0f, 1.0f, 4.0f};
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1003" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "KeepAlive" category = "Security">			
+			<Cause>
+			A type with a finalizer contains a System.IntPtr or System.UIntPtr field,
+			but does not call System.GC.KeepAlive.
+			</Cause>
+	
+			<Description>
+			Objects are garbage collected when managed code no longer has a reference
+			to the object. Code which calls a non-static method on the object has a 
+			reference to the object but that particular reference goes away when the
+			method is entered. So, it is possible for objects to be garbage collected
+			while a method on the object is executing. See
+			&lt;http://blogs.msdn.com/cbrumme/archive/2003/04/19/51365.aspx&gt; for more details.
+
+			Because of this care must be taken with p/invoke calls: if a method passes
+			an IntPtr into unmanaged code and disposes of the IntPtr in a finalizer
+			it's possible the finalizer will execute while the unmanaged code is
+			executing.
+			</Description>
+	
+			<Fix>
+			Add a call to System.GC.KeepAlive at the end of all methods that reference
+			the IntPtr.
+			</Fix>
+	
+			<CSharp>
+			internal class MyResource 
+			{
+				~MyResource()		
+				{					
+					// Note that this is called even if the ctor throws.
+					NativeMethods.CloseHandle(m_handle);
+				}
+			
+				public MyResource(IntPtr handle)
+				{
+					m_handle = handle;
+				}
+			
+				public void Work()
+				{
+					// If our caller is the only code which contains a reference
+					// to our object and it does not reference the reference after
+					// calling Work then our object will normally be available for
+					// collection as soon as WorkIt begins execution which would
+					// be bad because CloseHandle may be called while the unmanaged
+					// code is using the handle.
+					NativeMethods.WorkIt(m_handle);
+					
+					// To prevent this from happening we call KeepAlive at the end
+					// of our method which ensures that a reference to our object
+					// is present thereby preventing our object from being collected
+					// until WorkIt has had a chance to finish executing.
+					GC.KeepAlive(this);
+				}
+				
+				private static class NativeMethods
+				{
+					[System.Runtime.InteropServices.DllImport("Kernel32")]
+					public extern static bool CloseHandle(IntPtr handle);
+				
+					[System.Runtime.InteropServices.DllImport("Kernel32")]
+					public extern static void WorkIt(IntPtr handle);
+				}
+
+				private IntPtr m_handle;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1004" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "IndirectLinkDemand" category = "Security">			
+			<Cause>
+			An externally visible method has a link demand and is called by a member in the
+			same assembly which does not perform any security checks.
+			</Cause>
+	
+			<Description>
+			A link demand checks the permissions of the immediate caller so an indirect call
+			can bypass security checks. 
+			</Description>
+	
+			<Fix>
+			Add a security data access or link demand to the method which is calling the link
+			demand protected method.
+			</Fix>
+	
+			<CSharp>
+			using System.Security;
+			using System.Security.Permissions;
+			
+			public class ImageApp
+			{
+				// We want to allow code downloaded from the internet to manipulate the image
+				// so we don't want any security restrictions here.
+				public void SetImage(int[] data)
+				{
+				}
+
+				// But we don't want to allow downloaded code to close documents.
+				[PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
+				public void CloseDocument()
+				{
+				}
+				
+				// And methods that indirectly call methods which close documents
+				// must also be protected by a link demand: if this demand
+				// was missing the rule would fire.
+				[PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
+				public void CloseAllDocuments()
+				{
+				}
+				
+				// It's also OK to demand that all callers in the call chain
+				// have permission.
+				[PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
+				public void Quit()
+				{
+					CloseAllDocuments();
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1005" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "PermitDenySecurity" category = "Security">			
+			<Cause>
+			A method has a security check which uses a PermitOnly or Deny security action.
+			</Cause>
+	
+			<Description>
+			The PermitOnly and Deny actions short circuit the normal stack walk behavior of
+			security demands. These actions are rarely appropriate and can cause problems when
+			used:
+			* Link demands are not affected by Deny or PermitOnly.
+			* An Assert security action can terminate the stack walk before the PermitOnly or
+			Deny is reached.
+			* If Deny is used to protect a resource all code paths that interact with the resource
+			must be protected with Deny. On the other hand, if the resource is protected with
+			Demand the security check can be done in a single place.
+			</Description>
+	
+			<Fix>
+			Don't use these security actions or disable the rule with DisableRuleAttribute (see
+			the README for details).
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1006" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ImperativeSecurity" category = "Security">			
+			<Cause>
+			A method is programatically creating and using CodeAccessPermission objects.
+			</Cause>
+	
+			<Description>
+			Imperative security is very flexible but should only be used if you actually need
+			the flexibility. Using declarative security (PermissionSetAttribute, FileIOPermissionAttribute,
+			etc) is clearer, not dependent on runtime information which may change, and accessible
+			by tools such as Microsoft's Permissions View Tool (Permview.exe) or Mono's permview.
+			</Description>
+	
+			<Fix>
+			Use declarative security or disable the rule with DisableRuleAttribute (see
+			the README for details).
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1007" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "UnmanagedCodeSecurity" category = "Security">			
+			<Cause>
+			A type or method is decorated with System.Security.SuppressUnmanagedCodeSecurityAttribute.
+			</Cause>
+	
+			<Description>
+			Normally p/invoke and COM calls are protected by a security check for unmanaged code
+			execution permission. This demand occurs each time the method is called and checks
+			every caller in the call stack. When SuppressUnmanagedCodeSecurityAttribute is present
+			a link demand is used instead so the check happens at jit-compile time and only
+			checks the immediate caller.
+			</Description>
+	
+			<Fix>
+			Remove the attribute, or if the method is a performance bottleneck, disable the rule 
+			with DisableRuleAttribute (see the README for details).
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1008" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "VisibleEventHandler" category = "Security">			
+			<Cause>
+			An event handler method is declared with public or protected visibility.
+			</Cause>
+	
+			<Description>
+			Event handlers are often called by highly trusted system code such as button handlers.
+			Code that installs an event handler is not necessarily present when the handler
+			executes so security demand checks on the handler are not sufficient.
+			</Description>
+	
+			<Fix>
+			Make the handler private.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1009" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "InternalInterface" category = "Security">			
+			<Cause>
+			An inheritable public type has an overriddable method implementation of an internal
+			interface.
+			</Cause>
+	
+			<Description>
+			Internal interfaces are meant to be used within an assembly and other assemblies should
+			not normally be able to affect the semantics of an internal interface implementation.
+			</Description>
+	
+			<Fix>
+			Do one or more of the following:
+			* Make the method's declaring type sealed.
+			* Make the method's declaring type internal.
+			* Make the interface public.
+			* Remove all public constructors from the method's declaring type.
+			* Implement the method without using the virtual keyword.
+			* Implement the method explicitly.
+			* Use DisableRuleAttribute.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1010" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "SecureAsserts" category = "Security">			
+			<Cause>
+			A method asserts a permission, but no security checks are performed on the caller
+			of the method.
+			</Cause>
+	
+			<Description>
+			Asserting a permission terminates the normal stack-walking security checks. If you
+			assert without checking the permissions of your caller it's possible that your method
+			can be executed in an unexpected manner with inappropriate permissions.
+			</Description>
+	
+			<Fix>
+			Add a security demand to the method or its declaring type. If the method does
+			nothing potentially dangerous or clients cannot pass arbitrary data to the code
+			the method calls then DisableRuleAttribute can be used.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1011" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "SecureGetObjectData" category = "Security">			
+			<Cause>
+			An implementation or override of System.Runtime.Serialization.ISerializable::GetObjectData
+			is not protected using System.Security.Permissions.SecurityPermissionAttribute.SerializationFormatter.
+			</Cause>
+	
+			<Description>
+			If GetObjectData is not protected with SerializationFormatter malicious code can gain
+			access to the internal state of the object. 
+			</Description>
+	
+			<Fix>
+			Decorate the method with SecurityPermissionAttribute and set SerializationFormatter to
+			true.
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.Serialization;
+			using System.Security.Permissions;
+			
+			[Serializable]
+			public class Customer : ISerializable
+			{
+				public Customer(string name)
+				{
+					m_name = name;
+				}
+				
+				protected Customer(SerializationInfo info, StreamingContext context)
+				{
+					m_name = info.GetString("name");
+				}
+				
+				// Protect GetObjectData so arbitrary code cannot access our internal state.
+				[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+				public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+				{
+					info.AddValue("name", m_name);
+				}
+				
+				private string m_name;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1012" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "ConflictingTransparency" category = "Security">			
+			<Cause>
+			A 100% transparent assembly uses SecurityCriticalAttribute.
+			</Cause>
+	
+			<Description>
+			Transparent code is code which gives up its right to elevate security permissions:
+			* Transparent code cannot Assert permissions.
+			* Link demands are converted by the CLR into full demands.
+			* Unverifiable cannot be used automatically, even if it has SkipVerification permission.
+			Instead the CLR demands UnmanagedCode permission.
+			* P/Invoke calls decorated with SuppressUnmanagedCodeAttribute cause the CLR to demand
+			UnmanagedCode permission.
+			
+			In practice this means that transparent assemblies run with the set of permissions it
+			was granted or the permissions of its caller, which ever is smaller. This is very useful
+			and, in particular, makes APTCA assemblies easier to write. See 
+			&lt;http://blogs.msdn.com/shawnfa/archive/2005/09/21/472396.aspx&gt;
+			for more details on transparent assemblies.
+			
+			To make an assembly 100% transparent decorate it with [assembly: SecurityTransparent].
+			To make an assembly 100% critical (i.e. non-transparent) decorate it with
+			[assembly: SecurityCritical(SecurityCriticalScope.Everything)]. To make an assembly
+			mixed transparent/critical use [assembly: SecurityCritical] and decorate one or
+			more type/methods with SecurityCriticalAttribute. A 100% transparent
+			assembly cannot use SecurityCriticalAttribute anywhere.
+			</Description>
+	
+			<Fix>
+			Don't use incompatible transparency attributes.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1013" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "TransparentAssert1" category = "Security">			
+			<Cause>
+			A 100% transparent assembly asserts a permission.
+			</Cause>
+	
+			<Description>
+			Transparent code is code which gives up its right to elevate security permissions:
+			* Transparent code cannot Assert permissions.
+			* Link demands are converted by the CLR into full demands.
+			* Unverifiable cannot be used automatically, even if it has SkipVerification permission.
+			Instead the CLR demands UnmanagedCode permission.
+			* P/Invoke calls decorated with SuppressUnmanagedCodeAttribute cause the CLR to demand
+			UnmanagedCode permission.
+			
+			If a 100% transparent assembly asserts a permission the CLR will throw a SecurityException.
+			</Description>
+	
+			<Fix>
+			Either make the assembly mixed transparent/critical and the method that asserts
+			critical or remove the assert.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1014" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "TransparentAssert2" category = "Security">			
+			<Cause>
+			A mixed transparent/critical assembly has a transparent method which asserts a
+			permission.
+			</Cause>
+	
+			<Description>
+			Transparent code is code which gives up its right to elevate security permissions:
+			* Transparent code cannot Assert permissions.
+			* Link demands are converted by the CLR into full demands.
+			* Unverifiable cannot be used automatically, even if it has SkipVerification permission.
+			Instead the CLR demands UnmanagedCode permission.
+			* P/Invoke calls decorated with SuppressUnmanagedCodeAttribute cause the CLR to demand
+			UnmanagedCode permission.
+			
+			If transparent code asserts a permission the CLR will throw a SecurityException.
+			</Description>
+	
+			<Fix>
+			Make the method critical using SecurityCriticalAttribute or remove the assert.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1015" severity = "Error" breaking = "true">
+		<Translation lang = "en" typeName = "PartitionAssembly" category = "Security">			
+			<Cause>
+			A transparent/critical assembly contains a public transparent method which calls a 
+			non-public critical method and that method is not decorated with SecurityTreatAsSafeAttribute.
+			</Cause>
+	
+			<Description>
+			Mixed transparent/critical assemblies contain both transparent and critical code.
+			To simplify security audits as little code as possible should be critical and
+			public transparent code should not call non-public critical code. If this is done
+			security audits can consider only the public methods in the assembly.
+			
+			Note that the CLR enforces this: if a call is made from a public transparent method
+			to a non-public critical method a MethodAccessException is thrown if the target
+			method is not decorated with SecurityTreatAsSafeAttribute.
+			</Description>
+	
+			<Fix>
+			Refactor the code so that the target method is transparent, make the caller critical,
+			or decorate the target method with SecurityTreatAsSafeAttribute.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1016" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "SecureOverrides" category = "Security">			
+			<Cause>
+			A public unsealed type is protected with a link demand, has an overriddable method,
+			and neither the type nor method is protected with an inheritance demand.
+			</Cause>
+	
+			<Description>
+			If the type is protected by a link demand then the demand is performed whenever a
+			method of that type is called. But if one of the methods are overridden this check
+			may be done on the override when it calls the base method instead of the code in
+			the calling assembly which is what we need to check. To prevent this
+			from happening an inheritance demand can be used. 
+			</Description>
+	
+			<Fix>
+			Add an inheritance demand to the type or the overriddable methods.
+			</Fix>
+	
+			<CSharp>
+			using System.Security.Permissions;
+			
+			// Callers of our methods must have full trust.
+			[PermissionSet(SecurityAction.LinkDemand, Name = "FullTrust")]
+			public class Klass
+			{
+				// We don't need to protect this because it's not virtual.
+				public void Alpha()
+				{
+				}
+				
+				// This, however, must be protected with an InheritanceDemand because
+				// the demand on this type will check the override not who ever called
+				// Beta.
+				[PermissionSet(SecurityAction.InheritanceDemand, Name = "FullTrust")]
+				public virtual void Beta()
+				{
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1017" severity = "Error" breaking = "true">
+		<Translation lang = "en" typeName = "NonVirtualInheritanceDemand" category = "Security">			
+			<Cause>
+			A method has an inheritance demand, but the method cannot be overridden because
+			the method is not virtual.
+			</Cause>
+	
+			<Description>
+			If a virtual method has an inheritance demand then it can only be overriden if
+			the overriding code satisfies the demand. 
+			</Description>
+	
+			<Fix>
+			Remove the inheritance demand or make the method overriddable.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1018" severity = "Error" breaking = "true">
+		<Translation lang = "en" typeName = "SealedInheritanceDemand" category = "Security">			
+			<Cause>
+			A sealed type has an inheritance demand.
+			</Cause>
+	
+			<Description>
+			If a type has an inheritance demand then subclasses must satisfy the demand.
+			</Description>
+	
+			<Fix>
+			Remove the inheritance demand or the sealed keyword.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1019" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "NamedPermissionSet" category = "Security">			
+			<Cause>
+			A NamedPermissionSet is being instantiated with the name of one of the built-in
+			permission sets.
+			</Cause>
+	
+			<Description>
+			The strings passed into the NamedPermissionSet constructors have no relation to the
+			built-in permission sets. So, code like "new NamedPermissionSet("LocalIntranet")"
+			creates a new FullTrust permission set which happens to share the name of one of the
+			built-in permission sets. This is probably not the intended behavior. See
+			&lt;http://blogs.msdn.com/shawnfa/archive/2006/11/14/new-namedpermissionset.aspx&gt;
+			for more details.
+			</Description>
+	
+			<Fix>
+			Use PolicyLevel.GetNamedPermissionSet instead.
+			</Fix>
+		</Translation>
+	</Violation>
+</Violations>

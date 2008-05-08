@@ -1,0 +1,94 @@
+<Violations>
+	<Violation checkID = "G1000" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "DataLocale" category = "Globalization">			
+			<Cause>
+			A method created a System.Data.DataTable or System.Data.DataSet instance, but 
+			did not set the Locale property.
+			</Cause>
+	
+			<Description>
+			The locale affects how the data is presented to the user. For example, number
+			formatting, currency symbols, and sort order are all affected by the locale.
+			By default the DataTable and DataSet locales are set to the current culture. If
+			the data may be shared across cultures the invariant culture should normally be
+			used.
+			</Description>
+	
+			<Fix>
+			Explicitly set the culture.
+			</Fix>
+	
+			<CSharp>
+			using System.Data;
+			using System.Globalization;
+			
+			public static class Factory
+			{				
+				public static DataTable MakeTable()
+				{
+					DataTable table = new DataTable("Customers");
+					table.Locale = CultureInfo.InvariantCulture;
+					
+					DataColumn keyColumn = table.Columns.Add("ID", typeof(int));
+					keyColumn.AllowDBNull = false;
+					keyColumn.Unique = true;
+					
+					table.Columns.Add("LastName", typeof(string));
+					table.Columns.Add("FirstName", typeof(string));
+
+					return table;
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "G1001" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "MessageBoxOptions" category = "Globalization">			
+			<Cause>
+			A method calls System.Windows.Forms.MessageBox.Show without specifying 
+			MessageBoxOptions.
+			</Cause>
+	
+			<Description>
+			To display the text properly for cultures that use a right to left reading
+			order the RightAlign and RtlReading members of MessageBoxOptions must be
+			used.
+			</Description>
+	
+			<Fix>
+			Use the Show overload that takes a MessageBoxOptions and set RightAlign and
+			RtlReading using the containing control.
+			</Fix>
+	
+			<CSharp>
+			using System.Globalization;
+			using System.Windows.Forms;
+			
+			public static class Dialogs
+			{				
+				public static DialogResult ShowMessageBox(Control owner, string text, string caption)
+				{
+					MessageBoxOptions options = 0;
+					if (owner != null)
+					{
+						if (owner.RightToLeft == RightToLeft.Yes)
+							options |= MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign;
+					}
+					else if (CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft)
+						options |= MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign;
+					
+					return MessageBox.Show(
+						owner, 
+						text, 
+						caption,
+						MessageBoxButtons.OK, 
+						MessageBoxIcon.Information, 
+						MessageBoxDefaultButton.Button1, 
+						options);
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+</Violations>

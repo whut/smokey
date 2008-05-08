@@ -1,0 +1,25 @@
+<xsd:schema xmlns:xsd = "http://www.w3.org/2001/XMLSchema">
+	<xsd:annotation>
+		<xsd:documentation xml:lang = "en">
+			Schema for expected error xml files.
+		</xsd:documentation>
+	</xsd:annotation>
+
+	<!-- root element -->
+	<xsd:element name = "Expectations" type = "ExpectationsType"/>
+
+	<xsd:complexType name = "ExpectationsType" mixed = "true">
+		<xsd:sequence>
+			<xsd:element name = "Expected" type = "ExpectedType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+  	<!-- Expected element -->
+	<xsd:complexType name = "ExpectedType" mixed = "true">
+		<xsd:attribute name = "checkID" type = "xsd:string" use = "required"/>
+		<xsd:attribute name = "fullName" type = "xsd:string" use = "required"/>	
+		<xsd:attribute name = "typeName" type = "xsd:string" use = "required"/>	
+		 <xsd:attribute name = "shouldPass" type = "xsd:boolean"/>       <!-- for good code that we think is bad -->
+		<xsd:attribute name = "shouldFail" type = "xsd:boolean"/>       <!-- for bad code we don't catch yet -->
+	</xsd:complexType>
+</xsd:schema>

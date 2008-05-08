@@ -1,0 +1,73 @@
+<xsd:schema xmlns:xsd = "http://www.w3.org/2001/XMLSchema">
+	<xsd:annotation>
+		<xsd:documentation xml:lang = "en">
+			Schema for rule violation xml files.
+		</xsd:documentation>
+	</xsd:annotation>
+
+	<!-- root element -->
+	<xsd:element name = "Errors" type = "ErrorsType"/>
+
+	<xsd:complexType name = "ErrorsType" mixed = "true">
+		<xsd:sequence>
+			<xsd:element name = "Error" type = "ErrorType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name = "assembly" type = "xsd:string" use = "required"/>
+	</xsd:complexType>
+
+  	<!-- Error element -->
+	<xsd:complexType name = "ErrorType" mixed = "true">
+		<xsd:sequence>
+			<xsd:element name = "Location" type = "LocationType"/>
+			<xsd:element name = "Violation" type = "ViolationType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+  	<!-- Location element -->
+	<xsd:complexType name = "LocationType" mixed = "true">
+		<xsd:attribute name = "name" type = "xsd:string" use = "required"/>
+		<xsd:attribute name = "details" type = "xsd:string"/>
+		<xsd:attribute name = "file" type = "xsd:string"/>
+		<xsd:attribute name = "line" type = "xsd:positiveInteger"/>
+	</xsd:complexType>
+
+  	<!-- Violation element -->
+	<xsd:complexType name = "ViolationType" mixed = "true">
+		<xsd:sequence>
+			<xsd:element name = "Cause" type = "CauseType"/>
+			<xsd:element name = "Description" type = "DescriptionType"/>
+			<xsd:element name = "Fix" type = "FixType"/>
+			<xsd:element name = "CSharp" type = "CSharpType"/>	
+		</xsd:sequence>
+		<xsd:attribute name = "checkID" type = "xsd:string" use = "required"/>
+		<xsd:attribute name = "typeName" type = "xsd:string" use = "required"/>
+		<xsd:attribute name = "category" type = "xsd:string" use = "required"/>
+		<xsd:attribute name = "severity" type = "xsd:string" use = "required"/>
+		<xsd:attribute name = "breaking" type = "xsd:boolean" use = "required"/>
+	</xsd:complexType>
+
+  	<!-- Violation child elements -->
+	<xsd:complexType name = "CauseType" mixed = "true">
+		<xsd:simpleContent>
+			<xsd:extension base = "xsd:string"/>
+		</xsd:simpleContent>
+ 	</xsd:complexType>
+ 
+	<xsd:complexType name = "DescriptionType" mixed = "true">
+		<xsd:simpleContent>
+			<xsd:extension base = "xsd:string"/>
+		</xsd:simpleContent>
+ 	</xsd:complexType>
+ 
+	<xsd:complexType name = "FixType" mixed = "true">
+		<xsd:simpleContent>
+			<xsd:extension base = "xsd:string"/>
+		</xsd:simpleContent>
+ 	</xsd:complexType>
+ 
+	<xsd:complexType name = "CSharpType" mixed = "true">
+		<xsd:simpleContent>
+			<xsd:extension base = "xsd:string"/>
+		</xsd:simpleContent>
+ 	</xsd:complexType>
+</xsd:schema>

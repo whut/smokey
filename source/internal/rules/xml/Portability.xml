@@ -1,0 +1,275 @@
+<!-- Portability between OSs or .net and mono. -->
+<Violations>
+	<Violation checkID = "PO1000" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "NewLineLiteral" category = "Portability">			
+			<Cause>
+			A string literal has an embedded new line character.
+			</Cause>
+	
+			<Description>
+			Different operating systems use different characters to represent the end of
+			a line. Unix uses "\n", Windows uses "\r\n", and Mac OS 9 used "\r". To work
+			well on different OSs you should avoid hard coding the end of line characters.
+			
+			Note that, in order to allow verbatim strings to be used, this rule skips
+			strings with more than three new line characters.
+			</Description>
+	
+			<Fix>
+			Use System.Environment.NewLine or a character literal.
+			</Fix>
+	
+			<CSharp>
+			internal static class Hello
+			{
+				public static void Portable()
+				{
+					Console.WriteLine("hello" + Environment.NewLine + "world");
+				}
+
+				public static void Unix()
+				{
+					Console.WriteLine("hello" + '\n' + "world");
+				}
+			} 
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "PO1001" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "DllImportPath" category = "Portability">			
+			<Cause>
+			A DllImport attribute is using a path to the dll.
+			</Cause>
+	
+			<Description>
+			Hardcoding a path into the DllImport attribute is going to cause portability
+			problems. It's better to work with the .NET search paths which are documented
+			here: &lt;http://www.mono-project.com/Interop_with_Native_Libraries&gt;.
+			</Description>
+	
+			<Fix>
+			Use the name of the library without the extension.
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.InteropServices;
+
+			internal static class NativeMethods
+			{
+				// The runtime will append the appropiate extension (.dll, .so, .dylib),
+				// optionally prepend lib, and use the platform search paths to find the
+				// library.
+				[DllImport("aspell")]
+				public static extern IntPtr new_aspell_config();
+			} 
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "PO1002" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "DllImportExtension" category = "Portability">			
+			<Cause>
+			A DllImport attribute is using a file extension.
+			</Cause>
+	
+			<Description>
+			Hardcoding an extension into the DllImport attribute is going to cause portability
+			problems: Windows uses .dll, linux uses .so, and Mac OS X uses .dylib.
+			</Description>
+	
+			<Fix>
+			Use the name of the library without the extension.
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.InteropServices;
+
+			internal static class NativeMethods
+			{
+				// The runtime will append the appropiate extension (.dll, .so, .dylib),
+				// optionally prepend lib, and use the platform search paths to find the
+				// library.
+				[DllImport("aspell")]
+				public static extern IntPtr new_aspell_config();
+			} 
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "PO1003" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "SpecialFolder" category = "Portability">			
+			<Cause>
+			A string literal is using a special folder path.
+			</Cause>
+	
+			<Description>
+			Windows, Linux, and Macs all have different directory layouts so avoid
+			hardcoding directory names.
+			</Description>
+	
+			<Fix>
+			Use System.Environment.GetFolderPath to get the directory name.
+			</Fix>
+	
+			<CSharp>
+			using System.IO;
+			
+			internal static class Prefs
+			{
+				public static void Save(string fileName, string contents)
+				{
+					string root = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+					string path = Path.Combine(root, fileName);
+					File.WriteAllText(path, contents);
+				}
+			} 
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "PO1004" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "TempDir" category = "Portability">			
+			<Cause>
+			A string literal contains a path that starts with "/var/tmp", "/tmp",
+			or "C:\Windows\Temp".
+			</Cause>
+	
+			<Description>
+			Don't hardcode platform specific paths.
+			</Description>
+	
+			<Fix>
+			Use System.IO.Path.GetTempPath or System.IO.Path.GetTempFileName.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "PO1005" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "BoolMarshaling" category = "Portability">			
+			<Cause>
+			A p/invoke method has a bool return type or bool argument type that does
+			not have a MarshalAsAttribute.
+			</Cause>
+	
+			<Description>
+			C/C++ code uses different sizes for bool. Gcc normally uses four bytes. Windows
+			and Mac compilers normally use one byte. 
+			</Description>
+	
+			<Fix>
+			Use MarshalAsAttribute to specify the number of bytes used to marshal bools.
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.InteropServices;
+
+			internal static class NativeMethods
+			{
+				[DllImport("widget")]
+				public static extern void Enable([MarshalAs(UnmanagedType.U1)] bool enable);
+
+				[DllImport("widget")]
+				[return: MarshalAs(UnmanagedType.U1)] 
+				public static extern bool IsEnabled();
+			} 
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "PO1006" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "PathCombine" category = "Portability">			
+			<Cause>
+			A string literal containing a '/' or '\' is being concatenated with
+			another string.
+			</Cause>
+	
+			<Description>
+			Windows and Unix use different path separator characters. Note that
+			this ignores '/' if it is preceded by '&amp;'. 
+			</Description>
+	
+			<Fix>
+			Use Path.Combine to assemble paths or Path.PathSeparator.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "PO1007" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "ExitCode" category = "Portability">			
+			<Cause>
+			System.Environment.Exit is called (or main exits) with a value outside [0.255].
+			</Cause>
+	
+			<Description>
+			On Unix the low byte of the exit code will be set if the program exits
+			normally and the high byte will be set if the program exited via a signal.
+			On Windows the full 32-bit integer range can be used. 
+			</Description>
+	
+			<Fix>
+			Use a value in [0.255].
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "PO1008" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "WinExe" category = "Portability">			
+			<Cause>
+			The assembly has a reference to System.Windows.Forms.dll or gtk-sharp.dll but 
+			was not compiled with -target:winexe.
+			</Cause>
+	
+			<Description>
+			On Windows a console window will appear when the program is run. 
+			</Description>
+	
+			<Fix>
+			Use -target:winexe.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "PO1009" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "WinFormsVoodoo" category = "Portability">			
+			<Cause>
+			System.Windows.Forms.Application::Run is called but Application::EnableVisualStyles
+			and/or Application::SetCompatibleTextRenderingDefault are not called.
+			</Cause>
+	
+			<Description>
+			EnableVisualStyles allows your controls to be themed properly on Windows (see
+			&lt;http://blogs.msdn.com/rprabhu/archive/2003/09/28/56540.aspx&gt;). 
+			SetCompatibleTextRenderingDefault(false) will improve drawing performance and 
+			localization support on Windows (see &lt;http://blogs.msdn.com/jfoscoding/archive/2005/10/13/480632.aspx&gt;).
+			</Description>
+	
+			<Fix>
+			Call EnableVisualStyles and SetCompatibleTextRenderingDefault with true or false. 
+			Note that SetCompatibleTextRenderingDefault(false) will slightly change the results
+			of text measuring and you should use Label::GetPreferredSize or TextRenderer::MeasureText
+			instead of Graphics::MeasureText.
+			</Fix>
+	
+			<CSharp>
+			using System;
+			using System.Windows.Forms;
+			
+			public class Program
+			{
+				[STAThread]
+				public static void Main(string[] args)
+				{ 
+					// Every winforms app should normally call these two (apps written
+					// against .NET 1.0 which measure text may not want to call 
+					// SetCompatibleTextRenderingDefault(false)).
+					Application.EnableVisualStyles();
+					Application.SetCompatibleTextRenderingDefault(false);
+					
+					Application.Run(new Form()); 
+				}
+			} 
+			</CSharp>
+		</Translation>
+	</Violation>
+</Violations>

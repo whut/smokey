@@ -1,0 +1,5088 @@
+------------------------------------------------------------------------
+r141 | jessejones | 2007-07-26 03:52:50 -0700 (Thu, 26 Jul 2007) | 3 lines
+
+Bumped version number.
+
+
+------------------------------------------------------------------------
+r142 | jessejones | 2007-07-26 21:05:20 -0700 (Thu, 26 Jul 2007) | 31 lines
+
+Index: source/framework/AnalyzeAssembly.cs
+* Fixed -type and method options: if -method alone is specified we still
+  need to check methods in types, just not type rules. If -type alone
+  is specified we want to check both type and method rules for that
+  type.
+  
+Index: source/rules/performance/MethodCanBeMadeStaticRule.cs
+* If the type is in the System or Mono namespaces only check the method if
+  it's private or FamANDAssem.
+   
+Index: source/rules/usage/IDisposableWithoutSuppressFinalizeRule.cs
+* Use MemberAccessMask instead of the (mask & flags) == flags trick.
+
+Index: source/rules/interoperability/NewLineLiteralRule.cs
+Index: source/rules/performance/UseStringEmptyRule.cs
+Index: source/rules/performance/EmptyDestructorRule.cs
+Index: source/rules/performance/MethodCanBeMadeStaticRule.cs
+* Added Authors section.
+
+Index: extras/functest/Expected.schema.xml
+Index: extras/functest/Analyze.cs
+* Mono 1.2.5 allows us to use the default attribute in xsd:attribute elements.
+
+Index: README
+* Added CONTRIBUTORS.
+
+Index: nant.build
+* Added -targetframework:mono-2.0 to usage (seem to need it for 1.2.5).
+* Got rid of nunit_path property.
+ 	
+
+------------------------------------------------------------------------
+r143 | jessejones | 2007-07-27 04:24:44 -0700 (Fri, 27 Jul 2007) | 35 lines
+
+Index: source/rules/performance/AvoidBoxingRule.cs
+Index: source/rules/performance/AvoidUnboxingRule.cs
+Index: source/tests/rules/performance/AvoidBoxingTest.cs
+Index: extras/evildoer/BadClass.cs
+Index: extras/functest/Expected.xml
+Index: source/tests/rules/performance/AvoidUnboxingTest.cs
+Index: source/rules/xml/Performance.xml
+* Added.
+
+Index: source/rules/performance/MethodCanBeMadeStaticRule.cs
+* Check for namespaces starting with "System" or "Mono".
+
+Index: source/framework/MethodRules.cs
+Index: source/framework/TypeRules.cs
+* Don't trap TypeInitializationException.
+
+Index: source/console/TextReport.cs
+* Use ToString to avoid boxing warning.
+
+Index: source/rules/xml/Usage.xml
+* "Cannot" intstead of "Cant".
+
+Index: source/rules/xml/Reliability.xml
+* Forgot to check this in.
+
+Index: source/framework/ViolationDatabase.cs
+* Added some logging to ViolationDatabase type ctor.
+
+Index: extras/functest/Analyze.cs
+* Passes --debug to mono when starting up smokey.
+
+Index: source/tests/rules/usage/InfiniteRecursionTest.cs
+* Commented out a log.
+
+
+------------------------------------------------------------------------
+r144 | jessejones | 2007-07-27 15:49:16 -0700 (Fri, 27 Jul 2007) | 19 lines
+
+Index: source/rules/performance/AvoidBoxingRule.cs
+Index: source/rules/performance/AvoidUnboxingRule.cs
+Index: source/rules/performance/UseStringEmptyRule.cs
+Index: source/rules/usage/EqualsRequiresNullCheckRule.cs
+Index: source/rules/usage/DontDestroyStackTraceRule.cs
+Index: source/rules/usage/IDisposableWithoutSuppressFinalizeRule.cs
+Index: source/rules/usage/EqualsCantCastRule.cs
+Index: source/rules/usage/InfiniteRecursionRule.cs
+Index: source/rules/interoperability/NewLineLiteralRule.cs
+Index: source/framework/MethodRules.cs
+Index: source/rules/performance/MethodCanBeMadeStaticRule.cs
+* Added Rule.Succeeded and Rule.Succeeding constants.
+
+Index: extras/functest/Expected.schema.xml
+Index: extras/functest/Analyze.cs
+* Reverted adding default attribute to the xsd:attribute's (no point in 
+  gratuitously breaking 1.2.4 compatibility just yet).
+  
+
+------------------------------------------------------------------------
+r145 | jessejones | 2007-07-27 17:19:04 -0700 (Fri, 27 Jul 2007) | 16 lines
+
+Index: source/console/XmlReport.cs
+Index: source/console/TextReport.cs
+Index: source/console/BaseReport.cs
+Index: source/console/Program.cs
+Index: source/rules/xml/Schema.xml
+Index: source/rules/xml/Performance.xml
+Index: source/rules/performance/AvoidBoxingRule.cs
+Index: source/rules/performance/AvoidUnboxingRule.cs
+Index: source/framework/Log.cs
+Index: source/framework/ViolationDatabase.cs
+Index: source/framework/Settings.cs
+Index: source/console/Options.cs
+* Added support for arbitrary configuration settings via the config file or -set option.
+
+
+
+------------------------------------------------------------------------
+r146 | jessejones | 2007-07-27 17:32:12 -0700 (Fri, 27 Jul 2007) | 9 lines
+
+Index: source/framework/Reformat.cs
+Index: source/framework/Break.cs
+Index: source/framework/AssertTraceListener.cs
+Index: source/framework/AnalyzeAssembly.cs
+Index: nant.build
+Index: source/console/AnalyzeAssembly.cs
+* Moved a bunch of files from framework to console.
+
+
+------------------------------------------------------------------------
+r147 | jessejones | 2007-07-27 17:39:35 -0700 (Fri, 27 Jul 2007) | 3 lines
+
+Made a bunch more classes and structs internal.
+
+
+------------------------------------------------------------------------
+r148 | jessejones | 2007-07-28 00:00:03 -0700 (Sat, 28 Jul 2007) | 34 lines
+
+Index: source/tests/rules/maintainability/NetNamingTest.cs
+Index: source/tests/rules/maintainability/MonoNamingTest.cs
+Index: source/rules/xml/Maintainability.xml
+Index: source/rules/maintainability/NetNamingRules.cs
+Index: source/rules/maintainability/MonoNamingRules.cs
+Index: source/rules/maintainability/JurassicNamingRules.cs
+Index: source/rules/maintainability/NamingUtils.cs
+Index: extras/evildoer/BadNaming.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/console/Program.cs
+* Read ConfigurationManager.AppSettings before initing the logger.
+
+Index: source/tests/ReformatTextTest.cs
+Index: source/tests/rules/BaseTest.cs
+Index: source/tests/ReformatCodeTest.cs
+Index: source/tests/BreakLinesTest.cs
+* Unit tests have to read ConfigurationManager.AppSettings too.
+
+Index: source/console/Reformat.cs
+Index: source/console/TextReport.cs
+* XML now handles bulleted lists (* at the start of a line).
+
+Index: source/framework/BaseRules.cs
+* Made the tests internal so we need to get all types, not just the exported ones.
+
+Index: extras/evildoer/BadStruct.cs
+Index: extras/evildoer/BadDisposable.cs
+Index: extras/evildoer/GoodStruct.cs
+Index: extras/evildoer/GoodDisposable.cs
+* Changed to mono naming conventions.
+
+
+------------------------------------------------------------------------
+r149 | jessejones | 2007-07-28 00:52:37 -0700 (Sat, 28 Jul 2007) | 23 lines
+
+Index: source/rules/xml/Maintainability.xml
+Index: source/rules/maintainability/NamingUtils.cs
+* Naming failures now show the names that fail.
+
+Index: source/rules/maintainability/NetNamingRules.cs
+Index: source/rules/maintainability/MonoNamingRules.cs
+Index: source/rules/maintainability/JurassicNamingRules.cs
+* Special case constant fields.
+
+Index: nant.build
+* Smoke target uses -set:naming:jurassic.
+
+Index: source/framework/Violation.cs
+Index: source/framework/ViolationDatabase.cs
+Index: source/framework/Error.cs
+Index: source/console/XmlReport.cs
+Index: source/console/TextReport.cs
+Index: source/console/Program.cs
+Index: source/rules/BasicBlock.cs
+Index: source/console/Options.cs
+* Fixed to pass jurassic naming rule.
+
+
+------------------------------------------------------------------------
+r150 | jessejones | 2007-07-28 06:01:14 -0700 (Sat, 28 Jul 2007) | 8 lines
+
+Index: source/tests/DoubleDispatchTest.cs
+Index: source/framework/DoubleDispatch.cs
+* First cut at a double dispatch engine.
+
+Index: README
+* Added naming setting info.
+
+
+------------------------------------------------------------------------
+r151 | jessejones | 2007-07-28 22:01:49 -0700 (Sat, 28 Jul 2007) | 24 lines
+
+Index: source/framework/LinearVisitor.cs
+Index: source/framework/Disassemble.cs
+Index: source/framework/nodes/LoadArgNode.cs
+Index: source/framework/nodes/BlockNode.cs
+Index: source/framework/nodes/Node.cs
+Index: source/framework/nodes/ReturnNode.cs
+Index: source/tests/DisassembleTest.cs
+* Started working on disassembling instructions.
+
+Index: source/framework/DoubleDispatch.cs
+* Sorts overloads once instead of each time we need to build a cache entry.
+* Added VoidDoubleDispatch.
+
+Index: source/tests/rules/maintainability/NetNamingTest.cs
+* Commented out some logs.
+
+Index: bin/tests_d.dll.config
+* Added (nant 2.4.1 doesn't like us using the smokey file).
+
+Index: nant.build
+* Use the exec task instead of the nunit2 task so we get line numbers in the stack crawls.
+
+  		
+
+------------------------------------------------------------------------
+r152 | jessejones | 2007-07-29 01:33:46 -0700 (Sun, 29 Jul 2007) | 34 lines
+
+Index: source/framework/Disassemble.cs
+Index: source/framework/nodes/StoreLocalNode.cs
+Index: source/framework/nodes/LoadLocalNode.cs
+Index: source/framework/nodes/NoOpNode.cs 		
+Index: source/framework/nodes/BinaryOpNode.cs
+Index: source/tests/DisassembleTest.cs
+* Added support for binary ops, break, nop, ldarg, ldloc, stloc.
+
+Index: source/framework/NodeUtils.cs
+* Added.
+
+Index: source/framework/nodes/LoadArgNode.cs
+* Added Ldarg and Ldarg_S.
+
+Index: source/framework/nodes/Node.cs
+Index: source/framework/nodes/BlockNode.cs
+* Implemented tree ToString.
+
+Index: source/rules/CecilUtils.cs
+* Added ToString for MethodDefinition.
+
+Index: source/tests/rules/maintainability/MonoNamingTest.cs
+Index: source/tests/rules/usage/EqualsRequiresNullCheckTest.cs
+* Removed some logs.
+
+Index: source/framework/LinearVisitor.cs
+* Vist overloads now return a Visit enum so we can abort the visiting.
+* Base case asserts that there is only one instruction so we'll know that
+  we have to update the code if new container nodes are added.
+ 		
+Index: source/framework/DoubleDispatch.cs
+* Improved AmbiguousOverloadException error text.
+
+
+------------------------------------------------------------------------
+r153 | jessejones | 2007-07-29 04:50:21 -0700 (Sun, 29 Jul 2007) | 26 lines
+
+Index: source/framework/nodes/LoadIndirectNode.cs
+Index: source/framework/nodes/StoreIndirectNode.cs
+Index: source/framework/nodes/DupNode.cs
+Index: source/framework/LinearVisitor.cs
+* Added.
+
+Index: source/framework/Disassemble.cs
+* Keeps track of the number of values pushed by nodes so we can figure out
+  which are arguments.
+  
+Index: source/framework/nodes/Node.cs
+Index: source/framework/nodes/StoreLocalNode.cs
+Index: source/framework/nodes/LoadArgNode.cs
+Index: source/framework/nodes/BlockNode.cs
+Index: source/framework/nodes/LoadLocalNode.cs
+Index: source/framework/nodes/NoOpNode.cs
+Index: source/framework/nodes/ReturnNode.cs
+Index: source/framework/nodes/BinaryOpNode.cs
+Index: source/tests/DisassembleTest.cs
+* Node has Index instead of StartIndex.
+* Node no longer has NumInstructions.
+* Offset is now to the root instruction.
+ 			
+Index: source/rules/CecilUtils.cs
+* Renamed OperandToString to DoOperandToString.
+
+------------------------------------------------------------------------
+r154 | jessejones | 2007-07-29 15:38:55 -0700 (Sun, 29 Jul 2007) | 18 lines
+
+Index: source/framework/DoubleDispatch.cs
+* Added some ugly code that I will get rid of to handle reentrant Dispatch calls.
+
+Index: source/tests/DoubleDispatchTest.cs
+* Fixed: can't call Next outside of Dispatch.
+
+Index: source/framework/NodeUtils.cs
+* Match now calls the base overload.
+
+Index: source/tests/DisassembleTest.cs
+Index: source/framework/LinearVisitor.cs
+Index: source/framework/Disassemble.cs
+* Added DupNode, StoreArgNode overloads.
+
+Index: source/framework/nodes/BinaryOpNode.cs
+* Added Code getter.
+
+
+------------------------------------------------------------------------
+r155 | jessejones | 2007-07-29 16:22:33 -0700 (Sun, 29 Jul 2007) | 7 lines
+
+Index: source/framework/DoubleDispatch.cs
+Index: source/framework/NodeUtils.cs
+Index: source/tests/DoubleDispatchTest.cs
+* There's no longer a DoubleDispatch::Next method. Instead overloads can optionally
+  take a next argument.
+  
+
+------------------------------------------------------------------------
+r156 | jessejones | 2007-07-29 22:49:09 -0700 (Sun, 29 Jul 2007) | 57 lines
+
+Index: source/tests/BasicBlockTest.cs
+Index: source/tests/rules/performance/AvoidUnboxingTest.cs
+Index: source/tests/rules/performance/UseStringEmptyTest.cs
+Index: source/tests/rules/performance/MethodCanBeMadeStaticTest.cs
+Index: source/tests/rules/performance/AvoidBoxingTest.cs
+Index: source/tests/rules/usage/EqualsCantCastTest.cs
+Index: source/tests/rules/usage/EqualsCantCastTest2.cs
+Index: source/tests/rules/usage/InfiniteRecursionTest.cs
+Index: source/tests/rules/usage/EqualsRequiresNullCheckTest.cs
+Index: source/tests/rules/usage/DontDestroyStackTraceTest.cs
+Index: source/tests/rules/usage/IDisposableWithoutSuppressFinalizeTest.cs
+Index: source/tests/rules/interoperability/NewLineLiteralTest.cs
+Index: source/tests/rules/maintainability/NetNamingTest.cs
+Index: source/tests/rules/maintainability/MonoNamingTest.cs
+Index: source/console/XmlReport.cs
+Index: source/console/TextReport.cs
+Index: source/console/AnalyzeAssembly.cs
+Index: source/console/Program.cs
+Index: source/rules/BasicBlock.cs
+Index: source/rules/performance/MethodCanBeMadeStaticRule.cs
+Index: source/rules/performance/AvoidBoxingRule.cs
+Index: source/rules/performance/AvoidUnboxingRule.cs
+Index: source/rules/performance/EmptyDestructorRule.cs
+Index: source/rules/performance/UseStringEmptyRule.cs
+Index: source/rules/usage/EqualsRequiresNullCheckRule.cs
+Index: source/rules/usage/DontDestroyStackTraceRule.cs
+Index: source/rules/usage/IDisposableWithoutSuppressFinalizeRule.cs
+Index: source/rules/usage/EqualsCantCastRule.cs
+Index: source/rules/usage/NoObjectDisposedExceptionRule.cs
+Index: source/rules/usage/InfiniteRecursionRule.cs
+Index: source/rules/interoperability/NewLineLiteralRule.cs
+Index: source/rules/maintainability/NetNamingRules.cs
+Index: source/rules/maintainability/MonoNamingRules.cs
+Index: source/framework/SymbolTable.cs
+Index: source/framework/Log.cs
+Index: source/tests/DisassembleTest.cs
+Index: source/framework/BaseRules.cs
+Index: source/framework/ViolationDatabase.cs
+Index: source/framework/LinearVisitor.cs
+Index: source/framework/MethodRules.cs
+Index: source/framework/Disassemble.cs
+Index: source/framework/TypeRules.cs
+Index: source/framework/NodeUtils.cs
+Index: bin/tests_d.dll.config
+Index: bin/smokey_d.exe.config
+* Changed Log class:
+  - It now supports hierarchical logging using types for the topics.
+  - Log.InfoLine() is used instead of Log.WriteLine(Log.Level.Info). This is simpler
+    for clients and allows us to have a DebugLine which is compiled out in release.
+  - Replaced Level.Verbose with Trace and Debug.
+  - Logging defaults to Warning instead of Off.
+  - [Level]Line overloads use generics so we don't have to box ints when we log them. 		
+
+Index: source/framework/Settings.cs
+* Added Entries method.
+
+
+------------------------------------------------------------------------
+r157 | jessejones | 2007-07-29 23:03:14 -0700 (Sun, 29 Jul 2007) | 3 lines
+
+Tests use the same topic as their rules.
+
+
+------------------------------------------------------------------------
+r158 | jessejones | 2007-07-29 23:37:01 -0700 (Sun, 29 Jul 2007) | 21 lines
+
+Index: source/framework/Log.cs
+* Log topics are truncated in the middle before being logged.
+
+Index: source/framework/LinearVisitor.cs
+* Added Visitor base class (for logging).
+
+Index: source/console/AnalyzeAssembly.cs
+Index: source/framework/MethodRules.cs
+* Added Analyze base class (for logging).
+
+Index: source/tests/BasicBlockTest.cs
+Index: source/tests/DisassembleTest.cs
+* Fixed some of the test topics.
+
+Index: source/rules/usage/EqualsCantCastRule.cs
+* Changed BaseEqualsCantCastRule to EqualsCantCastRule.
+
+Index: README
+* Updated for the new logger.
+
+
+------------------------------------------------------------------------
+r159 | jessejones | 2007-07-30 00:47:26 -0700 (Mon, 30 Jul 2007) | 3 lines
+
+Added DBC class and a missing file.
+
+
+------------------------------------------------------------------------
+r160 | jessejones | 2007-07-30 06:00:38 -0700 (Mon, 30 Jul 2007) | 38 lines
+
+Index: source/tests/DisassembleTest.cs
+Index: source/framework/LinearVisitor.cs
+Index: source/framework/Disassemble.cs
+Index: source/framework/nodes/EndNode.cs
+Index: source/framework/nodes/.cs
+Index: source/framework/nodes/StoreLocalNode.cs
+Index: source/framework/nodes/LoadArgNode.cs
+Index: source/framework/nodes/LoadNullNode.cs
+Index: source/framework/nodes/NoOpNode.cs
+Index: source/framework/nodes/CallNode.cs
+Index: source/framework/nodes/StoreIndirectNode.cs
+Index: source/framework/nodes/LoadArgAddressNode.cs
+Index: source/framework/nodes/Node.cs
+Index: source/framework/nodes/ReturnNode.cs
+Index: source/framework/nodes/ConditionalBranchNode.cs
+Index: source/framework/nodes/LoadFieldNode.cs
+Index: source/framework/nodes/BinaryOpNode.cs
+Index: source/framework/nodes/UnconditionalBranchNode.cs
+Index: source/framework/nodes/StoreArgNode.cs
+Index: source/framework/nodes/DupNode.cs
+Index: source/framework/nodes/BoxNode.cs
+Index: source/framework/nodes/LoadConstantNode.cs
+Index: source/framework/nodes/LoadLocalNode.cs
+Index: source/framework/nodes/BlockNode.cs
+Index: source/framework/nodes/InitObjNode.cs
+Index: source/framework/nodes/PopNode.cs
+Index: source/framework/nodes/LoadLocalAddressNode.cs
+Index: source/framework/nodes/LoadIndirectNode.cs
+* Added a bunch more nodes.
+* Nodes now have a StartIndex.
+
+Index: source/framework/DoubleDispatch.cs
+* Can now use Register to replace existing overloads.
+
+Index: source/framework/Log.cs
+* Made topic column slightly smaller.
+
+
+------------------------------------------------------------------------
+r161 | jessejones | 2007-07-30 17:42:17 -0700 (Mon, 30 Jul 2007) | 35 lines
+
+Index: source/framework/nodes/LoadArgNode.cs
+Index: source/framework/nodes/StoreLocalNode.cs
+Index: source/framework/nodes/StoreArgNode.cs
+Index: source/framework/nodes/LoadLocalNode.cs
+Index: source/framework/nodes/LoadLocalAddressNode.cs
+* Added Name.
+
+Index: source/framework/nodes/ConditionalBranchNode.cs
+Index: source/framework/nodes/UnconditionalBranchNode.cs
+* Made Target a property with an internal setter.
+
+Index: source/framework/nodes/LoadStringNode.cs
+Index: source/framework/nodes/LoadNullNode.cs
+Index: source/framework/nodes/CallNode.cs
+Index: source/framework/nodes/NoOpNode.cs
+Index: source/framework/nodes/StoreIndirectNode.cs
+Index: source/framework/nodes/ReturnNode.cs
+Index: source/framework/nodes/LoadArgAddressNode.cs
+Index: source/framework/nodes/EndNode.cs
+Index: source/framework/nodes/BinaryOpNode.cs
+Index: source/framework/nodes/LoadFieldNode.cs
+Index: source/framework/nodes/DupNode.cs
+Index: source/framework/nodes/BoxNode.cs
+Index: source/framework/nodes/LoadConstantNode.cs
+Index: source/framework/nodes/BlockNode.cs
+Index: source/framework/nodes/InitObjNode.cs
+Index: source/framework/nodes/PopNode.cs
+Index: source/framework/nodes/LoadIndirectNode.cs
+* Made ctors internal.
+
+Index: source/rules/performance/UseStringEmptyRule.cs
+Index: source/rules/usage/EqualsRequiresNullCheckRule.cs
+* Added a comment.
+
+
+------------------------------------------------------------------------
+r162 | jessejones | 2007-07-30 17:54:49 -0700 (Mon, 30 Jul 2007) | 3 lines
+
+Moved some files into sub-directories.
+
+
+------------------------------------------------------------------------
+r163 | jessejones | 2007-07-30 20:17:59 -0700 (Mon, 30 Jul 2007) | 20 lines
+
+Index: source/framework/DoubleDispatch.cs
+* Added DoubleDispatchException base class.
+* Made exception classes public.
+* Optimized next a bit: ambiguous check is only done once when the applicable
+  methods are cached. 
+* Next now throws NoMoreNextMethodsException if it cant find anything to call.
+ 	
+Index: source/tests/DoubleDispatchTest.cs
+Index: source/framework/LinearVisitor.cs
+* DoubleDispatch now constrains the overloads which may be added. Of course the constraint
+  can be: both args must be assignable to object.
+  
+Index: source/rules/usage/IDisposableWithoutSuppressFinalizeRule.cs
+* Rewrote using the new node stuff.
+
+Index: source/framework/Disassemble.cs
+Index: source/framework/nodes/flow/EndNode.cs
+* Added support for Leave.
+
+
+------------------------------------------------------------------------
+r164 | jessejones | 2007-07-31 01:52:23 -0700 (Tue, 31 Jul 2007) | 30 lines
+
+Index: source/framework/Disassemble.cs 	
+Index: source/framework/nodes/stores/StoreArgNode.cs
+Index: source/framework/nodes/stores/StoreLocalNode.cs
+Index: source/framework/nodes/stores/StoreIndirectNode.cs
+Index: source/framework/nodes/CallNode.cs
+Index: source/framework/nodes/NewObjectNode.cs
+Index: source/framework/nodes/CastClassNode.cs
+Index: source/framework/nodes/CompareNode.cs
+Index: source/framework/nodes/loads/LoadArgNode.cs
+Index: source/framework/nodes/loads/LoadConstantNode.cs
+Index: source/framework/nodes/loads/LoadLocalNode.cs
+Index: source/framework/nodes/loads/LoadStaticFieldNode.cs
+Index: source/framework/nodes/loads/LoadLocalAddressNode.cs
+Index: source/framework/nodes/DupNode.cs
+Index: source/framework/nodes/BlockNode.cs
+Index: source/framework/nodes/UnboxNode.cs
+Index: source/framework/nodes/flow/EndNode.cs
+Index: source/framework/nodes/flow/BranchFalseNode.cs
+Index: source/framework/nodes/flow/LeaveNode.cs
+Index: source/framework/nodes/flow/BranchTrueNode.cs
+Index: source/framework/nodes/flow/TryNode.cs
+Index: source/framework/nodes/flow/ReturnNode.cs
+Index: source/framework/nodes/flow/ConditionalBranchNode.cs
+Index: source/framework/nodes/flow/ThrowNode.cs
+Index: source/framework/nodes/flow/UnconditionalBranchNode.cs
+Index: source/tests/DisassembleTest.cs 
+Index: source/framework/LinearVisitor.cs
+* Added bunch of nodes.
+* Minor changes here and there (eg ToString methods).
+
+------------------------------------------------------------------------
+r165 | jessejones | 2007-07-31 05:23:00 -0700 (Tue, 31 Jul 2007) | 6 lines
+
+Re-designed the Node classes. Instead of trying to derive a tree version
+of the instructions we simply replace the untyped Cecil instructions with
+typed versions. This is way simpler and should allow us to still do everything
+we want.
+
+
+------------------------------------------------------------------------
+r166 | jessejones | 2007-07-31 05:27:56 -0700 (Tue, 31 Jul 2007) | 3 lines
+
+Renaming.
+
+
+------------------------------------------------------------------------
+r167 | jessejones | 2007-07-31 05:29:23 -0700 (Tue, 31 Jul 2007) | 3 lines
+
+More renaming.
+
+
+------------------------------------------------------------------------
+r168 | jessejones | 2007-07-31 07:47:14 -0700 (Tue, 31 Jul 2007) | 22 lines
+
+Index: source/framework/instructions/stores/StoreArg.cs
+Index: source/framework/instructions/loads/LoadArg.cs
+* Uses MethodDefinition.Parameters to get the arg name.
+ 					
+Index: source/framework/instructions/stores/StoreLocal.cs
+Index: source/framework/instructions/loads/LoadLocal.cs
+Index: source/framework/TypedInstructions.cs
+* Uses MethodDefinition.Variables to get the variable name (tho this
+  gives us a lame name like V_1).
+  
+Index: source/framework/instructions/loads/LoadString.cs
+* Overrides OnOperandToString.
+
+Index: source/framework/instructions/loads/LoadConstant.cs
+* Fixed the casts.
+ 					
+Index: source/framework/DoubleDispatch.cs
+Index: source/framework/SymbolTable.cs
+Index: source/rules/usage/EqualsRequiresNullCheckRule.cs
+* Sets capacity when creating the List.
+
+
+------------------------------------------------------------------------
+r169 | jessejones | 2007-07-31 16:28:57 -0700 (Tue, 31 Jul 2007) | 13 lines
+
+Index: source/framework/SymbolTable.cs
+* Added LocalName.
+
+Index: source/framework/instructions/stores/StoreLocal.cs
+Index: source/framework/instructions/loads/LoadLocal.cs
+Index: source/framework/TypedInstructions.cs
+* Gets the name of the local from the mdb file (if present).
+ 					 					 	
+Index: source/framework/MethodRules.cs
+Index: source/rules/usage/IDisposableWithoutSuppressFinalizeRule.cs
+* MethodRules now creates the TypedInstructions.
+
+
+------------------------------------------------------------------------
+r170 | jessejones | 2007-07-31 16:34:35 -0700 (Tue, 31 Jul 2007) | 3 lines
+
+Split LoadConstant into LoadConstantInt and LoadConstantFloat.
+
+
+------------------------------------------------------------------------
+r171 | jessejones | 2007-07-31 23:22:43 -0700 (Tue, 31 Jul 2007) | 14 lines
+
+Index: source/framework/TypedInstructions.cs
+* Added TryCatches getter, indexed getter, and OffsetToIndex.
+* Added a ridiculous amount of code to print exception handlers nicely.
+
+Index: source/framework/TryCatches.cs
+* Added.
+
+Index: source/rules/usage/DontDestroyStackTraceRule.cs
+* Rewrote using TypedInstruction and TryCatches.
+
+Index: source/framework/instructions/stores/StoreLocal.cs
+* Fixed comment.
+
+
+------------------------------------------------------------------------
+r172 | jessejones | 2007-08-03 19:41:46 -0700 (Fri, 03 Aug 2007) | 67 lines
+
+Index: source/framework/BasicBlock.cs
+Index: source/framework/ControlFlowGraph.cs
+Index: source/framework/ControlFlowVisitor.cs
+Index: source/tests/ControlFlowGraphTest.cs
+Index: source/framework/instructions/loads/LoadConstantFloat.cs
+Index: source/framework/instructions/flow/ConditionalBranch.cs
+Index: source/framework/instructions/flow/Switch.cs
+Index: source/framework/instructions/flow/UnconditionalBranch.cs
+* Added.
+
+Index: source/rules/usage/InfiniteRecursionRule.cs
+Index: source/tests/rules/usage/InfiniteRecursionTest.cs
+Index: extras/evildoer/BadClass2.cs
+Index: extras/functest/Expected.xml
+* No longer checks indirect recursion.
+* Rewrote using the new whizbang ControlFlowVisitor.
+
+Index: source/rules/BasicBlock.cs
+Index: source/tests/BasicBlockTest.cs
+Index: source/rules/CecilUtils.cs
+Index: source/rules/usage/EqualsCantCastRule.cs
+Index: source/framework/MethodRules.cs
+Index: source/rules/usage/EqualsRequiresNullCheckRule.cs
+Index: nant.build
+* Renamed OldBasicBlock (will eventually get rid of this class).
+
+Index: source/rules/xml/Usage.xml
+* Added GetHashCode to the code samples that override Equals.
+ 			
+Index: source/framework/Log.cs
+* Don't fall over if we get malformed input.
+* Added overloads for printing empty lines.
+
+Index: source/framework/DBC.cs
+* AssertException descends from ApplicationException.
+
+Index: source/framework/LinearVisitor.cs
+* Extended Visit enum.
+
+Index: source/framework/instructions/stores/Store.cs
+Index: source/framework/instructions/stores/StoreArg.cs
+Index: source/framework/instructions/stores/StoreLocal.cs
+Index: source/framework/instructions/CatchAll.cs
+Index: source/framework/instructions/Call.cs
+Index: source/framework/instructions/Unbox.cs
+Index: source/framework/instructions/loads/Load.cs
+Index: source/framework/instructions/loads/LoadConstantInt.cs
+Index: source/framework/instructions/loads/LoadString.cs
+Index: source/framework/instructions/loads/LoadArg.cs
+Index: source/framework/instructions/loads/LoadLocal.cs
+Index: source/framework/instructions/loads/LoadNull.cs
+Index: source/framework/instructions/CastClass.cs
+Index: source/framework/instructions/flow/Branch.cs
+Index: source/framework/instructions/flow/End.cs
+Index: source/framework/instructions/BinaryOp.cs
+Index: source/framework/instructions/Compare.cs
+Index: source/framework/instructions/TypedInstruction.cs
+Index: source/framework/instructions/Box.cs
+* TypedInstruction now has an Index property.
+
+Index: source/framework/TryCatches.cs
+* Added IndexOf.
+
+Index: source/framework/TypedInstructions.cs
+* Added Length.
+
+
+------------------------------------------------------------------------
+r173 | jessejones | 2007-08-03 19:53:58 -0700 (Fri, 03 Aug 2007) | 3 lines
+
+Moved some files around.
+
+
+------------------------------------------------------------------------
+r174 | jessejones | 2007-08-04 00:41:52 -0700 (Sat, 04 Aug 2007) | 13 lines
+
+Index: source/framework/TryCatches.cs
+* Replaced IndexOf with HandlerStartsAt.
+
+Index: source/framework/visitors/ControlFlowGraph.cs
+* Cleaned up DoGetUnwiredBlocks a bit.
+
+Index: source/framework/visitors/BasicBlock.cs
+* Finally blocks are now printed using a '/' instead of a ','.
+
+Index: source/framework/visitors/ControlFlowVisitor.cs
+* Comment.
+
+
+------------------------------------------------------------------------
+r175 | jessejones | 2007-08-05 02:03:30 -0700 (Sun, 05 Aug 2007) | 15 lines
+
+Index: source/framework/visitors/DataFlow.cs
+Index: source/tests/DataFlowTest.cs
+* First cut at a class which tracks data flow.
+
+Index: source/framework/visitors/BasicBlock.cs
+* Added "S" support to ToString.
+
+Index: source/framework/visitors/ControlFlowVisitor.cs
+* Added another ctor.
+
+Index: source/framework/Log.cs
+Index: source/framework/TypedInstructions.cs
+* Messages with new lines are now shifted all the way over so the lines line up.
+
+
+------------------------------------------------------------------------
+r176 | jessejones | 2007-08-05 04:21:02 -0700 (Sun, 05 Aug 2007) | 11 lines
+
+Index: source/tests/DataFlowTest.cs
+Index: source/framework/visitors/DataFlow.cs
+* Tracks arguments now.
+* Checks more instruction types before a store: LoadPointer, LoadNull, LoadString
+  Box, and CastClass.
+ 			
+Index: source/framework/instructions/loads/LoadPointer.cs
+Index: source/framework/instructions/loads/Load.cs
+Index: source/framework/TypedInstructions.cs
+* Added LoadPointer.
+
+------------------------------------------------------------------------
+r177 | jessejones | 2007-08-05 15:22:41 -0700 (Sun, 05 Aug 2007) | 3 lines
+
+Moved BlockState into a partial class declaration.
+
+
+------------------------------------------------------------------------
+r178 | jessejones | 2007-08-05 17:02:59 -0700 (Sun, 05 Aug 2007) | 13 lines
+
+Index: source/tests/DataFlowTest.cs
+Index: source/framework/visitors/DataFlow.cs
+* DoBlockUpdate no longer returns a state since it mutates its argument.
+* DoBlockUpdate is called a bit less often.
+* Fixed DoMeet so that it uses the first index from meetState and the last
+  index from predState.
+* DoGetValue handles LoadArg and LoadLocal.
+* DoLogStates is a trace level instead of debug.
+  				
+Index: source/framework/visitors/DataFlowState.cs
+* ToString prints V_ correctly.
+
+
+------------------------------------------------------------------------
+r179 | jessejones | 2007-08-05 20:11:56 -0700 (Sun, 05 Aug 2007) | 15 lines
+
+Index: source/framework/visitors/DataFlow.cs
+* Added BlockState.ValueName to make it easier to print V_ or A_.
+* Added BlockState.ValueString so we can print null and NotInited sensibly.
+* Blocks are processed starting at the first instead of the last since the
+  first blocks tend to precede the later ones.
+* Changed DoMeet so that it does an in-place mutate and returns true if something
+  was changed.
+
+Index: source/framework/visitors/DataFlowState.cs
+* Got rid of ZeroMatches.
+
+Index: source/tests/DataFlowTest.cs
+* Started working on dataflow for the stack.
+
+
+------------------------------------------------------------------------
+r180 | jessejones | 2007-08-06 04:48:47 -0700 (Mon, 06 Aug 2007) | 16 lines
+
+Index: source/framework/visitors/DataFlow.cs
+Index: source/tests/DataFlowTest.cs
+* First cut at tracking stack values.
+
+Index: source/framework/visitors/DataFlowState.cs
+* Init args to NotInited when appropiate.
+
+Index: source/framework/instructions/loads/LoadConstantFloat.cs
+Index: source/framework/instructions/loads/LoadPointer.cs
+* Comment tweaks.
+
+Index: source/framework/instructions/NewObj.cs
+Index: source/framework/TypedInstructions.cs
+* Added.
+
+
+------------------------------------------------------------------------
+r181 | jessejones | 2007-08-06 17:27:16 -0700 (Mon, 06 Aug 2007) | 18 lines
+
+Index: source/rules/usage/EqualsRequiresNullCheckRule.cs
+Index: source/tests/rules/usage/EqualsRequiresNullCheckTest.cs
+Index: extras/evildoer/BadClass.cs
+Index: extras/evildoer/BrokenClass.cs
+Index: extras/functest/Expected.xml
+* Rewrote EqualsRequiresNullCheck so that it uses the new DataFlow class.
+ 		
+Index: source/framework/visitors/DataFlow.cs
+* Castclass and Isinst now preserve 0.
+* Ldc checks for NotInited.
+ 
+Index: source/framework/visitors/ControlFlowGraph.cs
+* Fixed dead code check for silly things like back to back leaves.
+
+Index: source/framework/MethodRules.cs
+* MethodInfo now has a ControlFlowGraph.
+
+
+------------------------------------------------------------------------
+r182 | jessejones | 2007-08-06 22:14:05 -0700 (Mon, 06 Aug 2007) | 17 lines
+
+Index: source/rules/usage/NullDerefRule.cs
+Index: source/tests/rules/usage/NullDerefTest.cs
+Index: source/rules/xml/Usage.xml
+* Readded and implemented using DataFlow.
+
+Index: source/rules/usage/EqualsRequiresNullCheckRule.cs
+Index: source/rules/usage/NullCheck.cs
+* Factored out some code into NullCheck.
+
+Index: source/framework/visitors/DataFlow.cs
+* meetState is compared to the old state after it is all accumulated.
+* Added code to set locals and args when they are compared against null.
+
+Index: source/framework/visitors/DataFlowState.cs
+* Finally blocks start with an empty stack.
+
+
+------------------------------------------------------------------------
+r183 | jessejones | 2007-08-06 23:05:45 -0700 (Mon, 06 Aug 2007) | 14 lines
+
+Index: source/rules/performance/UseStringEmptyRule.cs
+Index: extras/evildoer/GoodClass.cs
+Index: bin/tests_d.dll.config
+* IFormattable.ToString implementation is allowed to have one empty string (these 
+  are often implemented using switch statements which makes removing the empty
+  string literal annoying).
+  
+Index: source/rules/maintainability/JurassicNamingRules.cs
+* s_ is OK for static fields.
+
+Index: source/framework/visitors/ControlFlowGraph.cs
+* Changed a log from Info to Trace.
+
+
+------------------------------------------------------------------------
+r184 | jessejones | 2007-08-07 00:05:12 -0700 (Tue, 07 Aug 2007) | 7 lines
+
+Index: source/rules/usage/EqualsCantCastRule.cs
+* Rewrote using DataFlow with a magic value for arg1 so we can track it.
+
+Index: source/rules/usage/InfiniteRecursionRule.cs
+* Renamed InfiniteRecursionVisitor MyVisitor since it's a nested type.
+ 
+
+------------------------------------------------------------------------
+r185 | jessejones | 2007-08-07 00:07:19 -0700 (Tue, 07 Aug 2007) | 7 lines
+
+Index: source/rules/usage/EqualsCantCastRule.cs
+* Rewrote using DataFlow with a magic value for arg1 so we can track it.
+
+Index: source/rules/usage/InfiniteRecursionRule.cs
+* Renamed InfiniteRecursionVisitor MyVisitor since it's a nested type.
+ 
+
+------------------------------------------------------------------------
+r186 | jessejones | 2007-08-07 00:15:54 -0700 (Tue, 07 Aug 2007) | 3 lines
+
+Removed the old BasicBlock code.
+
+
+------------------------------------------------------------------------
+r187 | jessejones | 2007-08-07 00:18:02 -0700 (Tue, 07 Aug 2007) | 3 lines
+
+Removed CecilUtils.
+
+
+------------------------------------------------------------------------
+r188 | jessejones | 2007-08-07 00:31:33 -0700 (Tue, 07 Aug 2007) | 3 lines
+
+Added a new TooComplexRule.
+
+
+------------------------------------------------------------------------
+r189 | jessejones | 2007-08-07 02:50:03 -0700 (Tue, 07 Aug 2007) | 32 lines
+
+Index: source/framework/visitors/DataFlow.cs
+* Turns out we have to be able to meet stacks with differing lengths.
+* DoBlockUpdate no longer updates the stack if it starts as NotInited.
+* DoUpdateArgs and DoUpdateLocals need to handle NotInited stacks. 		
+ 		
+Index: source/framework/visitors/DataFlowState.cs
+* Fixed off by one error in SetValue.
+
+Index: source/framework/visitors/ControlFlowGraph.cs
+* If the next instruction starts a try block we need to also proccess
+  the current instruction for next blocks.
+  
+Index: source/framework/TryCatches.cs
+* For now we treat a fault block as a finally block.
+
+Index: source/rules/performance/UseStringEmptyRule.cs
+Index: source/rules/usage/EqualsRequiresNullCheckRule.cs
+Index: source/rules/usage/IDisposableWithoutSuppressFinalizeRule.cs
+Index: source/rules/usage/EqualsCantCastRule.cs
+Index: source/rules/usage/InfiniteRecursionRule.cs
+Index: source/rules/maintainability/TooComplexRule.cs
+Index: source/framework/visitors/ControlFlowVisitor.cs
+Index: source/framework/visitors/LinearVisitor.cs
+Index: source/framework/DoubleDispatch.cs
+* Made some methods static.
+
+Index: source/rules/usage/NullDerefRule.cs
+* Got rid of a new line in a string.
+
+Index: nant.build
+* Tweaked smoke -exclude-method.
+
+------------------------------------------------------------------------
+r190 | jessejones | 2007-08-07 06:43:31 -0700 (Tue, 07 Aug 2007) | 4 lines
+
+Log methods now take an instance argument so that the types can be inferred
+(and so we actually call the more efficient versions of the methods).
+
+
+------------------------------------------------------------------------
+r191 | jessejones | 2007-08-07 17:10:16 -0700 (Tue, 07 Aug 2007) | 24 lines
+
+Index: source/rules/xml/Usage.xml
+Index: source/framework/DoubleDispatch.cs
+Index: source/framework/visitors/BasicBlock.cs
+Index: extras/functest/Analyze.cs
+* Changed Equals methods so that they bottle-neck through operator==.
+
+Index: source/rules/usage/NullCheck.cs
+* Log.DebugLine<T>(null, ...) is bad, use Log.DebugLine((T) null, ...) instead.
+
+Index: source/rules/maintainability/TooComplexRule.cs
+* Use a setting for maxBranches.
+
+Index: source/rules/xml/Interoperability.xml
+Index: source/rules/xml/Maintainability.xml
+Index: source/rules/xml/Performance.xml
+* Made classes in the examples internal.
+
+Index: source/framework/Log.cs
+* Comments.
+
+Index: nant.build
+* Excluded DataFlow::GetStack from smoke.
+
+
+------------------------------------------------------------------------
+r192 | jessejones | 2007-08-08 02:05:33 -0700 (Wed, 08 Aug 2007) | 35 lines
+
+Index: source/framework/visitors/LoopVisitor.cs
+Index: source/rules/performance/StringConcatRule.cs
+Index: source/tests/LoopVisitorTest.cs
+Index: source/tests/rules/performance/StringConcatTest.cs
+Index: source/rules/xml/Performance.xml
+Index: source/framework/visitors/ControlFlowVisitor.cs
+Index: extras/evildoer/BadClass.cs
+Index: extras/functest/Expected.xml
+* Added LoopVisitor and StringConcatRule.
+
+Index: source/rules/xml/Schema.xml
+Index: extras/functest/Smoke.schema.xml
+* Every complexType with a child element that contains character content
+  needs to use mixed = "true" now.
+  
+Index: extras/functest/Expected.schema.xml
+* It seems elements which may contain comments also need mixed = "true".
+
+Index: source/rules/performance/MethodCanBeMadeStaticRule.cs
+Index: source/rules/maintainability/NetNamingRules.cs
+Index: source/rules/maintainability/MonoNamingRules.cs
+* 1.2.5 compiler generates more CompilerGenerated methods.
+ 		
+Index: source/tests/rules/usage/DestroyStackTraceTest.cs
+Index: source/tests/rules/usage/DontDestroyStackTraceTest.cs
+Index: source/rules/usage/DontDestroyStackTraceRule.cs
+Index: source/rules/usage/DestroyStackTraceRule.cs
+* Renamed.
+
+Index: source/console/AssertTraceListener.cs
+Index: source/framework/DBC.cs
+* Removed some angle brackets in doc comments that were confusing -doc
+  switch (not that that works anyway).
+  
+
+------------------------------------------------------------------------
+r193 | jessejones | 2007-08-08 02:19:55 -0700 (Wed, 08 Aug 2007) | 5 lines
+
+Log uses the dynamic type of the instance when possible.
+Changed code to use Log((type) null) instead of Log<type>(null) which uses the
+params Log method.
+
+
+------------------------------------------------------------------------
+r194 | jessejones | 2007-08-08 05:04:05 -0700 (Wed, 08 Aug 2007) | 13 lines
+
+Index: source/rules/usage/MalformedFormatStringRule.cs
+Index: source/rules/xml/Usage.xml
+Index: source/tests/rules/usage/MalformedFormatStringTest.cs
+Index: extras/evildoer/BadClass.cs
+Index: extras/evildoer/GoodClass.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/framework/visitors/DataFlow.cs
+Index: source/framework/visitors/DataFlowState.cs
+* Can now get the instruction which pushed a stack value.
+
+
+------------------------------------------------------------------------
+r195 | jessejones | 2007-08-08 18:01:55 -0700 (Wed, 08 Aug 2007) | 32 lines
+
+Index: source/tests/rules/performance/LargeStructTest.cs
+Index: source/rules/xml/Performance.xml
+Index: source/rules/performance/LargeStructRule.cs
+Index: extras/evildoer/BadStruct.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/rules/usage/CustomExceptionRule.cs
+Index: source/tests/rules/usage/CustomExceptionTest.cs
+Index: source/rules/xml/Usage.xml
+Index: extras/evildoer/BadClass.cs
+* Added.
+
+Index: source/rules/usage/EqualsRequiresNullCheckRule.cs
+Index: source/tests/rules/interoperability/NewLineLiteralTest.cs
+Index: source/tests/rules/maintainability/NetNamingTest.cs
+Index: source/tests/rules/maintainability/MonoNamingTest.cs
+Index: source/tests/rules/performance/UseStringEmptyTest.cs
+Index: source/tests/rules/performance/MethodCanBeMadeStaticTest.cs
+Index: source/tests/rules/performance/AvoidBoxingTest.cs
+Index: source/tests/rules/usage/EqualsCantCastTest.cs
+Index: source/tests/rules/usage/EqualsCantCastTest2.cs
+Index: source/tests/rules/usage/DestroyStackTraceTest.cs
+Index: source/tests/rules/usage/InfiniteRecursionTest.cs
+Index: source/tests/rules/usage/NullDerefTest.cs
+Index: source/tests/rules/usage/EqualsRequiresNullCheckTest.cs
+Index: source/tests/rules/usage/IDisposableWithoutSuppressFinalizeTest.cs
+Index: source/tests/rules/performance/StringConcatTest.cs
+Index: source/tests/rules/performance/AvoidUnboxingTest.cs
+* Uses m_rule with DebugLine instead of casting null.
+
+
+------------------------------------------------------------------------
+r196 | jessejones | 2007-08-08 19:18:12 -0700 (Wed, 08 Aug 2007) | 8 lines
+
+Index: source/rules/performance/NonGenericCollectionsRule.cs
+Index: source/tests/rules/performance/NonGenericCollectionsTest.cs
+Index: source/rules/xml/Performance.xml
+Index: extras/evildoer/BadClass.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+
+------------------------------------------------------------------------
+r197 | jessejones | 2007-08-08 20:03:40 -0700 (Wed, 08 Aug 2007) | 8 lines
+
+Index: source/tests/rules/usage/ClassCanBeMadeStaticTest.cs
+Index: source/rules/usage/ClassCanBeMadeStaticRule.cs
+Index: source/rules/xml/Usage.xml
+Index: extras/evildoer/BadClass.cs
+Index: extras/evildoer/BadNaming.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+------------------------------------------------------------------------
+r198 | jessejones | 2007-08-08 23:34:51 -0700 (Wed, 08 Aug 2007) | 48 lines
+
+Index: source/framework/AssemblyRules.cs
+Index: source/console/AnalyzeAssembly.cs
+* Added support for assembly rules.
+
+Index: source/rules/usage/AssemblyInfoRule.cs
+Index: source/rules/xml/Usage.xml
+* Added.
+
+Index: source/rules/usage/MalformedFormatStringRule.cs
+Index: source/tests/rules/usage/MalformedFormatStringTest.cs
+* Now handles params arg.
+
+Index: source/rules/usage/ClassCanBeMadeStaticRule.cs
+* Does rule if !IsAbstract instead of !IsAbstract || !IsSealed.
+
+Index: extras/evildoer/AssemblyInfo.cs
+Index: extras/functest/AssemblyInfo.cs
+Index: source/console/AssemblyInfo.cs
+* Fixed version number.
+
+Index: source/console/AssemblyInfo.cs
+* Enabled ComVisible.
+
+Index: source/console/Program.cs
+Index: source/rules/xml/Performance.xml
+Index: source/framework/visitors/DataFlow.cs
+Index: source/framework/visitors/ControlFlowVisitor.cs
+Index: source/framework/ViolationDatabase.cs
+Index: source/framework/MethodRules.cs
+Index: source/framework/NewLine.cs
+Index: extras/functest/Program.cs
+* Made classes static/abstract.
+* Got rid of string concat in loops.
+
+Index: source/framework/visitors/LoopVisitor.cs
+* No longer sometimes visits blocks twice.
+
+Index: source/framework/BaseRules.cs
+* Improved logging slightly.
+
+Index: source/framework/Error.cs
+Index: source/framework/Violation.cs
+* Turned into a class.
+
+Index: source/framework/DoubleDispatch.cs
+* DoubleDispatchException inherits from ApplicationException instead of Exception.
+
+
+------------------------------------------------------------------------
+r199 | jessejones | 2007-08-09 01:54:36 -0700 (Thu, 09 Aug 2007) | 16 lines
+
+Index: source/rules/usage/Aspell.cs
+Index: source/rules/usage/NativeAspell.cs
+Index: source/rules/usage/StringSpellingRule.cs
+Index: source/rules/xml/Usage.xml
+Index: source/tests/rules/usage/StringSpellingTest.cs
+Index: extras/evildoer/BadClass.cs
+Index: extras/evildoer/GoodClass.cs
+Index: extras/evildoer/GoodDisposable.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/framework/AssemblyRules.cs
+Index: source/framework/MethodRules.cs
+Index: source/framework/TypeRules.cs
+* Special case DllNotFoundException.
+
+------------------------------------------------------------------------
+r200 | jessejones | 2007-08-09 02:54:32 -0700 (Thu, 09 Aug 2007) | 19 lines
+
+Index: source/rules/xml/Usage.xml
+Index: source/rules/usage/Aspell.cs
+Index: README
+Index: IgnoreList.txt
+Index: nant.build
+* Added support for an ignoreList file.
+
+Index: source/framework/SymbolTable.cs
+* Fixed an off-by-one error when getting line numbers in methods.
+
+Index: source/rules/usage/StringSpellingRule.cs
+Index: source/rules/usage/MalformedFormatStringRule.cs
+Index: source/framework/visitors/DataFlow.cs
+Index: source/framework/visitors/DataFlowState.cs
+Index: source/framework/visitors/ControlFlowGraph.cs
+Index: source/console/Program.cs
+* Fixed some misspelled words (mostly abbreviations).
+
+
+------------------------------------------------------------------------
+r201 | jessejones | 2007-08-09 03:17:29 -0700 (Thu, 09 Aug 2007) | 6 lines
+
+Index: source/rules/usage/AssemblyAttributeSpellingRule.cs
+Index: source/rules/usage/StringSpellingRule.cs
+Index: source/rules/usage/BaseSpellingRule.cs
+* Added.
+
+
+------------------------------------------------------------------------
+r202 | jessejones | 2007-08-09 04:25:24 -0700 (Thu, 09 Aug 2007) | 9 lines
+
+Index: BumpBuildNumber.sh
+Index: source/console/AssemblyInfo.cs
+Index: extras/evildoer/AssemblyInfo.cs
+Index: extras/functest/AssemblyInfo.cs
+Index: nant.build
+* AssemblyVersion attribute is now automagically updated so we can get real
+  build numbers.
+  
+
+------------------------------------------------------------------------
+r203 | jessejones | 2007-08-09 04:29:27 -0700 (Thu, 09 Aug 2007) | 3 lines
+
+Fixed AssemblyVersion.cs paths for ftest.
+
+
+------------------------------------------------------------------------
+r204 | jessejones | 2007-08-09 15:43:58 -0700 (Thu, 09 Aug 2007) | 3 lines
+
+In .NET 2.0 custom exceptions should inherit from Exception, not ApplicationException.
+
+
+------------------------------------------------------------------------
+r205 | jessejones | 2007-08-09 16:16:40 -0700 (Thu, 09 Aug 2007) | 3 lines
+
+Added ThrowDerivedRule.
+
+
+------------------------------------------------------------------------
+r206 | jessejones | 2007-08-09 17:28:00 -0700 (Thu, 09 Aug 2007) | 13 lines
+
+Index: source/rules/usage/SwallowExceptionRule.cs
+Index: extras/evildoer/BadClass.cs
+Index: extras/functest/Expected.xml
+Index: source/tests/rules/usage/SwallowExceptionTest.cs
+Index: source/rules/xml/Usage.xml
+* Added.
+
+Index: source/rules/usage/ThrowDerivedRule.cs
+Index: source/rules/usage/DestroyStackTraceRule.cs
+Index: source/tests/rules/usage/DestroyStackTraceTest.cs
+* Tweaked logs.
+
+
+------------------------------------------------------------------------
+r207 | jessejones | 2007-08-10 02:42:49 -0700 (Fri, 10 Aug 2007) | 25 lines
+
+Index: source/rules/reliability/DisposableFieldsRule.cs
+Index: source/tests/rules/reliability/DisposableFieldsTest.cs
+Index: source/rules/xml/Reliability.xml
+Index: extras/evildoer/BadClass.cs
+Index: extras/functest/Expected.xml
+Index: bin/smokey_d.exe.config
+* Added.
+
+Index: source/console/Options.cs
+Index: source/console/Program.cs
+Index: source/console/DumpDisposable.cs
+* Added debug-only -dump-disposable.
+
+Index: source/framework/visitors/BasicBlock.cs
+Index: source/rules/xml/Performance.xml
+Index: source/rules/performance/UseStringEmptyRule.cs
+Index: source/framework/visitors/DataFlow.cs
+Index: source/framework/TypedInstructions.cs
+Index: extras/evildoer/GoodClass.cs
+* Don't use the System.IFormattable.ToString syntax.
+
+Index: source/rules/xml/Usage.xml
+* Added strings to the ObjectDisposedExceptions.
+ 			
+
+------------------------------------------------------------------------
+r208 | jessejones | 2007-08-10 03:42:29 -0700 (Fri, 10 Aug 2007) | 11 lines
+
+Index: source/rules/reliability/DisposeNativeResourcesRule.cs
+Index: extras/evildoer/BadClass2.cs
+Index: extras/functest/Expected.xml
+Index: source/tests/rules/reliability/DisposeNativeResourcesTest.cs
+Index: source/rules/xml/Reliability.xml
+* Added.
+
+Index: source/rules/performance/LargeStructRule.cs
+* Added some types from Cairo and System.Drawing.
+
+
+------------------------------------------------------------------------
+r209 | jessejones | 2007-08-10 04:41:35 -0700 (Fri, 10 Aug 2007) | 12 lines
+
+Index: source/rules/reliability/DisposeFieldsRule.cs
+Index: source/tests/rules/reliability/DisposeFieldsTest.cs
+Index: source/rules/xml/Reliability.xml
+Index: extras/evildoer/BadDisposable.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/rules/reliability/IsStandardDisposable.cs
+Index: source/rules/reliability/DisposableFieldsRule.cs
+* Factored out IsStandardDisposable.
+
+
+------------------------------------------------------------------------
+r210 | jessejones | 2007-08-10 04:59:41 -0700 (Fri, 10 Aug 2007) | 3 lines
+
+Added DisposableButNoFinalizerRule.
+
+
+------------------------------------------------------------------------
+r211 | jessejones | 2007-08-10 18:49:04 -0700 (Fri, 10 Aug 2007) | 25 lines
+
+Index: source/rules/reliability/DisposeScopedObjectsRule.cs
+Index: source/tests/rules/reliability/DisposeScopedObjectsTest.cs
+Index: source/rules/xml/Reliability.xml
+Index: extras/evildoer/BadClass.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/rules/reliability/IsDisposable.cs
+Index: source/rules/reliability/DisposableFieldsRule.cs
+Index: source/rules/reliability/DisposeFieldsRule.cs
+* Refactored.
+
+Index: source/framework/ListExtensions.cs
+Index: nant.build
+* Added extension methods for List::CopyIf and RemoveIf.
+
+Index: source/tests/rules/usage/EqualsCantCastTest2.cs
+Index: source/tests/rules/usage/EqualsCantCastTest.cs
+* Logging.
+
+Index: source/framework/instructions/NewObj.cs
+* Fixed comment.
+
+
+
+------------------------------------------------------------------------
+r212 | jessejones | 2007-08-10 20:26:05 -0700 (Fri, 10 Aug 2007) | 3 lines
+
+Added CtorCallsVirtualRule.
+
+
+------------------------------------------------------------------------
+r213 | jessejones | 2007-08-10 22:38:37 -0700 (Fri, 10 Aug 2007) | 15 lines
+
+Index: source/rules/reliability/DisposeFieldsRule.cs
+Index: source/rules/reliability/DisposableFieldsRule.cs
+Index: source/rules/reliability/OwnsFields.cs
+Index: source/tests/rules/reliability/DisposableFieldsTest.cs
+Index: source/tests/rules/reliability/DisposeFieldsTest.cs
+Index: source/rules/xml/Reliability.xml
+Index: extras/evildoer/BadClass.cs
+Index: extras/evildoer/BadDisposable.cs
+* Only checks fields that the ctor news.
+
+Index: source/rules/reliability/CtorCallsVirtualRule.cs
+Index: source/tests/rules/reliability/CtorCallsVirtualTest.cs
+* Added.
+
+
+------------------------------------------------------------------------
+r214 | jessejones | 2007-08-10 23:02:14 -0700 (Fri, 10 Aug 2007) | 3 lines
+
+Added ICloneableRule.
+
+
+------------------------------------------------------------------------
+r215 | jessejones | 2007-08-11 00:01:21 -0700 (Sat, 11 Aug 2007) | 3 lines
+
+Added LockThisRule.
+
+
+------------------------------------------------------------------------
+r216 | jessejones | 2007-08-11 00:52:03 -0700 (Sat, 11 Aug 2007) | 14 lines
+
+Index: source/rules/reliability/SynchronizedAttributeRule.cs
+Index: source/tests/rules/reliability/SynchronizedAttributeTest.cs
+Index: source/rules/xml/Reliability.xml
+Index: extras/evildoer/BadClass2.cs
+Index: extras/evildoer/GoodClass2.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/rules/maintainability/NetNamingRules.cs
+Index: source/rules/maintainability/MonoNamingRules.cs
+Index: source/rules/maintainability/JurassicNamingRules.cs
+* No longer complains about names generated by event keyword.
+
+
+------------------------------------------------------------------------
+r217 | jessejones | 2007-08-11 03:42:52 -0700 (Sat, 11 Aug 2007) | 10 lines
+
+Index: source/rules/maintainability/GlobalPublicTypeRule.cs
+Index: extras/functest/Expected.xml
+Index: source/rules/xml/Reliability.xml
+* Added.
+
+Index: source/rules/reliability/SynchronizedAttributeRule.cs
+Index: source/rules/reliability/LockThisRule.cs
+* Ignore private methods.
+
+
+------------------------------------------------------------------------
+r218 | jessejones | 2007-08-11 17:06:44 -0700 (Sat, 11 Aug 2007) | 14 lines
+
+Index: source/rules/reliability/CompareFloatsRule.cs
+Index: source/tests/rules/reliability/CompareFloatsTest.cs
+Index: extras/evildoer/BadClass2.cs
+Index: extras/functest/Expected.xml
+Index: source/rules/xml/Reliability.xml
+* Added.
+
+Index: source/framework/instructions/loads/LoadStaticField.cs
+Index: source/framework/instructions/loads/LoadField.cs
+Index: source/framework/instructions/loads/Load.cs
+Index: source/framework/TypedInstructions.cs
+* Added.
+
+
+------------------------------------------------------------------------
+r219 | jessejones | 2007-08-11 17:53:39 -0700 (Sat, 11 Aug 2007) | 3 lines
+
+Added EnumsNeedZeroRule.
+
+
+------------------------------------------------------------------------
+r220 | jessejones | 2007-08-11 18:08:01 -0700 (Sat, 11 Aug 2007) | 6 lines
+
+Index: source/rules/maintainability/JurassicNamingRules.cs
+Index: README
+Index: source/rules/xml/Maintainability.xml
+* Jurassic allows mField and s_staticField/sStaticField/msStaticField.
+
+
+------------------------------------------------------------------------
+r221 | jessejones | 2007-08-11 18:19:46 -0700 (Sat, 11 Aug 2007) | 26 lines
+
+Index: source/rules/reliability/DisposableButNoFinalizerRule.cs
+Index: source/rules/performance/UseStringEmptyRule.cs
+Index: source/rules/reliability/EnumsNeedZeroRule.cs
+Index: source/rules/reliability/DisposeNativeResourcesRule.cs
+Index: source/rules/reliability/CtorCallsVirtualRule.cs
+Index: source/console/DumpDisposable.cs
+* Made some methods static.
+
+Index: source/console/BaseReport.cs
+Index: source/framework/ViolationDatabase.cs
+* Throw ArgumentException instead of ApplicationException.
+
+Index: source/rules/reliability/DisposeScopedObjectsRule.cs
+* Use pointer instead of ptr in string.
+
+Index: source/rules/maintainability/GlobalPublicTypeRule.cs
+* Use string.Empty.
+
+Index: IgnoreList.txt
+* More words.
+
+Index: nant.build
+* Ignore DoCheckJurassicFields being too complex (should refactor, but we're bad
+  and don't have a test for this one).
+  
+
+------------------------------------------------------------------------
+r222 | jessejones | 2007-08-12 23:13:30 -0700 (Sun, 12 Aug 2007) | 108 lines
+
+Index: source/framework/visitors/DataFlow.cs
+Index: source/tests/DataFlowTest.cs
+* Some compiler generated methods in System.Core.dll have method calls in dead code so
+  had to replace some asserts with warning level logs.
+* DoAnalyze resets the stack of the meet state before doing meets.
+* Got rid of the meet between the same two blocks assert.
+* After meeting null arg/local pointer compares we also meet the pred block.
+* Meet null arg/local pointer compare also checks for bne.
+* DoUpdateArgs and DoUpdateLocals set their values to indeterminate when their address is taken.
+
+Index: source/framework/visitors/ControlFlowGraph.cs
+Index: source/tests/ControlFlowGraphTest.cs
+* Handles nested exceptions correctly.
+
+Index: source/rules/reliability/DisposeScopedObjectsRule.cs
+Index: source/rules/reliability/DisposeFieldsRule.cs
+Index: source/tests/rules/reliability/DisposeFieldsTest.cs
+* Check for calls to Close as well as Dispose.
+
+Index: source/rules/reliability/DisposeNativeResourcesRule.cs
+Index: source/tests/rules/reliability/DisposeNativeResourcesTest.cs
+* Instead of simply checking for a native field, check for a constructor
+  that calls a function (not property) and saves it into a native field.
+  
+Index: source/rules/usage/MalformedFormatStringRule.cs
+Index: source/tests/rules/usage/MalformedFormatStringTest.cs
+* Don't check method calls with one argument (happens with localize methods).
+
+Index: source/rules/usage/EqualsRequiresNullCheckRule.cs
+Index: source/tests/rules/usage/EqualsRequiresNullCheckTest.cs
+* Added a check for is statement.
+
+Index: source/rules/performance/LargeStructRule.cs
+* Only report problems if it's a type we can break.
+
+Index: source/rules/reliability/CtorCallsVirtualRule.cs
+Index: source/tests/rules/reliability/CtorCallsVirtualTest.cs
+* Check MetadataToken before testing helper functions. 
+* DoIsMyObject was using the wrong DataFlow.
+
+Index: extras/evildoer/BadClass.cs
+Index: extras/evildoer/GoodClass.cs
+Index: extras/evildoer/BadClass2.cs
+Index: source/tests/rules/usage/NullDerefTest.cs
+Index: source/tests/rules/reliability/DisposableFieldsTest.cs
+Index: source/tests/rules/maintainability/NetNamingTest.cs
+Index: source/tests/rules/maintainability/MonoNamingTest.cs
+* Added some more tests.
+
+Index: source/console/Progress.cs
+Index: source/console/Watchdog.cs
+Index: source/console/Program.cs
+Index: source/console/Options.cs
+Index: source/console/AnalyzeAssembly.cs
+Index: source/framework/BaseRules.cs
+Index: source/framework/AssemblyRules.cs
+Index: source/framework/MethodRules.cs
+Index: source/framework/TypeRules.cs
+* Added a watchdog to kill the process if a rule takes too long to run.
+* Added a thread to print progress info as rules run (nothing is printed
+  if a rule gets stuck).
+
+Index: source/rules/usage/CustomExceptionRule.cs
+Index: source/rules/usage/ClassCanBeMadeStaticRule.cs
+Index: source/rules/usage/ICloneableRule.cs
+Index: source/rules/reliability/SynchronizedAttributeRule.cs
+* Uses the new CanBreak method.
+
+Index: source/rules/reliability/OwnsFields.cs
+* Before checking helpers make sure the metatokens match.
+
+Index: source/rules/reliability/IsDisposable.cs
+* Check base classes.
+
+Index: source/rules/reliability/CompareFloatsRule.cs
+* GetStackIndex can return -1.
+
+Index: source/rules/maintainability/TooComplexRule.cs
+* Bumped maxBranches from 35 to 40.
+
+Index: source/rules/maintainability/NamingUtils.cs
+* Allow for two-letter abbreviation followed by new word (eg ValidIOMask).
+
+Index: source/framework/SymbolTable.cs
+* Use negate not complement with BinarySearch result.
+
+Index: source/framework/visitors/DataFlowState.cs
+* Added ResetStack.
+
+Index: source/framework/visitors/ControlFlowVisitor.cs
+* Changed an assert to a warning log.
+
+Index: source/framework/CecilExtensions.cs
+* Added CanBreak which returns true if a type is one we can break binary
+  compatibility for (ie not a public System or Mono type).
+  
+Index: source/framework/instructions/stores/StoreArg.cs
+Index: source/framework/instructions/loads/LoadArg.cs
+* ParameterDefinition.Sequence meaning changes depending on whether we have a this pointer or not...
+
+Index: source/framework/TryCatches.cs
+* Correctly handles nested exceptions.
+
+Index: source/framework/TypedInstructions.cs
+* Completely rewrote the try/catch/finally printing code so that it handles
+  nested exception handlers.
+ 		
+
+------------------------------------------------------------------------
+r223 | jessejones | 2007-08-13 01:42:49 -0700 (Mon, 13 Aug 2007) | 4 lines
+
+Rules use base classes instead of interfaces. Added an optional details
+option to rules to allow them to report additional information.
+
+
+------------------------------------------------------------------------
+r224 | jessejones | 2007-08-13 01:44:13 -0700 (Mon, 13 Aug 2007) | 3 lines
+
+Renamed a file.
+
+
+------------------------------------------------------------------------
+r225 | jessejones | 2007-08-13 05:14:12 -0700 (Mon, 13 Aug 2007) | 29 lines
+
+Index: source/console/XmlReport.cs
+Index: extras/functest/Smoke.schema.xml
+* Added details attribute.
+
+Index: source/console/TextReport.cs
+Index: source/framework/SymbolTable.cs
+* Prints <unknown> if we have no file.
+
+Index: source/rules/usage/Aspell.cs
+* Trim ' and - from words.
+
+Index: source/rules/reliability/DisposableFieldsRule.cs
+* Fixed m_details setting.
+
+Index: source/rules/reliability/DisposeFieldsRule.cs
+* Use a retarded loop so we can get better m_details names.
+
+Index: source/rules/reliability/DisposeScopedObjectsRule.cs
+* Uses m_details.
+
+Index: source/rules/maintainability/NetNamingRules.cs
+Index: source/rules/maintainability/MonoNamingRules.cs
+Index: extras/evildoer/GoodClass.cs
+* Ignore class and method names that start with yy.
+
+Index: SysIgnore.txt
+* Added list of words to use when smoking System dlls.
+
+
+------------------------------------------------------------------------
+r226 | jessejones | 2007-08-13 18:30:07 -0700 (Mon, 13 Aug 2007) | 50 lines
+
+Index: source/rules/reliability/DisposableButNoFinalizerRule.cs
+Index: source/rules/reliability/DisposeNativeResourcesRule.cs
+Index: source/rules/usage/IDisposableWithoutSuppressFinalizeRule.cs
+Index: source/tests/rules/reliability/DisposableButNoFinalizerTest.cs
+Index: source/tests/rules/reliability/DisposeNativeResourcesTest.cs
+Index: source/rules/xml/Usage.xml
+Index: source/rules/xml/Reliability.xml
+Index: extras/evildoer/GoodManagedDisposable.cs
+Index: extras/evildoer/BadDisposable2.cs
+Index: extras/evildoer/GoodDisposable2.cs
+Index: extras/evildoer/GoodDisposable.cs
+* Only report errors if the class has unmanaged resources.
+
+Index: source/console/TextReport.cs
+* Default consoleWidth is now 80.
+* Lists are now printed with an asterisk.
+
+Index: source/console/Watchdog.cs
+Index: source/console/Progress.cs
+* Implements IDisposable.
+
+Index: source/rules/performance/NonGenericCollectionsRule.cs
+Index: source/rules/reliability/DisposableFieldsRule.cs
+Index: source/rules/maintainability/NetNamingRules.cs
+Index: source/rules/maintainability/MonoNamingRules.cs
+Index: source/rules/maintainability/JurassicNamingRules.cs
+* Got rid of string concats in loops.
+
+Index: source/framework/visitors/DataFlow.cs
+* Spelling.
+
+Index: source/framework/visitors/ControlFlowGraph.cs
+* Made methods static.
+
+Index: source/framework/AssemblyRules.cs
+Index: source/framework/AssemblyRule.cs
+Index: source/framework/Rule.cs
+Index: source/framework/Location.cs
+Index: source/framework/MethodRule.cs
+Index: source/framework/TypeRule.cs
+* Use string.Empty.
+ 
+Index: SysIgnore.txt
+* Added more words.
+
+Index: CHANGE_LOG
+Index: CHANGES
+* Added.
+
+
+------------------------------------------------------------------------
+r227 | jessejones | 2007-08-13 19:39:57 -0700 (Mon, 13 Aug 2007) | 6 lines
+
+Index: TODO
+Index: CHANGE_LOG
+Index: CHANGES
+Index: README 
+Index: nant.build
+* Updated.
+------------------------------------------------------------------------
+r229 | jessejones | 2007-08-14 02:43:14 -0700 (Tue, 14 Aug 2007) | 21 lines
+
+Index: source/framework/visitors/DataFlow.cs
+Index: source/tests/rules/usage/EqualsRequiresNullCheckTest.cs
+* Refactored the meet null functions.
+* Meet null now checks for brfalse and brtrue.
+ 			
+Index: source/console/Program.cs
+* Disposes of Watchdog and Progress.
+
+Index: source/console/Watchdog.cs
+Index: source/console/Progress.cs
+* Shutdown does nothing if we're already stopped.
+
+Index: source/rules/xml/Usage.xml
+* Fixed some of the GetHashCode examples to use correct fields.
+
+Index: source/framework/instructions/stores/StoreField.cs
+Index: source/framework/instructions/stores/Store.cs
+Index: source/framework/TypedInstructions.cs
+* Added.
+
+
+------------------------------------------------------------------------
+r230 | jessejones | 2007-08-14 16:31:56 -0700 (Tue, 14 Aug 2007) | 27 lines
+
+Index: nant.build
+Index: source/framework/AssemblyRules.cs
+Index: source/framework/MethodRules.cs
+Index: source/framework/TypeRules.cs
+Index: source/framework/Profile.cs
+Index: source/framework/BaseRules.cs
+Index: source/framework/visitors/DataFlow.cs
+Index: source/console/AnalyzeAssembly.cs
+Index: source/console/Program.cs
+Index: source/console/TextReport.cs
+* Started work on a custom profiler.
+
+Index: source/rules/usage/InfiniteRecursionRule.cs
+Index: source/rules/usage/EqualsRequiresNullCheckRule.cs
+Index: source/rules/usage/MalformedFormatStringRule.cs
+Index: source/rules/usage/NullDerefRule.cs
+Index: source/rules/reliability/DisposeScopedObjectsRule.cs
+Index: source/rules/reliability/CompareFloatsRule.cs
+Index: source/framework/MethodRule.cs
+* Try to minimize the amount of work we do (for example don't do something
+  expensive if we may not need it, also MethodInfo now creates a DataFlow).
+  
+Index: source/framework/Log.cs
+Index: source/framework/DBC.cs
+* ConditionalAttribute does not work with template methods in 1.2.5.
+
+
+------------------------------------------------------------------------
+r231 | jessejones | 2007-08-15 04:32:24 -0700 (Wed, 15 Aug 2007) | 5 lines
+
+First pass at adding an AssemblyCache which will provide better data locality as
+we build our data structures and run tests, and make it easier/faster to do inter-
+procedural tests.
+  
+
+------------------------------------------------------------------------
+r232 | jessejones | 2007-08-15 04:43:22 -0700 (Wed, 15 Aug 2007) | 5 lines
+
+First pass at adding an AssemblyCache which will provide better data locality as
+we build our data structures and run tests, and make it easier/faster to do inter-
+procedural tests.
+  
+
+------------------------------------------------------------------------
+r233 | jessejones | 2007-08-15 04:47:31 -0700 (Wed, 15 Aug 2007) | 3 lines
+
+Method rules now take an AssemblyCache (this applies to the previous mis-checkin as well).
+
+
+------------------------------------------------------------------------
+r234 | jessejones | 2007-08-15 05:02:45 -0700 (Wed, 15 Aug 2007) | 9 lines
+
+Index: source/framework/AssemblyCache.cs
+Index: source/console/AnalyzeAssembly.cs
+* Added a callback to AssemblyCache so it doesn't time out.
+
+Index: source/framework/MethodInfo.cs
+Index: source/framework/MethodRule.cs
+* Moved into a separate file.
+
+
+------------------------------------------------------------------------
+r235 | jessejones | 2007-08-16 04:19:27 -0700 (Thu, 16 Aug 2007) | 11 lines
+
+Index: source/framework/visitors/NewDataFlow.cs
+Index: source/framework/visitors/ValuesLattice.cs
+Index: source/tests/NewDataFlowTest.cs
+Index: source/tests/V0.cs
+* First cut at a much nicer DataFlow class.
+
+Index: source/framework/visitors/BasicBlock.cs
+* Added support for zero length blocks (these are used internally by the 
+  new DataFlow class.
+  
+
+------------------------------------------------------------------------
+r236 | jessejones | 2007-08-16 04:20:36 -0700 (Thu, 16 Aug 2007) | 3 lines
+
+Renamed.
+
+
+------------------------------------------------------------------------
+r237 | jessejones | 2007-08-16 17:39:21 -0700 (Thu, 16 Aug 2007) | 14 lines
+
+Index: source/framework/visitors/Values.cs
+Index: source/tests/ValuesTest.cs
+* Started implementing Values stuff.
+
+Index: source/tests/NewDataFlowTest.cs
+* Removed some unused using declarations.
+
+Index: source/tests/V0.cs
+* Fix comment.
+
+Index: source/framework/ListExtensions.cs
+* Added Front and Back.
+
+
+------------------------------------------------------------------------
+r238 | jessejones | 2007-08-16 17:46:10 -0700 (Thu, 16 Aug 2007) | 3 lines
+
+Split the Values class into three files.
+
+
+------------------------------------------------------------------------
+r239 | jessejones | 2007-08-16 17:46:34 -0700 (Thu, 16 Aug 2007) | 3 lines
+
+Added the missing files.
+
+
+------------------------------------------------------------------------
+r240 | jessejones | 2007-08-16 20:50:32 -0700 (Thu, 16 Aug 2007) | 11 lines
+
+Index: source/framework/visitors/ValuesLattice.cs
+Index: source/framework/visitors/NewDataFlow.cs
+Index: source/tests/ValuesTest.cs
+Index: source/tests/V0.cs
+* Added some temporary hackish code to handle meeting the stack at the start of
+  catch and finally blocks.
+
+Index: source/framework/visitors/ValuesTracker.cs
+* This pointer starts with value 1 not indeterminate.
+
+
+------------------------------------------------------------------------
+r241 | jessejones | 2007-08-16 22:38:14 -0700 (Thu, 16 Aug 2007) | 10 lines
+
+Index: source/tests/V0.cs
+Index: source/framework/visitors/NewDataFlow.cs
+Index: source/framework/visitors/ValuesTracker.cs
+Index: source/framework/visitors/BasicBlock.cs
+Index: source/framework/visitors/ValuesLattice.cs
+Index: source/tests/ValuesTest.cs
+* Catch and finally blocks are now special cased by transforming a special
+  block that is spliced in instead of via non-commutative meet method.
+
+
+------------------------------------------------------------------------
+r242 | jessejones | 2007-08-17 02:25:37 -0700 (Fri, 17 Aug 2007) | 7 lines
+
+Index: source/tests/ValuesTest.cs
+Index: source/framework/visitors/ValuesTracker.cs
+* Sets locals and args when taking branches after compare against null.
+
+Index: source/framework/visitors/ValuesLattice.cs
+* Sets args and locals to indeterminate if their address is taken.
+
+------------------------------------------------------------------------
+r243 | jessejones | 2007-08-17 04:07:10 -0700 (Fri, 17 Aug 2007) | 10 lines
+
+Index: source/framework/visitors/ValuesState.cs
+Index: source/tests/ValuesTest.cs
+* Stack now stores the index of the instruction that did the push.
+
+Index: source/framework/visitors/ValuesTracker.cs
+* Added Analyze method so that we can tweak the initial state before analyzing.
+
+Index: source/framework/visitors/ValuesLattice.cs
+* Fixed stack popping so that it pops the correct number of items.
+
+------------------------------------------------------------------------
+r244 | jessejones | 2007-08-17 06:43:46 -0700 (Fri, 17 Aug 2007) | 34 lines
+
+Index: source/framework/visitors/ControlFlowVisitor.cs
+Index: source/framework/visitors/LoopVisitor.cs
+Index: source/framework/MethodInfo.cs
+Index: source/framework/visitors/DataFlow.cs
+Index: source/framework/visitors/DataFlowState.cs
+Index: source/rules/usage/EqualsRequiresNullCheckRule.cs
+Index: source/rules/usage/MalformedFormatStringRule.cs
+Index: source/rules/usage/EqualsCantCastRule.cs
+Index: source/rules/usage/NullCheck.cs
+Index: source/rules/usage/NullDerefRule.cs
+Index: source/rules/reliability/DisposeScopedObjectsRule.cs
+Index: source/rules/reliability/CompareFloatsRule.cs
+Index: source/tests/DataFlowTest.cs
+* Switched over to the new DataFlow class. It's better in every way and we're now
+  7x faster than 0.2.0.0.
+ 
+Index: source/framework/visitors/NewDataFlow.cs
+* Fixed the block sorting for zero sized blocks using the new BasicBlock::
+  SafeIndex property.
+  
+Index: source/framework/visitors/ValuesTracker.cs
+* Added InitArg.
+* Fixed GetStack and GetStackIndex so they do a WarningLine on what appears to be
+  bad codegen on compiler generated methods in the system dll.
+* Added DoSpliceEq.
+
+Index: source/framework/visitors/BasicBlock.cs
+* Fixed Equals and GetHashCode for zero size blocks.
+
+Index: source/framework/visitors/ValuesLattice.cs
+* Work around for a Cecil bug for number of pops done by Ldelem_Any.
+* Fixed stack meet code.
+
+
+------------------------------------------------------------------------
+r245 | jessejones | 2007-08-17 16:52:40 -0700 (Fri, 17 Aug 2007) | 5 lines
+
+Index: source/framework/Log.cs
+* Bottlenecks through helper methods so that arguments aren't converted into strings
+  unless we need to log them. This speeds debug builds up by about 4x.
+  
+
+------------------------------------------------------------------------
+r246 | jessejones | 2007-08-17 17:29:20 -0700 (Fri, 17 Aug 2007) | 3 lines
+
+Removed old DataFlow classes.
+
+
+------------------------------------------------------------------------
+r247 | jessejones | 2007-08-17 17:33:01 -0700 (Fri, 17 Aug 2007) | 3 lines
+
+Renamed NewDataFlow DataFlow.
+
+
+------------------------------------------------------------------------
+r248 | jessejones | 2007-08-17 19:05:44 -0700 (Fri, 17 Aug 2007) | 14 lines
+
+Index: source/rules/reliability/CtorCallsVirtualRule.cs
+Index: source/tests/rules/reliability/CtorCallsVirtualTest.cs
+* Rewrote CtorCallsVirtualRule using the new AssemblyCache. Now catches calls to virtuals
+  declared in base classes and calls to virtuals which take arguments.
+
+Index: source/framework/AssemblyCache.cs
+* Added FindMethod.
+
+Index: source/rules/performance/LargeStructRule.cs
+Index: source/rules/reliability/DisposeNativeResourcesRule.cs
+Index: source/rules/reliability/IsDisposable.cs
+* AssemblyCache::FindType takes a MetadataToken instead of a TypeReference.
+
+
+------------------------------------------------------------------------
+r249 | jessejones | 2007-08-17 19:34:06 -0700 (Fri, 17 Aug 2007) | 9 lines
+
+Index: source/rules/reliability/CtorCallsVirtualRule.cs
+* DoCallsVirtual wasn't using the tested list.
+* No longer check static methods or methods that use other objects for the this pointer.
+
+Index: source/framework/visitors/ControlFlowGraph.cs
+Index: source/framework/TypedInstructions.cs
+* Added Profile calls.
+
+
+------------------------------------------------------------------------
+r250 | jessejones | 2007-08-17 22:40:26 -0700 (Fri, 17 Aug 2007) | 14 lines
+
+Index: source/framework/visitors/BasicBlock.cs
+Index: source/framework/visitors/DataFlow.cs
+Index: source/framework/visitors/ControlFlowVisitor.cs
+Index: source/framework/visitors/LoopVisitor.cs
+Index: source/framework/visitors/ControlFlowGraph.cs 		
+Index: source/framework/TryCatches.cs
+Index: source/framework/TypedInstructions.cs
+Index: source/framework/visitors/ValuesTracker.cs
+* Added support for fault blocks (the 1.2.5 compiler generates them now).
+
+Index: nant.build
+* Made profile a switch settable from the command line.
+
+
+------------------------------------------------------------------------
+r251 | jessejones | 2007-08-18 02:28:13 -0700 (Sat, 18 Aug 2007) | 25 lines
+
+Index: source/console/CheckXml.cs
+Index: source/console/Options.cs
+Index: source/console/Program.cs
+* Added a debug only -check-xml option which checks spelling in the xml violation
+  files and verifies that the C# code compiles.
+  
+Index: source/rules/xml/Performance.xml
+Index: source/rules/xml/Usage.xml
+Index: source/rules/xml/Interoperability.xml
+Index: source/rules/xml/Reliability.xml
+Index: source/rules/xml/Maintainability.xml
+* Fixed a few misspelled words.
+* Fixed the code so that it compiles. Mostly this boiled down to adding using
+  declarations and initializing fields.
+
+Index: source/rules/performance/LargeStructRule.cs
+* Report includes an estimate for the stuct size.
+
+Index: source/rules/usage/Aspell.cs
+* No longer tries to spell check URIs.
+
+Index: source/framework/ViolationDatabase.cs
+* Added XmlFiles.
+
+
+------------------------------------------------------------------------
+r252 | jessejones | 2007-08-18 03:33:46 -0700 (Sat, 18 Aug 2007) | 13 lines
+
+Index: source/rules/usage/ReservedExceptionsRule.cs
+Index: extras/evildoer/BadClass2.cs
+Index: source/rules/xml/Usage.xml
+Index: source/tests/rules/usage/ReservedExceptionsTest.cs
+* Added.
+
+Index: source/rules/usage/ThrowDerivedRule.cs
+* Checks for a throw, not just the creation of an exception.
+
+Index: source/framework/ViolationDatabase.cs
+* Wrap exceptions from xml.Load so we can figure out which file failed.
+
+
+------------------------------------------------------------------------
+r253 | jessejones | 2007-08-18 17:43:18 -0700 (Sat, 18 Aug 2007) | 14 lines
+
+Index: source/rules/reliability/HashMatchesEqualsRule.cs
+Index: extras/evildoer/GoodClass.cs
+Index: source/tests/rules/reliability/HashMatchesEqualsTest.cs
+Index: source/rules/xml/Reliability.xml
+Index: extras/evildoer/BadStruct.cs
+Index: extras/evildoer/BadClass2.cs
+Index: extras/evildoer/GoodClass2.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/framework/AssemblyCache.cs
+* Added FindMethods.
+
+
+------------------------------------------------------------------------
+r254 | jessejones | 2007-08-18 19:31:55 -0700 (Sat, 18 Aug 2007) | 8 lines
+
+Index: source/tests/rules/reliability/ObjectHashCodeTest1.cs
+Index: source/rules/xml/Reliability.xml
+Index: source/rules/reliability/ObjectHashCodeRule1.cs
+Index: extras/evildoer/BadClass2.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+
+------------------------------------------------------------------------
+r255 | jessejones | 2007-08-18 21:18:17 -0700 (Sat, 18 Aug 2007) | 3 lines
+
+Renamed.
+
+
+------------------------------------------------------------------------
+r256 | jessejones | 2007-08-18 21:40:12 -0700 (Sat, 18 Aug 2007) | 3 lines
+
+Added ValueHashCodeRule.
+
+
+------------------------------------------------------------------------
+r257 | jessejones | 2007-08-18 22:11:26 -0700 (Sat, 18 Aug 2007) | 3 lines
+
+Added StructOverridesRule.
+
+
+------------------------------------------------------------------------
+r258 | jessejones | 2007-08-18 23:19:58 -0700 (Sat, 18 Aug 2007) | 3 lines
+
+Added VisibleFieldsRule.
+
+
+------------------------------------------------------------------------
+r259 | jessejones | 2007-08-19 00:39:24 -0700 (Sun, 19 Aug 2007) | 3 lines
+
+Added AttributesNeedUsageRule.
+
+
+------------------------------------------------------------------------
+r260 | jessejones | 2007-08-19 05:18:10 -0700 (Sun, 19 Aug 2007) | 64 lines
+
+Index: source/rules/reliability/HashMatchesEqualsRule.cs
+Index: source/tests/rules/reliability/HashMatchesEqualsTest.cs
+* Lame work around for generic code (calling a generic method doesn't use
+  the metadata token the method was defined with).
+
+Index: source/rules/reliability/ObjectHashCodeRule.cs
+* Make sure Object.GetHashCode is called with our this pointer.
+
+Index: source/rules/performance/StructOverridesRule.cs
+Index: source/rules/usage/ClassCanBeMadeStaticRule.cs
+Index: source/framework/CecilExtensions.cs
+* Don't check PrivateImplementationDetails types.
+
+Index: source/framework/SymbolTable.cs
+Index: source/framework/visitors/ValuesState.cs
+Index: source/framework/visitors/LoopVisitor.cs
+Index: source/framework/ViolationDatabase.cs
+Index: source/framework/Profile.cs
+Index: source/framework/Location.cs
+Index: source/framework/TryCatches.cs
+* Added struct Equals and GetHashCode overrides.
+ 
+Index: source/framework/NewLine.cs
+* Made fields readonly.
+
+Index: source/framework/MethodInfo.cs
+Index: source/tests/rules/reliability/CtorCallsVirtualTest.cs
+* MethodInfo is now a class (got a little too large for a struct).
+
+Index: source/tests/rules/performance/MethodCanBeMadeStaticTest.cs
+* Fixed minor error in logging.
+
+Index: source/console/CheckXml.cs
+Index: source/rules/usage/Aspell.cs
+* Made a method static.
+
+Index: source/rules/usage/AttributesNeedUsageRule.cs
+Index: source/framework/visitors/ValuesTracker.cs
+Index: source/framework/visitors/ValuesLattice.cs
+* Spelling.
+
+Index: source/rules/performance/NonGenericCollectionsRule.cs
+Index: source/rules/performance/LargeStructRule.cs
+Index: source/rules/usage/AssemblyAttributeSpellingRule.cs
+Index: source/rules/usage/StringSpellingRule.cs
+Index: source/rules/usage/NoObjectDisposedExceptionRule.cs
+Index: source/rules/reliability/DisposeFieldsRule.cs
+Index: source/rules/reliability/CtorCallsVirtualRule.cs
+Index: source/rules/reliability/DisposeNativeResourcesRule.cs
+Index: source/rules/reliability/DisposableFieldsRule.cs
+Index: source/rules/reliability/DisposeScopedObjectsRule.cs
+Index: source/rules/maintainability/NetNamingRules.cs
+Index: source/rules/maintainability/VisibleFieldsRule.cs
+Index: source/tests/rules/maintainability/VisibleFieldsTest.cs
+Index: source/rules/maintainability/MonoNamingRules.cs
+Index: source/rules/maintainability/JurassicNamingRules.cs
+Index: source/framework/visitors/ControlFlowVisitor.cs
+Index: source/framework/DoubleDispatch.cs
+Index: source/framework/AssemblyRule.cs
+Index: source/framework/Rule.cs
+Index: source/framework/MethodRule.cs
+Index: source/framework/TypeRule.cs
+* Protected fields are now private and have protected setter properites.
+
+------------------------------------------------------------------------
+r261 | jessejones | 2007-08-19 18:13:43 -0700 (Sun, 19 Aug 2007) | 15 lines
+
+Index: source/framework/visitors/LoopVisitor.cs
+* Clear m_blocks so the object can be reused properly.
+
+Index: source/rules/performance/StringConcatRule.cs
+* Only construct the visitor once.
+
+Index: source/rules/reliability/HashMatchesEqualsRule.cs
+Index: source/tests/rules/reliability/HashMatchesEqualsTest.cs
+* Details includes both fields and properties, not just one of them.
+* Special case operator== calling Object.Equals with this pointer.
+
+Index: source/framework/SymbolTable.cs
+* Profiles.
+
+
+------------------------------------------------------------------------
+r262 | jessejones | 2007-08-19 23:24:31 -0700 (Sun, 19 Aug 2007) | 30 lines
+
+Index: source/framework/Violation.cs
+Index: extras/functest/Smoke.schema.xml
+Index: source/console/TextReport.cs
+Index: source/console/AnalyzeAssembly.cs
+Index: source/console/Program.cs
+Index: source/rules/xml/Schema.xml
+Index: source/console/XmlReport.cs
+Index: source/rules/xml/Usage.xml
+Index: source/rules/xml/Interoperability.xml
+Index: source/rules/xml/Reliability.xml
+Index: source/framework/ViolationDatabase.cs
+* Renamed Kind Severity and added Nitpick level.
+
+Index: source/rules/xml/Performance.xml
+* MethodCanBeMadeStatic, UseStringEmpty, AvoidBoxing, AvoidUnboxing, and StringConcat
+  are now Nitpick level.
+
+Index: source/rules/xml/Maintainability.xml
+* MethodTooComplex is now Nitpick level.
+
+Index: source/console/Options.cs
+Index: source/framework/AssemblyRules.cs
+Index: source/framework/MethodRules.cs
+Index: source/framework/TypeRules.cs
+* -type and -method are now debug only.
+* Added -severity.
+* Use stderr to report problems with the options.
+
+
+
+------------------------------------------------------------------------
+r263 | jessejones | 2007-08-19 23:26:13 -0700 (Sun, 19 Aug 2007) | 3 lines
+
+Fixed some really old comments.
+
+
+------------------------------------------------------------------------
+r264 | jessejones | 2007-08-20 05:18:43 -0700 (Mon, 20 Aug 2007) | 3 lines
+
+Started rewriting the rules using a new simpler and more efficient visitor based design.
+
+
+------------------------------------------------------------------------
+r265 | jessejones | 2007-08-20 06:05:29 -0700 (Mon, 20 Aug 2007) | 3 lines
+
+Types rules now work with the new design. Converted EmptyDestructorRule.
+
+
+------------------------------------------------------------------------
+r266 | jessejones | 2007-08-20 19:59:16 -0700 (Mon, 20 Aug 2007) | 31 lines
+
+Index: source/framework/visitors/RuleDispatcher.cs
+* Fields are now visited.
+* Added Looping property which is true if we're visiting an instruction which
+  is within a loop.
+
+Index: source/tests/rules/MethodTest.cs
+* Added a catch block to ctor to print exceptions since nunit won't if  a
+  TextFixture fails.
+  
+Index: source/tests/rules/TypeTest.cs
+* Added optional used argument to ctor for types that need to be part of the
+  cache, but aren't checked.
+  
+Index: source/framework/AssemblyCache.cs
+* Adding TypeDefinition adds the methods.
+
+Index: source/rules/performance/NonGenericCollectionsRule.cs
+Index: source/rules/performance/StructOverridesRule.cs
+Index: source/rules/performance/MethodCanBeMadeStaticRule.cs
+Index: source/rules/performance/StringConcatRule.cs
+Index: source/rules/performance/LargeStructRule.cs
+Index: source/rules/performance/UseStringEmptyRule.cs
+Index: source/tests/rules/performance/StringConcatTest.cs
+Index: source/tests/rules/performance/LargeStructTest.cs
+Index: source/tests/rules/performance/UseStringEmptyTest.cs
+Index: source/tests/rules/performance/NonGenericCollectionsTest.cs
+Index: source/tests/rules/performance/StructOverridesTest.cs
+Index: source/tests/rules/performance/MethodCanBeMadeStaticTest.cs
+* Rewrote the performance rules.
+
+
+------------------------------------------------------------------------
+r267 | jessejones | 2007-08-20 23:26:29 -0700 (Mon, 20 Aug 2007) | 6 lines
+
+Index: source/framework/AssemblyCache.cs
+Index: nant.build
+Index: source/framework/MethodInfo.cs
+* Conditionaly compile test only code using new TEST define.
+
+
+------------------------------------------------------------------------
+r268 | jessejones | 2007-08-21 01:09:43 -0700 (Tue, 21 Aug 2007) | 22 lines
+
+Index: source/framework/visitors/RuleDispatcher.cs
+Index: source/rules/performance/NonGenericCollectionsRule.cs
+* Replaced DemarcatedFields with DemarcatedType.
+* Type visitor now visits MethodDefinition, EventDefinition, and
+  PropertyDefinition.
+* When visiting instructions we now check to see if base types are
+  registered.
+
+Index: source/rules/interoperability/NewLineLiteralRule.cs
+Index: source/rules/maintainability/NetNamingRules.cs
+Index: source/rules/maintainability/VisibleFieldsRule.cs
+Index: source/rules/maintainability/MonoNamingRules.cs
+Index: source/rules/maintainability/TooComplexRule.cs
+Index: source/rules/maintainability/JurassicNamingRules.cs
+Index: source/rules/maintainability/GlobalPublicTypeRule.cs
+Index: source/tests/rules/interoperability/NewLineLiteralTest.cs
+Index: source/tests/rules/maintainability/NetNamingTest.cs
+Index: source/tests/rules/maintainability/MonoNamingTest.cs
+Index: source/tests/rules/maintainability/VisibleFieldsTest.cs
+* Rewrote interoperability and maintainability rules.
+
+
+------------------------------------------------------------------------
+r269 | jessejones | 2007-08-21 04:07:35 -0700 (Tue, 21 Aug 2007) | 36 lines
+
+Index: source/tests/rules/MethodTest.cs
+* Added optional unused names.
+* Method can now be a ctor.
+
+Index: source/framework/visitors/RuleDispatcher.cs
+* MethodDefinition is visited after fields and such.
+* MethodDefinition is visited for ctors.
+
+Index: source/framework/AssemblyCache.cs
+* Test code can now add the same method multiple times.
+
+Index: source/framework/TypedInstructions.cs
+* Added Ceq.
+
+Index: source/tests/rules/reliability/DisposableFieldsTest.cs
+Index: source/tests/rules/reliability/DisposeFieldsTest.cs
+Index: source/tests/rules/reliability/CtorCallsVirtualTest.cs
+Index: source/tests/rules/reliability/DisposeScopedObjectsTest.cs
+Index: source/tests/rules/reliability/CompareFloatsTest.cs
+Index: source/tests/rules/reliability/DisposableButNoFinalizerTest.cs
+Index: source/tests/rules/reliability/EnumsNeedZeroTest.cs
+Index: source/tests/rules/reliability/DisposeNativeResourcesTest.cs
+Index: source/rules/reliability/EnumsNeedZeroRule.cs
+Index: source/rules/reliability/DisposeFieldsRule.cs
+Index: source/rules/reliability/CtorCallsVirtualRule.cs
+Index: source/rules/reliability/CompareFloatsRule.cs
+Index: source/rules/reliability/DisposableButNoFinalizerRule.cs
+Index: source/rules/reliability/DisposeNativeResourcesRule.cs
+Index: source/rules/reliability/DisposableFieldsRule.cs
+Index: source/rules/reliability/DisposeScopedObjectsRule.cs
+* Rewrote a bunch of reliability rules.
+
+Index: source/rules/maintainability/VisibleFieldsRule.cs
+* Fixed a log.
+
+
+------------------------------------------------------------------------
+r270 | jessejones | 2007-08-21 22:17:19 -0700 (Tue, 21 Aug 2007) | 31 lines
+
+Index: source/rules/reliability/HashMatchesEqualsRule.cs
+Index: source/rules/xml/Reliability.xml
+Index: source/tests/rules/reliability/HashMatchesEqualsTest.cs
+Index: extras/evildoer/BadStruct.cs
+Index: extras/evildoer/BadClass2.cs
+Index: extras/functest/Expected.xml
+* HashMatchesEquals now verifies that both Equals, operator==, operator!=
+  and GetHashCode use the same fields and properties.
+  
+Index: source/tests/rules/reliability/ValueHashCodeTest.cs
+Index: source/tests/rules/reliability/LockThisTest.cs
+Index: source/tests/rules/reliability/SynchronizedAttributeTest.cs
+Index: source/tests/rules/reliability/ObjectHashCodeTest.cs
+Index: source/rules/reliability/CtorCallsVirtualRule.cs
+Index: source/rules/reliability/SynchronizedAttributeRule.cs
+Index: source/rules/reliability/ObjectHashCodeRule.cs
+Index: source/rules/reliability/ValueHashCodeRule.cs
+Index: source/rules/reliability/LockThisRule.cs
+* Finished rewriting the reliability rules.
+
+Index: source/framework/instructions/Call.cs
+* Added IsThisCall.
+
+Index: source/framework/TypedInstructions.cs
+* Added LoadsThisArg.
+
+Index: source/framework/instructions/loads/LoadFieldAddress.cs
+Index: source/framework/instructions/loads/LoadPointer.cs
+* Added.
+
+
+------------------------------------------------------------------------
+r271 | jessejones | 2007-08-22 03:41:12 -0700 (Wed, 22 Aug 2007) | 39 lines
+
+Index: source/framework/VisitorRules.cs
+Index: source/framework/VisitorRule.cs
+Index: source/framework/visitors/RuleDispatcher.cs
+Index: source/console/AnalyzeAssembly.cs
+Index: source/tests/rules/MethodTest.cs
+Index: source/tests/rules/TypeTest.cs
+* Added support for assembly rules.
+
+Index: source/tests/rules/usage/EqualsCantCastTest.cs
+Index: source/tests/rules/usage/NoObjectDisposedExceptionTest.cs
+Index: source/tests/rules/usage/CustomExceptionTest.cs
+Index: source/tests/rules/usage/ICloneableTest.cs
+Index: source/tests/rules/usage/ClassCanBeMadeStaticTest.cs
+Index: source/tests/rules/usage/EqualsCantCastTest2.cs
+Index: source/tests/rules/usage/DestroyStackTraceTest.cs
+Index: source/tests/rules/usage/InfiniteRecursionTest.cs
+Index: source/tests/rules/usage/EqualsRequiresNullCheckTest.cs
+Index: source/tests/rules/usage/MalformedFormatStringTest.cs
+Index: source/tests/rules/usage/AttributesNeedUsageTest.cs
+Index: source/tests/rules/usage/IDisposableWithoutSuppressFinalizeTest.cs
+Index: source/rules/usage/CustomExceptionRule.cs
+Index: source/rules/usage/AssemblyInfoRule.cs
+Index: source/rules/usage/ICloneableRule.cs
+Index: source/rules/usage/ClassCanBeMadeStaticRule.cs
+Index: source/rules/usage/DestroyStackTraceRule.cs
+Index: source/rules/usage/InfiniteRecursionRule.cs
+Index: source/rules/usage/AssemblyAttributeSpellingRule.cs
+Index: source/rules/usage/EqualsRequiresNullCheckRule.cs
+Index: source/rules/usage/MalformedFormatStringRule.cs
+Index: source/rules/usage/AttributesNeedUsageRule.cs
+Index: source/rules/usage/IDisposableWithoutSuppressFinalizeRule.cs
+Index: source/rules/usage/EqualsCantCastRule.cs
+Index: source/rules/usage/NoObjectDisposedExceptionRule.cs
+* Rewrote most of the usage tests.
+
+Index: source/framework/instructions/Unbox.cs
+* Added FromType field.
+
+
+------------------------------------------------------------------------
+r272 | jessejones | 2007-08-22 04:21:42 -0700 (Wed, 22 Aug 2007) | 18 lines
+
+Index: source/tests/rules/usage/NullDerefTest.cs
+Index: source/tests/rules/usage/ReservedExceptionsTest.cs
+Index: source/tests/rules/usage/StringSpellingTest.cs
+Index: source/tests/rules/usage/ThrowDerivedTest.cs
+Index: source/tests/rules/usage/SwallowExceptionTest.cs
+Index: source/rules/usage/AssemblyAttributeSpellingRule.cs
+Index: source/rules/usage/StringSpellingRule.cs
+Index: source/rules/usage/ThrowDerivedRule.cs
+Index: source/rules/usage/SwallowExceptionRule.cs
+Index: source/rules/usage/NullDerefRule.cs
+Index: source/rules/usage/ReservedExceptionsRule.cs
+* Finished rewriting usage rules.
+
+Index: source/framework/instructions/flow/Throw.cs
+Index: source/framework/TypedInstructions.cs
+* Added.
+
+
+------------------------------------------------------------------------
+r273 | jessejones | 2007-08-22 05:03:24 -0700 (Wed, 22 Aug 2007) | 22 lines
+
+Index: source/framework/AssemblyCache.cs
+* Removed some test code that's no longer used.
+
+Index: source/rules/reliability/DisposeNativeResourcesRule.cs
+* Don't pass a null symbol table to TypedInstructions ctor.
+
+Index: source/tests/LoopVisitorTest.cs
+Index: source/tests/DoubleDispatchTest.cs
+Index: source/framework/visitors/ControlFlowVisitor.cs
+Index: source/framework/visitors/LoopVisitor.cs
+Index: source/framework/visitors/LinearVisitor.cs
+Index: source/framework/BaseRules.cs
+Index: source/framework/AssemblyRules.cs
+Index: source/framework/DoubleDispatch.cs
+Index: source/framework/MethodRules.cs
+Index: source/framework/TypeRules.cs
+Index: source/framework/AssemblyRule.cs
+Index: source/framework/MethodRule.cs
+Index: source/framework/TypeRule.cs
+* Removed some files we no longer use.
+* Speed increase over 0.2.0.0 is now 14x for System.dll.
+
+------------------------------------------------------------------------
+r274 | jessejones | 2007-08-22 17:12:05 -0700 (Wed, 22 Aug 2007) | 9 lines
+
+Index: source/framework/visitors/RuleDispatcher.cs
+Index: source/framework/VisitorRules.cs
+* Rules which throw exceptions are now removed from the callback table
+  and an error is reported.
+  
+Index: source/framework/Location.cs
+* Removed a now unused ctor.
+
+
+------------------------------------------------------------------------
+r275 | jessejones | 2007-08-22 20:59:27 -0700 (Wed, 22 Aug 2007) | 11 lines
+
+* Dispatcher uses reflection to call rule methods. This is faster than using a thunk
+  and requires less boiler-plate on the part of rules.
+* Rule registration is now done in a Register method so we can skip rules via -exclude-check.
+* Replaced -exclude-type and -exclude-method with -exclude-name.
+* Replaced debug -type and -method with -only.
+ 		
+
+
+
+ 		
+
+------------------------------------------------------------------------
+r276 | jessejones | 2007-08-22 21:23:04 -0700 (Wed, 22 Aug 2007) | 18 lines
+
+Index: source/framework/Rule.cs
+Index: source/tests/ControlFlowGraphTest.cs
+* Removed Rule class.
+
+Index: source/console/Options.cs
+* Bad option check is done before no assemblies check.
+
+Index: source/console/Watchdog.cs
+Index: source/console/Progress.cs
+Index: source/console/Program.cs
+Index: source/framework/AssemblyCache.cs
+Index: source/framework/VisitorRules.cs
+* Progress callback no longer takes a rule.
+
+Index: source/framework/visitors/RuleDispatcher.cs
+* Comment.
+
+
+------------------------------------------------------------------------
+r277 | jessejones | 2007-08-22 22:03:11 -0700 (Wed, 22 Aug 2007) | 21 lines
+
+Index: source/rules/maintainability/NetNamingRules.cs
+Index: source/rules/maintainability/MonoNamingRules.cs
+Index: source/rules/maintainability/JurassicNamingRules.cs
+* Fix the tests for types/methods that should be skipped.
+
+Index: source/rules/reliability/LockThisRule.cs
+* Always set m_offset so rule doesn't go bersek.
+
+Index: source/rules/usage/NoObjectDisposedExceptionRule.cs
+* Use string.Empty.
+
+Index: source/rules/interoperability/NewLineLiteralRule.cs
+* Spelling.
+
+Index: source/rules/reliability/HashMatchesEqualsRule.cs
+* Made methods static.
+
+Index: source/framework/AssemblyCache.cs
+* Don't concat strings in a loop.
+
+
+------------------------------------------------------------------------
+r278 | jessejones | 2007-08-22 22:09:57 -0700 (Wed, 22 Aug 2007) | 4 lines
+
+Renamed VisitorRule Rule.
+Renamed VisitorRules Rules.
+
+
+------------------------------------------------------------------------
+r279 | jessejones | 2007-08-22 22:19:51 -0700 (Wed, 22 Aug 2007) | 14 lines
+
+Index: source/tests/rules/reliability/HashMatchesEqualsTest.cs
+Index: source/tests/rules/reliability/ConsistentEqualityTest.cs
+Index: source/rules/reliability/HashMatchesEqualsRule.cs
+Index: source/rules/reliability/ConsistentEquality.cs
+* Renamed HashMatchesEquals ConsistentEquality.
+
+Index: source/rules/maintainability/NetNamingRules.cs
+Index: source/rules/maintainability/MonoNamingRules.cs
+Index: source/rules/maintainability/JurassicNamingRules.cs
+Index: source/rules/maintainability/NetNamingRule.cs
+Index: source/rules/maintainability/MonoNamingRule.cs
+* Dropped the s from the file name.
+
+
+------------------------------------------------------------------------
+r280 | jessejones | 2007-08-22 22:28:23 -0700 (Wed, 22 Aug 2007) | 3 lines
+
+Removed profiling from rules (have to do this in the dispatcher).
+
+
+------------------------------------------------------------------------
+r281 | jessejones | 2007-08-22 23:49:28 -0700 (Wed, 22 Aug 2007) | 25 lines
+
+Index: source/framework/AssemblyCache.cs
+* FindMethods efficiency is no longer horrendous.
+
+Index: source/rules/maintainability/NetNamingRule.cs
+Index: source/rules/maintainability/MonoNamingRule.cs
+* Fixed m_details concatenation.
+
+Index: source/framework/Rules.cs
+Index: source/framework/visitors/RuleDispatcher.cs
+Index: source/console/AnalyzeAssembly.cs
+* Tweaked profiling.
+
+Index: source/rules/xml/Reliability.xml
+* Renamed HashMatchesEquals ConsistentEquality.
+
+Index: source/rules/usage/NativeAspell.cs
+* Use DllImport("aspell") instead of DllImport("libaspell.dll").
+
+Index: source/rules/reliability/ConsistentEquality.cs
+* Sped up slightly.
+ 		
+Index: source/framework/Log.cs
+* DebugLog is conditional on DEBUG not LOG.
+ 
+
+------------------------------------------------------------------------
+r282 | jessejones | 2007-08-23 03:06:19 -0700 (Thu, 23 Aug 2007) | 14 lines
+
+Index: source/tests/rules/reliability/DisposableFieldsTest.cs
+Index: source/rules/reliability/DisposableFieldsRule.cs
+* Fields only count if they're both disposable and newed.
+
+Index: source/rules/reliability/ConsistentEquality.cs
+* Tweaked details.
+
+Index: source/framework/instructions/Call.cs
+* Don't consider a ctor call a this call.
+
+Index: source/framework/AssemblyCache.cs
+* Removed an unused method.
+
+
+------------------------------------------------------------------------
+r283 | jessejones | 2007-08-23 05:42:16 -0700 (Thu, 23 Aug 2007) | 25 lines
+
+Index: source/rules/usage/Aspell.cs
+* Added DoIsWordStart to ensure that we're consistent with DoGetWordLength.
+
+Index: source/rules/usage/EqualsRequiresNullCheckRule.cs
+Index: source/rules/usage/NullCheck.cs
+Index: source/rules/usage/NullDerefRule.cs
+* Added details about what is being derefed.
+
+Index: source/rules/reliability/ConsistentEquality.cs
+* Renamed the file.
+
+Index: source/framework/SymbolTable.cs
+* Subtract one from line number.
+
+Index: source/framework/visitors/ControlFlowGraph.cs
+* Disable an assert for now.
+
+Index: source/framework/MethodInfo.cs
+Index: source/framework/TypedInstructions.cs
+* Create a zero length Instructions if the method has no body.
+
+Index: SysIgnore.txt
+* More words.
+
+
+------------------------------------------------------------------------
+r284 | jessejones | 2007-08-23 16:39:50 -0700 (Thu, 23 Aug 2007) | 6 lines
+
+Index: source/rules/usage/Aspell.cs
+Index: source/framework/SymbolTable.cs
+Index: source/framework/ViolationDatabase.cs
+* BinarySearch uses ones complement not twos-complement if value wasn't foudnd.
+
+
+------------------------------------------------------------------------
+r285 | jessejones | 2007-08-23 16:44:45 -0700 (Thu, 23 Aug 2007) | 3 lines
+
+Index: source/rules/usage/Aspell.cs
+Index: source/framework/ViolationDatabase.cs
+* And, when inserting, we need to use the upper bound not the lower one.
+------------------------------------------------------------------------
+r286 | jessejones | 2007-08-23 16:52:56 -0700 (Thu, 23 Aug 2007) | 3 lines
+
+Fix BinarySearch range check.
+
+
+------------------------------------------------------------------------
+r287 | jessejones | 2007-08-23 18:14:37 -0700 (Thu, 23 Aug 2007) | 3 lines
+
+Updated changes and readme.
+
+
+------------------------------------------------------------------------
+r289 | jessejones | 2007-08-23 21:52:51 -0700 (Thu, 23 Aug 2007) | 3 lines
+
+Moved some files into console.
+
+
+------------------------------------------------------------------------
+r290 | jessejones | 2007-08-23 23:09:20 -0700 (Thu, 23 Aug 2007) | 13 lines
+
+Index: source/rules/design/LargeNamespaceRule.cs
+Index: source/console/ViolationDatabase.cs
+Index: source/console/Rules.cs
+Index: source/rules/xml/Design.xml
+* Added LargeNamespaceRule.
+
+Index: source/console/AnalyzeAssembly.cs
+Index: source/framework/visitors/RuleDispatcher.cs
+Index: source/framework/visitors/Demarcated.cs
+Index: source/framework/AssemblyCache.cs
+* Dispatcher now visits BeginTypes and EndTypes.
+
+
+------------------------------------------------------------------------
+r291 | jessejones | 2007-08-24 04:30:04 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+First cut at real xml doc comments.
+
+
+------------------------------------------------------------------------
+r292 | jessejones | 2007-08-24 04:31:12 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Script to build html docs.
+
+
+------------------------------------------------------------------------
+r293 | jessejones | 2007-08-24 16:38:35 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Moved some files into internal.
+
+
+------------------------------------------------------------------------
+r295 | jessejones | 2007-08-24 16:44:28 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+More removing of rules dir.
+
+
+------------------------------------------------------------------------
+r296 | jessejones | 2007-08-24 17:03:58 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Moved rules.
+
+
+------------------------------------------------------------------------
+r297 | jessejones | 2007-08-24 17:14:25 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Moved framework files around.
+
+
+------------------------------------------------------------------------
+r298 | jessejones | 2007-08-24 17:15:41 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Removed old visitors dir.
+
+
+------------------------------------------------------------------------
+r299 | jessejones | 2007-08-24 17:22:36 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Copied files from rules1 to rules.
+
+
+------------------------------------------------------------------------
+r300 | jessejones | 2007-08-24 17:25:00 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Removed rules1.
+
+
+------------------------------------------------------------------------
+r301 | jessejones | 2007-08-24 17:25:26 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Removed old console dir.
+
+
+------------------------------------------------------------------------
+r302 | jessejones | 2007-08-24 21:16:46 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Working on namespaces.
+
+
+------------------------------------------------------------------------
+r303 | jessejones | 2007-08-24 21:20:24 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Working on namespaces.
+
+
+------------------------------------------------------------------------
+r304 | jessejones | 2007-08-24 21:33:15 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Namespaced everything.
+
+
+------------------------------------------------------------------------
+r305 | jessejones | 2007-08-24 21:48:47 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+All the tests use BaseTest now.
+
+
+------------------------------------------------------------------------
+r306 | jessejones | 2007-08-24 21:57:27 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Removed base class for demarcated types.
+
+
+------------------------------------------------------------------------
+r307 | jessejones | 2007-08-24 22:05:47 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Document exceptions thrown from public types.
+
+
+------------------------------------------------------------------------
+r308 | jessejones | 2007-08-24 22:09:32 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Use "finalizer" instead of "destructor".
+
+
+------------------------------------------------------------------------
+r309 | jessejones | 2007-08-24 22:12:14 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Renamed two files.
+
+
+------------------------------------------------------------------------
+r310 | jessejones | 2007-08-24 22:29:36 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Added some DBC.Pre checks to public types.
+
+
+------------------------------------------------------------------------
+r311 | jessejones | 2007-08-24 22:35:32 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Added a post condition.
+
+
+------------------------------------------------------------------------
+r312 | jessejones | 2007-08-24 23:30:12 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Started moving this file.
+
+
+------------------------------------------------------------------------
+r313 | jessejones | 2007-08-24 23:33:12 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Moved spell check rules.
+
+
+------------------------------------------------------------------------
+r314 | jessejones | 2007-08-24 23:41:47 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Moved files into design rules dir.
+
+
+------------------------------------------------------------------------
+r315 | jessejones | 2007-08-24 23:50:42 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Added files to design rules dir.
+
+
+------------------------------------------------------------------------
+r316 | jessejones | 2007-08-24 23:59:31 -0700 (Fri, 24 Aug 2007) | 3 lines
+
+Started moving rules to new microsoft dir.
+
+
+------------------------------------------------------------------------
+r317 | jessejones | 2007-08-25 02:22:44 -0700 (Sat, 25 Aug 2007) | 3 lines
+
+Moved more files into microsoft and some into new misc and mono dirs.
+
+
+------------------------------------------------------------------------
+r318 | jessejones | 2007-08-25 02:44:34 -0700 (Sat, 25 Aug 2007) | 3 lines
+
+Added files to new Portability dir. Renamed checkIDs.
+
+
+------------------------------------------------------------------------
+r319 | jessejones | 2007-08-25 02:48:39 -0700 (Sat, 25 Aug 2007) | 3 lines
+
+Removed some obsolete dirs.
+
+
+------------------------------------------------------------------------
+r320 | jessejones | 2007-08-25 02:49:30 -0700 (Sat, 25 Aug 2007) | 3 lines
+
+Removed maintainability dir.
+
+
+------------------------------------------------------------------------
+r321 | jessejones | 2007-08-25 02:52:30 -0700 (Sat, 25 Aug 2007) | 3 lines
+
+Removed more obsolete stuff.
+
+
+------------------------------------------------------------------------
+r322 | jessejones | 2007-08-25 03:02:58 -0700 (Sat, 25 Aug 2007) | 3 lines
+
+Svn ignored some files.
+
+
+------------------------------------------------------------------------
+r323 | jessejones | 2007-08-26 17:45:47 -0700 (Sun, 26 Aug 2007) | 49 lines
+
+Index: custom/source/AssemblyInfo.cs
+Index: custom/source/tests/PrivateNeedsDoTest.cs
+Index: custom/source/tests/PublicStartsWithDoTest.cs
+Index: custom/source/tests/LogStartsWithStringTest.cs
+Index: custom/source/rules/LogStartsWithStringRule.cs
+Index: custom/source/rules/PrivateNeedsDoRule.cs
+Index: custom/source/rules/Rules.xml
+Index: custom/source/rules/PublicStartsWithDoRule.cs
+Index: custom/README
+Index: custom/nant.build
+* Added custom rule assembly. Currently it has three rules: PrivateNeedsDo,
+  PublicStartsWithDo, and LogStartsWithString.
+
+Index: source/internal/ViolationDatabase.cs
+Index: source/internal/Program.cs
+* Added support for custom rule assemblies.
+
+Index: source/tests/rules/TypeTest.cs
+* Assembly loc is now passed in so custom rules can pass in their own loc.
+
+Index: source/framework/Log.cs
+* Bad topics and levels are now written out to the console.
+* We now search all the loaded assemblies for topic types (if the type name 
+  isn't an AssemblyQualifiedName).
+ 
+Index: source/framework/support/advanced/ControlFlowGraph.cs
+Index: source/tests/ControlFlowGraphTest.cs
+* When wiring up finally blocks use the innermost finally block.
+* Dead code check now handles dead leaves to code that no one calls.
+ 		
+Index: source/internal/CheckItem.cs
+* Don't try to instantiate abstract rules.
+
+Index: source/tests/rules/MethodTest.cs
+Index: source/framework/support/RuleDispatcher.cs
+* Visits MethodDefinition instead of just BeginMethod.
+
+Index: source/internal/rules/xml/Microsoft.xml
+Index: source/internal/AssemblyInfo.cs
+* ComVisible defaults to false.
+
+Index: source/internal/rules/microsoft/EqualsCantCastRule.cs
+* Made EqualsCantCastRule abstract.
+
+Index: source/framework/ListExtensions.cs
+* Added Accumulate, although unfortunately it has two template arguments so it
+  isn't really an extension method.
+  
+
+------------------------------------------------------------------------
+r324 | jessejones | 2007-08-26 19:32:14 -0700 (Sun, 26 Aug 2007) | 15 lines
+
+Index: Smokey.keys
+Index: nant.build
+* Exe is now strongly named.
+
+Index: source/tests/rules/MethodTest.cs
+Index: source/tests/rules/TypeTest.cs
+* Inherits from BaseTest.
+
+Index: source/framework/support/RuleDispatcher.cs
+* Method visitor checks for empty method bodies.
+
+Index: custom/source/tests/PrivateNeedsDoTest.cs
+Index: custom/source/rules/PrivateNeedsDoRule.cs
+* Check for p/invoke methods.
+
+------------------------------------------------------------------------
+r325 | jessejones | 2007-08-27 04:58:23 -0700 (Mon, 27 Aug 2007) | 19 lines
+
+Index: source/internal/rules/microsoft/PluralEnumFlagsRule.cs
+Index: source/tests/rules/microsoft/PluralEnumFlagsTest.cs
+Index: source/internal/rules/xml/Microsoft.xml
+Index: extras/evildoer/BadClass2.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/framework/support/RuleDispatcher.cs
+Index: source/framework/support/advanced/CallGraph.cs
+* New CallGraph class is now visited.
+
+Index: source/tests/rules/AssemblyTest.cs
+Index: custom/source/tests/PrivateNeedsDoTest.cs
+Index: custom/source/tests/PublicStartsWithDoTest.cs
+Index: custom/source/tests/LogStartsWithStringTest.cs
+* Added.
+
+
+
+------------------------------------------------------------------------
+r326 | jessejones | 2007-08-27 06:59:32 -0700 (Mon, 27 Aug 2007) | 15 lines
+
+Index: source/internal/rules/microsoft/FlagsUseNoneRule.cs
+Index: source/tests/rules/microsoft/FlagsUseNoneTest.cs
+Index: source/internal/rules/xml/Microsoft.xml
+Index: extras/evildoer/BadClass2.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/internal/rules/microsoft/EnumsNeedZeroRule.cs
+* Calls Type.CanBreak.
+
+Index: source/internal/rules/microsoft/PluralEnumFlagsRule.cs
+Index: source/framework/support/CecilExtensions.cs
+* Added IsFlagsEnum to CecilExtensions.
+
+
+------------------------------------------------------------------------
+r327 | jessejones | 2007-08-27 07:30:47 -0700 (Mon, 27 Aug 2007) | 11 lines
+
+Index: source/internal/rules/performance/ToStringOnStringRule.cs
+Index: source/tests/rules/performance/ToStringOnStringTest.cs
+Index: source/internal/rules/xml/Performance.xml
+Index: extras/evildoer/BadClass2.cs
+Index: extras/functest/Expected.xml
+* Added (idea is from lukasz).
+
+Index: source/internal/rules/performance/StringConcatRule.cs
+* Use Visit instead of Do.
+
+
+------------------------------------------------------------------------
+r328 | jessejones | 2007-08-27 08:24:04 -0700 (Mon, 27 Aug 2007) | 11 lines
+
+Index: source/internal/rules/xml/Reliability.xml
+Index: source/internal/rules/reliability/WeakIdentityLockRule.cs
+Index: source/tests/rules/reliability/WeakIdentityLockTest.cs
+Index: extras/evildoer/BadClass2.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/internal/rules/reliability/CompareFloatsRule.cs
+* Visit instead of Do.
+
+
+------------------------------------------------------------------------
+r329 | jessejones | 2007-08-27 16:42:47 -0700 (Mon, 27 Aug 2007) | 15 lines
+
+Index: source/internal/rules/performance/UseDefaultInitRule.cs
+Index: source/internal/rules/xml/Performance.xml
+Index: source/tests/rules/performance/UseDefaultInitTest.cs
+Index: extras/evildoer/BadStruct.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/internal/rules/performance/MethodCanBeMadeStaticRule.cs
+* Visit instead of Do.
+
+Index: source/framework/instructions/InitObj.cs
+Index: source/framework/instructions/TypedInstructions.cs
+* Added.
+
+
+------------------------------------------------------------------------
+r330 | jessejones | 2007-08-27 18:11:14 -0700 (Mon, 27 Aug 2007) | 19 lines
+
+Index: source/internal/rules/portability/DllImportExtensionRule.cs
+Index: source/tests/rules/portability/DllImportExtensionTest.cs
+Index: source/internal/rules/xml/Portability.xml
+Index: extras/evildoer/BadClass2.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/internal/rules/portability/DllImportPathRule.cs
+Index: source/tests/rules/portability/DllImportPathTest.cs
+* Added.
+
+Index: source/internal/rules/portability/NewLineLiteralRule.cs
+Index: source/internal/rules/correctness/StringSpellingRule.cs
+Index: source/internal/rules/correctness/MalformedFormatStringRule.cs
+Index: source/internal/rules/correctness/InfiniteRecursionRule.cs
+Index: source/internal/rules/correctness/NullDerefRule.cs
+* Visit instead of Do.
+
+
+------------------------------------------------------------------------
+r331 | jessejones | 2007-08-28 01:44:46 -0700 (Tue, 28 Aug 2007) | 38 lines
+
+Index: source/internal/rules/reliability/StaticSetterRule.cs
+Index: source/tests/rules/reliability/StaticSetterTest.cs
+Index: source/internal/rules/xml/Reliability.xml
+Index: extras/evildoer/BadClass2.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/tests/rules/AssemblyTest.cs
+* Added optional used types list.
+* Each type (plus used) is now treated as if it were an assembly.
+
+Index: source/tests/rules/TypeTest.cs
+* Added an assert.
+
+Index: source/internal/rules/reliability/ObjectHashCodeRule.cs
+Index: source/internal/rules/reliability/ConsistentEqualityRule.cs
+Index: source/internal/rules/reliability/DisposeNativeResourcesRule.cs
+Index: source/internal/rules/reliability/DisposableFieldsRule.cs
+Index: source/internal/rules/reliability/CtorCallsVirtualRule.cs
+Index: source/internal/rules/reliability/DisposeFieldsRule.cs
+Index: source/internal/rules/reliability/DisposeScopedObjectsRule.cs
+* Visit instead of Do.
+
+Index: source/internal/CheckItem.cs
+Index: source/internal/AnalyzeAssembly.cs
+* Calls DispatchCallGraph.
+
+Index: source/framework/instructions/stores/StoreStaticField.cs
+Index: source/framework/instructions/loads/LoadFunctionAddress.cs
+Index: source/framework/instructions/stores/Store.cs
+Index: source/framework/instructions/loads/LoadPointer.cs
+Index: source/framework/instructions/TypedInstructions.cs
+* Added.
+
+Index: source/framework/support/advanced/CallGraph.cs
+* Removed Counts.
+
+
+------------------------------------------------------------------------
+r332 | jessejones | 2007-08-28 04:20:51 -0700 (Tue, 28 Aug 2007) | 9 lines
+
+Index: source/framework/support/advanced/ClassifyMethod.cs
+Index: source/internal/rules/reliability/StaticSetterRule.cs
+Index: source/framework/support/RuleDispatcher.cs
+* Moved thread roots code into ClassifyMethod.
+
+Index: source/internal/rules/xml/Reliability.xml
+* Tweaked StaticSetter sample code.
+
+
+------------------------------------------------------------------------
+r333 | jessejones | 2007-08-29 04:57:46 -0700 (Wed, 29 Aug 2007) | 28 lines
+
+Index: source/internal/HtmlViolations.cs
+Index: source/internal/Program.cs
+Index: source/internal/Options.cs
+Index: source/internal/ViolationDatabase.cs
+* First cut at a class that generates html for all of the builtin rules.
+
+Index: source/internal/Reformat.cs
+Index: source/internal/TextReport.cs
+* Added support for tables.
+
+Index: source/internal/rules/xml/Microsoft.xml
+Index: source/internal/rules/xml/Mono.xml
+Index: source/internal/rules/xml/Misc.xml
+* Uses a table.
+
+Index: source/internal/rules/xml/Performance.xml
+* Replaced "Or or" with "Or".
+
+Index: source/internal/rules/xml/Reliability.xml
+* Fix //- comments introduced during the xml doc commenting spree.
+
+Index: source/internal/rules/xml/Formatting.txt
+* Added.
+
+Index: source/internal/CheckItem.cs
+* Check for empty path before trying to load custom rules dll.
+
+
+------------------------------------------------------------------------
+r334 | jessejones | 2007-08-29 17:49:19 -0700 (Wed, 29 Aug 2007) | 19 lines
+
+Index: source/internal/Options.cs
+Index: source/internal/HtmlReport.cs
+Index: source/internal/Program.cs
+* Added -html to generate html reports.
+
+Index: source/internal/HtmlViolations.cs
+* Nav uses Violations.css.
+* Nav lists uses class.
+
+Index: source/internal/HtmlHelpers.cs
+* Factored out some code from HtmlViolations to this new file.
+
+Index: source/internal/rules/xml/Performance.xml
+Index: source/internal/rules/xml/Portability.xml
+Index: source/internal/rules/xml/Microsoft.xml
+Index: source/internal/rules/xml/Reliability.xml
+Index: source/internal/rules/xml/Correctness.xml
+* Made some methods static.
+
+------------------------------------------------------------------------
+r335 | jessejones | 2007-08-29 19:44:49 -0700 (Wed, 29 Aug 2007) | 6 lines
+
+Index: source/internal/HtmlViolations.cs
+* Add names to each violation so index.html can jump to them.
+
+Index: index.html
+* Added.
+
+------------------------------------------------------------------------
+r336 | jessejones | 2007-08-30 01:17:17 -0700 (Thu, 30 Aug 2007) | 96 lines
+
+Index: source/internal/rules/correctness/Aspell.cs
+Index: source/tests/rules/correctness/StringSpellingTest.cs
+* Ignore all words inside angle bracket markup, not just URLs.
+
+Index: source/internal/rules/portability/NewLineLiteralRule.cs
+Index: source/tests/rules/portability/NewLineLiteralTest.cs
+Index: source/internal/rules/xml/Portability.xml
+* Ignore verbatim strings (i.e. strings with more than three new lines).
+
+Index: source/internal/rules/design/LargeNamespaceRule.cs
+Index: README
+* Increased maxNamespace from 30 to 40.
+
+Index: source/framework/support/RuleDispatcher.cs
+* Dispatch(MethodDefinition) should be conditional on TEST not DEBUG.
+
+Index: nant.build
+* Tar now includes mdb files.
+ 		
+Index: source/internal/HtmlViolations.cs
+* Replace spaces in files with underscore instead of %20 which doesn't seem to be reliable.
+
+Index: source/internal/rules/xml/Performance.xml
+* AvoidUnboxing mentions System.Convert.
+
+Index: source/internal/rules/correctness/MalformedFormatStringRule.cs
+* Call ToString in log calls to avoid boxing.
+
+Index: source/internal/rules/xml/Reliability.xml
+Index: source/internal/rules/xml/Correctness.xml
+* Fix compiler warning.
+
+Index: IgnoreList.txt
+* More words.
+
+Index: source/internal/rules/correctness/NullCheck.cs
+* Use string.Empty.
+
+Index: source/internal/rules/performance/NonGenericCollectionsRule.cs
+Index: source/internal/rules/performance/StructOverridesRule.cs
+Index: source/internal/rules/performance/MethodCanBeMadeStaticRule.cs
+Index: source/internal/rules/performance/AvoidBoxingRule.cs
+Index: source/internal/rules/performance/ValueHashCodeRule.cs
+Index: source/internal/rules/performance/AvoidUnboxingRule.cs
+Index: source/internal/rules/performance/UseStringEmptyRule.cs
+Index: source/internal/rules/performance/EmptyFinalizerRule.cs
+Index: source/internal/rules/microsoft/VisibleFieldsRule.cs
+Index: source/internal/rules/microsoft/CustomExceptionRule.cs
+Index: source/internal/rules/microsoft/AssemblyInfoRule.cs
+Index: source/internal/rules/microsoft/ICloneableRule.cs
+Index: source/internal/rules/microsoft/DestroyStackTraceRule.cs
+Index: source/internal/rules/microsoft/LargeStructRule.cs
+Index: source/internal/rules/microsoft/GlobalPublicTypeRule.cs
+Index: source/internal/rules/microsoft/DisposableButNoFinalizerRule.cs
+Index: source/internal/rules/microsoft/SynchronizedAttributeRule.cs
+Index: source/internal/rules/microsoft/EqualsRequiresNullCheckRule.cs
+Index: source/internal/rules/microsoft/ThrowDerivedRule.cs
+Index: source/internal/rules/microsoft/SwallowExceptionRule.cs
+Index: source/internal/rules/microsoft/AttributesNeedUsageRule.cs
+Index: source/internal/rules/microsoft/IDisposableWithoutSuppressFinalizeRule.cs
+Index: source/internal/rules/microsoft/EqualsCantCastRule.cs
+Index: source/internal/rules/microsoft/NoObjectDisposedExceptionRule.cs
+Index: source/internal/rules/microsoft/NetNamingRule.cs
+Index: source/internal/rules/microsoft/LockThisRule.cs
+Index: source/internal/rules/microsoft/ReservedExceptionsRule.cs
+Index: source/internal/rules/mono/MonoNamingRule.cs
+Index: source/internal/rules/design/TooComplexRule.cs
+Index: source/internal/rules/design/ClassCanBeMadeStaticRule.cs
+Index: source/internal/rules/misc/JurassicNamingRule.cs
+* Visit instead of Do.
+
+Index: source/internal/HtmlHelpers.cs
+* Put short verbatim strings on one line to avoid new line violation.
+
+Index: source/internal/CheckXml.cs
+* Fix edge case with -----.
+
+Index: source/internal/Program.cs
+Index: source/framework/support/advanced/ControlFlowGraph.cs
+* Use Do for private methods.
+
+Index: source/framework/instructions/stores/StoreLocal.cs
+Index: source/framework/instructions/loads/LoadArg.cs
+Index: source/framework/instructions/loads/LoadLocal.cs
+Index: source/framework/support/MethodInfo.cs
+* Don't set fields to 0.
+
+Index: source/framework/instructions/loads/LoadConstantFloat.cs
+Index: source/framework/instructions/loads/LoadConstantInt.cs
+* Avoid unboxing warning with System.Convert.
+
+Index: source/framework/support/advanced/ValuesTracker.cs
+Index: source/framework/support/advanced/ClassifyMethod.cs
+* Spelling.
+
+ 
+------------------------------------------------------------------------
+r337 | jessejones | 2007-08-30 02:33:07 -0700 (Thu, 30 Aug 2007) | 12 lines
+
+Index: CHANGES
+Index: index.html
+Index: CHANGE_LOG
+Index: README
+* Updated.
+ 
+Index: source/tests/rules/reliability/StaticSetterTest.cs
+Index: source/internal/rules/xml/Reliability.xml
+Index: source/internal/rules/reliability/StaticSetterRule.cs
+* Private setters are OK.
+
+
+------------------------------------------------------------------------
+r339 | jessejones | 2007-08-30 07:55:17 -0700 (Thu, 30 Aug 2007) | 3 lines
+
+Added PublicAbstractCtorRule.
+
+
+------------------------------------------------------------------------
+r340 | jessejones | 2007-08-31 04:51:59 -0700 (Fri, 31 Aug 2007) | 10 lines
+
+Index: source/internal/rules/design/UseStrongNameRule.cs
+Index: source/internal/rules/xml/Design.xml
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/internal/rules/microsoft/EqualsCantCastRule.cs
+Index: source/framework/support/Rule.cs
+* Made abstract class ctors protected.
+
+
+------------------------------------------------------------------------
+r341 | jessejones | 2007-08-31 17:29:52 -0700 (Fri, 31 Aug 2007) | 3 lines
+
+Added AvoidEmptyInterfacesRule.
+
+
+------------------------------------------------------------------------
+r342 | jessejones | 2007-09-01 08:09:29 -0700 (Sat, 01 Sep 2007) | 25 lines
+
+Index: source/internal/rules/design/ImplementGenericCollectionRule.cs
+Index: source/tests/rules/design/ImplementGenericCollectionTest.cs
+Index: source/internal/rules/xml/Design.xml
+* Added.
+
+Index: source/internal/rules/xml/Microsoft.xml
+* Added link to exception hierarchy.
+
+Index: source/framework/support/CecilExtensions.cs
+Index: source/internal/rules/microsoft/ICloneableRule.cs
+Index: source/internal/rules/microsoft/DisposableButNoFinalizerRule.cs
+Index: source/internal/rules/microsoft/IDisposableWithoutSuppressFinalizeRule.cs
+Index: source/internal/rules/microsoft/NoObjectDisposedExceptionRule.cs
+Index: source/internal/rules/reliability/IsDisposable.cs
+* Uses new TypeDefinition::Implements extension method.
+
+Index: source/internal/Options.cs
+* Added mising "mono " to usage.
+
+Index: BumpBuildNumber.sh
+* Works when the file doesn't exist.
+* Timestamp is set to an old date so assemblies don't have to be rebuilt if only
+  the version changes.
+  
+
+------------------------------------------------------------------------
+r360 | jessejones | 2007-09-05 05:27:46 -0700 (Wed, 05 Sep 2007) | 24 lines
+
+Index: source/internal/rules/xml/Design.xml
+Index: extras/evildoer/BadClass2.cs
+Index: extras/evildoer/GoodClass2.cs
+Index: extras/functest/Expected.xml
+* Added UseBaseTypesRule.
+
+Index: source/framework/support/CecilExtensions.cs
+* Added PubliclyVisible and PrivatelyVisible.
+* Added ugly GetDeclaredIn for new UseBaseTypesRule.
+
+Index: nant.build
+* Reference Mono.Cecil.dll directly instead of using the package (which isn't setup
+  in 1.2.5, when installing from source anyway).
+
+Index: source/internal/rules/reliability/StaticSetterRule.cs
+Index: source/tests/rules/reliability/StaticSetterTest.cs
+* Use new PrivatelyVisible method.
+
+Index: source/internal/rules/design/TooComplexRule.cs
+* Minor renaming.	
+  
+Index: IgnoreList.txt
+* Ignore arg.
+
+------------------------------------------------------------------------
+r362 | jessejones | 2007-09-06 04:14:51 -0700 (Thu, 06 Sep 2007) | 10 lines
+
+Index: source/internal/rules/xml/Design.xml
+Index: source/internal/rules/design/EventSignatureRule.cs
+Index: source/tests/rules/design/EventSignatureTest.cs
+* Added.
+
+Index: source/tests/rules/EventTest.cs
+Index: source/framework/support/RuleDispatcher.cs
+* Added.
+
+
+------------------------------------------------------------------------
+r374 | jessejones | 2007-09-07 07:54:24 -0700 (Fri, 07 Sep 2007) | 9 lines
+
+Index: source/internal/rules/design/AttributePropertiesRule.cs
+Index: source/tests/rules/design/AttributePropertiesTest.cs
+Index: source/internal/rules/xml/Design.xml
+* Added.
+
+Index: source/tests/rules/MethodTest.cs
+* Method tests can now have more than one ctor.
+
+
+------------------------------------------------------------------------
+r377 | jessejones | 2007-09-08 04:48:42 -0700 (Sat, 08 Sep 2007) | 12 lines
+
+Index: source/internal/rules/design/HiddenMethodRule.cs
+Index: source/tests/rules/design/HiddenMethodTest.cs
+Index: source/internal/rules/xml/Design.xml
+* Added.
+
+Index: source/framework/support/CecilExtensions.cs
+* IsSubclass returns true if lhs is not object and rhs is.
+
+Index: nant.build
+* Added a test1 target.
+
+
+------------------------------------------------------------------------
+r379 | jessejones | 2007-09-08 07:10:28 -0700 (Sat, 08 Sep 2007) | 14 lines
+
+Index: source/internal/CheckItem.cs
+Index: README
+Index: extras/evildoer/GoodClass2.cs
+* Can now disable rules by defining and using a DisableRuleAttribute.
+
+Index: source/internal/rules/microsoft/NetNamingRule.cs
+Index: source/internal/rules/misc/JurassicNamingRule.cs
+* Added periods to details.
+* Internal fields should be pascal case, not camelcase.
+
+Index: source/internal/rules/mono/MonoNamingRule.cs
+* Added periods to details.
+
+
+------------------------------------------------------------------------
+r387 | jessejones | 2007-09-09 06:10:44 -0700 (Sun, 09 Sep 2007) | 3 lines
+
+Added TypedEnumeratorRule.
+
+
+------------------------------------------------------------------------
+r389 | jessejones | 2007-09-10 04:45:24 -0700 (Mon, 10 Sep 2007) | 9 lines
+
+Index: source/internal/rules/design/InternalExceptionRule.cs
+Index: source/internal/rules/xml/Design.xml
+Index: source/tests/rules/design/InternalExceptionTest.cs
+* Added.
+
+Index: source/framework/support/AssemblyCache.cs
+* Comment.
+
+
+------------------------------------------------------------------------
+r390 | jessejones | 2007-09-11 09:32:19 -0700 (Tue, 11 Sep 2007) | 3 lines
+
+Added TypedCollectionRule.
+
+
+------------------------------------------------------------------------
+r391 | jessejones | 2007-09-11 10:13:09 -0700 (Tue, 11 Sep 2007) | 3 lines
+
+Added OverridenFinalizerRule.
+
+
+------------------------------------------------------------------------
+r392 | jessejones | 2007-09-12 07:40:02 -0700 (Wed, 12 Sep 2007) | 3 lines
+
+Added ExceptionConstructorsRule.
+
+
+------------------------------------------------------------------------
+r396 | jessejones | 2007-09-13 03:01:03 -0700 (Thu, 13 Sep 2007) | 3 lines
+
+Added TypedDictionaryRule and TypedListRule.
+
+
+------------------------------------------------------------------------
+r397 | jessejones | 2007-09-14 05:22:45 -0700 (Fri, 14 Sep 2007) | 11 lines
+
+Index: source/internal/rules/xml/Design.xml
+Index: source/internal/rules/design/CLSCompliantRule.cs
+Index: extras/evildoer/AssemblyInfo.cs
+Index: extras/functest/Expected.xml
+* Added.
+
+Index: source/framework/support/AssemblyCache.cs
+Index: source/internal/rules/design/InternalExceptionRule.cs
+* Added HasPublicTypes to AssemblyCache.
+ 
+
+------------------------------------------------------------------------
+r401 | jessejones | 2007-09-15 04:38:07 -0700 (Sat, 15 Sep 2007) | 3 lines
+
+Added UseFlagsAttributeRule.
+
+
+------------------------------------------------------------------------
+r403 | jessejones | 2007-09-16 07:53:40 -0700 (Sun, 16 Sep 2007) | 3 lines
+
+Added NativeMethodsRule and STAThreadRule.
+
+
+------------------------------------------------------------------------
+r405 | jessejones | 2007-09-18 06:33:28 -0700 (Tue, 18 Sep 2007) | 3 lines
+
+Added CompareToRule.
+
+
+------------------------------------------------------------------------
+r410 | jessejones | 2007-09-19 04:54:02 -0700 (Wed, 19 Sep 2007) | 3 lines
+
+Added ObsoleteMessageRule.
+
+
+------------------------------------------------------------------------
+r412 | jessejones | 2007-09-20 08:35:50 -0700 (Thu, 20 Sep 2007) | 14 lines
+
+Index: source/internal/rules/design/EventHandlerRule.cs
+Index: source/tests/rules/design/EventHandlerTest.cs
+Index: source/internal/rules/xml/Design.xml
+* Added.
+
+Index: source/internal/rules/reliability/DisposeNativeResourcesRule.cs
+Index: source/internal/rules/microsoft/DisposableButNoFinalizerRule.cs
+Index: source/tests/rules/microsoft/DisposableButNoFinalizerTest.cs
+Index: source/tests/rules/reliability/DisposeNativeResourcesTest.cs
+Index: source/internal/rules/xml/Reliability.xml
+* Checks for HandleRefs.
+
+ 
+
+------------------------------------------------------------------------
+r416 | jessejones | 2007-09-21 08:15:09 -0700 (Fri, 21 Sep 2007) | 3 lines
+
+Added SerializeExceptionRule.
+
+
+------------------------------------------------------------------------
+r421 | jessejones | 2007-09-22 06:17:29 -0700 (Sat, 22 Sep 2007) | 3 lines
+
+Added SerializeExceptionMembersRule.
+
+
+------------------------------------------------------------------------
+r426 | jessejones | 2007-09-23 03:22:27 -0700 (Sun, 23 Sep 2007) | 40 lines
+
+Index: source/internal/rules/xml/Performance.xml
+Index: source/internal/rules/xml/Microsoft.xml
+Index: source/internal/rules/xml/Reliability.xml 					
+Index: source/internal/rules/xml/Design.xml
+* Fix compile errors.
+
+Index: IgnoreList.txt
+* Few more words.
+
+Index: nant.build
+* Exclude serialize exception rules.
+ 		
+Index: source/internal/rules/design/CLSCompliantRule.cs
+Index: source/internal/rules/design/UseFlagsAttributeRule.cs
+Index: source/internal/rules/reliability/STAThreadRule.cs
+Index: source/framework/DisableRuleAttribute.cs
+* Disable UseJurassicNaming for the class.
+
+Index: source/internal/rules/design/NativeMethodsRule.cs
+* Spelling.
+
+Index: source/internal/rules/design/EventHandlerRule.cs
+* String concat in loop.
+
+Index: source/internal/rules/design/ObsoleteMessageRule.cs
+* Private starts with Do.
+
+Index: source/internal/rules/design/SerializeExceptionMembersRule.cs
+Index: source/internal/CheckItem.cs
+* Static method.
+
+Index: source/internal/rules/correctness/Aspell.cs
+* Inherit from InvalidOperationException instead of Exception.
+
+Index: source/internal/rules/correctness/NativeAspell.cs
+* NativeAspell to NativeMethods.
+ 
+Index: source/internal/Violation.cs
+* Override Equals.
+
+------------------------------------------------------------------------
+r429 | jessejones | 2007-09-26 02:23:12 -0700 (Wed, 26 Sep 2007) | 40 lines
+
+Index: nant.build
+* Tar now tars binary and source separately.
+* Removed testall target.
+* Tar includes BumpBuildNumber script.
+
+Index: source/tests/rules/performance/UseDefaultInitTest.cs
+Index: source/internal/rules/xml/Performance.xml
+Index: source/internal/rules/performance/UseDefaultInitRule.cs
+Index: extras/evildoer/BadStruct.cs
+Index: extras/functest/Expected.xml
+Index: Smokey.files
+* Don't use this rule with value types.
+
+Index: source/tests/rules/design/AttributePropertiesTest.cs
+Index: source/internal/rules/design/AttributePropertiesRule.cs
+* Skip static fields.
+
+Index: source/internal/rules/design/HiddenMethodRule.cs
+* Skip virtual methods.
+
+Index: source/tests/rules/design/UseFlagsAttributeTest.cs
+Index: source/internal/rules/design/UseFlagsAttributeRule.cs
+* Skip enums with 2 or less non-zero values.
+
+Index: source/internal/rules/xml/Microsoft.xml
+* Don't recommend throwing IndexOutOfRangeException.
+
+Index: source/internal/rules/xml/Design.xml
+* Misspelled word.
+
+Index: source/internal/rules/xml/Correctness.xml
+* Fixed InternalError cause text (got zapped somehow).
+
+Index: BumpBuildNumber.sh
+* Fix touch so that it works on linux.
+
+Index: extras/evildoer/GoodDerived.cs
+* Added.
+
+
+------------------------------------------------------------------------
+r430 | jessejones | 2007-09-26 02:25:13 -0700 (Wed, 26 Sep 2007) | 3 lines
+
+Updated.
+
+
+------------------------------------------------------------------------
+r431 | jessejones | 2007-09-26 04:11:35 -0700 (Wed, 26 Sep 2007) | 13 lines
+
+Index: index.html
+Index: CHANGES
+Index: CHANGE_LOG
+Index: README
+* Updated.
+ 
+Index: source/internal/rules/xml/Design.xml
+* Tweaked formatting.
+
+Index: source/internal/rules/design/UseFlagsAttributeRule.cs
+* Make sure m_needsCheck is reset to false.
+
+
+------------------------------------------------------------------------
+r435 | jessejones | 2007-09-28 11:37:38 -0700 (Fri, 28 Sep 2007) | 14 lines
+
+Index: source/internal/rules/portability/SpecialFolderRule.cs
+Index: source/tests/rules/portability/SpecialFolderTest.cs
+Index: source/internal/rules/xml/Portability.xml
+* Added.
+
+Index: README
+Index: source/framework/Log.cs
+* Allow logging to stdout and stderr.
+
+Index: source/tests/rules/design/AttributePropertiesTest.cs
+Index: source/internal/rules/design/AttributePropertiesRule.cs
+* Ignore public fields.
+
+
+------------------------------------------------------------------------
+r439 | jessejones | 2007-09-29 12:38:53 -0700 (Sat, 29 Sep 2007) | 3 lines
+
+Added TempDirRule.
+
+
+------------------------------------------------------------------------
+r443 | jessejones | 2007-09-30 07:25:17 -0700 (Sun, 30 Sep 2007) | 13 lines
+
+Index: source/internal/rules/globalization/DataLocaleRule.cs
+Index: source/internal/rules/xml/Globalization.xml
+Index: source/tests/rules/globalization/DataLocaleTest.cs
+Index: source/internal/ViolationDatabase.cs
+* Added.
+
+Index: nant.build
+* Unit test references System.Data.dll.
+
+Index: source/internal/rules/portability/TempDirRule.cs
+* Don't try to substring an empty string.
+
+
+------------------------------------------------------------------------
+r448 | jessejones | 2007-10-01 13:37:18 -0700 (Mon, 01 Oct 2007) | 3 lines
+
+Added MessageBoxOptionsRule.
+
+
+------------------------------------------------------------------------
+r455 | jessejones | 2007-10-02 09:46:00 -0700 (Tue, 02 Oct 2007) | 3 lines
+
+Added BoolMarshalingRule.
+
+
+------------------------------------------------------------------------
+r463 | jessejones | 2007-10-03 14:39:47 -0700 (Wed, 03 Oct 2007) | 3 lines
+
+Added DeepInheritanceRule.
+
+
+------------------------------------------------------------------------
+r467 | jessejones | 2007-10-04 11:07:42 -0700 (Thu, 04 Oct 2007) | 3 lines
+
+Added BeforeEventRule.
+
+
+------------------------------------------------------------------------
+r468 | jessejones | 2007-10-05 14:25:51 -0700 (Fri, 05 Oct 2007) | 3 lines
+
+Added SuffixNameRule.
+
+
+------------------------------------------------------------------------
+r470 | jessejones | 2007-10-06 20:03:06 -0700 (Sat, 06 Oct 2007) | 37 lines
+
+Index: source/tests/rules/AssemblyTest.cs
+Index: source/tests/rules/MethodTest.cs
+Index: source/tests/rules/TypeTest.cs
+Index: source/tests/rules/EventTest.cs
+* We now load type information for dependent assemblies which will make rules needing
+  to walk class hierachies a lot easier to write.
+
+Index: source/framework/support/CecilExtensions.cs
+* Added a IsSubclassOf that takes a full name for the base class.
+
+Index: source/internal/rules/design/AttributePropertiesRule.cs
+* Uses a proper IsSubclassOf test.
+
+Index: source/internal/rules/xml/Reliability.xml
+Index: source/internal/rules/reliability/DisposeNativeResourcesRule.cs
+* Instead of checking for base class finalizers DisposeNativeResources checks for
+  overriden Dispose methods.
+  
+Index: source/framework/support/AssemblyCache.cs
+Index: source/internal/rules/microsoft/LargeStructRule.cs
+Index: source/internal/rules/design/HiddenMethodRule.cs
+Index: source/internal/rules/design/BeforeEventRule.cs
+Index: source/internal/rules/reliability/IsDisposable.cs
+* AssemblyCache takes a TypeReference instead of a MetadataToken so that it can
+  check dependent assemblies.
+  
+Index: nant.build
+* Removed -nologo from test target (started getting SIGILL with it which is kind of scary).
+
+Index: source/internal/rules/design/DeepInheritanceRule.cs
+* Added null check.
+
+Index: extras/evildoer/BadClass2.cs
+Index: extras/functest/Expected.xml
+* Added Bad5Attribute.
+
+
+------------------------------------------------------------------------
+r474 | jessejones | 2007-10-08 13:06:27 -0700 (Mon, 08 Oct 2007) | 28 lines
+
+Index: source/internal/rules/microsoft/CustomExceptionRule.cs
+Index: source/internal/rules/microsoft/SuffixNameRule.cs
+Index: source/internal/rules/microsoft/AttributesNeedUsageRule.cs
+Index: source/internal/rules/design/ExceptionConstructorsRule.cs
+Index: source/internal/rules/design/EventSignatureRule.cs
+Index: source/internal/rules/design/EventHandlerRule.cs
+Index: source/internal/rules/design/SerializeExceptionMembersRule.cs
+Index: source/internal/rules/globalization/DataLocaleRule.cs
+* Use IsSubclassOf instead of just checking the BaseType name.
+
+Index: source/internal/rules/microsoft/LargeStructRule.cs
+* Don't need stuff like System.Drawing.Color or System.Drawing.Point any more.
+
+Index: source/internal/rules/reliability/IsDisposable.cs
+Index: source/internal/rules/reliability/IsStandardDisposable.cs
+* Don't need IsStandardDisposable any more.
+
+Index: source/framework/support/CecilExtensions.cs
+* Added BaseImplements, ClassOrBaseImplements, and IsSameOrSubclassOf.
+
+Index: source/tests/rules/EventTest.cs
+Index: source/tests/rules/design/EventHandlerTest.cs
+Index: source/tests/rules/design/EventSignatureTest.cs
+* Can now specify used types.
+
+Index: source/framework/support/AssemblyCache.cs
+* Make sure type is not already in m_externalTypes before adding it.
+
+------------------------------------------------------------------------
+r481 | jessejones | 2007-10-13 16:36:13 -0700 (Sat, 13 Oct 2007) | 3 lines
+
+Added UnusedClassRule, SuffixNameRule, SuffixName2Rule, SuffixName3Rule, and PreferredTermRule.
+
+
+------------------------------------------------------------------------
+r483 | jessejones | 2007-10-14 16:27:57 -0700 (Sun, 14 Oct 2007) | 3 lines
+
+Added UnsealedAttributeRule.
+
+
+------------------------------------------------------------------------
+r487 | jessejones | 2007-10-15 18:59:03 -0700 (Mon, 15 Oct 2007) | 16 lines
+
+Index: source/internal/rules/performance/InlineStaticInitRule.cs
+Index: source/tests/rules/performance/InlineStaticInitTest.cs
+Index: source/internal/rules/xml/Performance.xml
+* Added.
+
+Index: source/internal/rules/microsoft/LargeStructRule.cs
+* Added infinite recursion check.
+* Added Int64 and UInt64 cases.
+
+Index: source/internal/rules/performance/UnusedClassRule.cs
+* Check for DisableRule in base classes/interfaces.
+
+Index: source/framework/support/CecilExtensions.cs
+Index: source/internal/CheckItem.cs
+* Added CustomAttributes.HasDisableRule.
+
+------------------------------------------------------------------------
+r491 | jessejones | 2007-10-16 20:56:20 -0700 (Tue, 16 Oct 2007) | 3 lines
+
+Added StringCompareRule.
+
+
+------------------------------------------------------------------------
+r493 | jessejones | 2007-10-17 18:03:12 -0700 (Wed, 17 Oct 2007) | 3 lines
+
+Added Const1Rule and Const2Rule.
+
+
+------------------------------------------------------------------------
+r496 | jessejones | 2007-10-21 18:48:36 -0700 (Sun, 21 Oct 2007) | 3 lines
+
+Added DeclareSecurityRule, BaseSerializable1Rule, and BaseSerializable2Rule.
+
+
+------------------------------------------------------------------------
+r498 | jessejones | 2007-10-29 15:56:59 -0700 (Mon, 29 Oct 2007) | 4 lines
+
+Added DefaultExceptionCtorRule, SerializableMethodsRule, SerializableCtorAccessRule, 
+NonSerializableFieldRule, and RequireSerializableCtorRule.
+
+
+------------------------------------------------------------------------
+r506 | jessejones | 2007-11-05 15:26:40 -0800 (Mon, 05 Nov 2007) | 3 lines
+
+Added OperatorAlternativeRule, UnusedMethodRule, CastOpAlternativeRule, PublicTypeRule, 
+and NoSerializableAttributeRule.
+
+------------------------------------------------------------------------
+r514 | jessejones | 2007-11-11 15:20:51 -0800 (Sun, 11 Nov 2007) | 4 lines
+
+Added EqualityOperatorRule, ImplicitCastRule, OptionalSerializationRule, NanTestRule,
+and SortedMethodsRule.
+
+
+------------------------------------------------------------------------
+r517 | jessejones | 2007-11-20 02:16:25 -0800 (Tue, 20 Nov 2007) | 27 lines
+
+Index: source/internal/rules/xml/Microsoft.xml
+Index: source/internal/rules/xml/Reliability.xml
+Index: source/internal/rules/xml/Performance.xml
+* Use "externally visible" instead of "publicly visible".
+
+Index: source/internal/rules/xml/Design.xml
+Index: source/internal/rules/design/OperatorAlternativeRule.cs
+* Require Equals if there is an operator!= method (instead of requiring Compare).
+
+Index: source/internal/rules/performance/Const1Rule.cs
+Index: source/internal/rules/design/AttributePropertiesRule.cs
+Index: source/internal/rules/reliability/DisposeNativeResourcesRule.cs
+Index: source/framework/SymbolTable.cs
+* Default SymbolTable ctor is now TEST only.
+
+Index: source/framework/SymbolTable.cs
+* Use ReflectionOnlyLoad instead of LoadFrom.
+* Check MethodEntry.LocalNamesAmbiguous.
+
+Index: source/framework/support/AssemblyCache.cs
+* FindType tries to shortcut the lookups via a cast.
+
+Index: extras/evildoer/BrokenStruct.cs
+Index: extras/evildoer/BadStruct.cs
+Index: extras/functest/Expected.xml
+Index: bin/tests_d.dll.config
+* Updated.
+------------------------------------------------------------------------
+r518 | jessejones | 2007-11-20 03:09:56 -0800 (Tue, 20 Nov 2007) | 16 lines
+
+Index: source/internal/rules/xml/Microsoft.xml
+* Spelling.
+
+Index: source/internal/rules/microsoft/TypedEnumeratorRule.cs
+Index: source/internal/rules/design/ImplementGenericCollectionRule.cs
+Index: source/internal/rules/design/TypedDictionaryRule.cs
+Index: source/internal/rules/design/TypedCollectionRule.cs
+Index: source/internal/rules/design/EventHandlerRule.cs
+Index: source/internal/rules/design/TypedListRule.cs
+Index: source/internal/rules/correctness/OptionalSerializationRule.cs
+Index: source/internal/CheckItem.cs
+Index: source/framework/support/Rule.cs
+Index: source/internal/rules/performance/NonGenericCollectionsRule.cs
+* Only check .Net 2.0 rules if the assembly is targeting .Net 2.0 or above.
+
+
+------------------------------------------------------------------------
+r519 | jessejones | 2007-11-22 18:33:25 -0800 (Thu, 22 Nov 2007) | 64 lines
+
+Index: source/framework/SymbolTable.cs
+* We now get a file name for a type if the type has constructors but no methods.
+
+Index: source/internal/rules/performance/InlineStaticInitRule.cs
+Index: source/internal/rules/design/UnusedMethodRule.cs
+* Ignore delegate classes.
+
+Index: source/internal/rules/microsoft/SuffixNameRule.cs
+Index: source/internal/rules/microsoft/SuffixName2Rule.cs
+Index: source/internal/rules/microsoft/SuffixName3Rule.cs
+* Only use if CanBreak.
+
+Index: source/internal/rules/xml/Reliability.xml
+* Changed some violations from warnings to errors.
+
+Index: source/tests/rules/misc/SortedMethodsTest.cs
+Index: source/internal/rules/misc/SortedMethodsRule.cs
+* Special case events, properties, and operators.
+
+Index: IgnoreList.txt
+* Updated.
+
+Index: README
+* DisableRuleAttribute should be sealed.
+
+Index: nant.build
+* Use exclude-check:D1031 instead of exclude-name:D1031.
+
+Index: source/framework/instructions/TypedInstructions.cs
+Index: source/tests/ValuesTest.cs
+Index: source/tests/DataFlowTest.cs
+Index: source/tests/V0.cs
+Index: source/tests/ControlFlowGraphTest.cs
+Index: source/internal/rules/microsoft/DestroyStackTraceRule.cs
+Index: source/framework/support/MethodInfo.cs
+Index: source/framework/support/RuleDispatcher.cs
+* Rename TypedInstructions TypedInstructionCollection.
+
+Index: source/internal/TextReport.cs
+* Don't use a static ctor.
+
+Index: source/internal/rules/xml/Portability.xml
+Index: source/internal/rules/portability/SpecialFolderRule.cs
+* Made a method static.
+
+Index: source/internal/rules/microsoft/AssemblyInfoRule.cs
+Index: source/internal/rules/design/CLSCompliantRule.cs
+Index: source/internal/rules/reliability/STAThreadRule.cs
+Index: source/internal/rules/correctness/OptionalSerializationRule.cs
+* Use new CustomAttributes.Has method.
+
+Index: source/internal/rules/microsoft/PreferredTermRule.cs
+* Use a StringBuilder instead of concatenating strings.
+
+Index: source/framework/support/advanced/TryCatches.cs
+Index: source/internal/rules/microsoft/SwallowExceptionRule.cs
+* Rename TryCatches TryCatchCollection.
+ 
+Index: source/framework/support/CecilExtensions.cs
+* Added CustomAttributeCollection.Has.
+
+Index: source/framework/support/Rule.cs
+* Disable UnusedClass violation.
+
+------------------------------------------------------------------------
+r520 | jessejones | 2007-11-22 18:34:35 -0800 (Thu, 22 Nov 2007) | 3 lines
+
+Renamed file.
+
+
+------------------------------------------------------------------------
+r521 | jessejones | 2007-11-22 19:38:01 -0800 (Thu, 22 Nov 2007) | 29 lines
+
+Index: source/internal/rules/reliability/BaseSerializable2Rule.cs
+* Check for any base GetObjectData call instead of just the immediate base.
+ 
+Index: source/internal/rules/correctness/BaseDisposableRule.cs
+* Check for any base Dispose call instead of just the immediate base.
+ 
+Index: source/internal/rules/microsoft/LargeStructRule.cs
+* Special case System.Double to avoid infinite recursion.
+
+Index: source/internal/rules/xml/Microsoft.xml
+* EqualsRequiresNullCheck1 rule also fires for infinitely recursive equals methods.
+
+Index: source/internal/rules/design/DeepInheritanceRule.cs
+* Print the depth if the rule fires.
+
+Index: source/internal/rules/reliability/NonSerializableFieldRule.cs
+* Print the field name if the rule fires.
+
+Index: source/internal/rules/performance/NotInstantiatedRule.cs
+Index: source/internal/rules/xml/Performance.xml
+Index: source/framework/support/Rule.cs
+Index: extras/evildoer/BadNaming.cs
+Index: extras/functest/Expected.xml
+* Renamed UnusedClass rule NotInstantiated.
+
+Index: source/framework/support/AssemblyCache.cs
+* Added FindBase.
+
+
+------------------------------------------------------------------------
+r522 | jessejones | 2007-12-08 22:44:58 -0800 (Sat, 08 Dec 2007) | 3 lines
+
+Updated.
+
+
+------------------------------------------------------------------------
+r525 | jessejones | 2007-12-10 17:16:27 -0800 (Mon, 10 Dec 2007) | 9 lines
+
+Index: source/internal/rules/security/APTCA1Rule.cs
+Index: source/internal/ViolationDatabase.cs
+Index: source/internal/rules/xml/Security.xml
+* Added.
+
+Index: source/framework/support/AssemblyCache.cs
+* Added FindAssembly.
+
+
+------------------------------------------------------------------------
+r526 | jessejones | 2007-12-21 09:30:20 -0800 (Fri, 21 Dec 2007) | 34 lines
+
+Index: source/internal/rules/microsoft/SuffixName2Rule.cs
+Index: source/internal/rules/microsoft/SuffixNameRule.cs
+* Classes that implement IDictionary should have a Dictionary suffix, not a Collection suffix.
+
+Index: source/internal/rules/design/TypedCollectionRule.cs
+* Don't complain about Collections.IDictionary and Collections.IList (TypedDictionary
+  and TypedList will handle it).
+  
+Index: nant.build
+Index: extras/functest/Analyze.cs
+Index: extras/functest/Program.cs
+Index: extras/functest/Options.cs
+Index: extras/functest/Expected.xml
+* Functional test can now test multiple assemblies.
+* Added functional tests for a few rules which were not regression tested.
+* Moved expected.xml files into the assembly being tested.
+
+Index: extras/evildoer/BadClass.cs
+* Added StringSpelling test.
+
+Index: extras/evildoer/BigNamespace.cs
+* Added LargeNamespace test.
+
+Index: extras/evildoer/Untyped.cs
+* Added TypedList and TypedDictionary tests.
+
+Index: extras/miscevil/NoSecurity.xml
+Index: extras/miscevil/NoSecurity.cs
+* Added DeclareSecurity, AssemblyInfo, and STAThread tests.
+
+Index: extras/miscevil/APTCA.cs
+* Added APTCA1 test.
+
+
+------------------------------------------------------------------------
+r527 | jessejones | 2007-12-22 14:19:38 -0800 (Sat, 22 Dec 2007) | 18 lines
+
+Index: source/internal/rules/security/APTCA1Rule.cs
+Index: source/internal/rules/security/BaseAPTCA.cs
+Index: extras/miscevil/APTCA.cs
+* Moved DoIsFullyTrusted into a base class.
+* Don't complain if the call is a base method call (APTCA2 will handle that case).
+
+Index: source/internal/rules/security/APTCA2Rule.cs
+Index: extras/miscevil/APTCA2.cs
+Index: extras/miscevil/APTCA2.xml
+Index: extras/miscevil/FullTrust.cs
+* Added.
+
+Index: nant.build
+Index: extras/miscevil/APTCA3.cs
+Index: extras/miscevil/APTCA3.xml
+* Added APTCA3 to test good code.
+
+
+------------------------------------------------------------------------
+r528 | jessejones | 2007-12-23 16:18:21 -0800 (Sun, 23 Dec 2007) | 3 lines
+
+Added ReadOnlyArrayRule.
+
+
+------------------------------------------------------------------------
+r529 | jessejones | 2007-12-23 19:55:16 -0800 (Sun, 23 Dec 2007) | 12 lines
+
+Index: source/internal/rules/security/KeepAliveRule.cs
+Index: source/internal/rules/xml/Security.xml
+Index: source/tests/rules/security/KeepAliveTest.cs
+* Added.
+
+Index: source/internal/rules/xml/Performance.xml
+Index: source/internal/rules/xml/Microsoft.xml
+Index: source/internal/rules/xml/Reliability.xml
+Index: source/internal/rules/xml/Design.xml
+Index: source/internal/rules/xml/Correctness.xml
+* Fixed IntPtr sample code so that it calls GC.KeepAlive.
+
+------------------------------------------------------------------------
+r532 | jessejones | 2008-01-09 02:50:57 -0800 (Wed, 09 Jan 2008) | 14 lines
+
+Index: source/internal/rules/security/IndirectLinkDemandRule.cs
+Index: source/tests/rules/security/IndirectLinkDemandTest.cs
+Index: source/internal/rules/xml/Security.xml
+* Added.
+
+Index: source/framework/support/advanced/CallGraph.cs
+* Added Entries method.
+
+Index: extras/evildoer/BadDisposable.cs
+Index: extras/evildoer/Expected.xml
+Index: extras/evildoer/GoodDisposable.cs
+* Expect KeepAlive violation.
+
+
+------------------------------------------------------------------------
+r533 | jessejones | 2008-01-18 02:05:06 -0800 (Fri, 18 Jan 2008) | 16 lines
+
+Index: source/tests/rules/security/UnmanagedCodeSecurityTest.cs
+Index: source/tests/rules/security/PermitDenySecurityTest.cs
+Index: source/internal/rules/xml/Security.xml
+Index: source/internal/rules/security/PermitDenySecurityRule.cs
+Index: source/internal/rules/security/ImperativeSecurityRule.cs
+Index: source/internal/rules/security/UnmanagedCodeSecurityRule.cs
+Index: source/tests/rules/security/ImperativeSecurityTest.cs
+* Added.
+
+Index: extras/evildoer/BadClass.cs
+Index: extras/evildoer/Expected.xml
+Index: extras/miscevil/APTCA3.cs
+Index: extras/miscevil/APTCA3.xml
+* Updated.
+
+
+------------------------------------------------------------------------
+r534 | jessejones | 2008-01-19 02:24:26 -0800 (Sat, 19 Jan 2008) | 3 lines
+
+Added InternalInterfaceRule and VisibleEventHandlerRule.
+
+
+------------------------------------------------------------------------
+r535 | jessejones | 2008-01-23 00:33:01 -0800 (Wed, 23 Jan 2008) | 4 lines
+
+Added ConflictingTransparencyRule, SecureAssertsRule, InternalInterfaceRule, 
+TransparentAssertRule1, TransparentAssertRule2, and SecureGetObjectDataRule.
+
+
+------------------------------------------------------------------------
+r536 | jessejones | 2008-01-28 03:30:52 -0800 (Mon, 28 Jan 2008) | 3 lines
+
+Added PartitionAssemblyRule and SecureOverridesRule.
+
+
+------------------------------------------------------------------------
+r537 | jessejones | 2008-01-31 02:43:33 -0800 (Thu, 31 Jan 2008) | 4 lines
+
+Added NonVirtualInheritanceDemandRule, NamedPermissionSetRule, and
+SealedInheritanceDemandRule.
+
+
+------------------------------------------------------------------------
+r538 | jessejones | 2008-01-31 05:40:12 -0800 (Thu, 31 Jan 2008) | 14 lines
+
+Index: source/internal/rules/portability/PathCombineRule.cs
+Index: source/tests/rules/portability/PathCombineTest.cs
+Index: source/internal/rules/xml/Portability.xml
+* Added.
+
+Index: source/internal/AnalyzeAssembly.cs
+* Add the directory of the assembly we're checking to Cecil's search paths so
+that dependant assemblies in that assembly are correctly loaded.
+
+Index: source/internal/rules/portability/TempDirRule.cs
+Index: extras/miscevil/APTCA3.cs
+* Cosmetics.
+
+
+------------------------------------------------------------------------
+r539 | jessejones | 2008-02-04 06:22:15 -0800 (Mon, 04 Feb 2008) | 22 lines
+
+Index: source/internal/GetOptions.cs
+Index: nant.build
+Index: source/tests/GetOptionsTest.cs
+Index: source/internal/AssemblyInfo.cs
+Index: source/internal/Options.cs
+Index: source/internal/Program.cs
+Index: TODO
+Index: extras/functest/AssemblyInfo.cs
+Index: extras/functest/Options.cs
+Index: extras/functest/Program.cs
+* Replaced Mono.GetOptions with a much simpler options processor.
+
+Index: source/tests/rules/design/EventHandlerTest.cs
+Index: source/tests/rules/design/EventSignatureTest.cs
+Index: source/tests/rules/design/BeforeEventTest.cs
+Index: source/tests/rules/misc/SortedMethodsTest.cs
+* Work around some new compiler warnings in mono 1.2.6
+
+Index: source/internal/rules/security/ReadOnlyArrayRule.cs
+* Cecil in mono 1.2.6 renamed FieldDefinition.IsReadOnly IsInitOnly.
+
+
+------------------------------------------------------------------------
+r540 | jessejones | 2008-02-05 01:41:46 -0800 (Tue, 05 Feb 2008) | 21 lines
+
+Index: source/framework/support/RuleDispatcher.cs
+* Use MethodInfo directly instead of creating a delegate using CreateDelegate. For some reason
+  this is a bit slower but works on .NET (Mono's CreateDelegate is less type safe than it should
+  be).
+  
+Index: source/framework/SymbolTable.cs
+* Refactored and tweaked so that we run OK on .NET where we can't use Mono.CompilerServices.SymbolWriter.
+
+Index: source/framework/support/advanced/ControlFlowGraph.cs
+Index: source/internal/rules/microsoft/SwallowExceptionRule.cs
+* Check Leave_S as well as Leave (the .NET compiler generates Leave_S but Mono
+  doesn't seem to).
+
+Index: source/internal/rules/xml/Security.xml
+* Mention Mono's permview.
+
+Index: source/internal/Options.cs
+Index: extras/functest/Options.cs
+* Removed obsolete code.
+
+
+------------------------------------------------------------------------
+r541 | jessejones | 2008-02-06 01:19:49 -0800 (Wed, 06 Feb 2008) | 73 lines
+
+Index: source/framework/support/AssemblyCache.cs
+* Now handles (more or less) types with the same full name defined in multiple assemblies.
+
+Index: source/internal/rules/security/ImperativeSecurityRule.cs
+* Ignore methods in classes whose name contains "Permission".
+
+Index: source/internal/rules/portability/PathCombineRule.cs
+Index: source/tests/rules/portability/PathCombineTest.cs
+Index: source/internal/rules/xml/Portability.xml
+* Ignore "</" and "//".
+
+Index: IgnoreList.txt
+Index: nant.build
+Index: source/tests/GetOptionsTest.cs
+* Updated.
+
+Index: source/internal/DumpDisposable.cs
+* Removed.
+
+Index: source/internal/HtmlViolations.cs
+* Cosmetics.
+
+Index: source/internal/rules/xml/Performance.xml
+Index: source/internal/rules/xml/Microsoft.xml
+Index: source/internal/rules/xml/Security.xml
+Index: source/internal/rules/xml/Design.xml
+* Fixed compiler errors.
+
+Index: source/internal/rules/security/BaseAPTCA.cs
+Index: source/internal/rules/security/APTCA1Rule.cs
+Index: source/internal/rules/security/APTCA2Rule.cs
+Index: extras/miscevil/APTCA3.cs
+Index: extras/miscevil/APTCA.xml
+Index: extras/miscevil/APTCA2.xml
+Index: extras/miscevil/APTCA3.xml
+Index: extras/miscevil/APTCA.cs
+Index: extras/miscevil/APTCA2.cs
+* Renamed APTCA Aptca.
+
+Index: source/internal/rules/security/KeepAliveRule.cs
+* Check for empty body.
+
+Index: source/internal/rules/security/PartitionAssemblyRule.cs
+Index: source/internal/rules/reliability/BaseSerializable2Rule.cs
+Index: source/internal/rules/correctness/BaseDisposableRule.cs
+* Don't concat strings in loops.
+
+Index: source/internal/rules/correctness/Aspell.cs
+* Call GC.KeepAlive.
+
+Index: source/internal/rules/security/NonVirtualInheritanceDemandRule.cs
+Index: source/internal/rules/security/InternalInterfaceRule.cs
+Index: source/internal/rules/security/SecureOverridesRule.cs
+Index: source/internal/rules/security/SealedInheritanceDemandRule.cs
+Index: source/internal/rules/misc/SortedMethodsRule.cs
+* Made some methods static.
+
+Index: source/internal/ViolationDatabase.cs
+* Don't expose const arrays.
+
+Index: source/internal/GetOptions.cs
+Index: source/internal/Program.cs
+Index: extras/functest/Program.cs
+* Use the correct suffix for MalformedCommandLineException.
+
+Index: source/internal/CheckXml.cs
+* Special case code that should be split and compiled separately.
+* Add references as required.
+ 			
+Index: source/framework/support/RuleDispatcher.cs
+* Call Profile.End in a finally block.
+
+
+------------------------------------------------------------------------
+r542 | jessejones | 2008-02-06 02:39:53 -0800 (Wed, 06 Feb 2008) | 10 lines
+
+Index: CHANGES
+Index: CHANGE_LOG
+Index: index.html
+Index: SysIgnore.txt
+* Updated.
+
+Index: nant.build
+* Added smokey_d.exe.config to tar_source.
+
+
+------------------------------------------------------------------------
+r544 | jessejones | 2008-02-12 20:12:37 -0800 (Tue, 12 Feb 2008) | 54 lines
+
+Index: source/internal/rules/reliability/IdenticalCaseRule.cs
+Index: source/tests/rules/reliability/IdenticalCaseTest.cs
+* Added.
+
+Index: source/internal/rules/reliability/RandomUsedOnceRule.cs
+Index: source/tests/rules/reliability/RandomUsedOnceTest.cs
+* Added.
+
+Index: source/internal/rules/reliability/IdenticalBranchRule.cs
+Index: source/tests/rules/reliability/IdenticalBranchTest.cs
+* Added.
+
+Index: source/internal/rules/design/DontExitRule.cs
+Index: source/tests/rules/design/DontExitTest.cs
+* Added.
+
+Index: source/internal/rules/design/BadExitRule.cs
+Index: extras/evildoer/GoodClass.cs
+Index: extras/evildoer/Expected.xml
+Index: extras/evildoer/BadClass2.cs
+* Added.
+
+Index: source/internal/rules/correctness/IntegerMultiplyRule.cs
+Index: source/tests/rules/correctness/IntegerMultiplyTest.cs
+Index: source/internal/rules/correctness/IntegerHelpers.cs
+* Added.
+
+Index: source/internal/rules/correctness/IntegerDivisionRule.cs
+Index: source/tests/rules/correctness/IntegerDivisionTest.cs
+* Added.
+
+Index: source/internal/rules/correctness/AverageRule.cs
+Index: source/tests/rules/correctness/AverageTest.cs
+* Added.
+
+Index: source/internal/rules/xml/Microsoft.xml
+Index: source/internal/rules/xml/Reliability.xml
+Index: source/internal/rules/xml/Design.xml
+Index: source/internal/rules/xml/Correctness.xml
+* Tweaked comments in the Dispose code examples to clarify the issues involved when
+  using managed objects from a finalizer.
+
+Index: source/framework/SymbolTable.cs
+Index: source/framework/instructions/loads/LoadLocal.cs
+* Added some comments.
+
+Index: source/framework/instructions/Conv.cs
+Index: source/framework/instructions/TypedInstructions.cs
+* Added.
+
+Index: source/framework/support/CecilExtensions.cs
+* Added Matches(Instruction, Instruction).
+
+
+------------------------------------------------------------------------
+r545 | jessejones | 2008-02-18 18:24:42 -0800 (Mon, 18 Feb 2008) | 10 lines
+
+Index: gen_match.py
+Index: nant.build
+* Added.
+
+Index: source/internal/rules/correctness/StringIndexOfRule.cs
+Index: source/tests/rules/correctness/StringIndexOfTest.cs
+Index: source/internal/rules/xml/Correctness.xml
+* Added.
+
+
+------------------------------------------------------------------------
+r546 | jessejones | 2008-02-19 04:06:31 -0800 (Tue, 19 Feb 2008) | 4 lines
+
+Added StringIndexOfRule, ArrayIndexOfRule, UnusedNewRule, UnusedStoreRule,
+and BadRegExRule.
+
+
+------------------------------------------------------------------------
+r547 | jessejones | 2008-02-21 23:45:58 -0800 (Thu, 21 Feb 2008) | 25 lines
+
+Index: source/internal/rules/performance/ExplicitGCRule.cs
+Index: source/tests/rules/performance/ExplicitGCTest.cs
+Index: source/internal/rules/xml/Performance.xml
+* Added.
+
+Index: source/internal/rules/design/ArrayToStringRule.cs
+Index: source/tests/rules/design/ArrayToStringTest.cs
+Index: source/internal/rules/xml/Design.xml
+* Added. This is the last FindBugs rule (for this version anyway).
+ 
+Index: source/framework/instructions/loads/LoadArg.cs
+Index: source/internal/rules/performance/UseDefaultInitRule.cs
+Index: source/internal/rules/performance/MethodCanBeMadeStaticRule.cs
+Index: source/internal/rules/microsoft/LockThisRule.cs
+Index: source/internal/rules/design/UseBaseTypesRule.cs
+Index: source/internal/rules/reliability/CompareFloatsRule.cs
+Index: source/internal/rules/reliability/WeakIdentityLockRule.cs
+Index: source/internal/rules/correctness/IntegerHelpers.cs
+Index: source/framework/support/advanced/ValuesTracker.cs
+Index: source/framework/support/advanced/ValuesLattice.cs
+* Renamed LoadArg::Argument Arg and cleared up the semantics: if the value
+  is zero it refers to the 'this' pointer, if it's positive it refers to
+  a method argument.
+  
+
+------------------------------------------------------------------------
+r548 | jessejones | 2008-02-26 22:05:22 -0800 (Tue, 26 Feb 2008) | 35 lines
+
+Index: source/internal/rules/design/CircularReferenceRule.cs
+Index: extras/evildoer/Expected.xml
+Index: extras/evildoer/Cyclic.cs
+* Added.
+
+Index: source/internal/rules/design/IdenticalMethodsRule.cs
+Index: extras/evildoer/Identical.cs
+* Added.
+
+Index: source/framework/support/advanced/ClassifyMethod.cs
+Index: extras/evildoer/BadClass2.cs
+* Finalizers are now treated as thread roots.
+
+Index: source/internal/Program.cs
+Index: source/framework/Log.cs
+Index: extras/functest/Analyze.cs
+* Added -append option to force appending to the log file.
+* Functest now uses -append so we can get a log for each assembly we test.
+
+Index: source/framework/support/advanced/ValuesState.cs
+Index: source/framework/support/advanced/TryCatches.cs
+Index: source/framework/Location.cs
+Index: source/framework/support/MethodInfo.cs
+Index: source/framework/support/advanced/BasicBlock.cs
+Index: source/framework/Profile.cs
+Index: source/tests/rules/reliability/ConsistentEqualityTest.cs
+Index: source/internal/rules/xml/Performance.xml
+Index: source/internal/rules/xml/Microsoft.xml
+Index: source/internal/rules/xml/Reliability.xml
+Index: source/internal/rules/xml/Design.xml
+* Use an unchecked statement and + for GetHashCode instead of ^.
+
+Index: index.html
+* Mention Findbugs.
+
+------------------------------------------------------------------------
+r549 | jessejones | 2008-02-29 07:47:44 -0800 (Fri, 29 Feb 2008) | 34 lines
+
+Index: source/internal/rules/reliability/HashOverflowRule.cs
+Index: source/tests/rules/reliability/HashOverflowTest.cs
+Index: source/internal/rules/xml/Reliability.xml
+* Added.
+
+Index: source/internal/rules/reliability/UncheckedAssemblyRule.cs
+Index: extras/miscevil/APTCA3.cs
+Index: extras/miscevil/APTCA3.xml
+* Added.
+
+Index: source/internal/rules/correctness/IntegerDivisionRule.cs
+Index: source/tests/rules/correctness/IntegerDivisionTest.cs
+* Added.
+
+Index: source/internal/rules/mono/NamingUtils.cs
+* Fixed an off-by-one error which resulted in index exceptions.
+
+Index: source/framework/support/advanced/ValuesTracker.cs
+* GetStackIndex no longer asserts if nth is too large (it can be if the code
+  doesn't match what we expect).
+  
+Index: source/framework/support/advanced/DataFlow.cs
+* Skip methods with more than 256 local variables (they can take a long time to
+  process).
+  
+Index: source/internal/rules/xml/Design.xml
+* Made the OverridenFinalizer cause text less confusing.
+
+Index: source/internal/rules/design/IdenticalMethodsRule.cs
+* Require 40 instead of 30 instructions.
+* No longer adds an extra new line to details.
+* Check for float and double operands.
+ 			
+
+------------------------------------------------------------------------
+r550 | jessejones | 2008-03-07 21:19:53 -0800 (Fri, 07 Mar 2008) | 44 lines
+
+Index: source/internal/rules/design/TemplateMethodRule.cs
+Index: source/tests/rules/design/TemplateMethodTest.cs
+Index: source/internal/rules/xml/Design.xml
+* Added.
+
+Index: source/internal/rules/design/EmptyOverrideRule.cs
+Index: source/tests/rules/design/EmptyOverrideTest.cs
+Index: source/internal/rules/xml/Correctness.xml
+* Added.
+
+Index: source/internal/rules/correctness/IgnoredReturnRule.cs
+Index: source/tests/rules/correctness/IgnoredReturnTest.cs
+* Added.
+
+Index: source/internal/rules/correctness/UnrelatedEqualsRule.cs
+Index: source/tests/rules/correctness/UnrelatedEqualsTest.cs
+* Added.
+
+Index: source/internal/rules/correctness/NullFieldRule.cs
+Index: extras/evildoer/BadClass.cs
+Index: extras/evildoer/GoodClass.cs
+Index: extras/evildoer/Expected.xml
+Index: extras/evildoer/GoodClass2.cs
+* Added.
+  
+Index: source/internal/AnalyzeAssembly.cs
+Index: source/framework/support/RuleDispatcher.cs
+Index: source/framework/support/AssemblyCache.cs
+Index: source/framework/support/Demarcated.cs
+* MethodInfo functions are now called for each method in a type (instead of in 
+  random order) and are bracketed by calls to new BeginMethods and EndMethods
+  types.
+   		
+Index: source/framework/instructions/Box.cs
+* Added Type property.
+
+Index: source/framework/instructions/loads/LoadStaticFieldAddress.cs
+Index: source/framework/instructions/TypedInstructions.cs
+* Added.
+
+Index: source/internal/rules/design/CircularReferenceRule.cs
+* Tie-breaker compares type name strings instead of hash codes
+  (hashes aren't stable across runs).
+
+------------------------------------------------------------------------
+r551 | jessejones | 2008-03-08 06:23:43 -0800 (Sat, 08 Mar 2008) | 32 lines
+
+Index: source/internal/rules/design/GodClassRule.cs
+Index: extras/evildoer/BadClass2.cs
+Index: source/internal/rules/xml/Design.xml
+* Added.
+ 
+Index: source/internal/rules/xml/Correctness.xml
+* Added code example to IgnoredReturn.
+* Fixed UnrelatedEquals check id.
+
+Index: source/internal/rules/performance/NotInstantiatedRule.cs
+* Added some logging.
+
+Index: source/internal/rules/design/IdenticalMethodsRule.cs
+* Sort the bad methods so that the results are stable across runs.
+
+Index: source/framework/support/RuleDispatcher.cs
+* Added debug code to assert that check ids for two rules don't match.
+
+Index: source/internal/rules/correctness/IgnoredReturnRule.cs
+Index: source/internal/rules/correctness/UnrelatedEqualsRule.cs
+Index: source/internal/rules/correctness/AssemblyAttributeSpellingRule.cs
+* Fixed check id.
+
+Index: extras/evildoer/GoodManagedDisposable.cs
+Index: extras/evildoer/GoodClass.cs
+Index: extras/evildoer/BadDisposable2.cs
+Index: extras/evildoer/GoodDisposable2.cs
+Index: extras/evildoer/GoodDisposable.cs
+Index: extras/evildoer/GoodClass2.cs
+* Use Ignore class.
+
+
+------------------------------------------------------------------------
+r552 | jessejones | 2008-03-11 09:08:55 -0700 (Tue, 11 Mar 2008) | 13 lines
+
+Index: source/internal/rules/design/SchizoidTypeRule.cs
+Index: source/internal/rules/xml/Design.xml
+Index: extras/evildoer/Expected.xml
+Index: extras/evildoer/Cohesion.cs
+* Added.
+ 
+Index: source/framework/support/RuleDispatcher.cs
+* Logs if a rule throws an exception.
+
+Index: unused/MaximizeCohesionRule.cs
+* Added.
+
+
+------------------------------------------------------------------------
+r553 | jessejones | 2008-03-13 06:31:32 -0700 (Thu, 13 Mar 2008) | 3 lines
+
+Getting rid of this rule.
+
+
+------------------------------------------------------------------------
+r554 | jessejones | 2008-03-13 20:52:01 -0700 (Thu, 13 Mar 2008) | 36 lines
+
+Index: source/internal/rules/design/TooManyArgsRule.cs
+Index: source/tests/rules/design/TooManyArgsTest.cs
+Index: source/internal/rules/xml/Design.xml
+Index: extras/evildoer/BrokenClass.cs
+* Added.
+
+Index: source/internal/rules/performance/MethodCanBeMadeStaticRule.cs
+Index: source/internal/rules/xml/Performance.xml
+Index: source/tests/rules/performance/MethodCanBeMadeStaticTest.cs
+Index: extras/evildoer/BadClass.cs
+Index: extras/evildoer/Expected.xml
+* Removed.
+
+Index: source/internal/rules/design/ClassCanBeMadeStaticRule.cs
+Index: source/tests/rules/design/ClassCanBeMadeStaticTest.cs
+Index: extras/evildoer/BigNamespace.cs
+* Instead of no non-static members this now checks for classes which
+  inherit from System.Object, have no non-static fields, and declare
+  no new virtual methods.
+
+Index: source/internal/Ignore.cs
+Index: source/internal/HtmlViolations.cs
+Index: source/internal/rules/microsoft/LockThisRule.cs
+Index: source/internal/ViolationDatabase.cs
+* Use new Ignore value class.
+
+Index: source/internal/rules/reliability/IdenticalCaseRule.cs
+* Sort the cases so that we can figure the number of instructions in each case.
+ 			
+Index: source/internal/rules/correctness/IgnoredReturnRule.cs
+* Ignore ignore of StringBuilder.Append.
+
+Index: source/internal/rules/correctness/NullFieldRule.cs
+* Ignore compiler controlled fields.
+
+
+------------------------------------------------------------------------
+r555 | jessejones | 2008-03-16 00:06:09 -0700 (Sun, 16 Mar 2008) | 49 lines
+
+Index: source/internal/rules/correctness/RecursiveEqualityRule.cs
+Index: source/internal/rules/xml/Correctness.xml
+Index: extras/evildoer/BadDisposable.cs
+Index: extras/evildoer/Expected.xml
+* Added.
+
+Index: source/internal/Program.cs
+* Main no longer returns 1 if the only violations are nitpicks.
+
+Index: source/internal/TextReport.cs
+Index: source/internal/HtmlReport.cs
+* Moved DoGetViolations into a helper class.
+* Text report dashes used to separate violations are now fixed length.
+* Prints the number of nitpick violations.
+
+Index: source/internal/rules/xml/Design.xml
+* Made DeepInheritance a nitpick.
+
+Index: source/internal/rules/microsoft/EqualsRequiresNullCheckRule.cs
+Index: source/internal/rules/microsoft/EqualsCantCastRule.cs
+Index: source/internal/rules/correctness/NullCheck.cs
+Index: source/framework/support/MethodInfo.cs
+Index: source/framework/support/advanced/ValuesTracker.cs
+Index: source/framework/support/advanced/ValuesState.cs
+Index: source/framework/support/advanced/ValuesLattice.cs
+* Made Smokey.Framework.Support.Advanced.Values a namespace instead of a class.
+
+Index: source/internal/rules/design/ClassCanBeMadeStaticRule.cs
+* Ignores classes with constructors but no other methods.
+
+Index: source/internal/rules/design/SchizoidTypeRule.cs
+* Don't count private methods or properties when determining whether we have
+  enough methods to put into a new class.
+  
+Index: source/internal/rules/design/IdenticalMethodsRule.cs
+* Fix the tie breaker code so our results are repeatable across runs.
+
+Index: source/internal/rules/correctness/BadRegExRule.cs
+Index: source/internal/Watchdog.cs
+Index: source/internal/AnalyzeAssembly.cs
+Index: source/framework/support/RuleDispatcher.cs
+Index: source/framework/instructions/TypedInstructions.cs
+Index: source/framework/support/advanced/BasicBlock.cs
+Index: source/framework/support/advanced/ClassifyMethod.cs
+Index: source/framework/support/advanced/TryCatches.cs
+Index: source/framework/support/Rule.cs
+* Minor smoke test fixes.
+
+
+------------------------------------------------------------------------
+r556 | jessejones | 2008-03-17 01:17:23 -0700 (Mon, 17 Mar 2008) | 49 lines
+
+Index: source/internal/ViolationDatabase.cs
+Index: source/internal/CheckItem.cs
+Index: source/internal/XmlReport.cs
+Index: source/internal/HtmlReport.cs
+Index: source/internal/AnalyzeAssembly.cs
+Index: source/internal/Violation.cs
+Index: source/internal/rules/xml/Schema.xml
+Index: source/internal/rules/xml/Performance.xml
+Index: source/internal/rules/xml/Breaking.txt
+Index: source/internal/rules/xml/Portability.xml
+Index: source/internal/rules/xml/Microsoft.xml
+Index: source/internal/rules/xml/Security.xml
+Index: source/internal/rules/xml/Mono.xml
+Index: source/internal/rules/xml/Reliability.xml
+Index: source/internal/rules/xml/Design.xml
+Index: source/internal/rules/xml/Correctness.xml
+Index: source/internal/rules/xml/Misc.xml
+Index: source/internal/rules/xml/Globalization.xml
+Index: source/internal/TextReport.cs
+Index: extras/functest/Smoke.schema.xml
+* Violations now have a breaking property.
+
+Index: source/internal/rules/performance/UnsealedAttributeRule.cs
+Index: source/internal/rules/microsoft/EnumsNeedZeroRule.cs
+Index: source/internal/rules/microsoft/VisibleFieldsRule.cs
+Index: source/internal/rules/microsoft/SuffixName2Rule.cs
+Index: source/internal/rules/microsoft/SuffixName3Rule.cs
+Index: source/internal/rules/microsoft/FlagsUseNoneRule.cs
+Index: source/internal/rules/microsoft/CustomExceptionRule.cs
+Index: source/internal/rules/microsoft/ICloneableRule.cs
+Index: source/internal/rules/microsoft/LargeStructRule.cs
+Index: source/internal/rules/microsoft/PluralEnumFlagsRule.cs
+Index: source/internal/rules/microsoft/SynchronizedAttributeRule.cs
+Index: source/internal/rules/microsoft/SuffixNameRule.cs
+Index: source/internal/rules/design/ImplementGenericCollectionRule.cs
+Index: source/internal/rules/design/TypedDictionaryRule.cs
+Index: source/internal/rules/design/UseBaseTypesRule.cs
+Index: source/internal/rules/design/ImplicitCastRule.cs
+Index: source/internal/rules/design/UseFlagsAttributeRule.cs
+Index: source/internal/rules/design/TypedCollectionRule.cs
+Index: source/internal/rules/design/LargeNamespaceRule.cs
+Index: source/internal/rules/design/TypedListRule.cs
+Index: source/framework/support/CecilExtensions.cs
+* Removed CanBreak.
+
+Index: source/internal/Program.cs
+* Added -ignore-breaking switch.
+
+
+------------------------------------------------------------------------
+r557 | jessejones | 2008-03-19 20:23:59 -0700 (Wed, 19 Mar 2008) | 53 lines
+
+Index: source/internal/rules/design/IdenticalCodeBlocksRule.cs
+Index: source/internal/rules/xml/Design.xml
+Index: extras/evildoer/IdenticalBlock.cs
+Index: extras/evildoer/Expected.xml
+* Added (idea is from Gendarme).
+
+Index: source/internal/rules/design/GuiUsesConsoleRule.cs
+Index: extras/miscevil/NoSecurity.xml
+Index: extras/miscevil/NoSecurity.cs
+Index: extras/evildoer/GoodManagedDisposable.cs
+Index: extras/evildoer/BadClass.cs
+Index: extras/evildoer/BadStruct2.cs
+Index: extras/evildoer/GoodClass.cs
+Index: extras/evildoer/BadDisposable2.cs
+Index: extras/evildoer/BadNaming.cs
+Index: extras/evildoer/GoodDisposable2.cs
+Index: extras/evildoer/BadNamespaces.cs
+Index: extras/evildoer/GoodDerived.cs
+Index: extras/evildoer/Identical.cs
+Index: extras/evildoer/GoodDisposable.cs
+Index: extras/evildoer/BadClass2.cs
+Index: extras/evildoer/GoodClass2.cs
+Index: extras/evildoer/BrokenClass.cs
+Index: extras/miscevil/FullTrust.cs
+Index: extras/evildoer/Cohesion.cs
+Index: extras/miscevil/APTCA.cs
+Index: extras/miscevil/APTCA2.cs
+Index: Smokey.files
+* Added (idea is from Gendarme).
+
+Index: source/internal/rules/reliability/CtorCallsVirtualRule.cs
+* Ignore final methods.
+
+Index: source/internal/rules/design/TooManyArgsRule.cs
+Index: source/tests/rules/design/TooManyArgsTest.cs
+* Ignore p/invokes.
+
+Index: source/framework/instructions/stores/StoreLocal.cs
+Index: source/framework/instructions/loads/LoadLocal.cs
+* Added Type property.
+
+Index: source/framework/instructions/loads/LoadLocalAddress.cs
+Index: source/framework/instructions/loads/LoadPointer.cs
+Index: source/framework/instructions/TypedInstructions.cs
+* Added.
+
+Index: source/framework/support/CecilExtensions.cs
+* Added IsGui.
+* Matches special cases ParameterReference (with more to come here).
+
+
+
+
+------------------------------------------------------------------------
+r558 | jessejones | 2008-03-20 00:57:00 -0700 (Thu, 20 Mar 2008) | 16 lines
+
+Index: source/framework/SymbolTable.cs
+* Added HaveLocalNames.
+* We now get the correct name for local variables.
+
+Index: source/internal/rules/design/IdenticalCodeBlocksRule.cs
+* Only match locals if we have real names for them.
+
+Index: source/framework/instructions/stores/StoreLocal.cs
+Index: source/framework/instructions/loads/LoadLocalAddress.cs
+Index: source/framework/instructions/loads/LoadLocal.cs
+* Added a RealName boolean property.
+ 
+Index: source/framework/support/CecilExtensions.cs
+* DoMatches special cases ParameterReference and  VariableReference and
+  uses the sequence or index.
+
+------------------------------------------------------------------------
+r559 | jessejones | 2008-03-21 09:29:00 -0700 (Fri, 21 Mar 2008) | 29 lines
+
+Index: source/internal/rules/portability/ExitCodeRule.cs
+Index: source/internal/rules/xml/Portability.xml
+Index: source/tests/rules/portability/ExitCodeTest.cs
+* Added (from Gendarme).
+
+Index: source/internal/rules/correctness/UseSetterValueRule.cs
+Index: source/tests/rules/correctness/UseSetterValueTest.cs
+Index: source/internal/rules/xml/Correctness.xml
+* Added (from Gendarme).
+
+Index: source/internal/rules/portability/WinExeRule.cs
+Index: extras/evildoer/Expected.xml
+* Added (from Gendarme).
+
+Index: source/internal/rules/performance/NotInstantiatedRule.cs
+* Ignore atributes.
+
+Index: source/internal/rules/correctness/IgnoredReturnRule.cs
+* Added some more system methods to ignore (from Gendarme).
+
+Index: source/framework/SymbolTable.cs
+* HaveLocalNames checks LocalNamesAmbiguous.
+
+Index: source/framework/instructions/loads/LoadArgAddress.cs
+Index: source/framework/instructions/loads/LoadPointer.cs
+Index: source/framework/instructions/TypedInstructions.cs
+* Added.
+
+ 
+------------------------------------------------------------------------
+r560 | jessejones | 2008-03-21 19:48:15 -0700 (Fri, 21 Mar 2008) | 8 lines
+
+Index: source/internal/rules/portability/ExitCodeRule.cs
+Index: source/tests/rules/portability/ExitCodeTest.cs
+* Handles exiting with a local which is set to a bad value.
+ 						
+Index: source/internal/Program.cs
+* Log version number on startup.
+
+
+------------------------------------------------------------------------
+r561 | jessejones | 2008-03-21 23:09:43 -0700 (Fri, 21 Mar 2008) | 17 lines
+
+Index: source/internal/Error.cs
+Index: source/internal/ViolationDatabase.cs
+Index: source/internal/XmlReport.cs
+Index: source/internal/CheckItem.cs
+Index: source/internal/HtmlReport.cs
+Index: source/internal/AnalyzeAssembly.cs
+Index: source/internal/Violation.cs
+Index: source/internal/Program.cs
+Index: source/framework/Location.cs
+Index: source/framework/support/AssemblyCache.cs
+Index: source/framework/support/Rule.cs
+Index: source/internal/HtmlViolations.cs
+* Made AnalyzeAssembly, Error, Violation, and Location public so that .NET tools
+  can smoke an assembly without launching the Smokey executable and without
+  parsing the xml results.
+  
+
+------------------------------------------------------------------------
+r562 | jessejones | 2008-03-21 23:13:23 -0700 (Fri, 21 Mar 2008) | 3 lines
+
+Moved some files into the new app directory.
+
+
+------------------------------------------------------------------------
+r563 | jessejones | 2008-03-22 02:17:07 -0700 (Sat, 22 Mar 2008) | 8 lines
+
+Index: source/app/AnalyzeAssembly.cs
+Index: source/internal/CheckItem.cs
+Index: source/internal/Program.cs
+Index: TODO
+* Added -only-type to allow only the specified types to be checked.
+* Removed debug -only switch which never really worked properly.
+ 			
+
+------------------------------------------------------------------------
+r564 | jessejones | 2008-03-22 20:35:59 -0700 (Sat, 22 Mar 2008) | 33 lines
+
+Index: README
+* In order to build Mono.Cecil.dll needs to be copied to $prefix/lib/mono/2.0.
+* Updated TODO section.
+ 
+Index: nant.build
+* Enable range checking in release.
+* gmcs no longer needs langversion:ling.
+
+Index: source/app/Violation.cs
+Index: source/internal/rules/xml/Security.xml
+Index: source/internal/rules/xml/Reliability.xml
+Index: source/internal/rules/xml/Design.xml
+Index: source/internal/rules/xml/Correctness.xml
+Index: source/internal/rules/design/IdenticalCodeBlocksRule.cs
+Index: source/internal/rules/design/SchizoidTypeRule.cs
+Index: source/internal/rules/reliability/DisposeFieldsRule.cs
+Index: source/internal/rules/reliability/DisposeScopedObjectsRule.cs
+Index: source/internal/rules/correctness/StringIndexOfRule.cs
+Index: source/internal/rules/correctness/ArrayIndexOfRule.cs
+Index: source/internal/rules/correctness/AssemblyAttributeSpellingRule.cs
+Index: source/internal/rules/correctness/UseSetterValueRule.cs
+Index: source/internal/AssertTraceListener.cs
+Index: source/internal/Watchdog.cs
+Index: source/internal/Progress.cs
+Index: source/internal/Program.cs
+Index: source/framework/Log.cs
+Index: source/framework/support/RuleDispatcher.cs
+Index: source/framework/support/advanced/DataFlow.cs
+Index: source/framework/support/advanced/ControlFlowGraph.cs
+Index: source/framework/support/AssemblyCache.cs
+* Minor smoke test fixes.
+
+
+------------------------------------------------------------------------
+r565 | jessejones | 2008-03-22 20:57:18 -0700 (Sat, 22 Mar 2008) | 3 lines
+
+Replacing ArrayToStringRule with CollectionToStringRule.
+
+
+------------------------------------------------------------------------
+r566 | jessejones | 2008-03-22 21:06:36 -0700 (Sat, 22 Mar 2008) | 3 lines
+
+Replaced ArrayToStringRule with CollectionToStringRule.
+
+
+------------------------------------------------------------------------
+r567 | jessejones | 2008-03-24 00:17:49 -0700 (Mon, 24 Mar 2008) | 52 lines
+
+Index: source/internal/rules/xml/Performance.xml
+Index: source/internal/rules/xml/Microsoft.xml
+Index: source/internal/rules/xml/Reliability.xml
+Index: source/internal/rules/xml/Design.xml
+Index: source/internal/rules/xml/Correctness.xml
+* Code samples use IEquatable<T> where appropiate.
+* Special case no virtuals.
+
+Index: source/framework/support/advanced/CallGraph.cs
+Index: source/framework/support/AssemblyCache.cs
+Index: source/framework/support/advanced/ClassifyMethod.cs
+Index: source/internal/rules/security/IndirectLinkDemandRule.cs
+Index: source/internal/rules/security/PartitionAssemblyRule.cs
+Index: source/internal/rules/reliability/CtorCallsVirtualRule.cs
+Index: source/internal/rules/reliability/ConsistentEqualityRule.cs
+Index: source/internal/rules/reliability/StaticSetterRule.cs
+Index: source/framework/instructions/Call.cs
+* CallGraph, AssemblyCache::FindMethod, and ClassifyMethod::ThreadRoots use 
+  MethodReferences instead of MetadataTokens so that methods defined outside 
+  the assembly we're checking are properly handled.
+  
+Index: source/internal/rules/misc/SortedMethodsRule.cs
+* Special case property names under four chars (Cecil can return "?" for these).
+
+Index: source/internal/rules/xml/Mono.xml
+* Updated to reflect that the naming rules wants constants to be PascalCase.
+
+Index: source/internal/rules/design/TemplateMethodRule.cs
+Index: source/tests/rules/design/TemplateMethodTest.cs
+* Increased the ratio from 20 to 120.
+
+Index: source/internal/rules/performance/Const1Rule.cs
+Index: source/internal/rules/microsoft/NoObjectDisposedExceptionRule.cs
+Index: source/internal/rules/design/IdenticalCodeBlocksRule.cs
+* Tweaked details formatting.
+
+Index: source/internal/rules/performance/InlineStaticInitRule.cs
+* Ignore <PrivateImplementationDetails>.
+
+Index: source/internal/rules/design/AttributePropertiesRule.cs
+* Add check for no method body.
+
+Index: source/internal/rules/design/IdenticalMethodsRule.cs
+* Handle long instruction operand type.
+
+Index: source/internal/rules/correctness/IgnoredReturnRule.cs
+* Ignore a bunch more system methods where ignoring the return value is common.
+
+Index: source/internal/rules/correctness/NullFieldRule.cs
+* Need to clear fields even if we have no ctors.
+
+
+------------------------------------------------------------------------
+r568 | jessejones | 2008-03-25 03:52:59 -0700 (Tue, 25 Mar 2008) | 15 lines
+
+Index: install.sh
+Index: uninstall.sh
+Index: nant.build
+* Added.
+
+Index: CHANGE_LOG
+Index: README
+Index: SysIgnore.txt
+IIndex: CHANGES
+* Updated.
+
+Index: source/internal/rules/xml/Design.xml
+Index: source/internal/rules/xml/Correctness.xml
+* Very minor tweaks.
+
+------------------------------------------------------------------------
+r569 | jessejones | 2008-03-25 04:51:58 -0700 (Tue, 25 Mar 2008) | 3 lines
+
+Updated.
+
+
+------------------------------------------------------------------------
+r572 | jessejones | 2008-03-26 19:34:08 -0700 (Wed, 26 Mar 2008) | 33 lines
+
+Index: source/internal/rules/microsoft/HungarianRule.cs
+Index: extras/evildoer/Hungarian.cs
+* Added.
+
+Index: source/internal/rules/portability/WinFormsVoodooRule.cs
+Index: source/internal/rules/xml/Portability.xml
+* Added.
+
+Index: source/internal/rules/microsoft/ClassPrefixRule.cs
+Index: source/internal/rules/xml/Microsoft.xml
+Index: extras/evildoer/ClassPrefix.cs
+Index: extras/evildoer/Expected.xml
+* Added.
+
+Index: source/internal/rules/security/InternalInterfaceRule.cs
+Index: source/tests/rules/security/InternalInterfaceTest.cs
+Index: source/internal/rules/xml/Security.xml
+* Added check to ensure that the interface is actually internal.
+
+Index: source/internal/rules/design/UseBaseTypesRule.cs
+* Added check to ensure that the base type is public or nested public.
+
+Index: source/internal/rules/reliability/RequireSerializableCtorRule.cs
+Index: extras/evildoer/BadClass.cs
+* Ignore classes which inherit from ExceptionConstructorsRule 
+  (ExceptionConstructorsRule will handle those).
+  
+Index: source/internal/rules/xml/Design.xml
+* Made SerializeExceptionRule cause language clearer.
+
+Index: source/internal/rules/correctness/IgnoredReturnRule.cs
+* Added a few more system methods to ignore.
+
+------------------------------------------------------------------------
+r573 | jessejones | 2008-03-26 19:52:25 -0700 (Wed, 26 Mar 2008) | 10 lines
+
+Index: source/internal/rules/microsoft/ClassPrefixRule.cs
+* Ignore "I".
+
+Index: source/internal/rules/security/InternalInterfaceRule.cs
+* Report now includes the interface name.
+
+Index: source/internal/rules/design/UseBaseTypesRule.cs
+* Fix a minor code booboo.
+
+
+------------------------------------------------------------------------
+r574 | jessejones | 2008-03-26 20:53:37 -0700 (Wed, 26 Mar 2008) | 15 lines
+
+Index: source/internal/rules/xml/Microsoft.xml
+* Made ClassPrefix and Hungarian nitpicks.
+
+Index: source/internal/rules/microsoft/HungarianRule.cs
+* Disable StringSpellingRule for the hungarian prefixes.
+
+Index: source/internal/rules/design/UseBaseTypesRule.cs
+Index: source/tests/rules/design/UseBaseTypesTest1.cs
+* Ignore parameters with generic types (they aren't handled quite right
+  by the rule).
+  
+Index: source/internal/rules/correctness/IgnoredReturnRule.cs
+* Added some winforms methods to ignore list.
+
+
+------------------------------------------------------------------------

@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<project name = "custom" default = "lib" basedir = ".">
+	<description>Typical usage is: nant -nologo -D:debug=true [targets].
+
+Properties (set with -D):
+debug        generate debugging info, defaults to false
+checked      set default context to checked, defaults to value of debug
+optimize     enables code optimizations, defaults to not debug
+</description>
+	
+	<!-- define some properties used to configure various settings -->
+	<property name = "debug" value = "false" overwrite = "false"/>
+
+	<if test = "${debug}">
+		<property name = "checked" value = "true" overwrite = "false"/>
+		<property name = "optimize" value = "false" overwrite = "false"/>
+		<property name = "extension" value = "_d" readonly = "true"/>
+	</if>
+	<if test = "${not debug}">
+		<property name = "checked" value = "false" overwrite = "false"/>
+		<property name = "optimize" value = "true" overwrite = "false"/>
+		<property name = "extension" value = "" readonly = "true"/>
+	</if>
+	
+	<!-- build the custom dll -->
+	<target name = "lib" description = "builds the custom library">
+		<csc target = "library" output = "../bin/custom${extension}.dll"
+		debug = "${debug}" checked = "${checked}" optimize = "${optimize}" warnaserror = "true">
+			<references>
+				<include name = "../bin/smokey${extension}.exe"/>
+				<include name = "Mono.Cecil.dll"/>
+			</references>
+			<resources basedir = "source/rules">
+				<include name="*.xml"/>
+			</resources>
+			<sources basedir = "source">
+				<include name = "*.cs"/>
+				<include name = "rules/*.cs"/>
+			</sources>
+		</csc>
+	</target>
+		
+	<!-- build the unit test library -->
+	<target name = "tests" description = "builds the custom unit tests">
+		<csc target = "library" output = "../bin/customtests${extension}.dll"
+		debug = "${debug}" define = "TEST" checked = "${checked}" optimize = "${optimize}" warnaserror = "true">
+			<references>
+				<include name = "nunit.framework.dll"/>
+				<include name = "../bin/tests${extension}.dll"/>
+				<include name = "Mono.Cecil.dll"/>
+			</references>
+			<resources basedir = "source/rules">
+				<include name="*.xml"/>
+			</resources>
+			<sources basedir = "source">
+				<include name = "rules/*.cs"/>
+				<include name = "tests/*.cs"/>
+			</sources>
+		</csc>
+	</target>
+															
+	<!-- run the unit tests -->
+	<target name = "test" depends = "tests" description = "runs the unit tests">
+		<!-- nant provides an nunit2 task, but we don't get stack crawls if we use it... -->
+		<exec program = "nunit-console2" failonerror = "true" commandline = 
+			"-nologo -config:../bin/customtests${extension}.dll.config ../bin/customtests${extension}.dll"/>
+	</target>
+						
+	<!-- smoke test our rules -->
+	<property name = "app_path" value = "../bin/smokey${extension}.exe"/>
+	<property name = "lib_path" value = "../bin/custom${extension}.dll"/>
+	<target name = "smoke" depends = "lib" description = "smoke the custom library">
+		<exec program = "mono" failonerror = "true" commandline = "--debug ${path::get-full-path(app_path)} 
+		-set:ignoreList:../IgnoreList.txt -set:naming:jurassic ${path::get-full-path(lib_path)}"/>
+	</target>
+</project>

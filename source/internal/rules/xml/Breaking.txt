@@ -1,0 +1,25 @@
+I haven't been able to find an authoritative explanation of what constitutes
+a breaking change. The best I have found is:
+
+- You may safely change default values of data members.
+
+- You may safely change all private/internal fields of a class/struct.
+
+- You may usually add properties or methods to an existing class or struct
+(this only hurts the client if it derives a class from that class, and
+happens to add a property/method with the same signature).
+
+- You may usually add data members and events to a class or struct, unless
+you use binary serialization in your clients (the binary layout changes with
+new data members).
+
+- Removing, renaming or changing the type/signature of public/protected
+properties/data members/events/methods can cause clients to crash (however
+unlike C++ you'll get something like a "MethodNotFoundException", and no
+memory will be overwritten) if (and only if) the client uses that member.
+
+- Removing an interface or changing the base class may hurt clients, if the
+client casts to that class/interface.
+
+- Changing static constants/enums causes clients to break (didn't think of
+that before your post).

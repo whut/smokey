@@ -1,0 +1,964 @@
+<!-- Fragile code -->
+<Violations>
+	<Violation checkID = "R1000" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "DisposableFields" category = "Reliability">			
+			<Cause>
+			A class news IDisposable fields but is not itself IDisposable.
+			</Cause>
+	
+			<Description>
+			Classes implement IDisposable so that they can cleanup unmanaged resources in
+			a timely manner. But if a field is an IDisposable and the class it's within is
+			not then this won't happen.
+			</Description>
+	
+			<Fix>
+			The class should implement IDisposable.
+			</Fix>
+	
+			<CSharp>
+			using System.IO;
+
+			internal class Log : IDisposable
+			{
+				public Log()
+				{
+					m_writer = new StringWriter();
+				}
+			
+				public void WriteLine(string line)
+				{
+					// All public methods (except Dispose) should throw 
+					// ObjectDisposedException if Dispose has been called.
+					if (m_disposed)		
+						throw new ObjectDisposedException("Log has been disposed");
+						
+					m_writer.WriteLine(line);
+				}
+			
+				// Note that this is a simplified version of the disposable pattern because
+				// we have no unmanaged resources.
+				public void Dispose()
+				{
+					if (!m_disposed)
+					{
+						m_writer.Dispose();
+						
+						m_disposed = true;
+					}
+				}
+									
+				private StringWriter m_writer;	// System.IO.StringWriter implements IDisposable
+				private bool m_disposed = false;
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "R1001" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "DisposeNativeResources" category = "Reliability">			
+			<Cause>
+			A class creates an IntPtr or HandleRef field does not have a finalizer, overriden
+			Dispose(bool), overridden OnDispose(bool), or overridden DoDispose(bool) method.
+			</Cause>
+	
+			<Description>
+			The CLR cannot cleanup unmanaged resources so you need to ensure that they are
+			cleaned up yourself.
+			</Description>
+	
+			<Fix>
+			If the unmanaged resource must be cleaned up in a timely or deterministic manner
+			then implement IDisposable. Otherwise simply provide a finalizer.
+			</Fix>
+	
+			<CSharp>
+			using System.IO;
+
+			internal class MyResource : IDisposable
+			{
+				~MyResource()		
+				{					
+					// Note that this is called even if the ctor throws.
+					DoDispose(false);
+				}
+			
+				public MyResource()
+				{
+					m_handle = NativeMethods.CreateHandle();
+				}
+			
+				public void DoWork()
+				{
+					// All public methods (except Dispose) should throw 
+					// ObjectDisposedException if Dispose has been called.
+					if (m_disposed)		
+						throw new ObjectDisposedException("MyResource has been disposed");
+						
+					NativeMethods.WorkIt(m_handle);
+					GC.KeepAlive(this);
+				}
+			
+				public void Dispose()
+				{
+					DoDispose(true);
+			
+					// If we've been disposed our object can be garbage collected without
+					// finalization.
+					GC.SuppressFinalize(this);
+				}
+			
+				private void DoDispose(bool disposing)
+				{
+					if (!m_disposed)
+					{
+						// If we've been called via Dispose we can,
+						if (disposing)
+						{
+							// dispose of managed fields.
+						}
+			
+						// If we've been called via the finalizer any references we have to
+						// managed objects may have been finalized so we have to be
+						// very careful and only dispose of unmanaged resources here.
+						NativeMethods.CloseHandle(m_handle);
+						m_handle = IntPtr.Zero;
+			
+						m_disposed = true;
+					}
+				}
+			
+				private static class NativeMethods
+				{
+					[System.Runtime.InteropServices.DllImport("Kernel32")]
+					public extern static bool CloseHandle(IntPtr handle);
+				
+					[System.Runtime.InteropServices.DllImport("Kernel32")]
+					public extern static IntPtr CreateHandle();
+				
+					[System.Runtime.InteropServices.DllImport("Kernel32")]
+					public extern static void WorkIt(IntPtr handle);
+				}
+				
+				private IntPtr m_handle;	// here's our unmanaged resource
+				private bool m_disposed = false;
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "R1002" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "DisposeFields" category = "Reliability">			
+			<Cause>
+			A class implements IDisposable, but does not dispose of all the disposable fields
+			it news.
+			</Cause>
+	
+			<Description>
+			The CLR cannot cleanup unmanaged resources so you need to ensure that they are
+			cleaned up yourself.
+			</Description>
+	
+			<Fix>
+			Implement IDisposable and dispose of all of the disposable fields.
+			</Fix>
+	
+			<CSharp>
+			using System.IO;
+
+			internal class Log : IDisposable
+			{
+				public Log()
+				{
+					m_writer = new StringWriter();
+				}
+			
+				public void WriteLine(string line)
+				{
+					// All public methods (except Dispose) should throw 
+					// ObjectDisposedException if Dispose has been called.
+					if (m_disposed)		
+						throw new ObjectDisposedException("Log has been disposed");
+						
+					m_writer.WriteLine(line);
+				}
+			
+				// Note that this is a simplified version of the disposable pattern because
+				// we have no unmanaged resources.
+				public void Dispose()
+				{
+					if (!m_disposed)
+					{
+						m_writer.Dispose();
+						
+						m_disposed = true;
+					}
+				}
+									
+				private StringWriter m_writer;	// System.IO.StringWriter implements IDisposable
+				private bool m_disposed = false;
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<!-- gap -->
+	
+	<Violation checkID = "R1004" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "DisposeScopedObjects" category = "Reliability">			
+			<Cause>
+			A method created an IDisposable local variable but did not dispose of it.
+			</Cause>
+	
+			<Description>
+			IDisposable is used for objects containing unmanaged resources that have to
+			be cleaned up in a timely manner. If you don't explicitly dispose of them
+			they are cleaned up by the garbage collector which may not run for quite some
+			time.
+			</Description>
+	
+			<Fix>
+			Use a using statement to ensure that the object is disposed even in the
+			presence of exceptions.
+			</Fix>
+	
+			<CSharp>
+			using System.IO;
+
+			internal static class Utils
+			{
+				public static string ReadAll(string path)
+				{
+					string text;
+					
+					using (StreamReader stream = new StreamReader(path)) 
+					{
+						text = stream.ReadToEnd();
+					}
+					
+					return text;
+				}
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "R1005" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "CtorCallsVirtual" category = "Reliability">			
+			<Cause>
+			A constructor is calling an unsealed virtual method.
+			</Cause>
+	
+			<Description>
+			If a constructor calls a virtual method which is overridden in a derived class
+			the method in the derived class is called. However the derived classes constructor
+			won't have been called yet. This will often be unexpected behavior and makes
+			it very easy for maintainers to introduce bugs if they change the derived method.
+			</Description>
+	
+			<Fix>
+			Seal the method, seal the class, or call the method somewhere else.
+			</Fix>
+	
+			<CSharp>
+			internal abstract class Animal
+			{
+				public abstract string Description
+				{
+					get;
+				}
+				
+				public abstract string Species
+				{
+					get;
+				}
+			}			
+
+			internal class Dog : Animal
+			{
+				public Dog(string breed)
+				{
+					// Call to Species is OK because the property is sealed.
+					m_descripion = string.Format("{0} ({1})", breed, Species);
+				}
+				
+				public override string Description
+				{
+					get {return m_descripion;}
+				}
+				
+				public sealed override string Species
+				{
+					get {return "Canis lupus familiaris";}
+				}
+				
+				private string m_descripion;
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<!-- gap -->
+	
+	<Violation checkID = "R1009" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "CompareFloats" category = "Reliability">			
+			<Cause>
+			A method is comparing floating point numbers for equality.
+			</Cause>
+		
+			<Description>
+			Floating point numbers are very precise, but they are not necessarily
+			accurate. Because of the way the hardware implements floating point
+			numbers they are almost always approximations of real values and errors
+			accumulate as operations are performed on them. Because of this it's
+			almost always wrong to compare a floating point number to a finite value.
+			Note that not equal tests have the same problem because they will almost
+			always be true.
+			</Description>
+	
+			<Fix>
+			The simplest fix is to check to see if the two numbers are close to each
+			other. Something like this: Math.Abs(x - y) &lt; 0.001. However this won't
+			work if the typical values are very large (because the delta will be large)
+			or very small (because the delta will be too small). For a safer alternative
+			see the code below. Also see &lt;http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm&gt;.
+			</Fix>
+	
+			<CSharp>
+			using System.Diagnostics;
+			
+			public static class DoubleExtensions
+			{
+				// Returns true if the two floating point numbers are close to each other.
+				public static bool NearlyEquals(this double x, double y)
+				{
+					return x.NearlyEquals(y, 1.0e-6);
+				}
+			
+				// Comparing floating point numbers for equality is tricky because the 
+				// limited precision of the hardware introduces small errors so that two 
+				// numbers that should compare equal don't. So what we do is consider the 
+				// numbers equal if their difference is less than some epsilon value. But 
+				// choosing this epsilon is also tricky because if the numbers are large 
+				// epsilon should also be large, and if the numbers are very small the 
+				// epsilon must be even smaller. To get around this we'll use a technique 
+				// from Knuth's "Seminumerical Algorithms" section 4.2.2 and scale epsilon 
+				// by the exponent of one of the specified numbers. 
+				public static bool NearlyEquals(this double x, double y, double epsilon)
+				{
+					Debug.Assert(epsilon &gt;= 0.0);
+								
+					// Infinity is an exact value so we can use equals with it.
+					if (double.IsInfinity(x) || double.IsInfinity(y))
+						return x == y;
+					
+					// Knuth recommends scaling by the exponent of the smallest number.
+					// C has standard functions for breaking apart floating point numbers
+					// (frexp) and scaling them (ldexp), but .NET does not. So, we'll
+					// scale by a percentage of the smallest value which should give
+					// us very similar results.
+					double scaling = 0.75 * Math.Min(Math.Abs(x), Math.Abs(y));
+						
+					// If we of our numbers is exactly zero then we cannot use an
+					// extremely small scaled epsilon or numbers will never compare
+					// equal to zero. So, we do like Knuth, and use whatever epsilion
+					// was passed in.
+					double delta = scaling != 0.0 ? epsilon * scaling : epsilon;
+					
+					// If the difference between the numbers is smaller than the scaled
+					// epsilon we'll consider the numbers to be equal.
+					double difference = Math.Abs(x - y);
+					bool equal = difference &lt;= delta;
+					
+					return equal;
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<!-- gap -->
+	
+	<Violation checkID = "R1011" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "ConsistentEquality" category = "Reliability">			
+			<Cause>
+			Equals, operator==, operator!=, CompareTo, and/or GetHashCode are using different
+			fields and properties.
+			</Cause>
+		
+			<Description>
+			If two objects compare equal with one equality method then they should compare
+			equal with the other equality methods. Similarly two objects that compare
+			equal should have the same hash code.
+			</Description>
+	
+			<Fix>
+			Fix the code so that the equals methods and GetHashCode are using the same
+			fields and properties. If there's a valid reason for accessing a field or
+			property in one method, but not all of them, you can avoid the error by
+			using a helper method to do the comparison.
+			</Fix>
+		</Translation>
+	</Violation>	
+		
+	<Violation checkID = "R1012" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "ObjectHashCode" category = "Reliability">			
+			<Cause>
+			A class defines Equals or operator== and checks state, but does not override 
+			GetHashCode or calls Object::GetHashCode in the override.
+			</Cause>
+		
+			<Description>
+			The Object::GetHashCode uses the object's address to compute the hash code.
+			This works well with the default Equals which is also based on addresses, but
+			does not work if you change the behavior of Equals because two objects that
+			compare equal must have the same hash.
+			</Description>
+	
+			<Fix>
+			Override GetHashCode and hash the fields that Equals checks. Do not call 
+			Object::GetHashCode.
+			</Fix>
+	
+			<CSharp>
+			internal class Customer : IEquatable&lt;Customer&gt;
+			{		
+				public override bool Equals(object rhsObj)
+				{
+					if (rhsObj == null)			// as is a little expensive, so skip it if we can
+						return false;
+					
+					Customer rhs = rhsObj as Customer;
+					return this == rhs;
+				}
+					
+				public bool Equals(Customer rhs)	// provide a typed overload for efficiency
+				{
+					return this == rhs;
+				}
+
+				public static bool operator==(Customer lhs, Customer rhs)
+				{
+					// If both are null, or both are the same instance, return true.
+					if (object.ReferenceEquals(lhs, rhs))
+						return true;
+					
+					// If one is null, but not both, return false.
+					if ((object) lhs == null || (object) rhs == null)
+						return false;
+					
+					// Return true if the fields match:
+					return lhs.name == rhs.name &amp;&amp; lhs.address == rhs.address;
+				}
+				
+				public static bool operator!=(Customer lhs, Customer rhs)
+				{
+					return !(lhs == rhs);
+				}
+				
+				public override int GetHashCode()
+				{
+					int hash;
+					
+					unchecked
+					{
+						hash = name.GetHashCode() + address.GetHashCode();
+					}
+					
+					return hash;
+				}
+
+				private string name = "ted";
+				private string address = "main street";
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+		
+	<Violation checkID = "R1013" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "WeakIdentityLock" category = "Reliability">			
+			<Cause>
+			A method locks an object with weak identity.
+			</Cause>
+		
+			<Description>
+			An object with weak identity is an object that can be directly accessed from
+			different application domains. Locking an object with weak identity means
+			that threads in one application domain can be blocked by threads from another
+			domain which is unexpected to say the least. The classes with weak identity are:
+			* System.MarshalByRefObject
+			* System.ExecutionEngineException
+			* System.OutOfMemoryException
+			* System.StackOverflowException
+			* System.String
+			* System.Reflection.MemberInfo
+			* System.Reflection.ParameterInfo
+			* System.Threading.Thread
+			</Description>
+	
+			<Fix>
+			Pick something else to lock.
+			</Fix>
+			
+			<CSharp>
+			internal class Engine
+			{
+				public void Work()
+				{
+					lock (m_lock)
+					{
+						DoWork();
+					}
+				}
+				
+				private static void DoWork()
+				{
+					Console.WriteLine("working...");
+				}
+				
+				private object m_lock = new object();
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "R1014" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "StaticSetter" category = "Reliability">			
+			<Cause>
+			A non-private static method which sets state and has no locking is called 
+			from a thread.
+			</Cause>
+	
+			<Description>
+			A non-private static method can be called from anywhere so there is no way
+			for callers to guarantee that any writes it does are serialized.
+			</Description>
+	
+			<Fix>
+			Don't use a static method or have the method lock.
+			</Fix>
+	
+			<CSharp>
+			internal static class Storage
+			{
+				public static void Update(string text)
+				{
+					lock (ms_lock)
+					{
+						// Copying a reference is guaranteed to be atomic as long as the field is
+						// aligned (which it will be if you're using the default AutoLayout). But
+						// to guarantee that our write is immediately visible to other threads we
+						// need to either use a lock or something like Interlocked.Exchange. See
+						// &lt;http://discuss.develop.com/archives/wa.exe?A2=ind0203B&amp;L=DOTNET&amp;P=R375&gt;
+						// and &lt;http://blogs.msdn.com/cbrumme/archive/2003/05/17/51445.aspx&gt; for 
+						// more details.
+						ms_text = text;
+					}
+				}
+				
+				public static string Text
+				{
+					get {return ms_text;}
+				}
+				
+				private static object ms_lock = new object();
+				private static string ms_text = string.Empty;
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "R1015" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "STAThread" category = "Reliability">			
+			<Cause>
+			The assembly references System.Windows.Forms but the main entry point does 
+			not have STAThreadAttribute.
+			</Cause>
+	
+			<Description>
+			STAThreadAttribute tells the runtime that the main thread is using the single
+			threaded apartment model. This is required on Windows in order to interoperate
+			with COM which is used by the clipboard, file dialogs, and drag and drop.
+			</Description>
+	
+			<Fix>
+			Use STAThread.
+			</Fix>
+	
+			<CSharp>
+			internal static class Program
+			{
+				[STAThread]
+				public static int Main(string[] args)
+				{ 
+					
+					Console.WriteLine("hello world");
+					
+					return 0;
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "R1016" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "Const2" category = "Reliability">			
+			<Cause>
+			A externally visible field is declared const.
+			</Cause>
+		
+			<Description>
+			The value for const fields is baked into the assemblies metadata. When another
+			assembly is compiled which refers to that field the value of the field is used
+			instead of the name. This means that changing the value of the constant will
+			not affect other assemblies unless they are recompiled.
+			</Description>
+	
+			<Fix>
+			Use a static readonly field unless you're sure that the value of the constant
+			will never change.
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "R1017" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "BaseSerializable1" category = "Reliability">			
+			<Cause>
+			An externally visible type derives from a type that implements System.Runtime.Serialization.ISerializable,
+			has a constructor with (SerializationInfo, StreamingContext)
+			arguments, but does not call the base serialization constructor.
+			</Cause>
+		
+			<Description>
+			The constructor must call the base constructor to ensure that the base fields
+			are properly serialized.
+			</Description>
+	
+			<Fix>
+			Call the base constructor.
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.Serialization;
+			using System.Security.Permissions;
+			
+			[Serializable]
+			public class BaseType : ISerializable
+			{
+				public BaseType()
+				{
+					m_baseValue = 3;
+				}
+				
+				protected BaseType(SerializationInfo info, StreamingContext context)
+				{
+					m_baseValue = info.GetInt32("m_baseValue");
+				}
+				
+				[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+				public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+				{
+					info.AddValue("baseValue", m_baseValue);
+				}
+				
+				private int m_baseValue;
+			}
+				
+			[Serializable]
+			public class DerivedType : BaseType
+			{
+				public DerivedType()
+				{
+					m_derivedValue = 4;
+				}
+				
+				protected DerivedType(SerializationInfo info, StreamingContext context) : 
+					base(info, context)
+				{
+					m_derivedValue = info.GetInt32("derivedValue");
+				}
+				
+				[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+				public override void GetObjectData(SerializationInfo info, StreamingContext context)
+				{
+					info.AddValue("derivedValue", m_derivedValue);
+					base.GetObjectData(info, context);
+				}
+				
+				private int m_derivedValue;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "R1018" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "BaseSerializable2" category = "Reliability">			
+			<Cause>
+			An externally visible type derives from a type that implements System.Runtime.Serialization.ISerializable,
+			has a GetObjectData(SerializationInfo, StreamingContext) method, but does not
+			call the base GetObjectData.
+			</Cause>
+		
+			<Description>
+			GetObjectData must call the base GetObjectData to ensure that the base fields
+			are properly serialized.
+			</Description>
+	
+			<Fix>
+			Call the base GetObjectData.
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.Serialization;
+			using System.Security.Permissions;
+			
+			[Serializable]
+			public class BaseType : ISerializable
+			{
+				public BaseType()
+				{
+					m_baseValue = 3;
+				}
+				
+				protected BaseType(SerializationInfo info, StreamingContext context)
+				{
+					m_baseValue = info.GetInt32("m_baseValue");
+				}
+				
+				[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+				public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+				{
+					info.AddValue("baseValue", m_baseValue);
+				}
+				
+				private int m_baseValue;
+			}
+				
+			[Serializable]
+			public class DerivedType : BaseType
+			{
+				public DerivedType()
+				{
+					m_derivedValue = 4;
+				}
+				
+				protected DerivedType(SerializationInfo info, StreamingContext context) : 
+					base(info, context)
+				{
+					m_derivedValue = info.GetInt32("derivedValue");
+				}
+				
+				[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+				public override void GetObjectData(SerializationInfo info, StreamingContext context)
+				{
+					info.AddValue("derivedValue", m_derivedValue);
+					base.GetObjectData(info, context);
+				}
+				
+				private int m_derivedValue;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "R1019" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "RequireSerializableCtor" category = "Reliability">			
+			<Cause>
+			The type implements System.Runtime.Serialization.ISerializable, is not a delegate
+			or interface, but does not implement the (SerializationInfo, StreamingContext) 
+			constructor.
+			</Cause>
+		
+			<Description>
+			In order to be deserialized the type must have a (SerializationInfo, StreamingContext)
+			constructor.
+			</Description>
+	
+			<Fix>
+			Add the (SerializationInfo, StreamingContext) constructor.
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.Serialization;
+			using System.Security.Permissions;
+			
+			[Serializable]
+			public class Customer : ISerializable
+			{
+				public Customer(string name)
+				{
+					m_name = name;
+				}
+				
+				// This should be protected for unsealed types, and private for sealed types.
+				protected Customer(SerializationInfo info, StreamingContext context)
+				{
+					m_name = info.GetString("name");
+				}
+				
+				[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+				public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+				{
+					info.AddValue("name", m_name);
+				}
+				
+				private string m_name;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "R1020" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "NonSerializableField" category = "Reliability">			
+			<Cause>
+			An instance field of a System.SerializableAttribute type is not serializable and
+			not marked with System.NonSerializedAttribute.
+			</Cause>
+		
+			<Description>
+			If the object is serialized System.Runtime.Serialization.SerializationException
+			will be thrown when the .NET framework tries to serialize the bad field.
+			</Description>
+	
+			<Fix>
+			Decorate the field with System.NonSerializedAttribute.
+			</Fix>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "R1021" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "RandomUsedOnce" category = "Reliability">			
+			<Cause>
+			An instance of System.Random is created using the default constructor and
+			only one random value is retrieved.
+			</Cause>
+		
+			<Description>
+			The random number generator will return poor results when used in this way.
+			</Description>
+	
+			<Fix>
+			Create an instance of Random and reuse it to get subsequent values.
+			</Fix>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "R1022" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "IdenticalBranch" category = "Reliability">			
+			<Cause>
+			A conditional branch has identical code for the taken and not-taken cases.
+			</Cause>
+		
+			<Description>
+			This isn't necessarily an error, but it may be a maintenance headache because
+			if one branch is changed the other will probably need to change as well.
+			</Description>
+	
+			<Fix>
+			Rewrite the code or use DisableRuleAttribute.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "R1023" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "IdenticalCase" category = "Reliability">			
+			<Cause>
+			Two cases in a switch statement have identical code.
+			</Cause>
+		
+			<Description>
+			This isn't necessarily an error, but it may be a maintenance headache because
+			if one case is changed the other will probably need to change as well.
+			</Description>
+	
+			<Fix>
+			Rewrite the code or use DisableRuleAttribute.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "R1024" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "UncheckedAssembly" category = "Reliability">			
+			<Cause>
+			The assembly has one or more add instructions but no add.ovf instruction.
+			</Cause>
+		
+			<Description>
+			In general you should compile assemblies using the -checked switch so that
+			integer arithmetic overflow is detected. If profiling indicates that a method
+			is a bottleneck or you're doing something like a hash function for which
+			overflow is immaterial then use the unchecked statement.
+			</Description>
+	
+			<Fix>
+			Use the -checked command line switch or DisableRuleAttribute.
+			</Fix>
+	
+			<CSharp>
+			internal class Vector3
+			{		
+				public override int GetHashCode()
+				{
+					int hash;
+					
+					// The addditions may overflow but we don't care so we use
+					// the unchecked statement to ensure that an OverflowException
+					// is not thrown.
+					unchecked
+					{
+						hash = X.GetHashCode() + Y.GetHashCode() + Z.GetHashCode();
+					}
+					
+					return hash;
+				}
+				
+				public readonly float X;
+				public readonly float Y;
+				public readonly float Z;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "R1025" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "HashOverflow" category = "Reliability">			
+			<Cause>
+			The result of a GetHashCode call is summed with add.ovf.
+			</Cause>
+		
+			<Description>
+			GetHashcode can return arbitrarily large values so the result should
+			not be summed with the version of add that does overflow checking.
+			</Description>
+	
+			<Fix>
+			Use the unchecked statement to ensure the math is done without overflow
+			checking.
+			</Fix>
+	
+			<CSharp>
+			internal class Vector3
+			{		
+				public override int GetHashCode()
+				{
+					int hash;
+					
+					// The addditions may overflow but we don't care so we use
+					// the unchecked statement to ensure that an OverflowException
+					// is not thrown.
+					unchecked
+					{
+						hash = X.GetHashCode() + Y.GetHashCode() + Z.GetHashCode();
+					}
+					
+					return hash;
+				}
+				
+				public readonly float X;
+				public readonly float Y;
+				public readonly float Z;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+</Violations>

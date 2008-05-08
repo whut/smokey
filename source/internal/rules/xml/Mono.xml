@@ -1,0 +1,47 @@
+<!-- Mono specific rules -->
+<Violations>
+	<Violation checkID = "MO1000" severity = "Warning" breaking = "true">	
+		<Translation lang = "en" typeName = "UseMonoNaming" category = "Mono">			
+			<Cause>
+			The above names are not using the Mono naming conventions.
+			</Cause>
+	
+			<Description>
+			Names should be chosen depending on what they represent:
+			    || Namespace        || PascalCase
+			    || Types            || PascalCase
+			    || Interfaces       || IFormatting
+			    || Properties       || PascalCase
+			    || Methods          || PascalCase
+			    || Parameters       || argList
+			    || Protected fields || num_items 
+			    || Private fields   || num_items 
+			    || Constants        || PascalCase
+			    
+			It's OK for an identifier to be all upper case if it's two characters long
+			(e.g. IO). Hungarian notation should not be used. Underscores should only
+			be used with protected or private fields. See &lt;http://www.mono-project.com/Coding_Guidelines&gt; 
+			for more details.
+			</Description>
+	
+			<Fix>
+			Use the above to choose a name which is compatible with the naming convention.
+			</Fix>
+	
+			<CSharp>
+			namespace Acme
+			{
+				internal class Factory
+				{
+					public bool HasWidget(string partNumber)
+					{
+						return partNumber == valid_part_number;
+					}
+					
+					private string valid_part_number = "xb8";
+				} 
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+</Violations>
