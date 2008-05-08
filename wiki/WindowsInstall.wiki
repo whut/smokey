@@ -6,7 +6,7 @@ Currently there's no installer on Windows, but for now you can simply drop the s
 
 == Running ==
 
-If you put smokey.exe into C:\WINDOWS then you can smoke an assembly by executing `smokey Cool.dll` from the cmd tool. If not you can use `C:\path\to\smokey.exe Cool.dll`. This will write a report to stdout listing all of the problems that were found with the file. You can also exclude types and methods from being tested. See smokey -usage for more details on this.
+If you put smokey.exe into C:\WINDOWS then you can smoke an assembly by executing `smokey Cool.dll` from the cmd tool. If not you can use `C:\path\to\smokey.exe Cool.dll`. This will write a report to stdout listing all of the problems that were found with the file. You can also exclude types and methods from being tested. See `smokey -usage` for more details on this.
 
 You can change the default behavior of Smokey with the ConfigureFile. You can also include SmokeyAttributes within your assembly to affect the way Smokey processes your types and methods.
 
