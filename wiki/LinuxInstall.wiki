@@ -6,7 +6,7 @@ You can run Smokey without doing any installation at all, but it's usually simpl
 
 == Running ==
 
-If you installed with the script you can smoke an assembly by executing `smoke Cool.dll` from a shell. If not you can use `mono /path/to/smokey.exe Cool.dll`. This will write a report to stdout listing all of the problems that were found with the file. You can also exclude types and methods from being tested. See -usage for more details on this.
+If you installed with the script you can smoke an assembly by executing `smoke Cool.dll` from a shell. If not you can use `mono /path/to/smokey.exe Cool.dll`. This will write a report to stdout listing all of the problems that were found with the file. You can also exclude types and methods from being tested. See `smoke -usage` for more details on this.
 
 You can change the default behavior of Smokey with the ConfigureFile. You can also include SmokeyAttributes within your assembly to affect the way Smokey processes your types and methods.
 
