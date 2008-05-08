@@ -2,16 +2,66 @@
 
 = Overview =
 
-Add your content here.
+Originally Smokey followed Gendarme's lead and rules subclassed either !TypeRule, !MethodRule, or !AssemblyRule. This was nice and simple but it lead to serious scaling issues because the method rules each iterated over the instructions in methods. 
+
+In order to reduce duplicate work and improve data locality Smokey now uses a simplified version of the [http://en.wikipedia.org/wiki/Visitor_pattern visitor pattern]. There is now one rule base class and subclasses register the objects they want to visit with the !RuleDispatcher.
+
+Here's an example of a simple rule:
+
+{{{
+// Fail if MessageBox was used without MessageBoxOptions (this is a localization
+// issue because MessageBoxOptions allows you to specify text direction).
+internal class MessageBoxOptionsRule : Rule
+{                
+    public MessageBoxOptionsRule(AssemblyCache cache, IReportViolations reporter) 
+        : base(cache, reporter, "G1001")
+    {
+    }
+            
+    public override void Register(RuleDispatcher dispatcher) 
+    {
+        dispatcher.Register(this, "VisitBegin");
+        dispatcher.Register(this, "VisitCall");
+    }
+    
+    // Called when RuleDispatcher begins visiting a method.
+    public void VisitBegin(BeginMethod begin)
+    {
+        m_method = begin.Info.Method;
+    }
+    
+    // Called when RuleDispatcher visits a call instruction.
+    public void VisitCall(Call call)
+    {
+        if (call.Target.ToString().Contains("System.Windows.Forms.MessageBox::Show"))
+        {
+            if (!call.ToString().Contains("System.Windows.Forms.MessageBoxOptions"))
+            {
+                Reporter.MethodFailed(m_method, CheckID, call.Untyped.Offset, string.Empty);
+            }
+        }
+    }
+    
+    MethodDefinition m_method;
+}
+}}}
 
 
 = Namespaces =
 
 == App ==
 
+This is a small namespace which contains public !AnalyzeAssembly, Error, and Violation classes. These classes allow tools to smoke assemblies without using System.Diagnostics.Process.
+
 == Framework ==
 
+The framework namespace contains classes which are used by Smokey itself and may also be used by rules. Examples include the Log and Settings Classes.
+
 == Framework.Instructions ==
+
+This namespace contains typed wrappers around the Cecil Instruction class (Cecil is the mono assembly reader and writer tool). These typed wrappers allow !RuleDispatcher to dispatch via the types and are substantially easier to use than the raw Instruction type.
+
+For example Smokey's !LoadArg type represents the Ldarg_0, Ldarg_1, Ldarg_2, and Ldarg_3, Ldarg, and Ldarg_S opcodes and provides Arg, Name, and Type properties which are rather painful to retrieve from the Cecil instruction.
 
 == Framework.Support ==
 
