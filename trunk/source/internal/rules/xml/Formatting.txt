@@ -1,0 +1,9 @@
+The xml needs to be converted to either text or html and formatted in a half-way
+decent manner. In order to do this we rely on wiki style formatting (see
+<http://www.usemod.com/cgi-bin/wiki.pl?TextFormattingRules> for details). The
+formatting is as follows:
+
+blank line                - starts a new paragraph
+* at the start of a line  - bulleted list item
+|| at the start if a line - creates a table, each column should be separated with ||
+<http://blah>             - url, html uses "here" for the text

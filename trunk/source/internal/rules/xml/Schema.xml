@@ -1,0 +1,74 @@
+<xsd:schema xmlns:xsd = "http://www.w3.org/2001/XMLSchema">
+	<xsd:annotation>
+		<xsd:documentation xml:lang = "en">
+			Schema for rule violation xml files.
+		</xsd:documentation>
+	</xsd:annotation>
+
+	<!-- root element -->
+	<xsd:element name = "Violations" type = "ViolationsType"/>
+
+	<xsd:complexType name = "ViolationsType" mixed = "true">
+		<xsd:sequence minOccurs = "0" maxOccurs = "unbounded">
+			<xsd:element name = "Violation" type = "ViolationType" minOccurs = "0" maxOccurs = "unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+  	<!-- Violation element -->
+	<xsd:complexType name = "ViolationType" mixed = "true">
+		<xsd:sequence minOccurs = "0" maxOccurs = "unbounded">
+			<xsd:element name = "Translation" type = "TranslationType" minOccurs = "0" maxOccurs = "unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name = "checkID" type = "xsd:string" use = "required"/>
+		<xsd:attribute name = "severity" type = "SeverityType" use = "required"/>	
+		<xsd:attribute name = "breaking" type = "xsd:boolean" use = "required"/>
+	</xsd:complexType>
+
+  	<!-- Translation element -->
+  	<!-- Note that Cause, Description, and Fix may use ${key} to refer to a setting. -->
+	<xsd:complexType name = "TranslationType" mixed = "true">
+		<xsd:sequence>
+			<xsd:element name = "Cause" type = "CauseType"/>
+			<xsd:element name = "Description" type = "DescriptionType"/>
+			<xsd:element name = "Fix" type = "FixType"/>
+			<xsd:element name = "CSharp" type = "CSharpType" minOccurs = "0"/>	
+		</xsd:sequence>
+		<xsd:attribute name = "lang" type = "xsd:string" use = "required"/>
+		<xsd:attribute name = "typeName" type = "xsd:string" use = "required"/>
+		<xsd:attribute name = "category" type = "xsd:string" use = "required"/>
+	</xsd:complexType>
+
+  	<!-- Violation child elements -->
+	<xsd:complexType name = "CauseType" mixed = "true">
+		<xsd:simpleContent>
+			<xsd:extension base = "xsd:string"/>
+		</xsd:simpleContent>
+ 	</xsd:complexType>
+ 
+	<xsd:complexType name = "DescriptionType" mixed = "true">
+		<xsd:simpleContent>
+			<xsd:extension base = "xsd:string"/>
+		</xsd:simpleContent>
+ 	</xsd:complexType>
+ 
+	<xsd:complexType name = "FixType" mixed = "true">
+		<xsd:simpleContent>
+			<xsd:extension base = "xsd:string"/>
+		</xsd:simpleContent>
+ 	</xsd:complexType>
+ 
+	<xsd:complexType name = "CSharpType" mixed = "true">
+		<xsd:simpleContent>
+			<xsd:extension base = "xsd:string"/>
+		</xsd:simpleContent>
+ 	</xsd:complexType>
+
+  	<!-- Misc types -->	
+	<xsd:simpleType name = "SeverityType">
+		<xsd:restriction base = "xsd:string">
+			<xsd:enumeration value = "Warning"/>	
+			<xsd:enumeration value = "Error"/>
+			<xsd:enumeration value = "Nitpick"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

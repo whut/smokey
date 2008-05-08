@@ -1,0 +1,67 @@
+<!-- Dumping ground (shouldn't be many of these). -->
+<Violations>
+	<Violation checkID = "M1000" severity = "Warning" breaking = "true">	
+		<Translation lang = "en" typeName = "UseJurassicNaming" category = "Misc">			
+			<Cause>
+			The above names are not using the Jurassic naming conventions.
+			</Cause>
+	
+			<Description>
+			Names should be chosen depending on what they represent:
+			    || Namespace      || PascalCase
+			    || Types          || PascalCase
+			    || Interfaces     || IFormatting
+			    || Events         || PascalCase
+			    || Properties     || PascalCase
+			    || Methods        || PascalCase
+			    || Parameters     || argList
+			    || Public fields  || PascalCase
+			    || Other fields   || m_numItems/mNumItems or ms_numItems/s_numItems/sNumItems/msNumItems
+
+			It's OK for an identifier to be all upper case if it's two characters long
+			(e.g. IO). Underscores and hungarian notation should not be used. These are
+			the same conventions as the .NET conventions, see
+			&lt;http://msdn2.microsoft.com/en-us/library/x2dbyw72(VS.71).&gt; for more
+			details on those.
+			</Description>
+	
+			<Fix>
+			Use the above to choose a name which is compatible with the naming convention.
+			</Fix>
+	
+			<CSharp>
+			namespace Acme
+			{
+				internal class Factory
+				{
+					public bool HasWidget(string partNumber)
+					{
+						return partNumber == m_validPartNumber;
+					}
+					
+					private string m_validPartNumber = "xb9";
+				} 
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "M1001" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "SortedMethods" category = "Misc">			
+			<Cause>
+			A type's methods are only mostly sorted.
+			</Cause>
+	
+			<Description>
+			This rule considers the methods of a type at each access level in turn.
+			If 80% or more of the methods at an access level are sorted the methods
+			are considered to be sorted. If any methods at that level are not sorted
+			the rule will fire.
+			</Description>
+	
+			<Fix>
+			Sort the methods correctly.
+			</Fix>
+		</Translation>
+	</Violation>
+</Violations>

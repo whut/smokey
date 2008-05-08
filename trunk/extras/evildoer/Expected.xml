@@ -1,0 +1,151 @@
+<Expectations>
+	<!-- Assembly -->
+	<Expected checkID = "D1004" typeName = "UseStrongName" fullName = "evildoer_d"/>
+	<Expected checkID = "R1014" typeName = "StaticSetter" fullName = "evildoer_d"/>
+	<Expected checkID = "D1018" typeName = "CLSCompliant" fullName = "evildoer_d"/>
+	<Expected checkID = "C1020" typeName = "AttributeSpelling" fullName = "evildoer_d"/>
+	<Expected checkID = "D1000" typeName = "LargeNamespace" fullName = "evildoer_d"/>
+	<Expected checkID = "D1039" typeName = "BadExit" fullName = "evildoer_d"/>
+
+	<!-- BadClass -->
+	<Expected checkID = "PO1000" typeName = "NewLineLiteral" fullName = "System.Void EvilDoer.BadClass::UnixNewLine()"/>
+	<Expected checkID = "PO1000" typeName = "NewLineLiteral" fullName = "System.Void EvilDoer.BadClass::WindowsNewLine()"/>
+	<Expected checkID = "PO1000" typeName = "NewLineLiteral" fullName = "System.Void EvilDoer.BadClass::MacNewLine()"/>
+
+	<Expected checkID = "D1002" typeName = "MethodTooComplex" fullName = "System.Void EvilDoer.BadClass::Complex(System.Int32,System.Int32)"/>
+
+	<Expected checkID = "P1000" typeName = "EmptyFinalizer" fullName = "EvilDoer.BadClass"/>
+	<Expected checkID = "P1002" typeName = "UseStringEmpty" fullName = "System.Void EvilDoer.BadClass::WriteBlankLine()"/>
+	<Expected checkID = "P1003" typeName = "AvoidBoxing" fullName = "System.Void EvilDoer.BadClass::Boxing(System.Int32)"/>
+	<Expected checkID = "P1004" typeName = "AvoidUnboxing" fullName = "System.Void EvilDoer.BadClass::Unboxing(System.Object)"/>
+	<Expected checkID = "P1005" typeName = "StringConcat" fullName = "System.Void EvilDoer.BadClass::Loop(System.String,System.String,System.Int32)"/>
+	<Expected checkID = "P1007" typeName = "NonGenericCollections" fullName = "EvilDoer.BadClass"/>
+
+	<Expected checkID = "R1000" typeName = "DisposableFields" fullName = "EvilDoer.BadClass"/>
+	<Expected checkID = "R1004" typeName = "DisposeScopedObjects" fullName = "System.Int32 EvilDoer.BadClass::ReadAll1(System.String,System.Int32)"/>
+
+	<Expected checkID = "C1001" typeName = "InfiniteRecursion" fullName = "System.Int32 EvilDoer.BadClass::GetHashCode()"/>
+	<Expected checkID = "MS1020" typeName = "EqualsRequiresNullCheck1" fullName = "System.Boolean EvilDoer.BadClass::Equals(EvilDoer.BadClass)"/>
+	<Expected checkID = "MS1020" typeName = "EqualsRequiresNullCheck1" fullName = "System.Boolean EvilDoer.BadClass::op_Equality(EvilDoer.BadClass,EvilDoer.BadClass)"/>
+	<Expected checkID = "MS1020" typeName = "EqualsRequiresNullCheck1" fullName = "System.Boolean EvilDoer.BadClass::Equals(System.Object)"/>
+	<Expected checkID = "MS1004" typeName = "EqualsRequiresNullCheck1" fullName = "System.Boolean EvilDoer.BadClass::Equals(System.Object)"/>
+	<Expected checkID = "MS1003" typeName = "DontDestroyStackTrace" fullName = "System.Void EvilDoer.BadClass::TrashStackTrace()"/>
+	<Expected checkID = "C1002" typeName = "MalformedFormatString" fullName = "System.String EvilDoer.BadClass::SkippedFormat(System.Int32,System.Int32)"/>
+	<Expected checkID = "C1000" typeName = "StringSpelling" fullName = "System.Void EvilDoer.BadClass::Unboxing(System.Object)"/>
+	<Expected checkID = "MS1012" typeName = "ThrowDerived" fullName = "System.Void EvilDoer.BadClass::Loop(System.String,System.String,System.Int32)"/>
+	<Expected checkID = "MS1011" typeName = "DontSwallowException" fullName = "System.Void EvilDoer.BadClass::Swallows()"/>
+	<Expected checkID = "S1007" typeName = "UnmanagedCodeSecurity" fullName = "EvilDoer.BadClass"/>
+
+	<!-- BadClass/Nested -->
+	<Expected checkID = "PO1000" typeName = "NewLineLiteral" fullName = "System.Void EvilDoer.BadClass/Nested::BadLiteral()"/>
+	<Expected checkID = "D1001" typeName = "ClassCanBeMadeStatic" fullName = "EvilDoer.BadClass/Nested"/>
+	<Expected checkID = "D1001" typeName = "ClassCanBeMadeStatic" fullName = "EvilDoer.BadClass2/Inner"/>
+
+	<!-- BadClass2 -->
+	<Expected checkID = "MS1018" typeName = "VisibleFields" fullName = "EvilDoer.BadClass2"/>
+	<Expected checkID = "R1005" typeName = "CtorCallsVirtual" fullName = "System.Void EvilDoer.BadClass2::.ctor(System.String)"/>
+	<Expected checkID = "R1001" typeName = "DisposeNativeResources" fullName = "EvilDoer.BadClass2"/>
+	<Expected checkID = "MS1008" typeName = "LockThis" fullName = "System.Void EvilDoer.BadClass2::Work()"/>
+	<Expected checkID = "MS1015" typeName = "SynchronizedAttribute" fullName = "System.Void EvilDoer.BadClass2::Work2()"/>
+	<Expected checkID = "R1009" typeName = "CompareFloats" fullName = "System.Boolean EvilDoer.BadClass2::BadArith(System.Double,System.Double)"/>
+	<Expected checkID = "R1011" typeName = "HashMatchesEquals" fullName = "EvilDoer.BadClass2"/>
+	<Expected checkID = "R1012" typeName = "ObjectHashCode1" fullName = "EvilDoer.BadClass2"/>
+	<Expected checkID = "MS1020" typeName = "EqualsRequiresNullCheck" fullName = "System.Boolean EvilDoer.BadClass2::Equals(System.Object)"/>
+	<Expected checkID = "MS1020" typeName = "EqualsRequiresNullCheck" fullName = "System.Boolean EvilDoer.BadClass2::op_Equality(EvilDoer.BadClass2,EvilDoer.BadClass2)"/>
+	<Expected checkID = "C1002" typeName = "MalformedFormatString" fullName = "System.String EvilDoer.BadClass2::get_StringProp()"/>
+	<Expected checkID = "MS1006" typeName = "ICloneable" fullName = "EvilDoer.BadClass2"/>
+	<Expected checkID = "MS1010" typeName = "ReservedExceptions" fullName = "System.Void EvilDoer.BadClass2::Reserved(System.Object)"/>
+	<Expected checkID = "P1010" typeName = "ToStringOnString" fullName = "System.String EvilDoer.BadClass2::SillyString(System.String)"/>
+	<Expected checkID = "R1013" typeName = "WeakIdentityLock" fullName = "System.Void EvilDoer.BadClass2::StringLock(System.Int32)"/>
+	<Expected checkID = "PO1001" typeName = "DllImportPath" fullName = "System.Void EvilDoer.BadClass2::BadExtern()"/>
+	<Expected checkID = "PO1002" typeName = "DllImportExtension" fullName = "System.Void EvilDoer.BadClass2::BadExtern()"/>
+	<Expected checkID = "D1007" typeName = "UseBaseTypes" fullName = "System.String EvilDoer.BadClass2::SillyString(System.String)"/>
+	<Expected checkID = "D1020" typeName = "NativeMethods" fullName = "System.Void EvilDoer.BadClass2::BadExtern()"/>
+	<Expected checkID = "D1020" typeName = "NativeMethods" fullName = "System.IntPtr EvilDoer.BadClass2::CreateHandle()"/>
+	<Expected checkID = "D1038" typeName = "DontExit2" fullName = "System.Void EvilDoer.BadClass2::Exit()"/>
+	<Expected checkID = "C1022" typeName = "UseSetterValue" fullName = "System.Void EvilDoer.BadClass2::set_Item(System.Int32,System.Object)"/>
+
+	<!-- BadDisposable -->
+	<Expected checkID = "R1002" typeName = "DisposeFields" fullName = "EvilDoer.BadDisposable"/>
+	<Expected checkID = "MS1007" typeName = "IDisposable" fullName = "System.Void EvilDoer.BadDisposable::Dispose()"/>
+	<Expected checkID = "MS1009" typeName = "NoObjectDisposedException" fullName = "EvilDoer.BadDisposable"/>
+	<Expected checkID = "S1003" typeName = "S1003" fullName = "EvilDoer.BadDisposable"/>
+	<Expected checkID = "C1018" typeName = "IgnoredReturn" fullName = "System.Void EvilDoer.BadDisposable::DoDispose(System.Boolean)"/>
+	<Expected checkID = "C1021" typeName = "RecursiveEquality" fullName = "System.Boolean EvilDoer.BadDisposable::op_Equality(EvilDoer.BadDisposable,EvilDoer.BadDisposable)"/>
+
+	<!-- BadDisposable2 -->
+	<Expected checkID = "MS1013" typeName = "DisposableButNoFinalizer" fullName = "EvilDoer.BadDisposable2"/>
+	<Expected checkID = "PO1005" typeName = "BoolMarshalling" fullName = "System.Boolean EvilDoer.BadDisposable2/NativeMethods::CloseHandle(System.IntPtr)"/>
+
+	<!-- BadNaming -->
+	<Expected checkID = "MO1000" typeName = "UseMonoNaming" fullName = "EvilDoer.BadNaming"/>
+	<Expected checkID = "D1001" typeName = "ClassCanBeMadeStatic" fullName = "EvilDoer.BadNaming"/>
+	<Expected checkID = "P1012" typeName = "NotInstantiated" fullName = "evildoer_d"/>
+	<Expected checkID = "D1032" typeName = "UnusedMethod" fullName = "evildoer_d"/>
+
+	<!-- BadStruct -->
+	<Expected checkID = "MS1019" typeName = "LargeStruct" fullName = "EvilDoer.BadStruct"/>
+	<Expected checkID = "R1011" typeName = "HashMatchesEquals" fullName = "EvilDoer.BadStruct"/>
+	<Expected checkID = "D1036" typeName = "EqualityOperator" fullName = "EvilDoer.BadStruct"/>
+	<Expected checkID = "P1009" typeName = "ValueHashCode" fullName = "System.Int32 EvilDoer.BadStruct::GetHashCode()"/>
+	<Expected checkID = "MS1005" typeName = "EqualsCannotCast2" fullName = "System.Boolean EvilDoer.BadStruct::Equals(System.Object)"/>
+
+	<!-- BadStruct2 -->
+	<Expected checkID = "P1008" typeName = "StructOverrides" fullName = "EvilDoer.BadStruct2"/>
+
+	<!-- BadException -->
+	<Expected checkID = "MS1002" typeName = "CustomException" fullName = "EvilDoer.BadException"/>
+	<Expected checkID = "D1015" typeName = "ExceptionConstructors" fullName = "EvilDoer.BadException"/>
+	<Expected checkID = "D1024" typeName = "SerializeException" fullName = "EvilDoer.BadException"/>
+	<Expected checkID = "D1025" typeName = "SerializeExceptionMembers" fullName = "EvilDoer.BadException"/>
+
+	<!-- GlobalClass -->
+	<Expected checkID = "MS1016" typeName = "GlobalPublicType" fullName = "GlobalClass"/>
+
+	<!-- Enums -->
+	<Expected checkID = "MS1014" typeName = "EnumsNeedZero" fullName = "EvilDoer.BadEnum1"/>
+	<Expected checkID = "MS1021" typeName = "PluralEnumFlags" fullName = "EvilDoer.BadFlag"/>
+	<Expected checkID = "MS1022" typeName = "FlagsUseNone" fullName = "EvilDoer.BadFlags"/>
+
+	<!-- Attributes -->
+	<Expected checkID = "MS1001" typeName = "AttributesNeedUsage" fullName = "EvilDoer.BadAttribute"/>
+	<Expected checkID = "P1013" typeName = "UnsealedAttribute" fullName = "EvilDoer.BadAttribute"/>
+
+	<Expected checkID = "D1022" typeName = "ObsoleteMessage" fullName = "System.String EvilDoer.BadNames::get_Name()"/>
+	<Expected checkID = "D1009" typeName = "AttributeProperties" fullName = "EvilDoer.Bad5Attribute"/>
+	<Expected checkID = "MS1001" typeName = "AttributesNeedUsage" fullName = "EvilDoer.Bad5Attribute"/>
+	<Expected checkID = "MS1025" typeName = "SuffixName3" fullName = "EvilDoer.BadFlags"/>
+	<Expected checkID = "MS1027" typeName = "PreferredTerm" fullName = "EvilDoer.HandleLogIn"/>
+
+	<Expected checkID = "D1006" typeName = "ImplementGenericCollection" fullName = "EvilDoer.EmptyCollection"/>
+	<Expected checkID = "D1016" typeName = "TypedList" fullName = "EvilDoer.EmptyCollection"/>
+	<Expected checkID = "D1017" typeName = "TypedDictionary" fullName = "EvilDoer.EmptyDictionary"/>
+
+	<Expected checkID = "D1041" typeName = "CircularReference" fullName = "EvilDoer.Base1"/>
+	<Expected checkID = "D1041" typeName = "CircularReference" fullName = "EvilDoer.Cyclic1"/>
+
+	<Expected checkID = "D1042" typeName = "IdenticalMethods" fullName = "System.Void EvilDoer.Identical2::MyBad(System.String)"/>
+
+	<Expected checkID = "C1017" typeName = "NullField" fullName = "EvilDoer.BadClass"/>
+	<Expected checkID = "D1045" typeName = "GodClass" fullName = "EvilDoer.BadClass2"/>
+
+	<Expected checkID = "D1046" typeName = "SchizoidTyp" fullName = "EvilDoer.HalfCohesive"/>
+
+	<Expected checkID = "D1049" typeName = "IdenticalCodeBlocks" fullName = "System.Void EvilDoer.BadClass::Complex(System.Int32,System.Int32)"/>
+	<Expected checkID = "D1049" typeName = "IdenticalCodeBlocks" fullName = "System.Void EvilDoer.Branch::Alpha(System.Int32,System.Int32)"/>
+	<Expected checkID = "D1049" typeName = "IdenticalCodeBlocks" fullName = "System.Void EvilDoer.ReverseBranch::Alpha(System.Int32,System.Int32)"/>
+	<Expected checkID = "D1049" typeName = "IdenticalCodeBlocks" fullName = "System.Void EvilDoer.ExceptionHandlers::Alpha(System.Int32,System.Int32)"/>
+	<Expected checkID = "D1049" typeName = "IdenticalCodeBlocks" fullName = "System.Void EvilDoer.SameMethod::Gamma(System.Int32,System.Int32)"/>
+
+	<Expected checkID = "MS1029" typeName = "ClassPrefix" fullName = "evildoer_d"/>
+	<Expected checkID = "MS1030" typeName = "MS1030" fullName = "Hungarian.Bad4"/>
+	<Expected checkID = "MS1030" typeName = "MS1030" fullName = "Hungarian.Bad3"/>
+	<Expected checkID = "MS1030" typeName = "MS1030" fullName = "Hungarian.Bad2"/>
+	<Expected checkID = "MS1030" typeName = "MS1030" fullName = "Hungarian.Bad1"/>
+	<Expected checkID = "PO1009" typeName = "WinFormsVoodoo" fullName = "evildoer_d"/>
+	<Expected checkID = "D1050" typeName = "UnusedField" fullName = "evildoer_d"/>
+	<Expected checkID = "P1008" typeName = "StructOverrides" fullName = "EvilDoer.XWindowAttributes"/>
+	<Expected checkID = "D1051" typeName = "PublicImplementation" fullName = "EvilDoer.InternalWorker"/>
+	<Expected checkID = "D1051" typeName = "PublicImplementation" fullName = "EvilDoer.InternalWorker3"/>
+	<Expected checkID = "C1003" typeName = "NullDeref" fullName = "System.Int32 EvilDoer.BadClass::BadMeet(System.Int32)"/>
+</Expectations>

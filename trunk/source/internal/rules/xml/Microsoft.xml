@@ -1,0 +1,1128 @@
+<!-- Microsoft design guidelines. -->
+<Violations>
+	<Violation checkID = "MS1000" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "AssemblyInfo" category = "Microsoft Design Guidelines">			
+			<Cause>
+			The assembly is missing AssemblyVersionAttribute (or major, minor, and revision are all
+			zero) or AssemblyDescriptionAttribute.
+			</Cause>
+	
+			<Description>
+			It's a good idea to make assemblies as self describing as possible. Part
+			of this is to embed useful attributes like the version and description.
+			</Description>
+	
+			<Fix>
+			Add the assembly attributes.
+			</Fix>
+	
+			<CSharp>
+			// These are usually placed into an AssemblyInfo.cs file.
+			using Mono.GetOptions;
+			using System.Reflection;
+			using System.Runtime.CompilerServices; 
+			using System.Runtime.InteropServices;
+			using System.Security.Permissions;
+			
+			[assembly: AssemblyVersion("1.2.92.1")]		// majorVersion.minorVersion.buildNumber.revision
+			[assembly: AssemblyTitle("Word Killer")]	// friendly name
+			[assembly: AssemblyDescription("Word processor for the smart folks.")]	// apears in the comments tab of the version tab of the file properties box on Windows
+			[assembly: AssemblyCopyright("Copyright (C) 2007 Joe Blow")]
+			
+			[assembly: CLSCompliant(true)]				// true if your assembly can be used by other languages
+			[assembly: ComVisible(false)]				// default to false, which means that COM cannot be used to interact with your public types
+			[assembly: PermissionSet(SecurityAction.RequestMinimum, Unrestricted = true)]	// don't restrict my ability to do stuff
+			
+			[assembly: Mono.Author("Joe Blow")]			// these are used by Mono.GetOptions (which is obsolete in mono 1.2.6)
+			[assembly: Mono.Author("Jane Doe")]
+			[assembly: Mono.About("Distributed under the MIT.X11 license")]
+			[assembly: Mono.UsageComplement("[docFile]")]	// this is appended to the "Usage:" line in -help
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "MS1001" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "AttributesNeedUsage" category = "Microsoft Design Guidelines">			
+			<Cause>
+			An attribute was defined without an AttributeUsage.
+			</Cause>
+	
+			<Description>
+			Attributes are almost always constrained to certain targets and often can't be used
+			multiple times on the same target. The AttributeUsage attribute allows the compiler to
+			enforce these constraints.
+			</Description>
+	
+			<Fix>
+			Use the AttributeUsage attribute.
+			</Fix>
+	
+			<CSharp>
+			[assembly: Contact("jesjones@mindspring.com")]
+			
+			[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
+			public sealed class ContactAttribute : Attribute
+			{		
+				public ContactAttribute(string address) 
+				{
+					m_address = address;
+				}
+				
+				public string Address
+				{
+					get {return m_address;}
+				}
+			
+				private readonly string m_address;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	
+	<Violation checkID = "MS1002" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "CustomException" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A custom exception inherits from ApplicationException.
+			</Cause>
+	
+			<Description>
+			.NET 1.0 attempted to draw a distinction between exceptions thrown by the .NET 
+			framework and those thrown by applications. Applications were supposed to only
+			throw exceptions derived from ApplicationException and the framework was not
+			supposed to throw ApplicationExceptions. But applications often throw system
+			exceptions like ArgumentException and there are a few framework exceptions
+			that inherit from ApplicationException (like TargetInvocationException).
+			
+			Because of this it is no longer possible to draw such a tidy distinction
+			between application and system exceptions. In .NET 2.0 Microsoft now recommends
+			that ApplicationException not be used at all. See &lt;http://blogs.msdn.com/kcwalina/archive/2007/01/30/exceptionhierarchies.aspx&gt;
+			for some guidance on how to design exception hierarchies.
+			</Description>
+	
+			<Fix>
+			Custom exceptions should inherit from Exception.
+			</Fix>
+	
+			<CSharp>
+			internal class MyException : Exception	// use Exception not ApplicationException
+			{
+				public MyException(string message) : base(message)
+				{
+				}
+				
+				public MyException(string message, Exception inner) : base(message, inner)
+				{
+				}
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "MS1003" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "DontDestroyStackTrace" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A catch handler is calling throw with the exception it caught.
+			</Cause>
+	
+			<Description>
+			Stack traces are attached to exception objects when the object is thrown, not when
+			it is created. So, if you throw the exception a second time the original stack
+			trace will be lost.
+			</Description>
+	
+			<Fix>
+			Use throw without an object.
+			</Fix>
+	
+			<CSharp>
+			internal static class WhizBang
+			{
+				public static void Run()
+				{
+					try
+					{
+						Console.WriteLine("cool stuff goes here");
+					}
+					catch (ApplicationException e)
+					{
+						Console.Error.WriteLine(e.Message);
+						throw;		// preserves stack crawl of the original error
+					}
+				}
+
+				public static void Run2()
+				{
+					try
+					{
+						Console.WriteLine("more cool stuff");
+					}
+					catch (ApplicationException e)
+					{
+						Console.Error.WriteLine(e.Message);
+						throw new ApplicationException("cool is buggy", e);		// retain original error
+					}
+				}
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "MS1004" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "EqualsCannotCast1" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A class Equals method is throwing an exception via a cast expression.
+			</Cause>
+	
+			<Description>
+			The Equals method should not throw exceptions so cast expressions should not be used.
+			See the code below for how Microsoft recommends implementing these methods or
+			&lt;http://msdn2.microsoft.com/en-us/library/ms173147(vs.80).aspx&gt; for more details.
+			</Description>
+	
+			<Fix>
+			Use an as expression (note that checking the types with GetType is not recommended
+			because classes may be subclassed).
+			</Fix>
+	
+			<CSharp>
+			internal class Customer : IEquatable&lt;Customer&gt;
+			{		
+				public override bool Equals(object rhsObj)
+				{
+					if (rhsObj == null)			// as is a little expensive, so skip it if we can
+						return false;
+					
+					Customer rhs = rhsObj as Customer;
+					return this == rhs;
+				}
+					
+				public bool Equals(Customer rhs)	// provide a typed overload for efficiency
+				{
+					return this == rhs;
+				}
+
+				public static bool operator==(Customer lhs, Customer rhs)
+				{
+					// If both are null, or both are the same instance, return true.
+					if (object.ReferenceEquals(lhs, rhs))
+						return true;
+					
+					// If one is null, but not both, return false.
+					if ((object) lhs == null || (object) rhs == null)
+						return false;
+					
+					// Return true if the fields match:
+					return lhs.name == rhs.name &amp;&amp; lhs.address == rhs.address;
+				}
+				
+				public static bool operator!=(Customer lhs, Customer rhs)
+				{
+					return !(lhs == rhs);
+				}
+				
+				public override int GetHashCode()
+				{
+					int hash;
+					
+					unchecked
+					{
+						hash = name.GetHashCode() + address.GetHashCode();
+					}
+					
+					return hash;
+				}
+				
+				private string name = "ted";
+				private string address = "main street";
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "MS1005" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "EqualsCannotCast2" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A struct Equals method is throwing an exception via a cast expression.
+			</Cause>
+	
+			<Description>
+			The Equals method should not throw exceptions so cast expressions should not be used.
+			See the code below for how Microsoft recommends implementing these methods or
+			&lt;http://msdn2.microsoft.com/en-us/library/ms173147(vs.80).aspx&gt; for more details.
+			</Description>
+	
+			<Fix>
+			Use GetType to verify that the types are identical before casting.
+			</Fix>
+	
+			<CSharp>
+			internal struct TwoDPoint : IEquatable&lt;TwoDPoint&gt;
+			{		
+				public override bool Equals(object rhsObj)
+				{
+					if (rhsObj == null)						// objects may be null
+						return false;
+					
+					if (GetType() != rhsObj.GetType()) 
+						return false;
+				
+					TwoDPoint rhs = (TwoDPoint) rhsObj;					
+					return this == rhs;
+				}
+					
+				public bool Equals(TwoDPoint rhs)	// provide a typed overload for efficiency
+				{					
+					return this == rhs;
+				}
+
+				public static bool operator==(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return lhs.x == rhs.x &amp;&amp; lhs.y == rhs.y;
+				}
+				
+				public static bool operator!=(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return !(lhs == rhs);
+				}
+				
+				public override int GetHashCode()
+				{
+					int hash;
+					
+					unchecked
+					{
+						hash = x.GetHashCode() + y.GetHashCode();
+					}
+					
+					return hash;
+				}
+				
+				private int x, y;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "MS1006" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "ICloneable" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A class implements ICloneable.
+			</Cause>
+	
+			<Description>
+			ICloneable is documented to return either a shallow (references are assigned) or 
+			deep copy (references are recursively cloned). Unfortunately clients often need to
+			know exactly how the copy is done and ICloneable isn't defined tightly enough to tell 
+			them. Because of this Microsoft now recommends that ICloneable not be used.
+			</Description>
+	
+			<Fix>
+			Don't implement ICloneable, but do provide a clone method and document the semantics.
+			</Fix>
+	
+			<CSharp>
+			internal abstract class Shape
+			{
+				// Returns a shallow copy. Note that we do not return object.
+				public abstract Shape Clone();
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "MS1007" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "IDisposable" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A class with unmanaged resources has a Dispose method which does not call GC.SuppressFinalize.
+			</Cause>
+	
+			<Description>
+			IDisposable allows you to support deterministic cleanup of resources via the using
+			statement, but implementing it is a bit tricky. It's strongly recommended that you
+			follow the pattern below.
+			
+			Note that the order in which finalizers are called is undefined and any managed
+			objects you have references to may have been garbage collected. Also finalizers
+			cannot throw or your app will terminate. And finalizers are normally called from
+			a worker thread.
+			</Description>
+	
+			<Fix>
+			The public Dispose method should call GC.SuppressFinalize.
+			</Fix>
+	
+			<CSharp>
+			internal class MyResource : IDisposable
+			{
+				~MyResource()		
+				{					
+					// Note that this is called even if the ctor throws.
+					DoDispose(false);
+				}
+			
+				public MyResource(IntPtr handle)
+				{
+					m_handle = handle;
+				}
+			
+				public void DoWork()
+				{
+					// All public methods (except Dispose) should throw 
+					// ObjectDisposedException if Dispose has been called.
+					if (m_disposed)		
+						throw new ObjectDisposedException("MyResource has been disposed");
+						
+					NativeMethods.WorkIt(m_handle);
+					GC.KeepAlive(this);
+				}
+			
+				public void Dispose()
+				{
+					DoDispose(true);
+			
+					// If we've been disposed our object can be garbage collected without
+					// finalization.
+					GC.SuppressFinalize(this);
+				}
+			
+				private void DoDispose(bool disposing)
+				{
+					if (!m_disposed)
+					{
+						// If we've been called via Dispose we can,
+						if (disposing)
+						{
+							// dispose of managed fields.
+						}
+			
+						// If we've been called via the finalizer any references we have to
+						// managed objects may have been finalized so we have to be
+						// very careful and only dispose of unmanaged resources here.
+						NativeMethods.CloseHandle(m_handle);
+						m_handle = IntPtr.Zero;
+			
+						m_disposed = true;
+					}
+				}
+			
+				private static class NativeMethods
+				{
+					[System.Runtime.InteropServices.DllImport("Kernel32")]
+					public extern static bool CloseHandle(IntPtr handle);
+			
+					[System.Runtime.InteropServices.DllImport("Kernel32")]
+					public extern static void WorkIt(IntPtr handle);
+				}
+				
+				private IntPtr m_handle;
+				private bool m_disposed = false;
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "MS1008" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "LockThis" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A method is locking this.
+			</Cause>
+	
+			<Description>
+			Microsoft originally recommended that developers use lock(this) or the 
+			Synchronized MethodImplAttribute. However this exposes the lock object
+			to the outside world which makes analyzing the locking semantics much 
+			harder and allows poorly written client code to deadlock your class.
+			Microsoft has now changed its collective mind and recommends against
+			using lock(this).
+			</Description>
+	
+			<Fix>
+			Create an object and use that for synchronization.
+			</Fix>
+	
+			<CSharp>
+			internal class Engine
+			{
+				public void Work()
+				{
+					lock (m_lock)
+					{
+						DoWork();
+					}
+				}
+				
+				private static void DoWork()
+				{
+					Console.WriteLine("working...");
+				}
+				
+				private object m_lock = new object();
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "MS1009" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "NoObjectDisposedException" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A class which implements IDisposable does not throw ObjectDisposedException.
+			</Cause>
+	
+			<Description>
+			IDisposable allows you to support deterministic cleanup of resources via the using
+			statement, but implementing it is a bit tricky. It's strongly recommended that you
+			follow the pattern below.
+			
+			Note that the order in which finalizers are called is undefined and finalizers
+			cannot throw or your app will terminate (starting with .NET 2.0). Also finalizers are normally called from
+			a worker thread.
+			</Description>
+	
+			<Fix>
+			All public methods, except Dispose, should throw ObjectDisposedException.
+			</Fix>
+	
+			<CSharp>
+			using System.IO;
+			
+			internal class Log : IDisposable
+			{
+				public Log()
+				{
+					m_writer = new StringWriter();
+				}
+			
+				public void WriteLine(string line)
+				{
+					// All public methods (except Dispose) should throw 
+					// ObjectDisposedException if Dispose has been called.
+					if (m_disposed)		
+						throw new ObjectDisposedException("Log has been disposed");
+						
+					m_writer.WriteLine(line);
+				}
+			
+				// Note that this is a simplified version of the disposable pattern because
+				// we have no unmanaged resources.
+				public void Dispose()
+				{
+					if (!m_disposed)
+					{
+						m_writer.Dispose();
+						
+						m_disposed = true;
+					}
+				}
+									
+				private StringWriter m_writer;	// System.IO.StringWriter implements IDisposable
+				private bool m_disposed = false;
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "MS1010" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ReservedExceptions" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A method that is throwing an exception that is reserved by the CLR: OutOfMemoryException, 
+			IndexOutOfRangeException, ExecutionEngineException, and NullReferenceException.
+			</Cause>
+	
+			<Description>
+			See &lt;http://blogs.msdn.com/kcwalina/archive/2007/01/30/exceptionhierarchies.aspx&gt;
+			for some guidance on how to design exception hierarchies.
+			</Description>
+	
+			<Fix>
+			Throw a better exception. Commonly thrown exceptions include 
+			InvalidOperationException, ArgumentException, ArgumentNullException, and 
+			ArgumentOutOfRangeException.
+			</Fix>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "MS1011" severity = "Warning" breaking = "false">	
+		<Translation lang = "en" typeName = "DontSwallowException" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A method catches Exception or SystemException, but does nothing in the
+			catch handler.
+			</Cause>
+	
+			<Description>
+			Base exceptions should not be blindly caught and catch handlers should not
+			normally be empty.
+			</Description>
+	
+			<Fix>
+			Catch a specific type of exception, or failing that, log or otherwise report the error.
+			</Fix>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "MS1012" severity = "Warning" breaking = "false">	
+		<Translation lang = "en" typeName = "ThrowDerived" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A method is throwing an exception of type Exception, SystemException,
+			or ApplicationException.
+			</Cause>
+	
+			<Description>
+			Instead of throwing a generic exception, throw an exception that indicates
+			the type of the problem. See &lt;http://blogs.msdn.com/kcwalina/archive/2007/01/30/exceptionhierarchies.aspx&gt;
+			for some guidance on how to design exception hierarchies.
+			</Description>
+	
+			<Fix>
+			Throw a better exception. Commonly thrown exceptions include 
+			InvalidOperationException, ArgumentException, ArgumentNullException, 
+			ArgumentOutOfRangeException, and NotImplementedException. A more complete list can be found 
+			&lt;http://blogs.msdn.com/brada/archive/2005/03/27/402801.aspx&gt;.
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "MS1013" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "DisposableButNoFinalizer" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A class with unmanaged resources implements IDisposable, but does not have a finalizer.
+			</Cause>
+	
+			<Description>
+			Normally IDisposable objects will be cleaned up via the Dispose method. But
+			if clients are not properly written this will not happen and the unmanaged
+			resources have to be cleaned up via the finalizer. Note that you should not
+			have a finalizer if you have no unmanaged resources.
+			</Description>
+	
+			<Fix>
+			Implement the finalizer.
+			</Fix>
+	
+			<CSharp>
+			internal class MyResource : IDisposable
+			{
+				~MyResource()		
+				{					
+					// Note that this is called even if the ctor throws.
+					DoDispose(false);
+				}
+			
+				public MyResource(IntPtr handle)
+				{
+					m_handle = handle;
+				}
+			
+				public void DoWork()
+				{
+					// All public methods (except Dispose) should throw 
+					// ObjectDisposedException if Dispose has been called.
+					if (m_disposed)		
+						throw new ObjectDisposedException("MyResource has been disposed");
+						
+					NativeMethods.WorkIt(m_handle);
+					GC.KeepAlive(this);
+				}
+			
+				public void Dispose()
+				{
+					DoDispose(true);
+			
+					// If we've been disposed our object can be garbage collected without
+					// finalization.
+					GC.SuppressFinalize(this);
+				}
+			
+				private void DoDispose(bool disposing)
+				{
+					if (!m_disposed)
+					{
+						// If we've been called via Dispose we can,
+						if (disposing)
+						{
+							// dispose of managed fields.
+						}
+			
+						// If we've been called via the finalizer any references we have to
+						// managed objects may have been finalized so we have to be
+						// very careful and only dispose of unmanaged resources here.
+						NativeMethods.CloseHandle(m_handle);
+						m_handle = IntPtr.Zero;
+			
+						m_disposed = true;
+					}
+				}
+			
+				private static class NativeMethods
+				{
+					[System.Runtime.InteropServices.DllImport("Kernel32")]
+					public extern static bool CloseHandle(IntPtr handle);
+			
+					[System.Runtime.InteropServices.DllImport("Kernel32")]
+					public extern static void WorkIt(IntPtr handle);
+				}
+				
+				private IntPtr m_handle;	// here's our unmanaged resource
+				private bool m_disposed = false;
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "MS1014" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "EnumsNeedZero" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A non-private enum has no zero value.
+			</Cause>
+		
+			<Description>
+			.NET initializes all memory to zero before call constructors. In C# developers
+			cannot replace the default constructor for structs so it's important that
+			setting a value type to zeros produces a sane value.
+			</Description>
+	
+			<Fix>
+			Add a zero value or make the enum private.
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "MS1015" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "SynchronizedAttribute" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A method is using the Synchronized MethodImplAttribute.
+			</Cause>
+	
+			<Description>
+			Microsoft originally recommended that developers use lock(this) or the 
+			Synchronized MethodImplAttribute. However this exposes the lock object
+			to the outside world which makes analyzing the locking semantics much 
+			harder and allows poorly written client code to deadlock your class.
+			Microsoft has now changed its collective mind and recommends against
+			using Synchronized MethodImplAttribute.
+			</Description>
+	
+			<Fix>
+			Create an object and use that for synchronization.
+			</Fix>
+	
+			<CSharp>
+			internal class Engine
+			{
+				public void Work()
+				{
+					lock (m_lock)
+					{
+						DoWork();
+					}
+				}
+				
+				private static void DoWork()
+				{
+					Console.WriteLine("working...");
+				}
+				
+				private object m_lock = new object();
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "MS1016" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "GlobalPublicType" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A public type is declared in the global namespace.
+			</Cause>
+	
+			<Description>
+			By making types public you are making a statement that those types can
+			be used by other assemblies. Placing your types into namespaces will help
+			prevent naming conflicts and, more importantly, allow you to organize
+			your types to make it easier for clients to discover them. The most
+			commonly used types should be placed in the main namespace and the
+			less commonly used types in nested namespaces.
+			</Description>
+	
+			<Fix>
+			Make the type internal or place it in a namespace.
+			</Fix>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "MS1017" severity = "Warning" breaking = "true">	
+		<Translation lang = "en" typeName = "UseNetNaming" category = "Microsoft Design Guidelines">			
+			<Cause>
+			The above names are not using the .NET naming conventions.
+			</Cause>
+	
+			<Description>
+			Names should be chosen depending on what they represent:
+			    || Namespace      || PascalCase
+			    || Types          || PascalCase
+			    || Interfaces     || IFormatting
+			    || Events         || PascalCase
+			    || Properties     || PascalCase
+			    || Methods        || PascalCase
+			    || Parameters     || argList
+			    || Public fields  || PascalCase
+			    || Other fields   || numItems 
+
+			It's OK for an identifier to be all upper case if it's two characters long
+			(e.g. IO). Underscores and hungarian notation should not be used. See
+			&lt;http://msdn2.microsoft.com/en-us/library/x2dbyw72(VS.71).aspx&gt; for more
+			details.
+			</Description>
+	
+			<Fix>
+			Use the above to choose a name which is compatible with the naming convention.
+			</Fix>
+	
+			<CSharp>
+			namespace Acme
+			{
+				internal class Factory
+				{
+					public bool HasWidget(string partNumber)
+					{
+						return partNumber == validPartNumber;
+					}
+					
+					private string validPartNumber = "xb7";
+				} 
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "MS1018" severity = "Warning" breaking = "true">	
+		<Translation lang = "en" typeName = "VisibleFields" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A public type has non-constant public or protected fields.
+			</Cause>
+	
+			<Description>
+			Mutable fields should be considered part of the implementation and should not be
+			exposed outside the class, and especially not outside the assembly. Doing so makes
+			it difficult to track who is doing what to the classes state, makes it difficult to
+			maintain the object's invariants, and makes it impossible to switch to using properties
+			without breaking binary compatibility.
+			</Description>
+	
+			<Fix>
+			Make the type internal or expose the field(s) using properties.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "MS1019" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "LargeStruct" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A struct has more than 16 bytes of fields.
+			</Cause>
+	
+			<Description>
+			Unlike classes structs are value types which means that they are placed on
+			the stack instead of the heap and copying is done via a bitwise copy of each
+			field instead of simply copying a pointer. Because of this large structs are
+			a drag on performance. Microsoft recommends that structs be 16 bytes or less.
+			</Description>
+	
+			<Fix>
+			Replace large structs with sealed classes.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "MS1020" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "EqualsRequiresNullCheck1" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A class Equals or operator== method is not checking its arguments for null (or
+			is infinitely recursive).
+			</Cause>
+	
+			<Description>
+			The Equals and operator== methods should not throw exceptions so it's important
+			to check that the arguments are null before calling any methods on the arguments.
+			See the code below for how Microsoft recommends implementing these methods or
+			&lt;http://msdn2.microsoft.com/en-us/library/ms173147(vs.80).aspx&gt; for more details.
+			</Description>
+	
+			<Fix>
+			Check the arguments for null.
+			</Fix>
+	
+			<CSharp>
+			internal class Customer : IEquatable&lt;Customer&gt;
+			{		
+				public override bool Equals(object rhsObj)
+				{
+					if (rhsObj == null)			// as is a little expensive, so skip it if we can
+						return false;
+					
+					Customer rhs = rhsObj as Customer;
+					return this == rhs;
+				}
+					
+				public bool Equals(Customer rhs)	// provide a typed overload for efficiency
+				{
+					return this == rhs;
+				}
+
+				public static bool operator==(Customer lhs, Customer rhs)
+				{
+					// If both are null, or both are the same instance, return true.
+					if (object.ReferenceEquals(lhs, rhs))
+						return true;
+					
+					// If one is null, but not both, return false.
+					if ((object) lhs == null || (object) rhs == null)
+						return false;
+					
+					// Return true if the fields match:
+					return lhs.name == rhs.name &amp;&amp; lhs.address == rhs.address;
+				}
+				
+				public static bool operator!=(Customer lhs, Customer rhs)
+				{
+					return !(lhs == rhs);
+				}
+				
+				public override int GetHashCode()
+				{
+					int hash;
+					
+					unchecked
+					{
+						hash = name.GetHashCode() + address.GetHashCode();
+					}
+					
+					return hash;
+				}
+
+				private string name = "ted";
+				private string address = "main street";
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "MS1021" severity = "Nitpick" breaking = "true">
+		<Translation lang = "en" typeName = "PluralEnumFlags" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A flags enum type name does not end with s, i, or ae.
+			</Cause>
+	
+			<Description>
+			By definition a flags enum value may consist of several values squished together so a plural 
+			name is appropriate.
+			</Description>
+	
+			<Fix>
+			Make the enum name plural.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "MS1022" severity = "Nitpick" breaking = "true">
+		<Translation lang = "en" typeName = "FlagsUseNone" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A flags enum has a zero value, but the name of the value is not None.
+			</Cause>
+	
+			<Description>
+			By convention flags enums should use None for their zero value.
+			</Description>
+	
+			<Fix>
+			The zero value should be named None.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "MS1023" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "SuffixName" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A name does not have the correct suffix.
+			</Cause>
+	
+			<Description>
+			By convention classes which implement certain interfaces or subclass certain base types
+			need to use a suffix to indicate the class role. The types and suffixes are:
+			|| System.Attribute || Attribute
+			|| System.EventArgs || EventArgs
+			|| System.Exception || Exception
+			|| System.Collections.ICollection || Collection
+			|| System.Collections.IDictionary || Dictionary
+			|| System.Collections.IEnumerable || Collection
+			|| System.Collections.Queue || Collection or Queue
+			|| System.Collections.Stack || Collection or Stack
+			|| System.Collections.Generic.ICollection || Collection
+			|| System.Collections.Generic.IDictionary || Dictionary
+			|| System.Data.DataSet || DataSet
+			|| System.Data.DataTable || Collection or DataTable
+			|| System.IO.Stream || Stream
+			|| System.Security.IPermission || Permission
+			|| System.Security.Policy.IMembershipCondition || Condition
+			|| An event-handler delegate. || EventHandler
+			</Description>
+	
+			<Fix>
+			Use the correct suffix.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "MS1024" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "SuffixName2" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A name does not have the correct suffix.
+			</Cause>
+	
+			<Description>
+			A name is using a suffix that is reserved for classes derived or implementing certain
+			System types. The suffixes and types are:
+			|| Attribute || System.Attribute
+			|| Collection || System.Collections.ICollection
+System.Collections.IEnumerable
+System.Collections.Queue
+System.Collections.Stack
+System.Collections.Generic.ICollection
+System.Data.DataSet
+System.Data.DataTable
+			|| Dictionary || System.Collections.IDictionary
+System.Collections.Generic.IDictionary
+			|| EventArgs || System.EventArgs
+			|| EventHandler || An event-handler delegate.
+			|| Exception || System.Exception
+			|| Permission || System.Security.IPermission
+			|| Queue || System.Collections.Queue
+			|| Stack || System.Collections.Stack
+			|| Stream || System.IO.Stream 			
+			</Description>
+	
+			<Fix>
+			Use a different suffix.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "MS1025" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "SuffixName3" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A name has a suffix that should not be used.
+			</Cause>
+	
+			<Description>
+			Microsoft recommends against ending identifiers with Delegate, Enum, Flags (for an enum),
+			and Impl.
+			</Description>
+	
+			<Fix>
+			Drop the suffix.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "MS1026" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "TypeNamespace" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A type name matches one of the following namespaces: Collections, Forms, System, or UI.
+			</Cause>
+	
+			<Description>
+			Type names should not match .NEt framework namespace names.
+			</Description>
+	
+			<Fix>
+			Rename the type.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "MS1027" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "PreferredTerm" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A externally visible type, method, or argument name contains an obsolete term.
+			</Cause>
+	
+			<Description>
+			|| Obsolete term || Preferred term
+			|| ComPlus || EnterpriseServices
+			|| Cancelled || Canceled
+			|| Indices || Indexes
+			|| LogIn || LogOn
+			|| LogOut || LogOff
+			|| SignOn || SignIn
+			|| SignOff || SignOut
+			|| Writeable || Writable			
+			</Description>
+	
+			<Fix>
+			Use the preferred name.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "MS1028" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "DefaultExceptionCtor" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A System.ArgumentException, System.ArgumentNullException, System.ArgumentOutOfRangeException, 
+			or System.DuplicateWaitObjectException is default constructed.
+			</Cause>
+	
+			<Description>
+			Provide a more meaningful exception message.			
+			</Description>
+	
+			<Fix>
+			Use the message or parameterName/message constructor.			
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "MS1029" severity = "Nitpick" breaking = "true">
+		<Translation lang = "en" typeName = "ClassPrefix" category = "Microsoft Design Guidelines">			
+			<Cause>
+			A majority of public class names in a namespace share a common prefix.
+			</Cause>
+	
+			<Description>
+			Programmers in languages without namespaces or where namespaces were added late often
+			use prefixes to make it clear where classes come from and to reduce the chances of name
+			collisions. For example MFC prefixed class names with C (CObject, CView, etc). The RogueWave
+			collection classes used RW (RWBag, RWSet, RWSortedVector, etc).
+			</Description>
+	
+			<Fix>
+			Use namespaces instead of prefixes to group classes.			
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "MS1030" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "Hungarian" category = "Microsoft Design Guidelines">			
+			<Cause>
+			Five or more arguments, local variables, or fields within a type use Hungarian notation.
+			</Cause>
+	
+			<Description>
+			Hungarian notation is the practice of encoding type or semantic information into names
+			using a more or less standard set of prefixes. For example, hMenu for a menu handle or
+			cItems for a count of items. See &lt;http://en.wikipedia.org/wiki/Hungarian_notation&gt; 
+			for more details.
+			
+			Microsoft recommends that Hungarian notation not be used with .NET because it doesn't
+			provide a lot of value for strongly typed languages, doesn't handle object-oriented
+			languages well, and is often confusing because there is no real standard for the prefixes.
+			
+			Note that this rule does not complain about prefixed which indicate scope. For example,
+			inName or m_name.
+			</Description>
+	
+			<Fix>
+			Use a descriptive name that indicates what the variable is for. For example, instead of
+			hMenu use fileMenu. Instead of strName use name.			
+			</Fix>
+		</Translation>
+	</Violation>
+</Violations>

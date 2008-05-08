@@ -1,0 +1,687 @@
+<Violations>
+	<Violation checkID = "P1000" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "EmptyFinalizer" category = "Performance">			
+			<Cause>
+			A finalizer was defined with no body.
+			</Cause>
+	
+			<Description>
+			When an object with a finalizer is garbage collected it is placed on a 
+			finalization queue which causes a thread to wake up and run the finalizer.
+			When the thread finishes it releases its reference to the object which
+			makes the object (again) eligible for collection. This is a lot of wasted
+			motion for a method which doesn't actually do anything. 
+			</Description>
+	
+			<Fix>
+			Either remove the finalizer or make it do something useful.
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.InteropServices;
+
+			internal class CFType
+			{
+				// finalizers are normally used to clean up unmanaged resources
+				~CFType()	
+				{
+					if (m_instance != IntPtr.Zero)
+						NativeMethods.CFRelease(m_instance);
+				}
+								
+				public CFType(IntPtr instance)
+				{
+					m_instance = instance;
+				}
+			
+				public void DoWork()
+				{
+					NativeMethods.WorkIt(m_instance);
+					GC.KeepAlive(this);
+				}
+			
+				private static class NativeMethods
+				{
+					[System.Runtime.InteropServices.DllImport("CoreFoundation")]
+					public extern static void CFRelease(IntPtr handle);
+			
+					[System.Runtime.InteropServices.DllImport("Kernel32")]
+					public extern static void WorkIt(IntPtr handle);
+				}
+				
+				private IntPtr m_instance;
+			} 
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<!-- gap -->
+
+	<Violation checkID = "P1002" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "UseStringEmpty" category = "Performance">			
+			<Cause>
+			An empty string literal was used.
+			</Cause>
+	
+			<Description>
+			String literals are normally coalesced in the assemblies metadata, but when
+			a string literal is used a string object must be created. If the literal
+			is empty you can use the String.Empty member to avoid creating a new string.
+			</Description>
+	
+			<Fix>
+			Use String.Empty (or use -severity:Warning).
+			</Fix>
+	
+			<CSharp>
+			internal static class HelloWorld
+			{
+				public static void Hello()
+				{
+					Console.WriteLine("hello world");
+					Console.WriteLine(String.Empty);
+					Console.WriteLine("goodbye");
+				}
+			} 
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "P1003" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "AvoidBoxing" category = "Performance">			
+			<Cause>
+			A method is boxing more than ${maxBoxes} value type(s).
+			</Cause>
+	
+			<Description>
+			Structs and primitive types like the integers are value types instead of
+			reference types. When a value type is converted to a reference type (such
+			as object) space is allocated on the heap and the contents of the value
+			type are copied to the new object. This is quite inefficient and should
+			be avoided if at all possible.
+			</Description>
+	
+			<Fix>
+			Use overloading or generics for example, List&lt;&gt; instead of ArrayList. 
+			Or, if you must do the boxing, minimize the number of times you do it. Or
+			use -severity:Warning.
+			</Fix>
+	
+			<CSharp>
+			using System.Collections.Generic;
+			
+			internal class Manager
+			{
+				public void Add(int n)
+				{
+					m_ints.Add(n);                                         // generic, so no boxing
+					Console.WriteLine(&quot;len: {0}&quot;, n.ToString()); // no boxing
+					Console.WriteLine(&quot;len: {0}&quot;, n);            // boxed to an object
+				}
+				
+				private List&lt;int&gt; m_ints = new List&lt;int&gt;();
+			} 
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "P1004" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "AvoidUnboxing" category = "Performance">			
+			<Cause>
+			A method is unboxing more than ${maxUnboxes} value type(s).
+			</Cause>
+	
+			<Description>
+			Structs and primitive types like the integers are value types instead of
+			reference types. When a reference type is converted to a value type (e.g.
+			by casting from object) the contents of the object are copied into the
+			value type. This is inefficient and should be avoided if possible.
+			</Description>
+	
+			<Fix>
+			Avoid using object types which may contain value types. If this is not possible
+			consider using generics, overloading, or System.Convert. Or use -severity:Warning.
+			</Fix>
+	
+			<CSharp>
+			using System.Collections.Generic;
+			
+			internal static class Engine
+			{
+				public static int Sum(IEnumerable&lt;int&gt; range)
+				{
+					int result = 0;
+					
+					foreach (int value in range)	// generic so no unboxing
+						result += value;
+						
+					return result;
+				}
+				
+				public static int Sum(object lhs, object rhs)
+				{
+					// This will still unbox, but it will happen inside
+					// Convert so Smokey won't complain.
+					return Convert.ToInt32(lhs) + Convert.ToInt32(rhs);
+				}
+			} 
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "P1005" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "StringConcat" category = "Performance">			
+			<Cause>
+			A method is concatenating strings within a loop.
+			</Cause>
+	
+			<Description>
+			Strings are immutable objects so when two strings are concatenated a brand
+			new string object must be created. This is quite slow if you're concatenating
+			a lot of strings.
+			</Description>
+	
+			<Fix>
+			Use System.Text.StringBuilder or string.Format to do the concatenation (or use -severity:Warning).
+			</Fix>
+	
+			<CSharp>
+			using System.Text;
+			
+			internal class Customer : IFormattable
+			{
+				public override string ToString()
+				{
+					return ToString("G", null);
+				}
+				
+				public string ToString(string format, IFormatProvider provider)
+				{
+					if (provider != null)
+					{
+						ICustomFormatter formatter = provider.GetFormat(GetType()) as ICustomFormatter;
+						if (formatter != null)
+							return formatter.Format(format, this, provider);
+					}
+					
+					StringBuilder builder = new StringBuilder(m_name.Length + 10 * m_orders.Length);
+					switch (format)
+					{	
+						case "":			
+						case null:
+						case "G":
+							builder.Append("name = ");
+							builder.Append(m_name);
+							break;
+		
+						case "L":
+							builder.Append("name = ");
+							builder.Append(m_name);
+							builder.Append(", orders = ");
+							foreach (string order in m_orders)
+							{
+								builder.Append(order);
+								builder.Append(' ');
+							}
+							break;
+														
+						default:
+							throw new ArgumentException(format + " isn't a valid Customer format string");
+					}
+					
+					return builder.ToString();
+				}
+				
+				private string m_name = "bob";
+				private string[] m_orders = new string[]{"order1"};
+			} 
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<!-- gap -->
+
+	<Violation checkID = "P1007" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "NonGenericCollections" category = "Performance">			
+			<Cause>
+			A class or struct has a field of type System.Collections.ArrayList, Hashtable,
+			Queue, SortedList, or Stack.
+			</Cause>
+	
+			<Description>
+			Compared to the classes in System.Collections.Generic the System.Collections containers
+			have the following problems:
+			* They are untyped which means casting must be done when accessing items in the
+			containers and type errors are caught at runtime instead of compile time.
+			* Value types must be boxed and unboxed. This is a big performance hit.
+			* The API of the generic collections has been cleaned up and updated.
+			</Description>
+	
+			<Fix>
+			Use the classes in System.Collections.Generic instead.
+			</Fix>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "P1008" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "StructOverrides" category = "Performance">			
+			<Cause>
+			A struct does not override GetHashCode and/or Equals.
+			</Cause>
+		
+			<Description>
+			ValueType::GetHashCode and Equals use reflection to do their work.
+			This is much much slower than simply overriding these methods and doing the
+			work yourself.
+			</Description>
+	
+			<Fix>
+			Override GetHashCode and Equals.
+			</Fix>
+	
+			<CSharp>
+			internal struct TwoDPoint : IEquatable&lt;TwoDPoint&gt;
+			{		
+				public override bool Equals(object rhsObj)
+				{
+					if (rhsObj == null)						// objects may be null
+						return false;
+					
+					if (GetType() != rhsObj.GetType()) 
+						return false;
+				
+					TwoDPoint rhs = (TwoDPoint) rhsObj;					
+					return this == rhs;
+				}
+					
+				public bool Equals(TwoDPoint rhs)	// provide a typed overload for efficiency
+				{					
+					return this == rhs;
+				}
+
+				public static bool operator==(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return lhs.x == rhs.x &amp;&amp; lhs.y == rhs.y;
+				}
+				
+				public static bool operator!=(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return !(lhs == rhs);
+				}
+				
+				public override int GetHashCode()
+				{
+					int hash;
+					
+					unchecked
+					{
+						hash = x.GetHashCode() + y.GetHashCode();
+					}
+					
+					return hash;
+				}
+				
+				private int x, y;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "P1009" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ValueHashCode" category = "Performance">			
+			<Cause>
+			A struct is calling ValueType::GetHashCode.
+			</Cause>
+		
+			<Description>
+			ValueType::GetHashCode uses reflection to compute the hash using all of the
+			fields in the object. This is quite slow and will cause problems if there
+			are fields that do not affect equality.
+			</Description>
+	
+			<Fix>
+			Override GetHashCode and hash the fields that Equals checks. Do not call 
+			ValueType::GetHashCode.
+			</Fix>
+	
+			<CSharp>
+			internal struct TwoDPoint : IEquatable&lt;TwoDPoint&gt;
+			{		
+				public override bool Equals(object rhsObj)
+				{
+					if (rhsObj == null)						// objects may be null
+						return false;
+					
+					if (GetType() != rhsObj.GetType()) 
+						return false;
+				
+					TwoDPoint rhs = (TwoDPoint) rhsObj;					
+					return this == rhs;
+				}
+					
+				public bool Equals(TwoDPoint rhs)	// provide a typed overload for efficiency
+				{					
+					return this == rhs;
+				}
+
+				public static bool operator==(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return lhs.x == rhs.x &amp;&amp; lhs.y == rhs.y;
+				}
+				
+				public static bool operator!=(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return !(lhs == rhs);
+				}
+				
+				public override int GetHashCode()
+				{
+					int hash;
+					
+					unchecked
+					{
+						hash = x.GetHashCode() + y.GetHashCode();
+					}
+					
+					return hash;
+				}
+				
+				private int x, y;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "P1010" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ToStringOnString" category = "Performance">			
+			<Cause>
+			ToString is being called on a string object.
+			</Cause>
+		
+			<Description>
+			Strings are already strings so it's silly to call ToString on them.
+			</Description>
+	
+			<Fix>
+			Remove the call to ToString.
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "P1011" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "UseDefaultInit" category = "Performance">			
+			<Cause>
+			A class constructor is zero initializing a field.
+			</Cause>
+		
+			<Description>
+			When memory for an object is allocated it is first zero initialized and
+			then constructors are called. This eliminates subtle bugs where code is
+			dependent on uninitialized memory and sometimes fails depending upon how
+			it was called.
+			
+			This rule checks for constructors setting a reference to null, a numeric
+			type to zero, or an explicit call to a struct's default constructor.
+			</Description>
+	
+			<Fix>
+			Let the CLR zero initialize fields.
+			</Fix>
+	
+			<CSharp>
+			internal class ComplexState
+			{		
+				public ComplexState(int state)
+				{
+					m_state = state;	// no need to initialize m_string
+				}
+					
+				public void Reset(int state)
+				{
+					m_state = state;	
+					m_string = null;
+				}
+					
+				public override string ToString()
+				{
+					if (m_string == null)
+						m_string = m_state.ToString();
+						
+					return m_string;
+				}
+				
+				private int m_state;
+				private string m_string;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "P1012" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "NotInstantiated" category = "Performance">			
+			<Cause>
+			An instantiable non-public type is never instantiated. Note that this rule
+			ignores value types, enumerations, and delegates.
+			</Cause>
+		
+			<Description>
+			Classes that are never used bloat the assembly and make maintenance more
+			difficult.
+			</Description>
+	
+			<Fix>
+			If the class is not used either remove it or #if it out. If the class has all
+			static methods and is used then make the class static (C# 2.0) or add a private
+			default constructor (C# 1.0). As a special case you can use DisableRuleAttribute
+			on a base class or interface to disable this rule for all derived classes.
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "P1013" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "UnsealedAttribute" category = "Performance">			
+			<Cause>
+			A public type inherits from System.Attribute, is not abstract, and is not sealed.
+			</Cause>
+		
+			<Description>
+			GetCustomAttribute will be more efficient if the attribute is sealed: instead
+			of searching for subclasses of the attribute it can search for just the attribute.
+			</Description>
+	
+			<Fix>
+			Make the class sealed or abstract.
+			</Fix>
+	
+			<CSharp>			
+			[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
+			public sealed class ContactAttribute : Attribute
+			{		
+				public ContactAttribute(string address) 
+				{
+					m_address = address;
+				}
+				
+				public string Address
+				{
+					get {return m_address;}
+				}
+			
+				private readonly string m_address;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "P1014" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "InlineStaticInit" category = "Performance">			
+			<Cause>
+			A reference type declares an explicit static constructor.
+			</Cause>
+		
+			<Description>
+			When a type has an explicit static constructor the JIT inserts code into the
+			type's instance constructors and static methods to ensure that the static 
+			constructor is called.
+			
+			If the type initializes static fields where they are declared and has no
+			static constructors the compiler decorates the type with the beforefieldinit
+			flag and adds an implicit static constructor. When the JIT encounters a type
+			with the beforefieldinit it will not, in general, insert checks to ensure that
+			the static constructor is called. Instead the static constructor will be called
+			sometime after the first variable declaration of the type is encountered.
+			</Description>
+	
+			<Fix>
+			Remove the static constructor and initialize the static fields where they are
+			declared or use the DisableRule attribute.
+			</Fix>
+	
+			<CSharp>		
+			using System.IO;
+			
+			// Compiler will generate a static constructor which will be called 
+			// when the JIT sees an Inline declaration.
+			internal static class Inline
+			{		
+				public static void Write()
+				{
+					Console.WriteLine(ms_text);
+				}
+				
+				private static string ms_text = "hello";
+			}
+
+			// This violates the rule so we use the DisableRule attribute. In this
+			// case we want to violate the rule because we don't want to read the 
+			// file unless the class is actually used.
+			[DisableRule("P1014", "InlineStaticInit")]
+			internal static class Explicit
+			{		
+				static Explicit()
+				{
+					ms_text = File.ReadAllText("some file");
+				}
+		
+				public static void Write()
+				{
+					Console.WriteLine(ms_text);
+				}
+				
+				private static string ms_text;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "P1015" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "StringCompare" category = "Performance">			
+			<Cause>
+			A string is compared to an empty string using Equals or operator==.
+			</Cause>
+		
+			<Description>
+			Using Equals to test for an empty string is substantially slower than 
+			using Length or IsNullOrEmpty.
+			</Description>
+	
+			<Fix>
+			Use Length or IsNullOrEmpty to do the comparison.
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "P1016" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "Const1" category = "Performance">			
+			<Cause>
+			A private or internal field is declared static readonly and is initialized with a 
+			value that can be computed at compile time.
+			</Cause>
+		
+			<Description>
+			Static readonly fields with non-zero values are initialized using a static
+			constructor. Const fields are initialized directly from metadata which is
+			substantially faster.
+			
+			Note however that const should generally not be used for externally visible 
+			fields: if the value changes every assembly that references it must be recompiled.
+			</Description>
+	
+			<Fix>
+			Use const instead of static readonly.
+			</Fix>
+	
+			<CSharp>	
+			using System.Drawing;
+			
+			public static class Constants
+			{		
+				internal const int LinesPerPage = 40;
+				
+				// Const can be used with the numeric types, char, bool, enum, or string
+				// so other types must use static readonly.
+				internal static readonly Color ForeColor = Color.FromArgb(20, 100, 30);
+
+				// To avoid subtle versioning problems public fields should not use const.
+				public static readonly int FontSize = 12;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "P1017" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ExplicitGC" category = "Performance">			
+			<Cause>
+			System.GC.Collect is called.
+			</Cause>
+		
+			<Description>
+			It's usually best to let the CLR trigger collections: it's able to use the
+			details of your application's memory allocation throughput and system information
+			to collect memory when it's actually needed. See &lt;http://blogs.msdn.com/ricom/archive/2003/12/02/40780.aspx&gt;
+			for more details on manual collections.
+			
+			If you think you need to explicitly call Collect take a look at your code and 
+			see if there are references to stale objects hanging around too long.
+			</Description>
+	
+			<Fix>
+			Don't call GC.Collect.
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "P1018" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "UseEmpty" category = "Performance">			
+			<Cause>
+			A type with a public Empty field was default constructed.
+			</Cause>
+		
+			<Description>
+			By convention default constructible immutable types are provided with
+			a public Empty field so that clients can avoid creating multiple identical
+			empty instances.
+			</Description>
+	
+			<Fix>
+			Use Empty.
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "P1019" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "UseEmptyTypes" category = "Performance">			
+			<Cause>
+			A zero length array of System.Type was created.
+			</Cause>
+		
+			<Description>
+			Type provides a Type::EmptyTypes field which can be used instead.
+			</Description>
+	
+			<Fix>
+			Use Type::EmptyTypes.
+			</Fix>
+		</Translation>
+	</Violation>	
+</Violations>

@@ -1,0 +1,2032 @@
+<!-- Assembly and class design. -->
+<Violations>
+	<Violation checkID = "D1000" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "LargeNamespace" category = "Design">			
+			<Cause>
+			A namespace has more than ${maxNamespace} public types.
+			</Cause>
+	
+			<Description>
+			Namespaces should be used to organize the public types in your assembly to make
+			them more discoverable to clients. Large namespaces make it much harder for your
+			clients to navigate your assembly. 
+			</Description>
+	
+			<Fix>
+			Place the types in your assembly into logical namespaces. Consider putting
+			little used types under an *.Advanced namespace.
+			</Fix>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1001" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "ClassCanBeMadeStatic" category = "Design">			
+			<Cause>
+			A class inherits from System.Object, has no non-static fields, and declares no virtual
+			methods.
+			</Cause>
+	
+			<Description>
+			In C# 1.0 classes that were not intended to be instantiated were normally sealed
+			classes with private constructors. However the class can still be used as a variable
+			or argument and instance members can still be declared. Neither of these make sense
+			if the class cannot be instantiated so C# 2.0 allows classes to be made static to
+			ensure that they aren't used inappropriately.
+			</Description>
+	
+			<Fix>
+			Make the class static or abstract.
+			</Fix>
+	
+			<CSharp>
+			internal static class Helpers 	// note that the class is static
+			{
+				public static void Helper1()
+				{
+				}
+				
+				public static void Helper2()
+				{
+				}
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "D1002" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "MethodTooComplex" category = "Design">			
+			<Cause>
+			A method has too many code paths.
+			</Cause>
+	
+			<Description>
+			As methods become larger and acquire more and more code paths they become
+			progressively harder to understand. In general, large methods should be
+			refactored to use private helper methods.
+			</Description>
+	
+			<Fix>
+			Refactor the code so that it uses private helper methods (or use DisableRuleAttribute).
+			</Fix>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1003" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "PublicAbstractCtor" category = "Design">			
+			<Cause>
+			An abstract class has a public constructor.
+			</Cause>
+	
+			<Description>
+			Abstract classes cannot be instantiated so it's misleading and potentially
+			confusing for them to have a public constructor.
+			</Description>
+	
+			<Fix>
+			Make the constructor protected or make the class concrete.
+			</Fix>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1004" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "UseStrongName" category = "Design">			
+			<Cause>
+			The assembly does not have a strong name.
+			</Cause>
+	
+			<Description>
+			Strongly named assemblies provide a couple of advantages: 1) a strongly named
+			assembly has a unique name composed of the file name minus the extension, the
+			exact version number, the culture identity, and the public key. A weakly named
+			assembly is only identified by file name so collisions are possible and
+			assemblies may load assembly versions they did not compile against. 2) Strongly
+			named assemblies will not load if they have been tampered with (but note that
+			they do not guarantee that the publisher is who you think it is: it's possible
+			for a malicious person to modify an assembly and give it a new strong name).
+			
+			Strongly named assemblies also have some disadvantages: 1) they can only reference
+			strongly named assemblies 2) assemblies that reference a strongly named assembly
+			use the exact version number so they must be recompiled if any part of the version
+			number changes.
+			
+			You can find more information about strongly named assemblies 
+			&lt;http://www.mono-project.com/Assemblies_and_the_GAC&gt; and 
+			&lt;http://msdn.microsoft.com/msdnmag/issues/06/07/CLRInsideOut/default.aspx&gt;.
+			</Description>
+	
+			<Fix>
+			To give your assembly a strong name you must first generate a public/private key
+			pair using the sn tool: "sn -k MyCompany.keys". Then invoke gmcs using the keyfile
+			option: "-keyfile:MyCompany.keys".
+			
+			To make management of the key pair easier you may also use delayed signing. See
+			&lt;http://www.mono-project.com/Assemblies_and_the_GAC#Using_A_Delay_Signed_Assembly&gt;
+			for more details.
+			</Fix>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1005" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "AvoidEmptyInterfaces" category = "Design">			
+			<Cause>
+			An interface has no members (and implements no more than one interface).
+			</Cause>
+	
+			<Description>
+			Interfaces should be used to specify a contract that classes must implement.
+			They should not be used to tag types. 
+			</Description>
+	
+			<Fix>
+			If the interface is used at runtime then use an attribute instead. If the interface
+			is used at compile time you may want to rethink your design because the interface
+			isn't providing any type safety.
+			</Fix>
+	
+			<CSharp>
+			using System.Collections.Generic;
+			using System.Reflection;
+			
+			[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+			public sealed class PlatformAttribute : Attribute
+			{		
+				public PlatformAttribute(string name) 
+				{
+					m_name = name;
+				}
+					
+				public string Name
+				{
+					get {return m_name;}
+				}
+			
+				private string m_name;
+			}
+			
+			public interface ITool
+			{
+				void Stuff();
+			}
+			
+			public static class Tools
+			{
+				public static ITool[] Load(Assembly assembly, string platform)
+				{
+					List&lt;ITool&gt; tools = new List&lt;ITool&gt;();
+					
+					Type[] types = assembly.GetTypes();
+					foreach (Type t in types)
+					{
+						if (t.IsClass &amp;&amp; !t.IsAbstract &amp;&amp; typeof(ITool).IsAssignableFrom(t))
+						{
+							object[] attributes = Attribute.GetCustomAttributes(assembly, typeof(PlatformAttribute));
+							if (DoIsCompatibleTool(attributes, platform))
+							{
+								object o = Activator.CreateInstance(t);	// throws if the object cannot be created
+								tools.Add((ITool) o);
+							}
+						}
+					}
+					
+					return tools.ToArray();
+				}
+				
+				private static bool DoIsCompatibleTool(object[] attributes, string platform)
+				{
+					bool compatible = attributes == null;
+					
+					for (int i = 0; !compatible &amp;&amp; i &lt; attributes.Length; ++i)
+					{
+						PlatformAttribute attr = (PlatformAttribute) attributes[i];
+						compatible = attr.Name == platform;
+					}
+					
+					return compatible;
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1006" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ImplementGenericCollection" category = "Design">			
+			<Cause>
+			A public class implements System.Collections.IEnumerable, but not 
+			System.Collections.Generic.IEnumerable. Classes implementing System.Collections.IDictionary
+			are ignored by this rule.
+			</Cause>
+	
+			<Description>
+			Implementing System.Collections.Generic.IEnumerable will allow your collection to be used
+			to construct generic types such as List, Queue, and Stack. 
+			</Description>
+	
+			<Fix>
+			Implement System.Collections.Generic.ICollection or System.Collections.Generic.IList.
+			</Fix>
+	
+			<CSharp>
+			using System.Collections.Generic;
+			using Old = System.Collections;
+			
+			public class MyCollection : Old.IEnumerable, IEnumerable&lt;int&gt;
+			{
+				// System.Collections.IEnumerable methods
+				Old.IEnumerator Old.IEnumerable.GetEnumerator()
+				{
+					return m_ints.GetEnumerator();
+				}
+				
+				// System.Collections.Generic.IEnumerable methods
+				public IEnumerator&lt;int&gt; GetEnumerator()
+				{
+					foreach (int n in m_ints)
+						yield return n;
+				}
+				
+				// ICollection or IList methods would go here
+				
+				private List&lt;int&gt; m_ints = new List&lt;int&gt;();
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1007" severity = "Nitpick" breaking = "true">
+		<Translation lang = "en" typeName = "UseBaseTypes" category = "Design">			
+			<Cause>
+			An externally visible method has a derived type as an argument, but doesn't use any
+			of the derived type's methods.
+			</Cause>
+	
+			<Description>
+			By over-constraining the argument's type you're preventing clients from using
+			other types that would work with your method. 
+			</Description>
+	
+			<Fix>
+			Change the argument so that it uses the base type.
+			</Fix>
+	
+			<CSharp>
+			using System.IO;
+			
+			public static class Writer
+			{
+				// Stream should not be a FileStream or MemoryStream because the method
+				// only uses Stream members.
+				public static void Write(Stream stream, byte[] bytes)
+				{
+					stream.Write(bytes, 0, bytes.Length);
+				}
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1008" severity = "Nitpick" breaking = "true">
+		<Translation lang = "en" typeName = "EventSignature" category = "Design">			
+			<Cause>
+			An externally visible event uses a delegate with an unconventional signature.
+			</Cause>
+	
+			<Description>
+			Microsoft recommends that event delegates use a standard signature and
+			standard argument names. This is done to improve future compatibility and
+			tool support. 
+			</Description>
+	
+			<Fix>
+			The delegate should return void and it should have two arguments. The first
+			argument should be named sender and be of type System.Object. The second
+			argument should be named e and be of type EventArgs or a subclass.
+			</Fix>
+	
+			<CSharp>			
+			public class NameChangedEventArgs : EventArgs
+			{
+				public readonly string OldName;
+				public readonly string NewName;
+				
+				public NameChangedEventArgs(string oldName, string newName)
+				{
+					OldName = oldName;
+					NewName = newName;
+				}
+			}
+	
+			public class Customer
+			{
+				// Standard way to define an unspecialized event.
+				public event EventHandler NameAccessed;
+
+				// Standard way to define a custom event.
+				public event EventHandler&lt;NameChangedEventArgs&gt; NameChanged;
+				
+				public string Name
+				{
+					get 
+					{
+						if (NameAccessed != null)	// events are null until a delegate is attached to them
+							NameAccessed(this, EventArgs.Empty);
+							
+						return m_name;
+					}
+					
+					set
+					{
+						if (value != m_name)
+						{
+							if (NameChanged != null)
+								NameChanged(this, new NameChangedEventArgs(m_name, value));
+								
+							m_name = value;
+						}
+					}
+				}
+				
+				private string m_name; 
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1009" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "AttributeProperties" category = "Design">			
+			<Cause>
+			An attribute does not define properties correctly.
+			</Cause>
+	
+			<Description>
+			Arguments that appear in an attribute constructor are required arguments
+			and should have a corresponding getter. Fields that aren't set in a 
+			constructor are optional arguments and should have both a setter and
+			a getter. 
+			</Description>
+	
+			<Fix>
+			Fields that are set via a constructor need a getter property. Fields
+			which aren't set via a constructor need both get and set properties.
+			</Fix>
+	
+			<CSharp>			
+			using System.Reflection;
+			
+			[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+			internal sealed class PlatformAttribute : Attribute
+			{		
+				public PlatformAttribute(string name) 
+				{
+					m_name = name;
+				}
+				
+				// Name appears in the contructor so it is a required argument
+				// and only needs a getter.
+				public string Name
+				{
+					get {return m_name;}
+				}
+			
+				// Vendor does not appear in the ctor so it is an optional
+				// argument and needs both a getter and a setter.
+				public string Vendor
+				{
+					get {return m_vendor;}
+					set {m_vendor = value;}
+				}
+			
+				private string m_name;
+				private string m_vendor;
+			}
+			
+			// Required arguments are positional.
+			[Platform("Windows")]
+			internal class WinClass
+			{
+			}
+			
+			// Optional arguments appear after the positional arguments and
+			// are named.
+			[Platform("Unix", Vendor = "Sun")]
+			internal class UnixClass
+			{
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1010" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "HiddenMethod" category = "Design">			
+			<Cause>
+			A derived class declares a method with the same name, same number of
+			arguments as a base class method, and the argument types are the same except
+			one or more of the arguments in the derived class are base types of the
+			argument in the base class.
+			</Cause>
+	
+			<Description>
+			If the derived class defines a method with a signature that is identical to
+			that in the base class the compiler will issue a warning. However if the domain
+			of the derived method is larger than that of the base class method the base
+			class method will still be hidden but the compiler won't issue a warning. 
+			</Description>
+	
+			<Fix>
+			Rename the method or change its signature.
+			</Fix>
+	
+			<CSharp>						
+			internal class BaseType
+			{
+				public void MethodOne(string x, object y)
+				{
+					Console.WriteLine("Base: {0}, {1}", x, y);
+				}
+				
+				public void MethodTwo(string x, string y)
+				{
+					Console.WriteLine("Base: {0}, {1}", x, y);
+				}
+			}
+			
+			internal class DerivedType : BaseType
+			{
+				public void MethodOne(string x, string y)
+				{
+					Console.WriteLine("Derived: {0}, {1}", x, y);
+				}
+				
+				// If this was named "MethodTwo" we'd have a violation of the rule.
+				public void Method2(string x, object y)
+				{
+					Console.WriteLine("Derived: {0}, {1}", x, y);
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1011" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "TypedEnumerator" category = "Design">			
+			<Cause>
+			An externally visible type implements System.Collections.IEnumerator, but
+			does not have a strongly typed version of the System.Collections.IEnumerator.Current 
+			property. 
+			</Cause>
+	
+			<Description>
+			The IEnumerator interface is weakly typed so using it requires clients to
+			cast. To make enumerating easier and safer for clients provide a strongly
+			typed version of Current.
+			</Description>
+	
+			<Fix>
+			Inherit from IEnumerator&lt;T&gt; and implement its Current method. Implement the
+			System.Collections.IEnumerator Current method explicitly.
+			</Fix>
+	
+			<CSharp>						
+			using System.Collections;
+			using System.Collections.Generic;
+			using System.Diagnostics;
+			
+			// IEnumerator&lt;T&gt; inherits from IEnumerator.
+			public class RangeEnumerator : IEnumerator&lt;int&gt;
+			{	
+				public RangeEnumerator(int first, int last)
+				{
+					Debug.Assert(first &lt;= last);
+					
+					m_current = first;
+					m_first = first;
+					m_last = last;
+				}
+				
+				// Implement the IEnumerator&lt;T&gt; member so we're type safe and more efficient.
+				public int Current
+				{
+					get {return m_current;}
+				}
+				
+				// Implement the IEnumerator interface member explicitly.
+				object IEnumerator.Current
+				{
+					get {return m_current;}
+				}
+				
+				public bool MoveNext()
+				{
+					++m_current;
+					return m_current &lt;= m_last;
+				}
+				
+				public void Reset()
+				{
+					m_current = m_first;
+				}
+				
+				public void Dispose()
+				{
+				}
+			
+				private int m_current;
+				private int m_first;
+				private int m_last;
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1012" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "InternalException" category = "Design">			
+			<Cause>
+			An exception class which derives directly from System.Exception, 
+			System.SystemException, or System.ApplicationException is not declared
+			public, but the assembly has public types. 
+			</Cause>
+	
+			<Description>
+			Custom exceptions are defined in order to allow clients to special case
+			them. But this is impossible to do from outside the assembly if it is
+			declared internal.
+			</Description>
+	
+			<Fix>
+			Make the exception public or derive the exception from a less general type.
+			You can find a list of exceptions &lt;http://blogs.msdn.com/brada/archive/2005/03/27/402801.aspx&gt;.
+			</Fix>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1013" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "TypedCollection" category = "Design">			
+			<Cause>
+			A class implements System.Collection.ICollection. 
+			</Cause>
+	
+			<Description>
+			System.Collection.ICollection is weakly typed and its interface is not as
+			useful as the ICollection in System.Collection.Generic.
+			</Description>
+	
+			<Fix>
+			Implement System.Collection.Generic.ICollection&lt;T&gt; instead of 
+			System.Collection.ICollection.
+			</Fix>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1014" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "OverridenFinalizer" category = "Design">			
+			<Cause>
+			The type has a finalizer, but a base class implements IDisposable.
+			</Cause>
+	
+			<Description>
+			If the derived finalizer disposes of resources those resources will leak
+			if Dispose is called on the base class because it will normally call 
+			SuppressFinalize which means that no finalizers will be called for that
+			object.
+
+			If the derived finalizer merely calls Dispose(false) it is not doing
+			anything useful and should rely on the base class finalizer calling
+			Dispose.
+			</Description>
+	
+			<Fix>
+			Instead of using a finalizer the derived class should override Dispose(bool).
+			</Fix>
+	
+			<CSharp>
+			internal class MyResource : IDisposable
+			{
+				~MyResource()		
+				{					
+					// Note that this is called even if the ctor throws.
+					Dispose(false);
+				}
+			
+				public MyResource(IntPtr handle)
+				{
+					m_handle = handle;
+				}
+			
+				public void DoWork()
+				{
+					// All public methods (except Dispose) should throw 
+					// ObjectDisposedException if Dispose has been called.
+					if (m_disposed)		
+						throw new ObjectDisposedException("MyResource has been disposed");
+						
+					NativeMethods.WorkIt(m_handle);
+					GC.KeepAlive(this);
+				}
+			
+				public void Dispose()
+				{
+					Dispose(true);
+			
+					// If we've been disposed our object can be garbage collected without
+					// finalization.
+					GC.SuppressFinalize(this);
+				}
+				
+				protected bool Disposed
+				{
+					get {return m_disposed;}
+				}
+			
+				protected virtual void Dispose(bool disposing)
+				{
+					if (!m_disposed)
+					{
+						// If we've been called via Dispose we can,
+						if (disposing)
+						{
+							// dispose of managed fields.
+						}
+			
+						// If we've been called via the finalizer any references we have to
+						// managed objects may have been finalized so we have to be
+						// very careful and only dispose of unmanaged resources here.
+						NativeMethods.CloseHandle(m_handle);
+						m_handle = IntPtr.Zero;
+			
+						m_disposed = true;
+					}
+				}
+			
+				private static class NativeMethods
+				{
+					[System.Runtime.InteropServices.DllImport("Kernel32")]
+					public extern static bool CloseHandle(IntPtr handle);
+				
+					[System.Runtime.InteropServices.DllImport("Kernel32")]
+					public extern static void WorkIt(IntPtr handle);
+				}
+				
+				private IntPtr m_handle;
+				private bool m_disposed;
+			}			
+
+			internal class DerivedResource : MyResource
+			{
+				public DerivedResource(IntPtr handle) : base(handle)
+				{
+				}
+				
+				protected override void Dispose(bool disposing)
+				{
+					if (!Disposed)
+					{
+						if (disposing)
+						{
+							// Dispose of derived managed fields.
+						}
+			
+						// Dispose of derived unmanaged fields.
+	
+						base.Dispose(disposing);
+					}					
+				}
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1015" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ExceptionConstructors" category = "Design">			
+			<Cause>
+			An exception class does not implement the required constructors. 
+			</Cause>
+	
+			<Description>
+			In order to support remoting exceptions must have a default constructor and
+			another constructor which takes a SerializationInfo and a StreamingContext.
+			There should also be a constructor that takes an inner exception. See
+			&lt;http://msdn2.microsoft.com/en-us/library/ms954599.aspx&gt; for more
+			details.
+			</Description>
+	
+			<Fix>
+			Add the missing constructors.
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.Serialization;
+			using System.Security.Permissions;
+			
+			[Serializable]
+			public class MyException : Exception
+			{
+				// This one is useful if you have a default exception string or if
+				// the exception is used in remoting contexts.
+				public MyException()
+				{
+				}
+				
+				public MyException(string message) : base(message) 
+				{
+				}
+				
+				public MyException(string message, Exception innerException) : 
+					base (message, innerException)
+				{
+				}
+				
+				// Need this one in case your exception is used in a remoting context.
+				// By convention this constructor is protected (or private if the class
+				// is sealed).
+  			    [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+				protected MyException(SerializationInfo info, StreamingContext context) : 
+					base(info, context)
+				{
+				}
+			}  			
+   			</CSharp>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1016" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "TypedList" category = "Design">			
+			<Cause>
+			A class implements System.Collection.IList. 
+			</Cause>
+	
+			<Description>
+			System.Collection.IList is weakly typed and its interface is not as
+			useful as the IList in System.Collection.Generic.
+			</Description>
+	
+			<Fix>
+			Implement System.Collection.Generic.IList&lt;T&gt; instead of 
+			System.Collection.IList.
+			</Fix>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1017" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "TypedDictionary" category = "Design">			
+			<Cause>
+			A class implements System.Collection.IDictionary. 
+			</Cause>
+	
+			<Description>
+			System.Collection.IDictionary is weakly typed and its interface is not as
+			useful as the IDictionary in System.Collection.Generic.
+			</Description>
+	
+			<Fix>
+			Implement System.Collection.Generic.IDictionary&lt;T&gt; instead of 
+			System.Collection.IDictionary.
+			</Fix>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1018" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "CLSCompliant" category = "Design">			
+			<Cause>
+			An assembly with public types does not use CLSCompliantAttribute. 
+			</Cause>
+	
+			<Description>
+			The CLSCompliantAttribute is used to indicate if an assembly can be
+			used across languages. Note that only public types and members must be
+			CLS compliant and types and members that are not compliant can be marked
+			as such even if the assembly as a whole is compliant.
+			</Description>
+	
+			<Fix>
+			Add a CLSCompliantAttribute to the assembly or make the public types internal.
+			</Fix>
+	
+			<CSharp>
+			// These are usually placed into an AssemblyInfo.cs file.
+			using Mono.GetOptions;
+			using System.Reflection;
+			using System.Runtime.CompilerServices; 
+			using System.Runtime.InteropServices;
+			using System.Security.Permissions;
+			
+			[assembly: AssemblyVersion("1.2.92.1")]		// majorVersion.minorVersion.buildNumber.revision
+			[assembly: AssemblyTitle("Word Killer")]	// friendly name
+			[assembly: AssemblyDescription("Word processor for the smart folks.")]	// apears in the comments tab of the version tab of the file properties box on Windows
+			[assembly: AssemblyCopyright("Copyright (C) 2007 Joe Blow")]
+			
+			[assembly: CLSCompliant(true)]				// true if your assembly can be used by other languages
+			[assembly: ComVisible(false)]				// default to false, which means that COM cannot be used to interact with your public types
+			[assembly: PermissionSet(SecurityAction.RequestMinimum, Unrestricted = true)]	// don't restrict my ability to do stuff
+			
+			[assembly: Mono.Author("Joe Blow")]			// these are used by Mono.GetOptions (which is obsolete in mono 1.2.6)
+			[assembly: Mono.Author("Jane Doe")]
+			[assembly: Mono.About("Distributed under the MIT.X11 license")]
+			[assembly: Mono.UsageComplement("[docFile]")]	// this is appended to the "Usage:" line in -help
+			</CSharp>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1019" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "UseFlagsAttribute" category = "Design">			
+			<Cause>			
+			An enum has less than three sequential non-zero values, all the values
+			are powers of two or disjoint bitmasks, and it is not marked with FlagsAttribute.
+			</Cause>
+	
+			<Description>
+			The FlagsAttribute is used by Enum.ToString so that it can return something
+			reasonable when two or more enum values are ORed together. For example, it
+			will return "First, Second" on the enum below for Options.First | Options.Second.
+			</Description>
+	
+			<Fix>
+			Add [Flags] to the enum.
+			</Fix>
+	
+			<CSharp>
+			[Flags]
+			internal enum Options
+			{
+				None   = 0x0000,	// by convention flags have a zero value named None
+				First  = 0x0001,
+				Second = 0x0002,
+				Third  = 0x0004,
+				All    = First | Second | Third,
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "D1020" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "NativeMethods" category = "Design">			
+			<Cause>			
+			A native (p/invoke) method is not declared in a "NativeMethods" class.
+			</Cause>
+	
+			<Description>
+			When Code Access Security is enabled on Windows the runtime, by default,
+			walks the stack for both CLR and native methods to ensure that the code has 
+			sufficient privileges (see &lt;http://www.codeproject.com/dotnet/UB_CAS_NET.asp&gt;).
+			
+			This behavior is affected by the class the native method is declared in:
+			* NativeMethods. Stack walking happens normally so the method can be called
+			from anywhere.
+			* SafeNativeMethods. Stack walking is suppressed. This should only be used for
+			methods that have no security implications, for example a mathematical computation
+			like an FFT.
+			* UnsafeNativeMethods. Stack walking is suppressed, but the method may run afoul
+			of a security permission. Callers must do a full security review to ensure that
+			the code is OK.
+			</Description>
+	
+			<Fix>
+			Declare the native method in one of the NativeMethod classes.
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.InteropServices;
+			
+			internal static class NativeMethods
+			{
+				[DllImport("Kernel32")]
+				public extern static bool CloseHandle(IntPtr handle);
+			
+				[DllImport("Kernel32")]
+				public extern static void WorkIt(IntPtr handle);
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "D1021" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "CompareTo" category = "Design">			
+			<Cause>			
+			A class implements IComparable, but doesn't override Equals.
+			</Cause>
+	
+			<Description>
+			To ensure that equality is consistent with ordering a class that
+			implements CompareTo should also override Equals.
+			</Description>
+	
+			<Fix>
+			Override Equals.
+			</Fix>
+	
+			<CSharp>
+			internal class Customer : IComparable&lt;Customer&gt;, IEquatable&lt;Customer&gt;
+			{		
+				public int CompareTo(Customer rhs)	
+				{
+					if (rhs == null)
+						throw new ArgumentException("rhs is null");
+						
+					int result = name.CompareTo(rhs.name);
+					if (result == 0)
+						result = address.CompareTo(rhs.address);
+						
+					return result;
+				}
+
+				public override bool Equals(object rhsObj)
+				{
+					if (rhsObj == null)		
+						return false;
+					
+					Customer rhs = rhsObj as Customer;
+					return this == rhs;
+				}
+					
+				public bool Equals(Customer rhs)	
+				{
+					return this == rhs;
+				}
+
+				public static bool operator==(Customer lhs, Customer rhs)
+				{
+					// If both are null, or both are the same instance, return true.
+					if (object.ReferenceEquals(lhs, rhs))
+						return true;
+					
+					// If one is null, but not both, return false.
+					if ((object) lhs == null || (object) rhs == null)
+						return false;
+					
+					// Bottleneck through CompareTo.
+					return lhs.CompareTo(rhs) == 0;
+				}
+				
+				public static bool operator!=(Customer lhs, Customer rhs)
+				{
+					return !(lhs == rhs);
+				}
+				
+				public static bool operator&lt;(Customer lhs, Customer rhs)
+				{
+					return lhs.CompareTo(rhs) &lt; 0;
+				}
+				
+				public static bool operator&lt;=(Customer lhs, Customer rhs)
+				{
+					return lhs.CompareTo(rhs) &lt;= 0;
+				}
+				
+				public static bool operator&gt;(Customer lhs, Customer rhs)
+				{
+					return lhs.CompareTo(rhs) &gt; 0;
+				}
+				
+				public static bool operator&gt;=(Customer lhs, Customer rhs)
+				{
+					return lhs.CompareTo(rhs) &gt;= 0;
+				}
+				
+				public override int GetHashCode()
+				{
+					int hash;
+					
+					unchecked
+					{
+						hash = name.GetHashCode() + address.GetHashCode();
+					}
+					
+					return hash;
+				}
+				
+				private string name = "ted";
+				private string address = "main street";
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "D1022" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ObsoleteMessage" category = "Design">			
+			<Cause>			
+			A type or member is marked with ObsoleteAttribute, but does not set the
+			Message property.
+			</Cause>
+	
+			<Description>
+			When code that is marked with ObsoleteAttribute is compiled the Message
+			property is included in the warning message. This message should tell clients
+			what to use instead of the obsolete type or member and possibly when the 
+			obsolete feature will be removed.
+			</Description>
+	
+			<Fix>
+			Set the Message property.
+			</Fix>
+	
+			<CSharp>
+			public static class Names
+			{
+				[Obsolete("Use the FirstName and LastName properties instead.")]
+				public static string Name
+				{
+					get {return "Name";}
+				}
+				
+				public static string FirstName
+				{
+					get {return "FirstName";}
+				}
+				
+				public static string LastName
+				{
+					get {return "LastName";}
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "D1023" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "EventHandler" category = "Design">			
+			<Cause>			
+			A type contains a delegate that returns void and has two arguments with
+			the first being of type object and the second EventArgs or a subclass.
+			</Cause>
+	
+			<Description>
+			In .NET 2.0 you can use System.EventHandler System.EventHandler&lt;T&gt;
+			to define delegates.
+			</Description>
+	
+			<Fix>
+			Remove the delegate and use System.EventHandler.
+			</Fix>
+	
+			<CSharp>
+			internal class AddressEventArgs : EventArgs
+			{
+				public readonly string Address;
+				
+				public AddressEventArgs(string address)
+				{
+					Address = address;
+				}
+			}
+
+			internal class Names
+			{
+				public EventHandler NameChanged;
+				public EventHandler&lt;AddressEventArgs&gt; AddressChanged;
+				
+				public string Name
+				{
+					get {return m_name;}
+					set 
+					{
+						m_name = value; 
+						if (NameChanged != null) 
+							NameChanged(this, EventArgs.Empty);
+					}
+				}
+				
+				public string Address
+				{
+					get {return m_address;}
+					set 
+					{
+						m_address = value; 
+						if (AddressChanged != null) 
+							AddressChanged(this, new AddressEventArgs(m_address));
+					}
+				}
+				
+				private string m_name;
+				private string m_address;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1024" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "SerializeException" category = "Design">			
+			<Cause>
+			An exception class is not marked with SerializableAttribute. 
+			</Cause>
+	
+			<Description>
+			In order to support remoting exceptions must be serializable.
+			</Description>
+	
+			<Fix>
+			Use SerializableAttribute. See
+			&lt;http://msdn2.microsoft.com/en-us/library/ms954599.aspx&gt; for more
+			details.
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.Serialization;
+			using System.Security.Permissions;
+			
+			[Serializable]
+			public class MyException : Exception
+			{
+				// This one is useful if you have a default exception string or if
+				// the exception is used in remoting contexts.
+				public MyException()
+				{
+				}
+				
+				public MyException(string message) : base(message) 
+				{
+				}
+				
+				public MyException(string message, Exception innerException) : 
+					base (message, innerException)
+				{
+				}
+				
+				// Need this one in case your exception is used in a remoting context.
+				// By convention this constructor is protected (or private if the class
+				// is sealed).
+  			    [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+				protected MyException(SerializationInfo info, StreamingContext context) : 
+					base(info, context)
+				{
+				}
+			}  			
+   			</CSharp>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1025" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "SerializeExceptionMembers" category = "Design">			
+			<Cause>
+			An exception class with non-static fields does not override GetObjectData. 
+			</Cause>
+	
+			<Description>
+			In order to properly support remoting, exceptions must be serializable and
+			fields must be processed by GetObjectData.
+			</Description>
+	
+			<Fix>
+			Override GetObjectData and call AddValue on all the fields which should
+			be serialized. See
+			&lt;http://msdn2.microsoft.com/en-us/library/ms954599.aspx&gt; for more
+			details.
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.Serialization;
+			using System.Security.Permissions;
+			
+			[Serializable]
+			public class MyException : Exception
+			{
+				// This one is useful if you have a default exception string or if
+				// the exception is used in remoting contexts.
+				public MyException()
+				{
+				}
+				
+				public MyException(string message, string info) : base(message) 
+				{
+					m_info = info;
+				}
+				
+				public MyException(string message, Exception innerException) : 
+					base (message, innerException)
+				{
+				}
+				
+				// Need this one in case your exception is used in a remoting context.
+				// By convention this constructor is protected (or private if the class
+				// is sealed).
+  			    [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+				protected MyException(SerializationInfo info, StreamingContext context) : 
+					base(info, context)
+				{
+					m_info = info.GetString("m_info");
+				}
+				
+				[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+				public override void GetObjectData(SerializationInfo info, StreamingContext context)
+				{
+					info.AddValue("m_info", m_info, typeof(string));
+					base.GetObjectData(info, context);
+				}
+				
+				public string Info
+				{
+					get {return m_info;}
+				}
+				
+				private string m_info = string.Empty;
+			}  			
+   			</CSharp>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1026" severity = "Nitpick" breaking = "true">
+		<Translation lang = "en" typeName = "DeepInheritance" category = "Design">			
+			<Cause>
+			A class has more than four super classes in its inheritance hierarchy. 
+			</Cause>
+	
+			<Description>
+			Deeply nested type hierarchies are difficult to understand and maintain.
+			Try to use shallower hierarchies and prefer composition to inheritance.
+			</Description>
+	
+			<Fix>
+			Subclass a type closer to the root of the hierarchy or redesign the classes.
+			</Fix>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1027" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "BeforeEvent" category = "Design">			
+			<Cause>
+			The name of an event starts with "Before" or "After". 
+			</Cause>
+	
+			<Description>
+			The .NET convention is to verbs to name events using real verbs instead of
+			using before or after prefixes. For example, "Closing" and "Closed" instead
+			of "BeforeClose" and "AfterClose".
+			</Description>
+	
+			<Fix>
+			Use the present or past tense of a verb to name the event.
+			</Fix>
+		</Translation>
+	</Violation>
+		
+	<Violation checkID = "D1028" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "DeclareSecurity" category = "Design">			
+			<Cause>
+			The assembly does not specify security permissions. 
+			</Cause>
+	
+			<Description>
+			Assemblies should make clear what security permissions they require. This
+			is done with the System.Security.Permissions.SecurityAction enum:
+			* RequestMinimum - the set of permissions that are absolutely required for this 
+			assembly to run.
+			* RequestOptional - the set of permissions that would be nice to run with, but 
+			are not required.
+			* RequestRefuse - a set of permissions that should never be granted to the 
+			assembly.
+			
+			An introduction into the security attributes can be found 
+			&lt;http://blogs.msdn.com/shawnfa/archive/2004/08/30/222918.aspx&gt;.
+			</Description>
+	
+			<Fix>
+			Add a PermissionSetAttribute or SecurityPermissionAttribute.
+			</Fix>
+	
+			<CSharp>
+			// These are usually placed into an AssemblyInfo.cs file.
+			using System.Security.Permissions;
+
+			// Don't restrict the ability of the assembly to do anything.			
+			[assembly: PermissionSet(SecurityAction.RequestMinimum, Unrestricted = true)]
+			
+			// Disallow everything but executing managed code.
+			[assembly: SecurityPermission(SecurityAction.RequestMinimum, Execution = true)]
+			[assembly: PermissionSet(SecurityAction.RequestOptional, Name = "Nothing")]	
+			
+			// Require 5M of space in the application's private virtual file system,
+			// don't allow p/invoke calls, and allow the app to perform file IO if
+			// it's run in a context which allows it.
+			[assembly:IsolatedStorageFilePermission(SecurityAction.RequestMinimum, UserQuota = 5242880)]
+			[assembly:SecurityPermission(SecurityAction.RequestRefuse, UnmanagedCode = true)]
+			[assembly:FileIOPermission(SecurityAction.RequestOptional, Unrestricted = true)]			
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1029" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "SerializableCtorAccess" category = "Design">			
+			<Cause>
+			A type implements System.Runtime.Serialization.ISerializable and has a
+			(SerializationInfo, StreamingContext) constructor which is not protected
+			(if the type is unsealed), or private (if the type is sealed).
+			</Cause>
+		
+			<Description>
+			The most derived constructor is called by the .NET framework when deserializing
+			objects and there is typically no need for it to be called from user code. To
+			ensure that the constructor is not called accidentally (and does not appear
+			in Intellisense) make it protected or private.
+			</Description>
+	
+			<Fix>
+			If the type is unsealed make the constructor protected. If the type is sealed
+			make the constructor private.
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.Serialization;
+			using System.Security.Permissions;
+			
+			[Serializable]
+			public class Customer : ISerializable
+			{
+				public Customer(string name)
+				{
+					m_name = name;
+				}
+				
+				// This should be protected for unsealed types, and private for sealed types.
+				protected Customer(SerializationInfo info, StreamingContext context)
+				{
+					m_name = info.GetString("name");
+				}
+				
+				[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+				public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+				{
+					info.AddValue("name", m_name);
+				}
+				
+				private string m_name;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1030" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "SerializableMethods" category = "Design">			
+			<Cause>
+			A method decorated with one of the following attributes has an incorrect
+			signature:
+			* System.Runtime.Serialization.OnSerializingAttribute
+			* System.Runtime.Serialization.OnSerializedAttribute
+			* System.Runtime.Serialization.OnDeserializingAttribute
+			* System.Runtime.Serialization.OnDeserializedAttribute
+			</Cause>
+		
+			<Description>
+			The method should be private, return void, and have one argument of type
+			System.Runtime.Serialization.StreamingContext.
+			</Description>
+	
+			<Fix>
+			Fix the method's signature.
+			</Fix>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1031" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "PublicType" category = "Design">			
+			<Cause>
+			The assembly is an application (i.e. it has a main entry point), but also
+			has a public type.
+			</Cause>
+		
+			<Description>
+			If a type is public other assemblies can reference its assembly and make use of it. 
+			This is generally not what you want for applications. But if you do you
+			should move the public types into a new assembly so that changes to the core
+			application don't break existing assemblies.
+			</Description>
+	
+			<Fix>
+			Either make the types internal, move the types into a new assembly, or
+			use the -exclude-check command line switch to disable this rule.
+			</Fix>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1032" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "UnusedMethod" category = "Design">			
+			<Cause>
+			A method is not externally visible, not virtual, not an operator, and is never called.
+			</Cause>
+		
+			<Description>
+			Dead code should not be left in assemblies. It requires extra maintenance
+			work to keep up to date and is not tested code so it is likely to either
+			start buggy or become buggy over time.
+			</Description>
+	
+			<Fix>
+			Remove or #ifdef out the unused methods, or use DisableRuleAttribute on the
+			method or the declaring type.
+			</Fix>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1033" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "OperatorAlternative" category = "Design">			
+			<Cause>
+			An externally visible type defines an operator, but does not define a named
+			alternative method.
+			</Cause>
+		
+			<Description>
+			In order to interop well with languages like Visual Basic that don't support
+			operator overloading named versions of operators should be supplied. The
+			operators and method names checked by this rule are:
+			|| C# Symbol || Alternate Name
+			|| + || Add
+			|| - || Subtract
+			|| * || Multiply
+			|| / || Divide
+			|| % || Mod
+			|| &gt;, &gt;=, &lt;, &lt;= || Compare
+			|| ==, != || Equals
+			</Description>
+	
+			<Fix>
+			Add the named method(s). These should be instance methods taking one argument
+			of the declaring type and returning the same type.
+			</Fix>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1034" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "CastOpAlternative" category = "Design">			
+			<Cause>
+			An externally visible type defines a cast operator to Foo, but does not
+			have ToFooType and FromFooType methods.
+			</Cause>
+		
+			<Description>
+			In order to interop well with languages like Visual Basic that don't support
+			operator overloading named versions of the cast operator should be supplied.
+			</Description>
+	
+			<Fix>
+			Add the named method(s). These should be static methods returning the correct type.
+			</Fix>
+	
+			<CSharp>
+			public struct Size
+			{
+				public Size(int width, int height)
+				{
+					m_width = width;
+					m_height = height;
+				}
+				
+				public static explicit operator Point(Size size)
+				{
+					return new Point(size.m_width, size.m_height);
+				}
+				
+				public static Point ToPointType(Size size)
+				{
+					return new Point(size.m_width, size.m_height);
+				}
+				
+				public static Size FromPointType(Point pt)
+				{
+					return new Size(pt.X, pt.Y);
+				}
+				
+				public int Width {get {return m_width;}}
+				public int Height {get {return m_height;}}
+				
+				private int m_width;
+				private int m_height;
+			}			
+
+			public struct Point
+			{
+				public Point(int x, int y)
+				{
+					m_x = x;
+					m_y = y;
+				}
+				
+				// cast methods elided
+				
+				public int X {get {return m_x;}}
+				public int Y {get {return m_y;}}
+				
+				private int m_x;
+				private int m_y;
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1035" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "ImplicitCast" category = "Design">			
+			<Cause>
+			A type defines an implicit cast operator.
+			</Cause>
+		
+			<Description>
+			Implicit casts should rarely be used. Normally they are used when two types
+			are interchangeable (a wrapper around a platform handle might have an implicit
+			cast to an IntPtr) or when one type is a superset of another (a bigint struct
+			might have an implicit cast to an int). 
+			
+			As a counter example consider point
+			and size structs. They have the same physical structure but represent different
+			concepts and have slightly different operations. These differences should be
+			reflected in the code and if a cast operator is provided it should be explicit.
+			</Description>
+	
+			<Fix>
+			Use an explicit cast operator or disable the rule for that type using DisableRuleAttribute
+			(see the README).
+			</Fix>	
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1036" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "EqualityOperator" category = "Design">			
+			<Cause>
+			A value type overrides Equals, but does not define operator== and operator!=.
+			</Cause>
+		
+			<Description>
+			operator== is usually more natural to use than Equals and programmers expect
+			to be able to use it.
+			</Description>
+	
+			<Fix>
+			Add operator== and operator!=.
+			</Fix>
+	
+			<CSharp>
+			internal struct TwoDPoint : IEquatable&lt;TwoDPoint&gt;
+			{		
+				public override bool Equals(object rhsObj)
+				{
+					if (rhsObj == null)						// objects may be null
+						return false;
+					
+					if (GetType() != rhsObj.GetType()) 
+						return false;
+				
+					TwoDPoint rhs = (TwoDPoint) rhsObj;					
+					return this == rhs;
+				}
+					
+				public bool Equals(TwoDPoint rhs)	// provide a typed overload for efficiency
+				{
+					return this == rhs;
+				}
+
+				public static bool operator==(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return lhs.x == rhs.x &amp;&amp; lhs.y == rhs.y;
+				}
+				
+				public static bool operator!=(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return !(lhs == rhs);
+				}
+				
+				public override int GetHashCode()
+				{
+					int hash;
+					
+					unchecked
+					{
+						hash = x.GetHashCode() + y.GetHashCode();
+					}
+					
+					return hash;
+				}
+				
+				private int x, y;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "D1037" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "DontExit1" category = "Design">			
+			<Cause>
+			System.Windows.Forms.Application.Exit is called.
+			</Cause>
+		
+			<Description>
+			Application.Exit will stop message pumps and cause Application.Run to return, but
+			it will not call the Closed and Closing events on your windows. To ensure that these
+			are called you should call Form.Close on your window(s).
+			</Description>
+	
+			<Fix>
+			If you're calling Exit in response to an error your application can recover from
+			throw an exception instead. If you really want to call Exit then decorate the method
+			with DisableRuleAttribute (see the README).
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "D1038" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "DontExit2" category = "Design">			
+			<Cause>
+			System.Environment.Exit is called.
+			</Cause>
+		
+			<Description>
+			Environment.Exit can be used to terminate console applications.
+			</Description>
+	
+			<Fix>
+			It's usually best to throw an exception and return the error code from main. If you 
+			really want to call Exit then decorate the method with DisableRuleAttribute (see the README).
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "D1039" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "BadExit" category = "Design">			
+			<Cause>
+			The assembly calls both System.Windows.Forms.Application.Run and System.Environment.Exit.
+			</Cause>
+		
+			<Description>
+			Environment.Exit should be used for console applications, not winforms applications.
+			</Description>
+	
+			<Fix>
+			If you're calling Exit in response to an error your application can recover from
+			throw an exception instead. Otherwise call Form.Close or Application.Exit.
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "D1040" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "CollectionToString" category = "Design">			
+			<Cause>
+			ToString() is called on a collection.
+			</Cause>
+		
+			<Description>
+			ToString on an collection doesn't return anything very useful.
+			</Description>
+	
+			<Fix>
+			Don't print the collection or use custom code to convert the collection into a string.
+			</Fix>
+	
+			<CSharp>
+			using System.Collections.Generic;
+			using System.Linq;
+
+			internal class Printer
+			{		
+				// Prints "System.Int32[]".
+				public static void Print1(int[] a)
+				{
+					Console.WriteLine(a.ToString());
+				}
+				
+				// Prints something like "[1, 3, 4]". Note that this may be problematic
+				// if the collection can be large.
+				public static void Print2(int[] a)
+				{
+					Console.WriteLine("[{0}]", string.Join(", ", 
+						Array.ConvertAll(a, x =&gt; x.ToString())));
+				}
+
+				public static void Print2(List&lt;int&gt; l)
+				{
+					Console.WriteLine("[{0}]", l.Aggregate(string.Empty,
+						(total, next) =&gt; total.Length == 0 ? next.ToString() : total + ", " + next));
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "D1041" severity = "Nitpick" breaking = "true">
+		<Translation lang = "en" typeName = "CircularReference" category = "Design">			
+			<Cause>
+			Two classes each refer to the other.
+			</Cause>
+		
+			<Description>
+			This is a classic coupling issue and leads to the following issues:
+			* Changes in one class will often require changes to the other.
+			* The classes cannot be understood in isolation.
+			* It's difficult to test systems with high coupling.
+			See &lt;http://en.wikipedia.org/wiki/Coupling_(computer_science)&gt; for more information on coupling.
+			</Description>
+	
+			<Fix>
+			Look at refactoring the classes to eliminate the circular dependency. For example
+			a delegate or interface can often be used to hide one of the classes. If the coupling is
+			benign then use DisableRuleAttribute on the class.
+			</Fix>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "D1042" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "IdenticalMethods" category = "Design">			
+			<Cause>
+			Two non-trivial methods have identical implementations.
+			</Cause>
+		
+			<Description>
+			This is a violation of the DRY principle (Don't Repeat Yourself, see
+			&lt;http://en.wikipedia.org/wiki/Don't_repeat_yourself&gt;). Like all such
+			violations it makes the code more difficult to change and opens the door to
+			inconsistent behavior if changes aren't kept in sync.
+			</Description>
+	
+			<Fix>
+			Put the method into a base class or into a static helper class.
+			</Fix>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "D1043" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "TemplateMethod" category = "Design">			
+			<Cause>
+			A new virtual method has a ratio of more than 120 instructions to virtual method calls.
+			</Cause>
+		
+			<Description>
+			Large virtual methods which do not call virtual hooks are problematic because
+			subclasses cannot, in general, modify the behavior of the base method without
+			duplicating large chunks of the base method.
+			</Description>
+	
+			<Fix>
+			Make the method non-virtual, seal it, or use the template method pattern (see
+			&lt;http://en.wikipedia.org/wiki/Template_method_pattern&gt;.
+			</Fix>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "D1044" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "EmptyOverride" category = "Design">			
+			<Cause>
+			An empty override overrides a base class method which is not empty.
+			</Cause>
+		
+			<Description>
+			It's generally a bad idea to use inheritance to remove functionality from a
+			base class.
+			</Description>
+	
+			<Fix>
+			Try to redesign the classes, for example by using aggregation instead of inheritance.
+			</Fix>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "D1045" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "GodClass" category = "Design">			
+			<Cause>
+			A class references more than forty distinct types.
+			</Cause>
+		
+			<Description>
+			This class is probably too complex and may be an instance of the blob anti-pattern
+			(see &lt;http://sourcemaking.com/antipatterns/the-blob&gt;).
+			</Description>
+	
+			<Fix>
+			Instead of concentrating intelligence in one class try to distribute it broadly across 
+			multiple classes.
+			</Fix>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "D1046" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "SchizoidType" category = "Design">			
+			<Cause>
+			A type's fields can be partioned in such a way that some non-virtual methods use one partition
+			and other non-virtual methods use a different partition.
+			</Cause>
+		
+			<Description>
+			This is symptomatic of a class with low cohesion. The classic example is a class
+			where half the methods use one set of fields and the other methods use a different
+			set of fields. This often means that the class has multiple responsibilities and
+			should be split into multiple classes.
+			
+			Cohesion is one of the most important metrics in object oriented design: classes are
+			much easier to develop with and maintain if they are narrowly tailored to support one
+			and only one responsibility. See 
+			&lt;http://en.wikipedia.org/wiki/Cohesion_%28computer_science%29&gt; for more details
+			on cohesion.
+			</Description>
+	
+			<Fix>
+			The class probably has multiple responsibilities or does not have a clear purpose.
+			Break the class into two or more separate classes and make each class responsible
+			for one thing.
+			</Fix>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "D1047" severity = "Nitpick" breaking = "true">
+		<Translation lang = "en" typeName = "TooManyArgs" category = "Design">			
+			<Cause>
+			A method has six or more arguments.
+			</Cause>
+		
+			<Description>
+			Methods with a lot of arguments make code difficult to read and can be difficult
+			to use.
+			</Description>
+	
+			<Fix>
+			Use the params keyword, turn some arguments into properties, or bundle the arguments
+			into a struct.
+			</Fix>
+	
+			<CSharp>
+			internal class Shape
+			{		
+			}
+
+			// Instead of providing a constructor with a zillion arguments we provide
+			// a very simple constructor and allow users to override the default values
+			// via properties. Note that this idiom is used a lot in the .NET framework.
+			internal class Rectangle : Shape
+			{		
+				public Rectangle()
+				{
+				}
+				
+				public int Top
+				{
+					set {}
+				}
+				
+				public int Left
+				{
+					set {}
+				}
+				
+				public int Width
+				{
+					set {}
+				}
+				
+				public int Height
+				{
+					set {}
+				}
+				
+				public int BorderWidth
+				{
+					set {}
+				}
+				
+				public int BorderColor
+				{
+					set {}
+				}
+				
+				public int FillColor
+				{
+					set {}
+				}
+			}
+			
+			internal struct TriangleData
+			{
+				public int Pt1;
+				public int Pt2;
+				public int Pt3;
+				public int FrameWidth;
+				public int BorderWidth;
+				public int BorderColor;
+				public int FillColor;
+			}
+
+			// Instead of providing a constructor with a zillion arguments we tuck
+			// the arguments away into a helper struct. This makes it easier to see
+			// which argument does what since when they are used they will be named,
+			// but it's usually better to use properties for constructors.
+			internal class Triangle : Shape
+			{		
+				public Triangle(TriangleData data)
+				{
+				}
+			}
+
+			internal class Renderer
+			{		
+				// This can be called with any number of arguments
+				public void Draw(params Shape[] shapes)
+				{
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "D1048" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "GuiUsesConsole" category = "Design">			
+			<Cause>
+			The assembly has a reference to System.Windows.Forms.dll or gtk-sharp.dll but uses 
+			System.Console.Write or System.Console.WriteLine.
+			</Cause>
+		
+			<Description>
+			In general there is no reason for a GUI application to write to the console except perhaps
+			for debugging code.
+			</Description>
+	
+			<Fix>
+			Remove the Console code, replace it with System.Diagnostics.Debug/Trace, 
+			or conditionally compile the Console code using ConditionalAttribute.
+			</Fix>
+	
+			<CSharp>
+			using System.Diagnostics;
+			using System.Windows.Forms;
+			
+			internal class Program
+			{			
+				[Conditional("DEBUG")]
+				public static void DumpState1()
+				{ 
+					// This is OK because we use ConditionalAttribute.
+					Console.WriteLine("california");
+				}
+			
+				public static void DumpState2()
+				{ 
+					// This is always OK.
+					Debug.WriteLine("montana");
+				}
+			
+				[DisableRule("D1048", "GuiUsesConsole")]	
+				public static void Main(string[] args)
+				{				
+					DumpState1();
+					DumpState2();
+
+					// This is OK because we use DisableRuleAttribute.
+					Debug.WriteLine("wyoming");
+
+					MessageBox.Show("hello!", "greet");
+				}
+			} 
+			</CSharp>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "D1049" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "IdenticalCodeBlocks" category = "Design">			
+			<Cause>
+			A non-trivial block of code appears two or more times within a type.
+			</Cause>
+		
+			<Description>
+			This is a violation of the DRY principle (Don't Repeat Yourself, see
+			&lt;http://en.wikipedia.org/wiki/Don't_repeat_yourself&gt;). Like all such
+			violations it makes the code more difficult to change and opens the door to
+			inconsistent behavior if changes aren't kept in sync.
+			</Description>
+	
+			<Fix>
+			Put the code into a private helper method.
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "D1050" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "UnusedField" category = "Design">			
+			<Cause>
+			The value of an internal field is never used. Note that this ignores fields in structs
+			which are decorated with StructLayoutAttribute and LayoutKind.Sequential or
+			LayoutKind.Explicit.
+			</Cause>
+		
+			<Description>
+			Dead code should not be left in assemblies. It requires extra maintenance
+			work to keep up to date and is not tested code so it is likely to either
+			start buggy or become buggy over time.
+			</Description>
+	
+			<Fix>
+			Remove the field or start using it. Note that, as a special case, you can use
+			DisableRuleAttribute on the declaring type.
+			</Fix>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1051" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "PublicImplementation" category = "Design">			
+			<Cause>
+			An internal class directly implements one or more public interfaces, has non-private/protected 
+			methods not declared in an interface, and those methods are only called by the class or
+			a subclass
+			(constructors and overrides are ignored).
+			</Cause>
+		
+			<Description>
+			This class is likely an implemenation class designed to be used only via its interfaces. If
+			this is the case it should not have non-private/protected methods which are not declared in
+			an interface.
+			</Description>
+	
+			<Fix>
+			Make the methods private or protected.
+			</Fix>
+		</Translation>
+	</Violation>
+</Violations>
+

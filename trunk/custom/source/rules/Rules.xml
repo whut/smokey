@@ -1,0 +1,59 @@
+<!-- This is what the user sees when a rule is violated. The checkID should be
+globally unique (if it's not the app will quit). Severity can be Error, 
+Warning, or Nitpick. The CSharp element is optional, and if present, should
+show how to write code that passes the rule. 
+
+Note that this file must be named Rules.xml. -->
+<Violations>
+	<Violation checkID = "CU1000 - example custom rules" severity = "Warning">	
+		<Translation lang = "en" typeName = "PrivateNeedsDo" category = "Custom">			
+			<Cause>
+			The name of a private method does not start with Do.
+			</Cause>
+	
+			<Description>
+			In order to make the code a bit clearer out convention is to prefix
+			the names of private methods with Do.
+			</Description>
+	
+			<Fix>
+			Prepend the method name with Do.
+			</Fix>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "CU1001 - example custom rules" severity = "Warning">	
+		<Translation lang = "en" typeName = "PublicStartsWithDo" category = "Custom">			
+			<Cause>
+			The name of a public or protected method starts with Do.
+			</Cause>
+	
+			<Description>
+			In order to make the code a bit clearer out convention is to prefix
+			the names of private methods with Do.
+			</Description>
+	
+			<Fix>
+			Don't use Do with public or protected methods.
+			</Fix>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "CU1002 - example custom rules" severity = "Error">	
+		<Translation lang = "en" typeName = "LogStartsWithString" category = "Custom">			
+			<Cause>
+			A call to one of the Smokey logging methods uses a string for the
+			first argument.
+			</Cause>
+	
+			<Description>
+			The Smokey logger is a hierarchical logger and uses the type of the
+			first argument to decide whether to log or not.
+			</Description>
+	
+			<Fix>
+			The first argument should be "this", "true", or null cast to a type.
+			</Fix>
+		</Translation>
+	</Violation>	
+</Violations>

@@ -1,0 +1,334 @@
+-- Version 1.1.0.0 (r572) ----
+* Added 3 new rules:
+	ClassPrefix
+	Hungarian
+	WinFormsVoodoo
+* InternalInterfaceRule checks to see if the interface is actually internal.
+* UseBaseTypesRule checks to see if the base type is externally visible.
+* UseBaseTypesRule ignores parameters with generic types (they aren't handled 
+  quite right by the rule).
+* RequireSerializableCtorRule ignores classes which inherit from Exception
+  (ExceptionConstructorsRule will handle those).
+* Made SerializeExceptionRule cause language clearer.
+* Added more system methods for IgnoredReturnRule to ignore.
+* InternalInterfaceRule report now includes the interface name.
+
+
+-- Version 1.0.0.0 (r568) ----
+
+* Added 34 new rules:
+	CircularReference
+	EmptyOverride
+	GodClass
+	HashOverflow
+	IdenticalMethods
+	IgnoredReturn
+	MaximizeCohesion
+	RecursiveEquality
+	SchizoidType
+	TemplateMethod
+	TooManyArgs
+	UncheckedAssembly
+	
+	ArrayIndexOf		from FindBugs
+	Average
+	BadExit
+	BadRegEx
+	CollectionToString
+	DontExit
+	ExplicitGC
+	IdenticalCase	
+	IdenticalBranch
+	IntegerDivision
+	IntegerMultiply
+	NullField
+	RandomUsedOnce
+	StringIndexOf
+	UnrelatedEquals
+	UnusedNew
+	UnusedStore
+	
+	ExitCode			from Gendarme
+	GuiUsesConsole
+	IdenticalCodeBlocks
+	UseSetterValue
+	WinExe
+* Removed MethodCanBeMadeStaticRule.
+* Added install and uninstall scripts.
+* All rules now have a breaking property which is true if fixing the violation is
+  likely to break binary compatibility with client assemblies.
+* There is no longer special code which disabled certain rules for system assemblies.
+  Instead use the new -ignore-breaking command line switch.
+* Added -only-type to allow only the specified types to be checked.
+* ClassCanBeMadeStaticRule now checks for classes which inherit from System.Object, 
+  have no non-static fields, and declare no new virtual methods instead of checking
+  for all static members.
+* Made DeepInheritanceRule a nitpick.
+* Added a new namespace called App which contains public classes which can be used
+  by .NET tools to smoke assemblies.
+* Made some changes to the report text:
+	- Tweaked comments in the Dispose code examples to clarify the issues involved 
+	  when using managed objects from a finalizer.   
+	- Code samples use IEquatable<T> where appropiate.
+	- Updated mono naming rule to reflect that the naming rules wants constants to 
+	  be PascalCase.
+	- Made the OverridenFinalizer cause text less confusing. 			
+	- Code examples use an unchecked statement and + for GetHashCode instead of ^.
+* Finalizers are now treated as thread roots.
+* Skip methods with more than 256 local variables (they can take a long time to
+  process).
+* Main no longer returns 1 if the only violations are nitpicks.
+* Bug fixes:
+	- Fixed an off-by-one error in SymbolTable which resulted in index exceptions.
+	- SymbolTable now gets the correct names for local variables.
+	- ValuesTracker::GetStackIndex no longer asserts if nth is too large (it can be 
+	  if the code doesn't match what we expect).
+	- CallGraph, AssemblyCache::FindMethod, and ClassifyMethod::ThreadRoots use 
+      MethodReferences instead of MetadataTokens so that methods defined outside 
+      the assembly we're checking are properly handled.
+    - SortedMethodsRule special case property names under four chars (Cecil can 
+      return "?" for these).
+  	- InlineStaticInitRule ignores <PrivateImplementationDetails>.
+  	- AttributePropertiesRule now has a check for no method body.
+	- CtorCallsVirtualRule ignores final methods.
+       		  
+
+-- Version 0.8.0.0 (r541) ----
+* Added 21 new rules:
+	APTCA1
+	APTCA2
+	ConflictingTransparency
+	ImperativeSecurity
+	IndirectLinkDemand
+	InternalInterface
+	KeepAlive
+	NamedPermissionSet 
+	NonVirtualInheritanceDemand 
+	PathCombine 
+	PartitionAssembly 
+	PermitDenySecurity
+	ReadOnlyArray
+	SealedInheritanceDemand 
+	SecureAsserts
+	SecureGetObjectData
+	SecureOverrides 
+	TransparentAssert1
+	TransparentAssert2
+	UnmanagedCodeSecurity
+	VisibleEventHandler
+* Tweaked the code so that it compiles with mono 1.2.6.
+* Smokey now works with .NET (you'll need to have Mono.Cecil in Smokey's directory
+  or somewhere else the CLR can find it).
+* Replaced Mono.GetOptions with a much simpler options processor.
+* Dependent assemblies in the directory of the assembly being tested are now
+  correctly loaded.
+* Fixed SuffixName rule: classes that implement IDictionary should have a Dictionary 
+  suffix, not a Collection suffix.
+* Instead of throwing an exception if two assemblies define a type with the same
+  name in the same namespace we now just use the first type.
+
+
+-- Version 0.7.0.0 (r521) ----
+* Added 35 new rules:
+	BaseSerializable1Rule
+	BaseSerializable2Rule
+	BeforeEventRule
+	BoolMarshalingRule
+	CastOpAlternativeRule
+	Const1Rule
+	Const2Rule
+	DataLocaleRule
+	DeclareSecurityRule
+	DeepInheritanceRule
+	DefaultExceptionCtorRule
+	EqualityOperatorRule
+	ImplicitCastRule
+	InlineStaticInitRule
+	MessageBoxOptionsRule
+	NanTestRule
+	NonSerializableFieldRule
+	NoSerializableAttributeRule
+	NotInstantiatedRule
+	OperatorAlternativeRule
+	OptionalSerializationRule
+	PreferredTermRule
+	PublicTypeRule
+	RequireSerializableCtorRule
+	SerializableCtorAccessRule
+	SerializableMethodsRule
+	SortedMethodsRule
+	SpecialFolderRule
+	StringCompareRule
+	SuffixNameRule
+	SuffixName2Rule
+	SuffixName3Rule
+	TempDirRule
+	UnsealedAttributeRule
+	UnusedMethodRule
+* Only check .Net 2.0 related rules if the assembly is targeting .Net 2.0 or above.
+* We now get a file name for a type if the type has constructors but no methods.
+* Instead of loading just the assembly being checked we now load all of the
+  dependant assemblies which makes life easier for us and allows us to do a 
+  bit better job in some of the rules.
+* Instead of checking for base class finalizers DisposeNativeResourcesRule checks 
+  for overriden Dispose methods.
+* BaseDisposableRule checks for any base Dispose call instead of just the immediate
+  base.
+* AttributePropertiesRule ignores public fields.	
+* Updated EqualsRequiresNullCheck1 description to point out that it also fires for 
+  infinitely recursive equals methods.
+* Use "V_n" if MethodEntry.LocalNamesAmbiguous.
+* Added infinite recursion check to LargeStructRule.
+* Allow logging to stdout and stderr.
+  
+
+-- Version 0.6.0.0 (r430) ----
+* Added 23 new rules:
+    - AttributeProperties, attributes need getters for required arguments and
+      getters/setters for optional arguments.
+    - AvoidEmptyInterfaces, use attributes instead of tagging types with empty
+      interfaces.
+    - CLSCompliant, assemblies should use CLSCompliantAttribute.
+    - CompareTo, class implements IComparable but doesn't override Equals.
+    - EventHandler, use EventHandler instead of writing event delegates yourself.
+    - EventSignature, event delegates should use the standard delegate signature.
+    - ExceptionConstructors, exceptions need constructors for inner exceptions
+      and for remoting.
+    - HiddenMethod, derived method has a different signature but still hides a 
+      base class method.
+    - ImplementGenericCollection, use the generic IEnumerable.
+    - NativeMethods, p/invokes should be in a class name NativeMethods, 
+      SafeNativeMethods, or UnsafeNativeMethods.
+    - ObsoleteMessage, ObsoleteAttribute usage doesn't set Message property.
+    - OverridenFinalizer, don't override finalizers if the base class implements
+      IDisposable.
+    - PublicAbstractCtor, abstract classes should not have public ctors.
+    - SerializeException, exceptions should be serializable.
+    - SerializeExceptionMembers, exceptions with fields should override 
+      GetObjectData.
+    - STAThread, main should use STAThreadAttribute.
+    - TypedCollection, use the generic ICollection.
+    - TypedDictionary, use the generic IDictionary.
+    - TypedEnumerator, use the generic IEnumerator.
+    - TypedList, use the generic IList.
+    - UseBaseTypes, don't pass a derived type into a method if a base type will
+      work.
+    - UseFlagsAttribute, enums should use FlagsAttribute where appropiate.
+    - UseStrongName, assemblies should have strong names.
+* Assemblies can now define a DisableRuleAttribute and use it to disable rules
+  for types and methods in that assembly (see the README for more details).
+* Building refererences Cecil like the other Mono assemblies (instead of using
+  the package).
+* DisposeNativeResources and DisposableButNoFinalizer check for HandleRef
+  in addition to IntPtr and UIntPtr.
+* BumpBuildNumber.sh is now included in the tarball.
+* Don't recommend throwing IndexOutOfRangeException.
+
+
+-- Version 0.5.0.0 (r336) ----
+* Added nine new rules:
+    - DllImportExtension, no extensions in DllImport.
+    - DllImportPath, no paths in DllImport.
+    - FlagsUseNone, flags enum should use "None" for the zero value.
+    - LargeNamespace, namespace has more than 40 public types.
+    - PluralEnumFlags, flags enum should end with s, i, or ae.
+    - StaticSetter, non-private static method sets a field and is called
+      from a thread.
+    - ToStringOnString, ToString is called on a string (from lukasz).
+    - UseDefaultInit, don't set fields to 0 in a ctor.
+    - WeakIdentityLock, don't lock objects with weak identity.
+* Added support for custom rules complete with an example which has three
+  rules.
+* Smokey.exe is now strongly named.
+* Reorganized the files and renamed most of the checkIDs.
+* Have multiple namespaces now so that the (public types especially) are
+  grouped nicely.
+* Rules can now visit a callgraph.
+* Reports can now be generated in html format.
+* StringSpellingRule ignores all words inside angle bracket markup, not
+  just URLs.
+* Added a web site: <https://home.comcast.net/~jesse98/public/Smokey>.
+
+-- Version 0.4.0.0 (r286) ----
+* Analyzing System.dll is 13x faster than 0.3.0.0:
+    - #ifdefed out FastAssert and DebugLine (conditional attributes don't work
+      for template functions in 1.2.5).
+    - logging no longer converts the arguments to strings if they won't be logged
+    - build all our data structures up front and stick them in AssemblyCache
+    - completely rewrote Dataflow which was a big bottleneck
+    - completely rewrote rules and visitors to use a new much simpler visitor
+      design that allows rules to execute in parallel as a method is visited
+* Added support for fault blocks (the 1.2.5 compiler generates them now).
+* Added some new rules:
+    - AttributesNeedUsage, attribute was defined without an AttributeUsage
+    - ConsistentEquality, equals methods and GetHashCode need to match
+    - ReservedExceptions, can't throw a handful of exceptions reserved by CLR
+    - StructOverrides, structs should override both Equals and GetHashCode
+    - ValueHashCode, very inefficient to use the default ValueType::GetHashCode
+    - VisibleFields, public type has non-constant public or protected fields
+* CtorCallsVirtual catchs more problems.
+* Dataflow now checks for if (p == null) and sets p to null or not null according
+  to which branch was taken.
+* Many rules include additional details in their reports.
+* Replaced -exclude-type and -exclude-method with -exclude-name.
+* Replaced -type and -method with -only and made it debug only.
+* Added Nitpick severity level. 
+* AvoidBoxing, AvoidUnboxing, MethodCanBeMadeStatic, MethodTooComplex, 
+  StringConcat, and UseStringEmpty are now Nitpick level.
+* Added -severity option.
+* Added debug only -check-xml to check spelling and verify that the code in the
+  xml compiles.
+
+-- Version 0.3.0.0 (r227) ----
+* Works with mono 1.2.5 candidate release 3.
+* Added new rules:
+    AssemblyAttributeSpelling
+    AssemblyInfo
+    AvoidBoxing
+    AvoidUnboxing
+    ClassCanBeMadeStatic
+    CompareFloats
+    CtorCallsVirtual
+    CustomException
+    DisposableButNoFinalizer
+    DisposableFields
+    DisposeFields
+    DisposeNativeResources
+    DisposeScopedObjects
+    EnumsNeedZero
+    GlobalPublicType
+    ICloneable
+    JurassicNaming (like net except fields may be m_name or mName)
+    LargeStruct
+    LockThis
+    MalformedFormatString
+    MonoNaming (this is the default)
+    NetNaming (use -set:naming:net to use this)
+    NonGenericCollections
+    StringConcat
+    StringSpelling
+    SwallowException
+    SynchronizedAttribute
+    ThrowDerived
+    TooComplex
+* MethodCanBeMadeStatic does not check public/protected methods in System or
+  Mono namespaces.
+* Replaced the old crappy BasicBlock code with a much better version.
+* Added LinearVisitor, ControlFlowVisitor, and LoopVisitor which make use of a 
+  new DoubleDispatch class.
+* Added DataFlow class which returns the value of arguments, locals, and the
+  stack at any point in a method.
+* Improved logger:
+    - It now supports hierarchical logging by leveraging the type system.
+    - New DebugLine method is compiled out in release.
+    - Eliminates boxing for the common case of one or two arguments after format 
+      string.
+* Added general configuration support via the configuration file or the -set
+  command-line switch.
+* Prints progress to stderr (can disable via -quiet).
+* TextReporter prints the full path instead of just the file name.
+* Fixed version numbers so the minor version is in the right place.
+* Nant script now generates build numbers.
+ 
+-- Version 0.0.2.0 (r141) ----
+* First public release.

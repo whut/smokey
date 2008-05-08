@@ -1,0 +1,813 @@
+<!-- This category is for code that is broken. The severity of these rules should
+normally be Error. -->
+<Violations>
+	<Violation checkID = "C1000" severity = "Warning" breaking = "false">	<!-- get a fair number of false positives here so we use Warning instead of Error -->
+		<Translation lang = "en" typeName = "StringSpelling" category = "Correctness">			
+			<Cause>
+			The above words were misspelled.
+			</Cause>
+	
+			<Description>
+			....
+			</Description>
+	
+			<Fix>
+			Correct the spelling or use the -set:ignoreList command line switch.
+			</Fix>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "C1001" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "InfiniteRecursion" category = "Correctness">			
+			<Cause>
+			A method is directly calling itself an infinite number of times.
+			</Cause>
+	
+			<Description>
+			A method that is recursively calling itself an infinite number of times
+			will use an infinite amount of CPU and stack space. This is rarely a
+			good thing.
+			</Description>
+	
+			<Fix>
+			Either remove the recursion or add a base case to terminate the recursion.
+			</Fix>
+	
+			<CSharp>
+			internal class Recursion
+			{								
+				public override int GetHashCode()
+				{
+					return base.GetHashCode();	// this is fine, but would be bad without the base.
+				}
+
+				public static int Fibonacci(int n)
+				{
+					if (n &lt; 2)		// base case terminates the recursion
+						return n;
+					
+					return Fibonacci(n - 1) + Fibonacci(n - 2);
+				}
+			} 
+			</CSharp>
+		</Translation>
+	</Violation> 
+	
+	<Violation checkID = "C1002" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "MalformedFormatString" category = "Correctness">			
+			<Cause>
+			A method call is being made with a format string, but the number of arguments
+			in the format does not match the number of actual arguments.
+			</Cause>
+	
+			<Description>
+			...
+			</Description>
+	
+			<Fix>
+			Make the format string consistent with the arguments.
+			</Fix>
+	
+			<CSharp>
+			internal class Point
+			{
+				public override string ToString()
+				{
+					// The arguments in the format string don't have to be in
+					// order but their count must match the actual argument count.
+					return string.Format("x = {1}, y = {0}", m_y, m_x);
+				}
+				
+				public string ToString2()
+				{
+					// It is, however, permissible to reuse arguments.
+					return string.Format("y^2 = {0}*{0}", m_y);
+				}
+				
+				private int m_x, m_y;
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "C1003" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "NullDeref" category = "Correctness">			
+			<Cause>
+			A method is using a reference which may be null.
+			</Cause>
+	
+			<Description>
+			If a reference is initialized to null then all of the code paths leading
+			to the use of that method have to set it to a non-null value.
+			</Description>
+	
+			<Fix>
+			Either check to see if the reference is null before using it or ensure that
+			it is always set before using it.
+			</Fix>
+	
+			<CSharp>
+			using System.IO;
+			
+			internal static class Create
+			{								
+				public static StreamWriter Writer(string path, bool truncate, bool open)
+				{
+					FileStream stream = null;
+					StreamWriter writer = null;         
+					
+					if (truncate &amp;&amp; open)
+						stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write);
+					else
+						stream = new FileStream(path, FileMode.Truncate, FileAccess.Write);
+				
+					if (stream != null)		// need the if because not all code paths create a stream
+					{
+						stream.Seek(0, SeekOrigin.End); 
+						writer = new StreamWriter(stream);         
+					}
+					
+					return writer;
+				}
+			} 
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "C1004" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "InternalError" category = "Correctness">			
+			<Cause>
+			A rule has failed to run.
+			</Cause>
+	
+			<Description>
+			The rule has a bug and has failed via an exception.
+			</Description>
+	
+			<Fix>
+			Contact the author of the rule.
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "C1005" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "BaseDisposable" category = "Correctness">			
+			<Cause>
+			A base class overrides IDisposable, the type overrides Dispose, but does
+			not call the base Dispose.
+			</Cause>
+	
+			<Description>
+			If the derived class does not call the base Dispose the base resources won't
+			be disposed and the derived resources may be disposed twice.
+			</Description>
+	
+			<Fix>
+			Call the base Dispose.
+			</Fix>
+	
+			<CSharp>
+			internal class MyResource : IDisposable
+			{
+				~MyResource()		
+				{					
+					// Note that this is called even if the ctor throws. Also note
+					// that this will call the derived Dispose.
+					Dispose(false);
+				}
+			
+				public MyResource(IntPtr handle)
+				{
+					m_handle = handle;
+				}
+			
+				public void DoWork()
+				{
+					// All public methods (except Dispose) should throw 
+					// ObjectDisposedException if Dispose has been called.
+					if (m_disposed)		
+						throw new ObjectDisposedException("MyResource has been disposed");
+						
+					NativeMethods.WorkIt(m_handle);
+					GC.KeepAlive(this);
+				}
+			
+				public void Dispose()
+				{
+					Dispose(true);
+			
+					// If we've been disposed our object can be garbage collected without
+					// finalization.
+					GC.SuppressFinalize(this);
+				}
+				
+				protected bool Disposed
+				{
+					get {return m_disposed;}
+				}
+			
+				protected virtual void Dispose(bool disposing)
+				{
+					if (!m_disposed)
+					{
+						// If we've been called via Dispose we can,
+						if (disposing)
+						{
+							// dispose of managed fields.
+						}
+			
+						// If we've been called via the finalizer any references we have to
+						// managed objects may have been finalized so we have to be
+						// very careful and only dispose of unmanaged resources here.
+						NativeMethods.CloseHandle(m_handle);
+						m_handle = IntPtr.Zero;
+			
+						m_disposed = true;
+					}
+				}
+			
+				private static class NativeMethods
+				{
+					[System.Runtime.InteropServices.DllImport("Kernel32")]
+					public extern static bool CloseHandle(IntPtr handle);
+				
+					[System.Runtime.InteropServices.DllImport("Kernel32")]
+					public extern static void WorkIt(IntPtr handle);
+				}
+				
+				private IntPtr m_handle;
+				private bool m_disposed;
+			}			
+
+			internal class DerivedResource : MyResource
+			{
+				public DerivedResource(IntPtr handle) : base(handle)
+				{
+				}
+				
+				protected override void Dispose(bool disposing)
+				{
+					if (!Disposed)
+					{
+						if (disposing)
+						{
+							// Dispose of derived managed fields.
+						}
+			
+						// Dispose of derived unmanaged fields.
+	
+						base.Dispose(disposing);
+					}					
+				}
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "C1006" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "NoSerializableAttribute" category = "Correctness">			
+			<Cause>
+			An externally visible type implements System.Runtime.Serialization.ISerializable,
+			but is not marked with System.SerializableAttribute. 
+			</Cause>
+		
+			<Description>
+			To be recognized by the runtime as serializable types must be marked with 
+			SerializableAttribute even if they use custom serialization via ISerializable.
+			</Description>
+	
+			<Fix>
+			Decorate the type with System.SerializableAttribute.
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.Serialization;
+			using System.Security.Permissions;
+			
+			[Serializable]
+			public class Customer : ISerializable
+			{
+				public Customer(string name)
+				{
+					m_name = name;
+				}
+				
+				protected Customer(SerializationInfo info, StreamingContext context)
+				{
+					m_name = info.GetString("name");
+				}
+				
+				[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+				public void GetObjectData(SerializationInfo info, StreamingContext context)
+				{
+					info.AddValue("name", m_name);
+				}
+				
+				private string m_name;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "C1007" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "OptionalSerialization" category = "Correctness">			
+			<Cause>
+			A field is decorated with OptionalFieldAttribute, but no method in the declaring
+			type is decorated with OnDeserializingAttribute or OnDeserializedAttribute. 
+			</Cause>
+		
+			<Description>	
+			OptionalFieldAttribute affects deserialization but not serialization. When an
+			object without the optional field is deserialized the new object is zero initialized
+			with FormatterServices.GetUninitializedObject and then the fields which are present
+			in the data stream are deserialized.
+			</Description>
+	
+			<Fix>
+			Use OnDeserializingAttribute or OnDeserializedAttribute to ensure optional fields
+			are correctly initialized.
+			</Fix>
+	
+			<CSharp>
+			using System.Reflection;
+			using System.Runtime.Serialization;
+			
+			[Serializable]
+			internal class Optional
+			{		
+				[OnDeserialized]
+				protected void OnDeserialized(StreamingContext context)
+				{
+					// Note that you may use the required deserialized
+					// fields to set optional fields.
+					m_optional = 5;
+				}
+			
+				[OptionalField(VersionAdded = 2)]
+				private int m_optional = 5;		// this is not done when the object is deserialized
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "C1008" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "NanTest" category = "Correctness">			
+			<Cause>
+			An equality or inequality operator operand is System.Single.NaN or System.Double.NaN. 
+			</Cause>
+		
+			<Description>	
+			An IEEE-754 NaN is a special value returned by expressions which have no meaningful
+			value (such as 0.0/0.0 or sqrt(-1)). Expressions involving NaNs also produce NaN and
+			NaNs never compare equal to other values (not even themselves).
+			</Description>
+	
+			<Fix>
+			Use System.Single.IsNaN(System.Single) or System.Double.IsNaN(System.Double) to check
+			to see if a value is a NaN.
+			</Fix>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "C1009" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "IntegerDivision" category = "Correctness">			
+			<Cause>
+			The result of an integer division is cast to a float or double. 
+			</Cause>
+		
+			<Description>	
+			This is usually an error.
+			</Description>
+	
+			<Fix>
+			If the divide should be a floating point divide then cast one of the arguments to
+			float or double before doing the divide. If the divide should be an integer divide
+			assign the result to a temporary integer variable.
+			</Fix>
+	
+			<CSharp>
+			internal static class Math
+			{		
+				public static double Ratio(int n, int m)
+				{
+					// Need an explicit cast so that we do a floating point divide.
+					// If we don't do this stuff like 2/5 == 0 instead of 0.4.
+					return (double) n / m;
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "C1010" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "IntegerMultiply" category = "Correctness">			
+			<Cause>
+			The result of an integer multiplication is cast to a long. 
+			</Cause>
+		
+			<Description>	
+			In general it's best to do the multiply using longs to reduce the chance of overflow.
+			</Description>
+	
+			<Fix>
+			Cast one of the operands to a long before doing the multiplication.
+			</Fix>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "C1011" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "Average" category = "Correctness">			
+			<Cause>
+			Code like "(a + b)/2" or "(a + b) >> 1" is used where a and b are both ints. 
+			</Cause>
+		
+			<Description>	
+			The standard average algorithm may overflow if a and b are large. See
+			&lt;http://googleresearch.blogspot.com/2006/06/extra-extra-read-all-about-it-nearly.html&gt; 
+			for a real world example of this at Google.
+			</Description>
+	
+			<Fix>
+			The simplest fix is to rewrite the code like this: "a + ((b - a)/2)".
+			</Fix>
+		</Translation>	
+	</Violation>
+
+	<Violation checkID = "C1012" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "StringIndexOf" category = "Correctness">			
+			<Cause>
+			String.IndexOf or IndexOfAny is called and the code checks for a positive result.
+			</Cause>
+		
+			<Description>	
+			This may be an off by one error.
+			</Description>
+	
+			<Fix>
+			Instead of something like text.IndexOf(':') use text.IndexOf(':', 1);
+			</Fix>
+		</Translation>	
+	</Violation>
+
+	<Violation checkID = "C1013" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ArrayIndexOf" category = "Correctness">			
+			<Cause>
+			Array.IndexOf is called and the code checks for a positive result.
+			</Cause>
+		
+			<Description>	
+			This may be an off by one error.
+			</Description>
+	
+			<Fix>
+			If you really don't want to check index zero then use the IndexOf overload that
+			allows you to specify a starting index.
+			</Fix>
+		</Translation>	
+	</Violation>
+
+	<Violation checkID = "C1014" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "UnusedStore" category = "Correctness">			
+			<Cause>
+			A value is stored into a local variable, argument, or field
+			followed immediately by another store into the same location.
+			</Cause>
+		
+			<Description>	
+			This rule will fire for code that computes a value, saves it, and then throws
+			it away. For example, "i = i++" will cause the rule to fire.
+			</Description>
+	
+			<Fix>
+			Don't perform work that you don't need to and don't save results that you never use.
+			</Fix>
+		</Translation>	
+	</Violation>
+
+	<Violation checkID = "C1015" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "BadRegEx" category = "Correctness">			
+			<Cause>
+			A regular expression is malformed.
+			</Cause>
+		
+			<Description>	
+			See &lt;http://msdn2.microsoft.com/en-us/library/az24scfc(vs.71).aspx&gt;
+			for information on .NET regex syntax.
+			</Description>
+	
+			<Fix>
+			Fix the expression.
+			</Fix>
+		</Translation>	
+	</Violation>
+
+	<Violation checkID = "C1016" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "UnusedNew" category = "Correctness">			
+			<Cause>
+			A new object is created but the reference to the object isn't saved or used.
+			</Cause>
+		
+			<Description>	
+			This rule will fire if you do stuff like "new Exception("oops")" instead of
+			"throw new Exception("oops")".
+			</Description>
+	
+			<Fix>
+			It's poor style to create an object simply for the side effects, but if that's
+			what you want to do assign the result to Ignore.Value.
+			</Fix>
+		</Translation>	
+	</Violation>
+
+	<Violation checkID = "C1017" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "NullField" category = "Correctness">			
+			<Cause>
+			A private field is never set to a non-null value.
+			</Cause>
+		
+			<Description>	
+			The C# compiler will issue a warning if the field is never used, but it will
+			not issue a warning if the field is used but never initialized.
+			</Description>
+	
+			<Fix>
+			Either remove the field or initialize it properly.
+			</Fix>
+		</Translation>	
+	</Violation>
+
+	<Violation checkID = "C1018" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "IgnoredReturn" category = "Correctness">			
+			<Cause>
+			A method is called but the method's return value is not used.
+			</Cause>
+		
+			<Description>	
+			In general return values should not be ignored in C#.
+			</Description>
+	
+			<Fix>
+			Unlike C there is no built-in mechanism for explicitly ignoring return
+			values in C#. You can assign it to a temporary (although you will get a
+			warning because the temporary isn't used) or use an Ignore class as in
+			the code below.
+			</Fix>
+	
+			<CSharp>
+			internal static class Ignore
+			{
+				public static object Value 
+				{
+					[DisableRule("C1022", "UseSetterValue")]	
+					set {}
+				}
+			}
+
+			internal static class Printer
+			{		
+				public static void Print2(string s, string t)
+				{
+					Ignore.Value = Print(s + t);	// ignore return value because it's always true
+				}
+
+				public static bool Print(string s)
+				{
+					Console.WriteLine(s);
+					return true;
+				}
+			}
+			</CSharp>
+		</Translation>	
+	</Violation>
+
+	<Violation checkID = "C1019" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "UnrelatedEquals" category = "Correctness">			
+			<Cause>
+			Equals is called with two unrelated types.
+			</Cause>
+		
+			<Description>	
+			This will always cause Equals to return false unless Equals is overridden to
+			special case the other type which is rarely a good idea.
+			</Description>
+	
+			<Fix>
+			Fix the code so that it compares objects which are truly comparable.
+			</Fix>
+		</Translation>	
+	</Violation>
+
+	<Violation checkID = "C1020" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "AttributeSpelling" category = "Correctness">			
+			<Cause>
+			The above words were misspelled.
+			</Cause>
+	
+			<Description>
+			....
+			</Description>
+	
+			<Fix>
+			Correct the spelling or use the -set:ignoreList command line switch.
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "C1021" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "RecursiveEquality" category = "Correctness">			
+			<Cause>
+			An operator== or operator!= method calls itself.
+			</Cause>
+		
+			<Description>
+			This is usually caused by the method directly comparing an argument to null.
+			</Description>
+	
+			<Fix>
+			Cast the argument to System.Object before comparing to null.
+			</Fix>
+	
+			<CSharp>
+			internal class Customer : IEquatable&lt;Customer&gt;
+			{		
+				public override bool Equals(object rhsObj)
+				{
+					if (rhsObj == null)			// as is a little expensive, so skip it if we can
+						return false;
+					
+					Customer rhs = rhsObj as Customer;
+					return this == rhs;
+				}
+					
+				public bool Equals(Customer rhs)	// provide a typed overload for efficiency
+				{
+					return this == rhs;
+				}
+
+				public static bool operator==(Customer lhs, Customer rhs)
+				{
+					// If both are null, or both are the same instance, return true.
+					if (object.ReferenceEquals(lhs, rhs))
+						return true;
+					
+					// If one is null, but not both, return false. If the casts were
+					// missing this would generate a recursive call to ourselves.
+					if ((object) lhs == null || (object) rhs == null)
+						return false;
+					
+					// Return true if the fields match:
+					return lhs.name == rhs.name &amp;&amp; lhs.address == rhs.address;
+				}
+				
+				public static bool operator!=(Customer lhs, Customer rhs)
+				{
+					return !(lhs == rhs);
+				}
+				
+				public override int GetHashCode()
+				{
+					int hash;
+					
+					unchecked
+					{
+						hash = name.GetHashCode() + address.GetHashCode();
+					}
+					
+					return hash;
+				}
+				
+				private string name = "ted";
+				private string address = "main street";
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "C1022" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "UseSetterValue" category = "Correctness">			
+			<Cause>
+			A property setter is not using the value argument.
+			</Cause>
+		
+			<Description>
+			...
+			</Description>
+	
+			<Fix>
+			Use the argument somehow. If for some reason you don't want to make use of it
+			you can use Ignore.Value as in the code below.
+			</Fix>
+	
+			<CSharp>
+			internal static class Ignore
+			{
+				public static object Value 
+				{
+					[DisableRule("C1022", "UseSetterValue")]	
+					set {}
+				}
+			}
+
+			internal class Ship
+			{		
+				public string Name 
+				{
+					get {return m_name;}
+					set {m_name = value;}
+				}
+				
+				// We don't use the Captain property at the moment so the setter
+				// does nothing. Of course, it's usually better to omit code that
+				// doesn't do anything...
+				public string Captain 
+				{
+					get {return string.Empty;}
+					set {Ignore.Value = value;}
+				}
+				
+				private string m_name;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "C1023" severity = "Error" breaking = "true">
+		<Translation lang = "en" typeName = "UnprotectedEvent" category = "Correctness">			
+			<Cause>
+			An event is fired without first checking to see that the event is non-null,
+			or the check uses the wrong event.
+			</Cause>
+		
+			<Description>
+			Events are null until a handler is added to them so firing them without a
+			null check is dangerous.
+			</Description>
+	
+			<Fix>
+			Check for null before firing the event.
+			</Fix>
+	
+			<CSharp>
+			internal class Customer
+			{		
+				public event EventHandler NameChanged;
+				
+				public string Name 
+				{
+					get 
+					{
+						return m_name;
+					}
+					
+					set 
+					{
+						if (value != m_name)
+						{
+							m_name = value;
+							
+							// To be safe we need to check for null.
+							if (NameChanged != null)
+								NameChanged(this, EventArgs.Empty);
+					}
+				}
+								
+				private string m_name;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "C1024" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "IntZeroDivide" category = "Correctness">			
+			<Cause>
+			An integer divide was done with a zero denominator.
+			</Cause>
+		
+			<Description>
+			This will result in an System.DivideByZeroException at runtime (even if
+			arithmetic is unchecked).
+			</Description>
+	
+			<Fix>
+			Don't do integer divide by zeros.
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "C1025" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "FloatZeroDivide" category = "Correctness">			
+			<Cause>
+			A floating point divide was done with a zero denominator.
+			</Cause>
+		
+			<Description>
+			If the numerator is non-zero this will result in a positive or negative infinity.
+			If the numerator is zero this will result in a NaN.
+			</Description>
+	
+			<Fix>
+			The code is very likely wrong.
+			</Fix>
+		</Translation>
+	</Violation>	
+</Violations>		
