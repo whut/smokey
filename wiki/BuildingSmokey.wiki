@@ -1,0 +1,25 @@
+#summary Building Smokey and related targets.
+
+= Environment =
+
+Building Smokey isn't very complex, but currently the only way to build it is via [http://nant.sourceforge.net/ nant].
+
+= Building =
+
+You'll need a public/private key pair in order to build. I'd rather not distribute the official private key so you can use your own keys. To make the keys navigate to the top level Smokey directory and execute `sn -k Smokey.keys`.
+
+As of mono 1.0 Cecil is included in the gac but not in the lib directory so the compiler won't find it. The easiest fix for this is to copy Mono.Cecil.dll from the gac to $prefix/lib/mono/2.0.
+
+== Application ==
+
+Building the app can be done with a command like `nant -nologo app`.
+    
+== Tests ==
+
+To build and run the unit tests: `nant -nologo -D:debug=true test`. All of the unit tests should pass. Note that you can also run these in release. The unit tests take a long time to run. If you just want to run one test you can use the test1 target although you will need to edit the test1 target in the nant file to include the test you wish to test.
+
+To build and run the functional tests: `nant -nologo -D:debug=true ftest`. The functional tests should all pass. You can run the functional tests in release, but at the moment, there will be some spurious errors because the assemblies have different names in release.
+    
+== Smoking ==
+
+To run smokey on itself: `nant -nologo -D:debug=true smoke`. No errors or warnings should be reported.
