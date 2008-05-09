@@ -591,7 +591,6 @@
 				[STAThread]
 				public static int Main(string[] args)
 				{ 
-					
 					Console.WriteLine("hello world");
 					
 					return 0;
@@ -957,6 +956,71 @@
 				public readonly float X;
 				public readonly float Y;
 				public readonly float Z;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "R1026" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "AvoidIsAlive" category = "Reliability">			
+			<Cause>
+			System.WeakReference::IsAlive was used.
+			</Cause>
+		
+			<Description>
+			If IsAlive returns true then the object it references has not been garbage
+			collected but it may be garbage collected immediately after IsAlive returns
+			if another thread releases the last reference to the object. If IsAlive
+			returns false the object was definitely collected.
+			</Description>
+	
+			<Fix>
+			Use WeakReference::Target instead of IsAlive. Or if you do use IsAlive only
+			check for a false result.
+			</Fix>
+	
+			<CSharp>
+			using System.Collections.Generic;
+			
+			// Simple leak checker. Register objects which should be garbage collected
+			// and call DumpActive later to see if they were, in fact, collected.
+			internal static class ObjectTracker
+			{
+				public static void Register(object o)
+				{ 			
+					lock (ms_objects)
+					{
+						ms_objects.Add(new WeakReference(o));
+					}
+				}
+				
+				[DisableRule("P1017", "ExplicitGC")]    
+				public static void DumpActive()
+				{
+					// Force a collection so that everything that can be collected is.
+					// Note that we also have to sleep for a bit to give the finalizer
+					// thread time to run.
+					GC.Collect();		
+					System.Threading.Thread.Sleep(200);
+			
+					// Now we can iterate over all of our objects and see which are
+					// still alive. The code uses Target so that we have a strong
+					// reference to the object on the stack as soon as Target returns.
+					// If we had used IsAlive and Target the object could have been
+					// collected between the two calls (e.g. another thread may have
+					// removed the last reference to the object).
+					lock (ms_objects)
+					{
+						foreach (WeakReference r in ms_objects)
+						{
+							object o = r.Target;
+							if (o != null)
+								Console.WriteLine("{0} is alive", o);
+						}
+					}
+				}
+			
+				private static List&lt;WeakReference&gt; ms_objects = new List&lt;WeakReference&gt;();
 			}
 			</CSharp>
 		</Translation>

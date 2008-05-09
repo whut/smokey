@@ -5,9 +5,11 @@ BIN_DIR=/usr/local/bin
 LOG_FILE=/tmp/smokey.log
 MONO=`which mono`
 
+# Copy the assembly into /usr/local/bin
 cp bin/smokey.exe "$BIN_DIR"
 chmod -x "$BIN_DIR/smokey.exe"
 
+# Write a hard-coded config file alongside the assembly.
 echo "<?xml version = \"1.0\" encoding = \"utf-8\" ?>" > "$BIN_DIR/smokey.exe.config"
 echo "<configuration>" >> "$BIN_DIR/smokey.exe.config"
 echo "	<appSettings>" >> "$BIN_DIR/smokey.exe.config"
@@ -18,6 +20,7 @@ echo "		<add key = \"topic:System.Object\" value = \"Warning\"/>	" >> "$BIN_DIR/
 echo "	</appSettings>" >> "$BIN_DIR/smokey.exe.config"
 echo "</configuration>" >> "$BIN_DIR/smokey.exe.config"
 
+# Create a little smokey launcher script.
 echo "#!/bin/sh" > "$BIN_DIR/smoke"
 echo "exec -a smokey.exe $MONO $BIN_DIR/smokey.exe \$@" >> "$BIN_DIR/smoke"
 chmod +x "$BIN_DIR/smoke"

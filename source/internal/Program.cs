@@ -86,6 +86,16 @@ namespace Smokey.Internal
 			}
 			finally
 			{
+#if DEBUG
+				if (Log.NumErrors > 0 && Log.NumWarnings > 0)
+					Console.Error.WriteLine("There were {0} errors and {1} warnings!!!", Log.NumErrors, Log.NumWarnings);
+
+				else if (Log.NumErrors > 0)
+					Console.Error.WriteLine("There were {0} errors!!!", Log.NumErrors);
+
+				else if (Log.NumWarnings > 0)
+					Console.Error.WriteLine("There were {0} warnings!!!", Log.NumWarnings);				
+#endif
 				Log.Flush();
 			}
 			

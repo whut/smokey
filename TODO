@@ -13,7 +13,7 @@ mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mo
 mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.1/System.Xml.Core.dll > tmp.txt
 mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.0/System.Windows.Forms.dll > tmp.txt
 
-mono bin/smokey.exe bin/smokey.exe
+mono bin/smokey.exe bin/smokey.exe	scaleable
 	27.065				1.1
 	24.194				1.0
 	31.63 seconds		
@@ -30,33 +30,11 @@ mono bin/smokey.exe -set:ignoreList:SysIgnore.txt /ex6/lib/mono/gac/System/2.0.0
 <http://msdn2.microsoft.com/en-us/library/ee1hzekz(VS.80).aspx>
 Essential .NET Volume 1, The Common Language Runtime - Don Box
 
-/cast [target=mouseover,exists] Spirit Lance; Spirit Lance
 
-* Move to sourcesafe or google.
-* NoStaticRemove
-	- static and private collection
-	- non-ctor does an add
-	- elements are ref types, but not WeakReference
-	- need to special case dict c[k] = v syntax?
-	Mime	
-		Matches80Plus		no removes
-		MatchesBelow80		no removes
-		
-	MimeIconEngine
-		MimeIconIndex		no removes
-		
-	TextBoxTextRenderer
-		measure_cache		no removes
-				
-	XplatUICarbon
-		WindowMapping		no removes
-		HandleMapping		no removes
-		
-	XplatUIX11	
-		Hashtable			no removes
+* Could collapse m_foundAdd, m_foundRemove, and m_keys.
 * DisposeDoesStaticRemove
 	- Dispose or Disposing directly or indirectly removes a reference type from
-	  a collection
+	  a private static collection
 	- Dispose should be used for determinsitic finalization, not to enable objects
 	  to be GCed => carefully examine code (threading issues too)
 	Hwnd
@@ -64,9 +42,12 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	ToolStripManager
 		toolstrips			RemoveToolStrip (indirect call from dispose)
 		menu_items			RemoveToolStripMenuItem (indirect call from dispose)
+* Look at ContainsKey usage: can we simply use set_Item?
 * UseHashSet
 	- look for the standard List usage
-* Try built-in profiler again.
+	- performance rule
+	- list is used but all adds are preceded by an existence check
+	- only if targeting .net 3.0 or 3.5 (which ever added hashset)
 * ThreadedAttribute
 	- has mandatory id, id can be "*", or "Foo1, Foo2"
 	- allow id = "Main" and "Finalizer"
@@ -82,18 +63,23 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	  and either does a stfld or is [Mutable]
 	- don't count ctors
 * ImmutableAttribute
+* Would be nice if install script installed custom rules somehow?
+* NonLocalizedString
+	- string literal is used with Windows.Forms.Controls::Text and the like
+	- require at least instance of a localized string
 * DefineEmptyRule
 	- immutable, instantiable, and has public default ctor
 * May be able to define other rules using mutable and immutable
+* Might want to have a CustomAttributes page on the wiki instead of the readme.
+  http://code.google.com/p/procan/w/list has an example (and featured wiki link).
+  Maybe wiki could have SmokeyUsage and CustomAttributes pages
+  Seems like this would be easier to find and use than the readme
 * WrongNamespace
 	- namespace matches another directory (ie not the one the class is defined in)
 	- note that we want to catch wrong usage so it's ok to have namespaces like
 	  dir1.dir2.foo
 * Using Parse instead of TryParse?
-* Mention the MD addon in the readme, maybe on the web page as well.
-	http://code.google.com/p/smokeyaddin/
-* MMC has been renamed.
-* Mention heapbuddy/shot and the clr profiler.
+* See if google shows the googlecode project.
 * Need profiles like fxcop?
 	- "public API review" profile, a "bug review" profile, a "full analysis review" profile
 	- maybe a system profile
@@ -106,10 +92,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- profile-help should show a blurb about installed profiles
 * Look at other fxcop options and stuff.
 * Look at gendarme options again.
-* UseHashSetRule
-	- performance rule
-	- list is used but all adds are preceded by an existence check
-	- only if targeting .net 3.0 or 3.5 (which ever added hashset)
+	http://www.mono-project.com/Gendarme
 * IdenticalMethods isn't determinstic.
 * StructNullDeref
 	- on entry to methods private fields are assumed to be null
@@ -122,6 +105,8 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- get the intersection
 	- ignore methods called only by ctors? or ignore privates?
 * Add a few more fxcop rules.
+* Generated html doesn't include breaking flag.
+* Try built-in profiler again. Might want to look at heapbuddy too.
 * Do a release.
 
 * Add a few more fxcop rules.
@@ -134,10 +119,6 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Foreign key but no update rule.
 * AssemblyResolver.Resolver.Resolve can be used to get a definition from a reference.
   a list of violations without messing with System.Process or external files.
-* Can create a package using: mcs -pkg:gtk-sharp,pango-sharp sample.cs
-   See <http://www.mono-project.com/Assemblies_and_the_GAC#Public_Key_Token_Remapping>
-  Also see  Libraries with Unstable APIs, <http://www.mono-project.com/Assemblies_and_the_GAC>
-* Look for apple stack crawl code.
 * Unit tests take too long to run. Maybe we can cleanup better?
 * Look at C# 3.0:
 	- extension methods
@@ -163,11 +144,8 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- null coalescing operator
   		string fileName = tempFileName ?? "Untitled"
 * Add a rejected file. Mention possibility of a (disabled by default) nitpicky level.
-* Might want to have a useful classes page. (equal too)
 * Add a script to update doc comments with DBC info (including invariants).
-* Can we use CompilerServices to get local variable names?
 * Could use threading to improve performance on multi-processors.
-* Probably should have an authors section in files.
 * Create table but no primary key.
 * If --html is specified colorize example code. Should also support wiki formatting...
   already using * for bulleted lists.
@@ -260,17 +238,13 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- <http://msdn2.microsoft.com/en-us/library/ee1hzekz(VS.80).aspx>
 	- names diff by case, property with same name as result type, maybe these should be nitpicky level
 	- IFormattable.ToString that doesn't call ICustomFormatter.Format
-	- too many public methods in a class
 	- switch (or if) covers all enum values w/o a default
 	- no classes with only nested types
 	- deadcode nitpick (use callgraph)
 	- deadlock? (use callgraph), erasor algorithm
-	- check event for null before using it
-	- maybe some GetOptions rules such as missing attributes
 	- publicly visible const field (breaking change if it's changed)?
 	- prefer no null events? http://blogs.msdn.com/jaybaz_ms/archive/2004/09/16/230681.aspx
 	- all classes are public and there are more than five classes
-	- do not ignore return values (or only non value type returns?)
 	- argument isn't used
 * Bogus Gendarme rules:
 	- DoubleCheckLockingRule, just use a singleton class
@@ -311,7 +285,10 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 		violations
 		smokey_bin
 		smokey_src
+		latest cecil
 	- update index.html (eg prepend new downloads)
+	- update googlecode description
+	- update wiki todo
 	- send an announcement
 	- make sure everything is checked in
 	- do the following (be sure to fix the versions):
