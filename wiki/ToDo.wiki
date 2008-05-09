@@ -1,0 +1,29 @@
+#summary Future plans.
+
+== Introduction ==
+
+As far as I can tell Smokey is pretty much feature complete so most of the changes I envision involve new rules and bug fixes.
+
+
+== Short Term ==
+
+For the next release I have a number of new rules planned and one new feature: support for profiles which will make it easier to do things like profile system assemblies in a standard fashion.
+
+
+== Medium Term ==
+
+More rules, in particular I'd like to add more !FxCop rules (Smokey probably has 70-80% of the !FxCop already). I may also add some SQL related rules.
+
+
+== Long Term ==
+
+These are things I'd like to implement, but probably won't get around to any time soon:
+
+ * The unit tests take way too long to run. I'm not sure why. Maybe Cecil is constantly reloading the assembly or we're not resetting references to null and therefore thrashing memory.
+ * It'd be really nice if we got file and line numbers on Windows.
+ * I haven't looked at Smokey memory usage at all. I suspect there's not a lot of room for improvement, but it would be nice to look more closely at it.
+ * It'd be nice to be able to provide more hints to direct Smokey. For example, we might be able to do extended type checking by annotating variables with type attributes.
+ * There are spurious errors in the functional test because the assembly names differ between debug and release.
+ * We automagically ensure that the code samples in the XML compile, but it would be nice to smoke them as well.
+ * It should be possible to get a substantial speedup on a multicore machine by running rules in parallel.
+ * Localization is only partially supported: all of the rule text can be localized but the !TextReport has hardcoded strings.
