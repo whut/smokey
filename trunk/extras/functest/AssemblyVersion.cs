@@ -1,4 +1,4 @@
-// Machine generated on Tue May  6 20:48:47 PDT 2008
+// Machine generated on Fri May  9 14:08:28 PDT 2008
 using System.Reflection;
  
-[assembly: AssemblyVersion("1.1.71.0")]
+[assembly: AssemblyVersion("1.1.98.0")]

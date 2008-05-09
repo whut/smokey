@@ -810,4 +810,24 @@ normally be Error. -->
 			</Fix>
 		</Translation>
 	</Violation>	
+	
+	<Violation checkID = "C1026" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "NoStaticRemove" category = "Correctness">			
+			<Cause>
+			A class has a private static collection, the elements are reference types (but
+			not WeakReference), adds elements to it outside the classes constructors,
+			and never removes elements from the collection.
+			</Cause>
+		
+			<Description>
+			None of the objects in the collection or objects referenced by those objects 
+			will be garbage collected.
+			</Description>
+	
+			<Fix>
+			The simplest fix is to change the collection to use the WeakReference type. Even
+			better, of course, is to remove elements when they are no longer used.
+			</Fix>
+		</Translation>
+	</Violation>	
 </Violations>		

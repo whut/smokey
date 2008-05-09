@@ -1,4 +1,4 @@
-// Copyright (C) 2007 Jesse Jones
+// Copyright (C) 2007-2008 Jesse Jones
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -92,9 +92,12 @@ namespace Smokey.Framework.Support.Advanced
 #endif
 			}
 			else
+			{
 				// Methods with a very large number of local variables can cause dataflow
 				// to take a very long time so we skip them.
+				m_skipped = true;
 				Log.InfoLine(this, "skipping DataFlow for {0} (it has {1} locals)", instructions.Method, instructions.Method.Body.Variables.Count);			
+			}
 		}
 		
 		/// <summary>Returns lattices for the start of all blocks reachable from the roots.
@@ -114,8 +117,15 @@ namespace Smokey.Framework.Support.Advanced
 				
 			return inputStates;
 		}
+		
+		/// <summary>Returns true if we skipped processing this method (because it's
+		/// too complex).</summary>
+		public bool Skipped
+		{
+			get {return m_skipped;}
+		}
 
-		#region Private methods
+		#region Private Methods -----------------------------------------------
 		// This is a standard iterative data-flow analysis algorithm. See Advanced
 		// Compiler Design and Implementation by Muchnick for example.
 		private Dictionary<BasicBlock, LATTICE> DoAnalyze(LatticeFunctions<LATTICE> functions, LATTICE initialState)
@@ -272,10 +282,11 @@ namespace Smokey.Framework.Support.Advanced
 #endif
 		#endregion
 				
-		#region Fields
+		#region Fields --------------------------------------------------------
 		private BasicBlock m_entry;
 		private List<BasicBlock> m_workList = new List<BasicBlock>();
 		private Dictionary<BasicBlock, List<BasicBlock>> m_predecessors = new Dictionary<BasicBlock, List<BasicBlock>>();
+		private bool m_skipped;
 		#endregion
 	}
 }

@@ -30,7 +30,7 @@ namespace Custom
 {	
 	internal class LogStartsWithStringRule : Rule
 	{				
-		// The checkID must match the id in the xml. Note that multiple rules can
+		// The checkID must match the id in the xml. Note that multiple classes can
 		// share the same checkID.
 		public LogStartsWithStringRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "CU1002 - example custom rules")

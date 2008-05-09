@@ -1,4 +1,4 @@
-// Copyright (C) 2007 Jesse Jones
+// Copyright (C) 2007-2008 Jesse Jones
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -68,6 +68,7 @@ namespace Smokey.Framework.Support.Advanced
 				foreach (BasicBlock root in graph.Roots)
 					DoSpliceNullCheck(m_instructions, root, visited);
 				var data = new DataFlow<Lattice>(m_instructions, graph.Roots);
+				m_skipped = data.Skipped;
 				Profile.Stop("Splicing");
 				
 				var functions = new Lattice.Functions();
@@ -105,7 +106,7 @@ namespace Smokey.Framework.Support.Advanced
 				DBC.Pre(index >= 0 && index < m_states.Length, "index out of range");
 				return m_states[index];
 			}
-			
+						
 			// The stack is kind of annoying so we'll provide helpers.
 			public long? GetStack(int index, int nth)
 			{
@@ -114,8 +115,11 @@ namespace Smokey.Framework.Support.Advanced
 				List<StackEntry> stack = m_states[index].Stack;
 				if (stack == null)
 				{
-					Log.WarningLine(this, "stack was null at {0:X2}", m_instructions[index].Untyped.Offset);
-					Log.DebugLine(this, "{0:F}", m_instructions);
+					if (!m_skipped)
+					{						
+						Log.WarningLine(this, "stack was null at {0:X2}", m_instructions[index].Untyped.Offset);
+						Log.DebugLine(this, "{0:F}", m_instructions);
+					}
 					return null;
 				}
 				
@@ -133,8 +137,11 @@ namespace Smokey.Framework.Support.Advanced
 				List<StackEntry> stack = m_states[index].Stack;
 				if (stack == null)
 				{
-					Log.WarningLine(this, "stack was null at {0:X2}", m_instructions[index].Untyped.Offset);
-					Log.DebugLine(this, "{0:F}", m_instructions);
+					if (!m_skipped)
+					{						
+						Log.WarningLine(this, "stack was null at {0:X2}", m_instructions[index].Untyped.Offset);
+						Log.DebugLine(this, "{0:F}", m_instructions);
+					}
 					return -1;
 				}
 				
@@ -160,7 +167,7 @@ namespace Smokey.Framework.Support.Advanced
 			public static readonly int FirstNonNullLocalBlockLen = -4000;	// A_0
 			public static readonly int LastNonNullLocalBlockLen  = -4999;	// A_999
 			
-			#region Private methods
+			#region Private Methods -------------------------------------------
 			// Catch and finally blocks require special handling to reset their stacks
 			// on entry. We can't really do this in meet without breaking commutativity
 			// and transform is too late. So what we do is splice in a special zero
@@ -361,10 +368,11 @@ namespace Smokey.Framework.Support.Advanced
 			}
 			#endregion
 									
-			#region Fields
+			#region Fields ----------------------------------------------------
 			private TypedInstructionCollection m_instructions;
 			private Lattice m_initialState;
 			private State[] m_states;
+			private bool m_skipped;
 			#endregion
 		}
 	}

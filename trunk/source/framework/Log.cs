@@ -124,6 +124,16 @@ namespace Smokey.Framework
 			set {ms_autoFlush = value;}
 		}
 		
+		public static int NumErrors
+		{
+			get {return ms_numErrors;}
+		}
+		
+		public static int NumWarnings
+		{
+			get {return ms_numWarnings;}
+		}
+		
 		public static void Indent()
 		{
 			++ms_indentlevel;
@@ -136,19 +146,19 @@ namespace Smokey.Framework
 			ms_indentText = new string(' ', 3*ms_indentlevel);
 		}
 		
-		public static void ErrorLine<T>(T instance)												{DoWriteLine(Level.Error, DoGetType(instance));}
-		public static void ErrorLine<T>(T instance, string arg1)								{DoLog(Level.Error, DoGetType(instance), arg1);}
-		public static void ErrorLine<T, A1>(T instance, A1 arg1)								{DoLog(Level.Error, DoGetType(instance), arg1);}
-		public static void ErrorLine<T, A1>(T instance, string format, A1 arg1)					{DoLog(Level.Error, DoGetType(instance), format, arg1);}
-		public static void ErrorLine<T, A1, A2>(T instance, string format, A1 arg1, A2 arg2)	{DoLog(Level.Error, DoGetType(instance), format, arg1, arg2);}
-		public static void ErrorLine<T>(T instance, string format, params object[] args)		{DoLog(Level.Error, DoGetType(instance), format, args);}
+		public static void ErrorLine<T>(T instance)												{++ms_numErrors; DoWriteLine(Level.Error, DoGetType(instance));}
+		public static void ErrorLine<T>(T instance, string arg1)								{++ms_numErrors; DoLog(Level.Error, DoGetType(instance), arg1);}
+		public static void ErrorLine<T, A1>(T instance, A1 arg1)								{++ms_numErrors; DoLog(Level.Error, DoGetType(instance), arg1);}
+		public static void ErrorLine<T, A1>(T instance, string format, A1 arg1)					{++ms_numErrors; DoLog(Level.Error, DoGetType(instance), format, arg1);}
+		public static void ErrorLine<T, A1, A2>(T instance, string format, A1 arg1, A2 arg2)	{++ms_numErrors; DoLog(Level.Error, DoGetType(instance), format, arg1, arg2);}
+		public static void ErrorLine<T>(T instance, string format, params object[] args)		{++ms_numErrors; DoLog(Level.Error, DoGetType(instance), format, args);}
 				
-		public static void WarningLine<T>(T instance)											{DoWriteLine(Level.Warning, DoGetType(instance));}
-		public static void WarningLine<T>(T instance, string arg1)								{DoLog(Level.Warning, DoGetType(instance), arg1);}
-		public static void WarningLine<T, A1>(T instance, A1 arg1)								{DoLog(Level.Warning, DoGetType(instance), arg1);}
-		public static void WarningLine<T, A1>(T instance, string format, A1 arg1)				{DoLog(Level.Warning, DoGetType(instance), format, arg1);}
-		public static void WarningLine<T, A1, A2>(T instance, string format, A1 arg1, A2 arg2)	{DoLog(Level.Warning, DoGetType(instance), format, arg1, arg2);}
-		public static void WarningLine<T>(T instance, string format, params object[] args)		{DoLog(Level.Warning, DoGetType(instance), format, args);}
+		public static void WarningLine<T>(T instance)											{++ms_numWarnings; DoWriteLine(Level.Warning, DoGetType(instance));}
+		public static void WarningLine<T>(T instance, string arg1)								{++ms_numWarnings; DoLog(Level.Warning, DoGetType(instance), arg1);}
+		public static void WarningLine<T, A1>(T instance, A1 arg1)								{++ms_numWarnings; DoLog(Level.Warning, DoGetType(instance), arg1);}
+		public static void WarningLine<T, A1>(T instance, string format, A1 arg1)				{++ms_numWarnings; DoLog(Level.Warning, DoGetType(instance), format, arg1);}
+		public static void WarningLine<T, A1, A2>(T instance, string format, A1 arg1, A2 arg2)	{++ms_numWarnings; DoLog(Level.Warning, DoGetType(instance), format, arg1, arg2);}
+		public static void WarningLine<T>(T instance, string format, params object[] args)		{++ms_numWarnings; DoLog(Level.Warning, DoGetType(instance), format, args);}
 		
 		public static void InfoLine<T>(T instance)												{DoWriteLine(Level.Info, DoGetType(instance));}
 		public static void InfoLine<T>(T instance, string arg1)									{DoLog(Level.Info, DoGetType(instance), arg1);}
@@ -339,6 +349,8 @@ namespace Smokey.Framework
 		private static int ms_indentlevel;
 		private static string ms_indentText = string.Empty;
 		private static string ms_lineIndent;
+		private static int ms_numWarnings;
+		private static int ms_numErrors;
 		#endregion
 	}
 }

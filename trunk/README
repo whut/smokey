@@ -1,174 +1,19 @@
-DESCRIPTION
-Smokey is a command line tool used to analyze .NET or Mono assemblies for 
-problems. It's similar to tools like FxCop, Gendarme, and FindBugs. This 
-version of Smokey has 175 rules. They cover things like not implementing 
-IDisposable properly, allowing exceptions to escape from Equals, infinite 
-recursion, etc.
+QUICK START
 
-
-INSTALLING
-There's an install script which will install the executable, a config file,
-and a simple smoke script into /usr/local/bin. Run it using a command like
-"sudo ./install.sh". There's also an uninstall.sh script which will remove
-the files.
-
-
-RUNNING
-To analyze an assembly do something like this:
+If you're on Unix use the install script. Something like:
+    sudo ./install.sh
+    
+Once Smokey is installed you can smoke assemblies using:
     smoke Cool.dll
-or
-    mono smokey.exe Cool.dll
-if you haven't run the install script.
-
-This will write a report to stdout listing all of the problems that were
-found with the file. You can also exclude types and methods from being
-tested. See -usage for more details on this.
-
-You can also disable rules by defining the following attribute in your
-assembly:
-	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | 
-		AttributeTargets.Constructor | AttributeTargets.Enum | AttributeTargets.Interface | 
-		AttributeTargets.Method | AttributeTargets.Struct, AllowMultiple = true)]
-	internal sealed class DisableRuleAttribute : Attribute
-	{		
-		public DisableRuleAttribute(string id, string name) 
-		{
-			this.id = id;
-			this.name = name;
-		}
-		
-		public string ID
-		{
-			get {return id;}
-		}
-	
-		public string Name
-		{
-			get {return name;}
-		}
-	
-		private string id;
-		private string name;
-	}
-
-and using it like this:
-		[DisableRule("MS1010", "ReservedExceptions")]
-		public static void Reserved(object x)
-		{
-			if (x == null)
-				throw new NullReferenceException("x is null");
-				
-			Console.WriteLine("{0}", x);
-		}
-
-Note that you will need Cecil. As of Mono 1.2.5 Cecil is part of the Mono
-distribution but if you're using an earlier version of Mono you can get it
-from <https://home.comcast.net/~jesse98/public/Mono.Cecil.dll> and drop it in 
-the same directory as smokey.exe.
-
-
-CONFIGURATION
-
-This is done via the smokey.exe.config file in the same directory as the 
-smokey.exe and the -set command line option. The default settings are:
-
-Name            Default     Allowed Values
-consoleWidth    80          positive int (used when writing text reports)
-custom          ---         colon separated list of paths to assemblies with custom rules
-ignoreList      ""          path to a file with a whitespace separated list 
-                            of words to ignore when spell-checking
-logfile         null        stdout, stderr, or a path
-maxBoxes        3           non-negative int (used by the AvoidBoxing rule)
-maxBranches     40          used by TooComplexRule
-maxNamespace    40          used by LargeNamespaceRule
-maxUnboxes      1           non-negative int (used by the AvoidUnboxing rule)
-naming          mono        mono, net, jurassic (jurassic is .NET except protected
-                            and private fields start with m_/m or ms_/s_/ms)
-topic           ---         log topic (see below)
-                            
-The logger is a hierarchical logger which leverages the C# type system. By 
-default System.Object and all subclasses log at the Warning level. You can
-change the default for Object or for a sub or base class using the topic
-settings. Currently the topics are:
-
-System.Object
-    Smokey.Analyze
-        Smokey.AnalyzeAssembly
-        Smokey.Rule
-            Smokey.DontDestroyStackTraceRule
-            Smokey.EqualsCantCastRule
-            ...
-    Smokey.Report
-    Smokey.SymbolTable
-    Smokey.ViolationData
-    Smokey.Visitor
-        Smokey.LinearVisitor
-
-Here's an example:
-
-<?xml version = "1.0" encoding = "utf-8" ?>
-<configuration>
-    <appSettings>
-        <add key = "logfile" value = "/Users/jessejones/Source/Smokey/smokey.log"/>
-		<add key = "topic:System.Object" value = "Info"/>	<!-- may be off, Error, Warning, Info, Trace, or Debug -->
-        <add key = "topic:Smokey.DisposeNativeResourcesRule" value = "Debug"/>	<!-- get more detailed logging for this rule -->
-        <add key = "consoleWidth" value = "80"/> 
-    </appSettings>
-</configuration>
-
-If the -set option is used on the command line it it will override the config 
-file setting.
-
-
-BUILDING
-
-You'll need a public/private key pair in order to build. I'd rather not 
-distribute the official private key so you can use your own keys. To make the
-keys navigate to the top level Smokey directory and execute "sn -k Smokey.keys".
-
-As of mono 1.0 Cecil is included in the gac but not in the lib directory so the
-compiler won't find it. The easiest fix for this is to copy Mono.Cecil.dll from
-the gac to $prefix/lib/mono/2.0.
-
-Building the app can be done with a command like this:
-    nant -nologo app
     
-To build and run the unit tests:
-    nant -nologo -D:debug=true test
-All of the unit tests should pass. Note that you can also run these in release.
-    
-To build and run the functional test:
-    nant -nologo -D:debug=true ftest
-The functional tests should all pass, but some cases may be reported as
-known to be broken. Note that you can also run this in release.
-    
-To run smokey on itself:
-    nant -nologo -D:debug=true smoke
-No errors or warnings should be reported.
+To uninstall:
+    sudo ./uninstall.sh
 
 
-TODO
+MORE INFO
 
-* More rules.
-
-* It'd be nice to smoke the code samples in the XML instead of merely ensuring
-that they compile.
-
-* It should be possible to run rules in different threads to improve performance
-on a multicore machine.
-
-* Localization is only partially supported: all of the rule text can be localized
-but the TextReport has hardcoded strings.
-
-
-CONTRIBUTORS
-
-Many of the rules are from or inspired by similar rules in FxCop, Gendarme,
-or FindBugs. None of the code from these tools is used in Smokey except for
-one or two very simple rules from Gendarme.
-
-The FxCop rules are documented here:
-<http://msdn2.microsoft.com/en-us/library/ee1hzekz(VS.80).aspx>.
+See the wiki for additional information on installing, configuring, running, and
+customizing Smokey. The address is <http://code.google.com/p/smokey/w/list>.
 
 
 jesjones@mindspring.com

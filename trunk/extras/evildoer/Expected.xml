@@ -148,4 +148,8 @@
 	<Expected checkID = "D1051" typeName = "PublicImplementation" fullName = "EvilDoer.InternalWorker"/>
 	<Expected checkID = "D1051" typeName = "PublicImplementation" fullName = "EvilDoer.InternalWorker3"/>
 	<Expected checkID = "C1003" typeName = "NullDeref" fullName = "System.Int32 EvilDoer.BadClass::BadMeet(System.Int32)"/>
+	<Expected checkID = "C1026" typeName = "NoStaticRemove" fullName = "EvilDoer.BadStatic1"/>
+	<Expected checkID = "C1026" typeName = "NoStaticRemove" fullName = "EvilDoer.BadStatic2"/>
+	<Expected checkID = "C1026" typeName = "NoStaticRemove" fullName = "EvilDoer.BadStatic3"/>
+	<Expected checkID = "P1007" typeName = "NonGenericCollections" fullName = "EvilDoer.BadStatic2"/>
 </Expectations>

@@ -28,7 +28,7 @@ namespace Custom
 {	
 	internal class PrivateNeedsDoRule : Rule
 	{				
-		// The checkID must match the id in the xml. Note that multiple rules can
+		// The checkID must match the id in the xml. Note that multiple classes can
 		// share the same checkID.
 		public PrivateNeedsDoRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "CU1000 - example custom rules")

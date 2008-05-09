@@ -28,7 +28,7 @@ namespace Custom
 {	
 	internal class PublicStartsWithDoRule : Rule
 	{				
-		// The checkID must match the id in the xml. Note that multiple rules can
+		// The checkID must match the id in the xml. Note that multiple classes can
 		// share the same checkID.
 		public PublicStartsWithDoRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "CU1001 - example custom rules")
