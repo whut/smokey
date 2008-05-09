@@ -1,0 +1,369 @@
+#summary Common code idioms.
+
+== IDisposable (managed resources) ==
+
+{{{
+using System.IO;
+
+internal class Log : IDisposable
+{
+    public Log()
+    {
+        m_writer = new StringWriter();
+    }
+
+    public void WriteLine(string line)
+    {
+        // All public methods (except Dispose) should throw 
+        // ObjectDisposedException if Dispose has been called.
+        if (m_disposed)        
+            throw new ObjectDisposedException("Log has been disposed");
+            
+        m_writer.WriteLine(line);
+    }
+
+    public void Dispose()
+    {
+        if (!m_disposed)
+        {
+            m_writer.Dispose();
+            
+            m_disposed = true;
+        }
+    }
+                        
+    private StringWriter m_writer;    // System.IO.StringWriter implements IDisposable
+    private bool m_disposed = false;
+}            
+}}}
+
+
+== IDisposable (unmanaged resources) ==
+
+{{{
+internal class MyResource : IDisposable
+{
+    ~MyResource()        
+    {                    
+        // Note that this is called even if the ctor throws.
+        DoDispose(false);
+    }
+
+    public MyResource(IntPtr handle)
+    {
+        m_handle = handle;
+    }
+
+    public void DoWork()
+    {
+        // All public methods (except Dispose) should throw 
+        // ObjectDisposedException if Dispose has been called.
+        if (m_disposed)        
+            throw new ObjectDisposedException("MyResource has been disposed");
+            
+        NativeMethods.WorkIt(m_handle);
+        GC.KeepAlive(this);
+    }
+
+    public void Dispose()
+    {
+        DoDispose(true);
+
+        // If we've been disposed our object can be garbage collected without
+        // finalization.
+        GC.SuppressFinalize(this);
+    }
+
+    private void DoDispose(bool disposing)
+    {
+        if (!m_disposed)
+        {
+            // If we've been called via Dispose we can,
+            if (disposing)
+            {
+                // dispose of managed fields.
+            }
+
+            // If we've been called via the finalizer any references we have to
+            // managed objects may have been finalized so we have to be
+            // very careful and only dispose of unmanaged resources here.
+            NativeMethods.CloseHandle(m_handle);
+            m_handle = IntPtr.Zero;
+
+            m_disposed = true;
+        }
+    }
+
+    private static class NativeMethods
+    {
+        [System.Runtime.InteropServices.DllImport("Kernel32")]
+        public extern static bool CloseHandle(IntPtr handle);
+
+        [System.Runtime.InteropServices.DllImport("Kernel32")]
+        public extern static void WorkIt(IntPtr handle);
+    }
+    
+    private IntPtr m_handle;
+    private bool m_disposed = false;
+}            
+}}}
+
+
+== IDisposable (virtual Dispose) ==
+
+{{{
+internal class MyResource : IDisposable
+{
+    ~MyResource()        
+    {                    
+        // Note that this is called even if the ctor throws.
+        Dispose(false);
+    }
+
+    public MyResource(IntPtr handle)
+    {
+        m_handle = handle;
+    }
+
+    public void DoWork()
+    {
+        // All public methods (except Dispose) should throw 
+        // ObjectDisposedException if Dispose has been called.
+        if (m_disposed)        
+            throw new ObjectDisposedException("MyResource has been disposed");
+            
+        NativeMethods.WorkIt(m_handle);
+        GC.KeepAlive(this);
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+
+        // If we've been disposed our object can be garbage collected without
+        // finalization.
+        GC.SuppressFinalize(this);
+    }
+    
+    protected bool Disposed
+    {
+        get {return m_disposed;}
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!m_disposed)
+        {
+            // If we've been called via Dispose we can,
+            if (disposing)
+            {
+                // dispose of managed fields.
+            }
+
+            // If we've been called via the finalizer any references we have to
+            // managed objects may have been finalized so we have to be
+            // very careful and only dispose of unmanaged resources here.
+            NativeMethods.CloseHandle(m_handle);
+            m_handle = IntPtr.Zero;
+
+            m_disposed = true;
+        }
+    }
+
+    private static class NativeMethods
+    {
+        [System.Runtime.InteropServices.DllImport("Kernel32")]
+        public extern static bool CloseHandle(IntPtr handle);
+    
+        [System.Runtime.InteropServices.DllImport("Kernel32")]
+        public extern static void WorkIt(IntPtr handle);
+    }
+    
+    private IntPtr m_handle;
+    private bool m_disposed;
+}            
+
+internal class DerivedResource : MyResource
+{
+    public DerivedResource(IntPtr handle) : base(handle)
+    {
+    }
+    
+    protected override void Dispose(bool disposing)
+    {
+        if (!Disposed)
+        {
+            if (disposing)
+            {
+                // Dispose of derived managed fields.
+            }
+
+            // Dispose of derived unmanaged fields.
+
+            base.Dispose(disposing);
+        }                    
+    }
+}            
+}}}
+
+
+== IEquatable (class version) ==
+
+{{{
+internal class Customer : IEquatable<Customer>
+{        
+    public override bool Equals(object rhsObj)
+    {
+        if (rhsObj == null)            // as is a little expensive, so skip it if we can
+            return false;
+        
+        Customer rhs = rhsObj as Customer;
+        return this == rhs;
+    }
+        
+    public bool Equals(Customer rhs)    // provide a typed overload for efficiency
+    {
+        return this == rhs;
+    }
+
+    public static bool operator==(Customer lhs, Customer rhs)
+    {
+        // If both are null, or both are the same instance, return true.
+        if (object.ReferenceEquals(lhs, rhs))
+            return true;
+        
+        // If one is null, but not both, return false.
+        if ((object) lhs == null || (object) rhs == null)
+            return false;
+        
+        // Return true if the fields match:
+        return lhs.name == rhs.name && lhs.address == rhs.address;
+    }
+    
+    public static bool operator!=(Customer lhs, Customer rhs)
+    {
+        return !(lhs == rhs);
+    }
+    
+    public override int GetHashCode()
+    {
+        int hash;
+        
+        unchecked
+        {
+            hash = name.GetHashCode() + address.GetHashCode();
+        }
+        
+        return hash;
+    }
+    
+    private string name = "ted";
+    private string address = "main street";
+}
+}}}
+
+
+== IEquatable (struct version) ==
+
+{{{
+internal struct TwoDPoint : IEquatable<TwoDPoint>
+{        
+    public override bool Equals(object rhsObj)
+    {
+        if (rhsObj == null)                        // objects may be null
+            return false;
+        
+        if (GetType() != rhsObj.GetType()) 
+            return false;
+    
+        TwoDPoint rhs = (TwoDPoint) rhsObj;                    
+        return this == rhs;
+    }
+        
+    public bool Equals(TwoDPoint rhs)    // provide a typed overload for efficiency
+    {                    
+        return this == rhs;
+    }
+
+    public static bool operator==(TwoDPoint lhs, TwoDPoint rhs)
+    {
+        return lhs.x == rhs.x && lhs.y == rhs.y;
+    }
+    
+    public static bool operator!=(TwoDPoint lhs, TwoDPoint rhs)
+    {
+        return !(lhs == rhs);
+    }
+    
+    public override int GetHashCode()
+    {
+        int hash;
+        
+        unchecked
+        {
+            hash = x.GetHashCode() + y.GetHashCode();
+        }
+        
+        return hash;
+    }
+    
+    private int x, y;
+}
+}}}
+
+
+== IFormattable ==
+
+{{{
+using System.Text;
+
+internal class Customer : IFormattable
+{
+    public override string ToString()
+    {
+        return ToString("G", null);
+    }
+    
+    // Support custom formatting via "{0:L}" String.Format syntax.
+    public string ToString(string format, IFormatProvider provider)
+    {
+        if (provider != null)
+        {
+            ICustomFormatter formatter = provider.GetFormat(GetType()) as ICustomFormatter;
+            if (formatter != null)
+                return formatter.Format(format, this, provider);
+        }
+        
+        StringBuilder builder = new StringBuilder(m_name.Length + 10 * m_orders.Length);
+        switch (format)
+        {    
+            case "":            
+            case null:
+            case "G":
+                builder.Append("name = ");
+                builder.Append(m_name);
+                break;
+
+            case "L":
+                builder.Append("name = ");
+                builder.Append(m_name);
+                builder.Append(", orders = ");
+                foreach (string order in m_orders)
+                {
+                    builder.Append(order);
+                    builder.Append(' ');
+                }
+                break;
+                                            
+            default:
+                throw new ArgumentException(format + " isn't a valid Customer format string");
+        }
+        
+        return builder.ToString();
+    }
+    
+    private string m_name = "bob";
+    private string[] m_orders = new string[]{"order1"};
+} 
+}}}
+
