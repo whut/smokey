@@ -30,24 +30,8 @@ mono bin/smokey.exe -set:ignoreList:SysIgnore.txt /ex6/lib/mono/gac/System/2.0.0
 <http://msdn2.microsoft.com/en-us/library/ee1hzekz(VS.80).aspx>
 Essential .NET Volume 1, The Common Language Runtime - Don Box
 
-
-* Could collapse m_foundAdd, m_foundRemove, and m_keys.
-* DisposeDoesStaticRemove
-	- Dispose or Disposing directly or indirectly removes a reference type from
-	  a private static collection
-	- Dispose should be used for determinsitic finalization, not to enable objects
-	  to be GCed => carefully examine code (threading issues too)
-	Hwnd
-		windows				only via Hwnd::Dispose
-	ToolStripManager
-		toolstrips			RemoveToolStrip (indirect call from dispose)
-		menu_items			RemoveToolStripMenuItem (indirect call from dispose)
-* Look at ContainsKey usage: can we simply use set_Item?
-* UseHashSet
-	- look for the standard List usage
-	- performance rule
-	- list is used but all adds are preceded by an existence check
-	- only if targeting .net 3.0 or 3.5 (which ever added hashset)
+* check in
+* review memory model
 * ThreadedAttribute
 	- has mandatory id, id can be "*", or "Foo1, Foo2"
 	- allow id = "Main" and "Finalizer"
@@ -60,7 +44,8 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * MutableAttribute
 * ProtectMutators
 	- non-trivial [Threaded] or method called from a thread root doesnt have a lock 
-	  and either does a stfld or is [Mutable]
+	  and either does a stfld or stsfld or is [Mutable], method has multiple ids
+	  or another method with a different id does same mutate
 	- don't count ctors
 * ImmutableAttribute
 * Would be nice if install script installed custom rules somehow?
@@ -74,6 +59,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
   http://code.google.com/p/procan/w/list has an example (and featured wiki link).
   Maybe wiki could have SmokeyUsage and CustomAttributes pages
   Seems like this would be easier to find and use than the readme
+* Should get an assert or something if xml has a violation with no rule.
 * WrongNamespace
 	- namespace matches another directory (ie not the one the class is defined in)
 	- note that we want to catch wrong usage so it's ok to have namespaces like
@@ -106,8 +92,11 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- ignore methods called only by ctors? or ignore privates?
 * Add a few more fxcop rules.
 * Generated html doesn't include breaking flag.
+* We require linq so need 1.2.9 or something.
+* Need install.bat and uninstall.bat
 * Try built-in profiler again. Might want to look at heapbuddy too.
 * Do a release.
+* Add the new attrs to the wiki.
 
 * Add a few more fxcop rules.
 * Implement more FxCop rules:
