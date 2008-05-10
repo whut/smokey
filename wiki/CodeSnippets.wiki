@@ -207,7 +207,7 @@ internal class DerivedResource : MyResource
 }}}
 
 
-== System.IEquatable (class version) ==
+== System.IEquatable<T> (class version) ==
 
 {{{
 internal class Customer : IEquatable<Customer>
@@ -263,7 +263,7 @@ internal class Customer : IEquatable<Customer>
 }}}
 
 
-== System.IEquatable (struct version) ==
+== System.IEquatable<T> (struct version) ==
 
 {{{
 internal struct TwoDPoint : IEquatable<TwoDPoint>
