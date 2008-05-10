@@ -371,5 +371,56 @@ internal class Customer : IFormattable
 == Thread.Monitor ==
 
 {{{
-code
+internal class ProducerConsumer
+{
+    public void Produce(object o)
+    {
+        lock (m_mutex)
+        {
+            m_queue.Enqueue(o);
+            
+            // If no thread is waiting then this will be a no-op. By
+            // using PulseAll instead of Pulse we can ensure that as
+            // many threads as possible wake up to handle the objects
+            // we've added (and if only one thread is running Consume
+            // PulseAll is no less efficient than Pulse).
+            //
+            // Similarly we need to pulse even if the queue was non-empty
+            // because Consume may have missed the pulse when we first
+            // added an item.
+            //
+            // Note that, unlike pthreads, the lock must be held when
+            // Pulse or PulseAll is called.
+            Monitor.PulseAll(m_mutex);
+        }
+    }
+    
+    public object Consume()
+    {
+        object result = null;
+        
+        lock (m_mutex)
+        {
+            // If multiple threads are running Consume then we must use a loop
+            // to ensure another Consume thread hasn't stolen the new object.
+            // If Consume is only run by one thread then we could technically
+            // use an if, but it's better style and less fragile to use a
+            // loop anyway.
+            while (m_queue.Count == 0)
+            {
+                // The wait call will release our mutex and wait for a Pulse.
+                // When pulsed the mutex will be reacquired and wait will return
+                // true (always true because we don't use a timeout).
+                Ignore.Value = Monitor.Wait(m_mutex);
+            }
+            
+            result = m_queue.Dequeue();
+        }
+        
+        return result;
+    }
+    
+    private readonly object m_mutex = new object();
+    private Queue m_queue = new Queue();
+}
 }}}
