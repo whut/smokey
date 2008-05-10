@@ -830,4 +830,50 @@ normally be Error. -->
 			</Fix>
 		</Translation>
 	</Violation>	
+	
+	<Violation checkID = "C1027" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "DisposeDoesStaticRemove" category = "Correctness">			
+			<Cause>
+			A class implements IDisposable and one of the Dispose methods directly or
+			indirectly removes a reference type (but not WeakReference) from a static collection.
+			</Cause>
+		
+			<Description>
+			The Dispose pattern is designed to enable deterministic cleanup of resources:
+			the code should continue to work more or less properly even if Dispose is not
+			called.
+			</Description>
+	
+			<Fix>
+			This code is delicate and should be analyzed carefully to check that the objects
+			in the collection are always collected. Also verify that Dispose is always explicitly
+			called when appropiate (in general we can't rely on the finalizer because our
+			managed fields may have been collected before it's entered).
+			
+			Of course, even better, is to make the code more robust and more obviously correct.
+			One simple solution is to change the collection to store WeakReferences. 
+			
+			If the code flow prevents the method that does the remove from being called disable
+			the rule by adding DisableRuleAttribute to the Dispose method.
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "C1028" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "InconsistentProperty" category = "Correctness">			
+			<Cause>
+			A property setter sets one or more fields to the value argument, but the property
+			getter returns a field which was not set in the setter.
+			</Cause>
+		
+			<Description>
+			Getters and setters should pretty much always use the same fields.
+			</Description>
+	
+			<Fix>
+			Fix the code, or in the unlikely event that the code is correct, use DisableRuleAttribute
+			on the getter.
+			</Fix>
+		</Translation>
+	</Violation>	
 </Violations>		
