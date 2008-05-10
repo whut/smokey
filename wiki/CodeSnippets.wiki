@@ -1,6 +1,6 @@
 #summary Common code idioms.
 
-== IDisposable (managed resources) ==
+== System.IDisposable (managed resources) ==
 
 {{{
 using System.IO;
@@ -38,7 +38,7 @@ internal class Log : IDisposable
 }}}
 
 
-== IDisposable (unmanaged resources) ==
+== System.IDisposable (unmanaged resources) ==
 
 {{{
 internal class MyResource : IDisposable
@@ -109,7 +109,7 @@ internal class MyResource : IDisposable
 }}}
 
 
-== IDisposable (virtual Dispose) ==
+== System.IDisposable (virtual Dispose) ==
 
 {{{
 internal class MyResource : IDisposable
@@ -207,7 +207,7 @@ internal class DerivedResource : MyResource
 }}}
 
 
-== IEquatable (class version) ==
+== System.IEquatable (class version) ==
 
 {{{
 internal class Customer : IEquatable<Customer>
@@ -263,7 +263,7 @@ internal class Customer : IEquatable<Customer>
 }}}
 
 
-== IEquatable (struct version) ==
+== System.IEquatable (struct version) ==
 
 {{{
 internal struct TwoDPoint : IEquatable<TwoDPoint>
@@ -312,7 +312,7 @@ internal struct TwoDPoint : IEquatable<TwoDPoint>
 }}}
 
 
-== IFormattable ==
+== System.IFormattable ==
 
 {{{
 using System.Text;
@@ -368,7 +368,7 @@ internal class Customer : IFormattable
 }}}
 
 
-== Thread.Monitor ==
+== System.Threading.Monitor ==
 
 {{{
 internal class ProducerConsumer
