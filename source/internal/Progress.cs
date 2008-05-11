@@ -1,4 +1,4 @@
-// Copyright (C) 2007 Jesse Jones
+// Copyright (C) 2007-2008 Jesse Jones
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -44,57 +44,60 @@ namespace Smokey.Internal
 	        if (m_disposed)        
     	        throw new ObjectDisposedException("Progress has been disposed");
             
-			lock (m_lock)
+			lock (m_mutex)
 			{
-				m_name = name;
+				m_name = name;	// we don't want to pulse this, we want to reply on the timeout instead
 			}
 		}
 				
 		// Joins the thread.
 		public void Shutdown()
 		{
-			if (m_running)
+			if (m_disposed)        
+				throw new ObjectDisposedException("Progress has been disposed");
+			
+			lock (m_mutex)
 			{
-				if (m_disposed)        
-					throw new ObjectDisposedException("Progress has been disposed");
-				
-				lock (m_lock)
+				if (m_running)
 				{
 					m_running = false;
+		            Monitor.PulseAll(m_mutex);
 				}
-				
-				Ignore.Value = m_event.Set();
+			}
+
+			if (m_thread != null)
+			{
 				bool terminated = m_thread.Join(1000);
 				DBC.Assert(terminated, "thread didn't terminate");
+				
+				m_thread = null;
 			}
 		}
 		
 		public void Dispose()
 		{
-			Shutdown();		
-
 			if (!m_disposed)
 			{
-				m_event.Close();				
+				Shutdown();		
 				m_disposed = true;
 			}
 		}
 
-		#region Private Methods
+		#region Private Methods -----------------------------------------------
 		private void DoThread(object instance)
 		{
 			bool wrote = false;
 			
-			while (true)
+			lock (m_mutex)
 			{
-				Ignore.Value = m_event.WaitOne(m_interval, false);
-
-				lock (m_lock)
+				while (m_running)
 				{
-					if (!m_running)
-						break;
-					
-					if (m_name != null)		// only write if we got new info
+					while (m_running && m_name == null)
+					{
+						Ignore.Value = Monitor.Wait(m_mutex, m_interval);
+					}
+	
+					if (m_running && m_name != null)	// only write if we got new info
 					{
 						if (m_verbose)
 							if (wrote)
@@ -114,14 +117,13 @@ namespace Smokey.Internal
 		}
 		#endregion
 		
-		#region Fields
-		private readonly Thread m_thread;
+		#region Fields --------------------------------------------------------
+		private Thread m_thread;
 		private readonly TimeSpan m_interval = TimeSpan.FromSeconds(5);
-		private readonly AutoResetEvent m_event = new AutoResetEvent(false);
 		private readonly bool m_verbose;
 		private bool m_disposed = false;
 
-		private object m_lock = new object();
+		private object m_mutex = new object();
 			private bool m_running = true;
 			private string m_name;
 		#endregion

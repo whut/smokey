@@ -156,6 +156,4 @@
 	<Expected checkID = "C1027" typeName = "DisposeDoesStaticRemove" fullName = "EvilDoer.BadDisposeRemove2"/>
 	<Expected checkID = "C1027" typeName = "DisposeDoesStaticRemove" fullName = "EvilDoer.BadDisposeRemove3"/>
 	<Expected checkID = "C1028" typeName = "InconsistentProperty" fullName = "System.Int32 EvilDoer.BadProp1::get_Y()"/>
-	<Expected checkID = "C1028" typeName = "InconsistentProperty" fullName = "System.Int32 EvilDoer.BadProp2::get_Y()"/>
-	<Expected checkID = "C1028" typeName = "InconsistentProperty" fullName = "System.Int32 EvilDoer.BadProp2::get_X()"/>
 </Expectations>

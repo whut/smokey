@@ -43,120 +43,55 @@ namespace Smokey.Internal.Rules
 				
 		public override void Register(RuleDispatcher dispatcher) 
 		{
-			dispatcher.Register(this, "VisitBegin");
-			dispatcher.Register(this, "VisitMethod");
-			dispatcher.Register(this, "VisitRet");
-			dispatcher.Register(this, "VisitStore");
-			dispatcher.Register(this, "VisitEnd");
+			dispatcher.Register(this, "VisitType");
 		}
 				
-		public void VisitBegin(BeginMethods begin)
+		public void VisitType(TypeDefinition type)
 		{
 			Log.DebugLine(this, "-----------------------------------"); 
-			Log.DebugLine(this, "{0}", begin.Type);				
-
-			m_getters.Clear();
-			m_setters.Clear();
-			m_getFields.Clear();
-			m_setFields.Clear();
+			Log.DebugLine(this, "{0}", type);		
 			
-			foreach (PropertyDefinition prop in begin.Type.Properties)
+			foreach (PropertyDefinition prop in type.Properties)
 			{
-				if (prop.GetMethod != null && prop.SetMethod != null)
+				FieldReference getter = null;
+				FieldReference setter = null;
+				
+				if (prop.GetMethod != null && prop.GetMethod.Parameters.Count == 0)
 				{
-					if (prop.SetMethod.Parameters.Count == 1)	// ignore indexers
+					if (!prop.GetMethod.CustomAttributes.HasDisableRule("C1028"))
 					{
-						if (!prop.GetMethod.CustomAttributes.HasDisableRule("C1028"))
+						if (prop.GetMethod.Body != null && prop.GetMethod.Body.Instructions.Count == 3)
 						{
-							m_getters.Add(prop.GetMethod, prop);
-							m_setters.Add(prop.SetMethod, prop);
-		
-							m_getFields.Add(prop.GetMethod, new List<FieldReference>());
-							m_setFields.Add(prop.SetMethod, new List<FieldReference>());
+							Instruction i = prop.GetMethod.Body.Instructions[1];
+							if (i.OpCode.Code == Code.Ldfld || i.OpCode.Code == Code.Ldsfld)
+							{
+								getter = (FieldReference) i.Operand;
+							}
 						}
 					}
 				}
-			}
-		}
-				
-		public void VisitMethod(BeginMethod begin)
-		{		
-			m_info = null;
-			m_inGetter = m_getters.ContainsKey(begin.Info.Method);
-			m_inSetter = m_setters.ContainsKey(begin.Info.Method);
-			
-			if (m_inGetter || m_inSetter)
-			{
-				Log.DebugLine(this, "-----------------------------------"); 
-				Log.DebugLine(this, "{0:F}", begin.Info.Instructions);		
-				
-				m_info = begin.Info;
-			}
-		}
-		
-		public void VisitRet(End end)	
-		{
-			if (m_inGetter && end.Untyped.OpCode.Code == Code.Ret && end.Index > 0)
-			{
-				LoadField load = m_info.Instructions[end.Index - 1] as LoadField;
-				if (load != null)
+
+				if (prop.SetMethod != null && prop.SetMethod.Parameters.Count == 1)
 				{
-					List<FieldReference> fields = m_getFields[m_info.Method];
-					if (fields.IndexOf(load.Field) < 0)
+					if (prop.SetMethod.Body != null && prop.SetMethod.Body.Instructions.Count == 4)
 					{
-						Log.DebugLine(this, "{0} is used at {1:X2}", load.Field.Name, end.Untyped.Offset);											
-						fields.Add(load.Field);
+						Instruction i = prop.SetMethod.Body.Instructions[2];
+						if (i.OpCode.Code == Code.Stfld || i.OpCode.Code == Code.Stsfld)
+						{
+							setter = (FieldReference) i.Operand;
+						}
+					}
+				}
+				
+				if (getter != null && setter != null)
+				{
+					if (getter.ToString() != setter.ToString())
+					{
+						Log.DebugLine(this, "getter uses {0}, but setter uses {1}", getter.Name, setter.Name);		
+						Reporter.MethodFailed(prop.GetMethod, CheckID, 0, string.Empty);
 					}
 				}
 			}
 		}
-
-		public void VisitStore(StoreField store)	
-		{
-			if (m_inSetter)
-			{
-				LoadArg load = m_info.Instructions[store.Index - 1] as LoadArg;
-				if (load != null && load.Arg == 1)
-				{
-					List<FieldReference> fields = m_setFields[m_info.Method];
-					if (fields.IndexOf(store.Field) < 0)
-					{
-						Log.DebugLine(this, "{0} is used at {1:X2}", store.Field.Name, store.Untyped.Offset);											
-						fields.Add(store.Field);
-					}
-				}
-			}
-		}
-
-		public void VisitEnd(EndMethods end)
-		{
-			foreach (KeyValuePair<MethodDefinition, PropertyDefinition> entry in m_getters)
-			{
-				List<FieldReference> gets = m_getFields[entry.Key];
-				List<FieldReference> sets = m_setFields[entry.Value.SetMethod];
-				
-				if (sets.Count > 0)
-				{
-					var d = gets.Except(sets);
-					if (d.Count() > 0)			// if gets has elements not in sets we have a problem
-					{
-						foreach (FieldReference f in d)
-							Log.DebugLine(this, "{0} is a bad get", f.Name);
-							
-						Reporter.MethodFailed(entry.Key, CheckID, 0, string.Empty);
-					}
-				}
-			}
-		}
-						
-		private MethodInfo m_info;
-		private Dictionary<MethodDefinition, PropertyDefinition> m_getters = new Dictionary<MethodDefinition, PropertyDefinition>();
-		private Dictionary<MethodDefinition, PropertyDefinition> m_setters = new Dictionary<MethodDefinition, PropertyDefinition>();
-
-		private Dictionary<MethodDefinition, List<FieldReference>> m_getFields = new Dictionary<MethodDefinition, List<FieldReference>>();
-		private Dictionary<MethodDefinition, List<FieldReference>> m_setFields = new Dictionary<MethodDefinition, List<FieldReference>>();
-
-		private bool m_inGetter;
-		private bool m_inSetter;
 	}
 }

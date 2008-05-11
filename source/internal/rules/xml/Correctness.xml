@@ -862,8 +862,8 @@ normally be Error. -->
 	<Violation checkID = "C1028" severity = "Error" breaking = "false">
 		<Translation lang = "en" typeName = "InconsistentProperty" category = "Correctness">			
 			<Cause>
-			A property setter sets one or more fields to the value argument, but the property
-			getter returns a field which was not set in the setter.
+			A property getter does nothing but return a field, the property setter does nothing
+			but set a field, but the two use different fields.
 			</Cause>
 		
 			<Description>

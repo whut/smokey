@@ -9,7 +9,7 @@ import sys
 #
 # Blank lines are ignored.
 # Lines whose first non-whitespace character is '#' are also ignored.
-# Non-blank lines are white-space separated: the offset apepars first
+# Non-blank lines are white-space separated: the offset appears first
 # (0A:), then the instruction (ble.s), then any arguments (1F).
 #
 # If the instruction starts with an upper case letter it is used as is
@@ -168,7 +168,7 @@ def writeProlog(lines):
 	print("")
 	print("			do")
 	print("			{")
-	print("				if (index - %s < 0)") % (len(lines) - 1)
+	print("				if (index - %s < 0 || index >= m_info.Instructions.Length)") % (len(lines) - 1)
 	print("					break;")
 	print("")
 	

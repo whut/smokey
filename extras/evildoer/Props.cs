@@ -146,31 +146,4 @@ namespace EvilDoer
 		private int x;
 		private int y;
 	}
-
-	public class BadProp2
-	{
-		// C1028/InconsistentProperty
-		public int X
-		{
-			get {if (z > 0) return x; else return z;}
-			set {x = value; y = value;}
-		}
-		
-		// C1028/InconsistentProperty
-		public int Y
-		{
-			get {if (z > 0) return z; else return y;}
-			set {x = value; y = value;}
-		}
-		
-		public int Z
-		{
-			get {return z;}
-			set {z = value;}
-		}
-		
-		private int x;
-		private int y;
-		private int z;
-	}
 }
