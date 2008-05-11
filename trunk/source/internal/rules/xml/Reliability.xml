@@ -1025,4 +1025,170 @@
 			</CSharp>
 		</Translation>
 	</Violation>
+
+	<Violation checkID = "R1027" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "UnusualMonitor1" category = "Reliability">			
+			<Cause>
+			A System.Monitor.Wait was done without a timeout, but the wait is not in a
+			loop, or the loop does more than just waiting.
+			</Cause>
+		
+			<Description>
+			Writing threaded code can be both difficult and subtle so it's highly
+			desirable to stick to the standard monitor pattern.
+			</Description>
+	
+			<Fix>
+			Rewrite the code to use the standard monitor pattern. This should usually be
+			done even if the code is correct to make it easier for readers of the code
+			to verify that it is correct and to ensure that the code works in the future
+			if more threads are used. If not, decorate the method with DisableRuleAttribute.
+			</Fix>
+	
+			<CSharp>
+			using System.Collections;
+			using System.Threading;
+			
+			internal class ProducerConsumer
+			{
+				public void Produce(object o)
+				{
+					lock (m_mutex)
+					{
+						m_queue.Enqueue(o);
+						
+			            // Pulse when a change is made to our wait predicate.
+						// If no thread is waiting then this will be a no-op. By
+						// using PulseAll instead of Pulse we can ensure that as
+						// many threads as possible wake up to handle the objects
+						// we've added (and if only one thread is running Consume
+						// PulseAll is no less efficient than Pulse).
+						//
+						// Similarly we need to pulse even if the queue was non-empty
+						// because Consume may have missed the pulse when we first
+						// added an item.
+						//
+						// Note that, unlike pthreads, the lock must be held when
+						// Pulse or PulseAll is called.
+						Monitor.PulseAll(m_mutex);
+					}
+				}
+				
+				public object Consume()
+				{
+					object result = null;
+					
+					lock (m_mutex)
+					{
+						// Block until we're happy with our wait predicate. If multiple 
+						// threads are running Consume then we must use a loop to ensure 
+						// another Consume thread hasn't stolen the new object. If Consume 
+						// is only run by one thread then we could technically use an if, 
+						// but it's better style and less fragile to use a loop anyway.
+						while (m_queue.Count == 0)
+						{
+							// The wait call will release our mutex and wait for a Pulse.
+							// When pulsed the mutex will be reacquired and wait will return
+							// true (always true because we don't use a timeout).
+							Ignore.Value = Monitor.Wait(m_mutex);
+						}
+						
+						result = m_queue.Dequeue();
+					}
+					
+					return result;
+				}
+				
+				private object m_mutex = new object();
+				private Queue m_queue = new Queue();
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "R1028" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "UnusualMonitor2" category = "Reliability">			
+			<Cause>
+			A System.Monitor.Wait was done with a timeout, but the wait is not in a
+			loop.
+			</Cause>
+		
+			<Description>
+			Writing threaded code can be both difficult and subtle so it's highly
+			desirable to stick to the standard monitor pattern.
+			</Description>
+	
+			<Fix>
+			Rewrite the code to use the standard monitor pattern. This should usually be
+			done even if the code is correct to make it easier for readers of the code
+			to verify that it is correct and to ensure that the code works in the future
+			if more threads are used. If not, decorate the method with DisableRuleAttribute.
+			</Fix>
+	
+			<CSharp>
+			using System.Collections;
+			using System.Threading;
+			
+			internal class ProducerConsumer
+			{
+				public void Produce(object o)
+				{
+					lock (m_mutex)
+					{
+						m_queue.Enqueue(o);
+						
+			            // Pulse when a change is made to our wait predicate.
+						// If no thread is waiting then this will be a no-op. By
+						// using PulseAll instead of Pulse we can ensure that as
+						// many threads as possible wake up to handle the objects
+						// we've added (and if only one thread is running Consume
+						// PulseAll is no less efficient than Pulse).
+						//
+						// Similarly we need to pulse even if the queue was non-empty
+						// because Consume may have missed the pulse when we first
+						// added an item.
+						//
+						// Note that, unlike pthreads, the lock must be held when
+						// Pulse or PulseAll is called.
+						Monitor.PulseAll(m_mutex);
+					}
+				}
+				
+				public object Consume()
+				{
+					object result = null;
+					
+					lock (m_mutex)
+					{
+						// Block until we're happy with our wait predicate. If multiple 
+						// threads are running Consume then we must use a loop to ensure 
+						// another Consume thread hasn't stolen the new object. If Consume 
+						// is only run by one thread then we could technically use an if, 
+						// but it's better style and less fragile to use a loop anyway.
+						while (m_queue.Count == 0)
+						{
+							// The wait call will release our mutex and wait for a Pulse.
+							// When pulsed the mutex will be reacquired and wait will return
+							// true (always true because we don't use a timeout).
+							bool pulsed = Monitor.Wait(m_mutex, m_timeout);
+							
+							// It's also possible to use the timeout to work around
+							// missed pulses.
+							if (!pulsed)
+								throw new InvalidOperationException("timed out");
+						}
+						
+						result = m_queue.Dequeue();
+					}
+					
+					return result;
+				}
+				
+				private object m_mutex = new object();
+				private Queue m_queue = new Queue();
+				private TimeSpan m_timeout = TimeSpan.FromSeconds(60);
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
 </Violations>

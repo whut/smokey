@@ -30,35 +30,47 @@ mono bin/smokey.exe -set:ignoreList:SysIgnore.txt /ex6/lib/mono/gac/System/2.0.0
 <http://msdn2.microsoft.com/en-us/library/ee1hzekz(VS.80).aspx>
 Essential .NET Volume 1, The Common Language Runtime - Don Box
 
-* check in
-* review memory model
-* ThreadedAttribute
-	- has mandatory id, id can be "*", or "Foo1, Foo2"
-	- allow id = "Main" and "Finalizer"
-	- disllow just "Main"
-	- update xml, eg finalizers
-* MarkThreadedRule
-	- all assembly methods called by a [Threaded] method must also be [Threaded]
-	- all methods called must have id "*" or the id must include the callers id
-	- methods called via an unmarked method must have id "*" or include "Main"
-* MutableAttribute
-* ProtectMutators
-	- non-trivial [Threaded] or method called from a thread root doesnt have a lock 
-	  and either does a stfld or stsfld or is [Mutable], method has multiple ids
-	  or another method with a different id does same mutate
-	- don't count ctors
-* ImmutableAttribute
+* InconsistentProperty
+	- may want to change this to check for trivial properties
+		protected Rectangle MaximizedBounds {
+			get {
+				if (maximized_bounds != Rectangle.Empty) {
+					return maximized_bounds;
+				}
+				return default_maximized_bounds;
+			}
+
+			set {
+				maximized_bounds = value;
+				OnMaximizedBoundsChanged(EventArgs.Empty);
+				if (IsHandleCreated) {
+					XplatUI.SetWindowMinMax(Handle, maximized_bounds, minimum_size, maximum_size);
+				}
+			}
+		}
+* Unit tests should assert that type and method names aren't repeated.
+* Fields used within a monitor lock are used elsewhere with no lock or a different
+  lock.
+* Use Thread.Sleep(1) instead of Thread.Sleep(0)
+* Can we have a rule which checks to see that locks are acquired in the same order?
+* Don't Thread.Abort or Interrupt
+	- http://www.yoda.arachsys.com/csharp/threads/abort.shtml
+* http://www.styledesign.biz/weblogs/macinnesm/archive/2004/09/21/196.aspx
+	- enumerators suck
+	- ContainsKey followed by a lookup is hosed
+* Apart from Control.BeginInvoke, asynchronous BeginXXX method calls should always 
+  make sure there is a matching EndXXX call.
+* When passing an EventHandler delegate to Control.Invoke (or Control.BeginInvoke), 
+  any parameters you specify are ignored - the sender is always set to the control 
+  it is executed for, and the EventArgs is always set to EventArgs.Empty.
+* Can we use a lock leveling attribute?
+	- http://www.bluebytesoftware.com/blog/PermaLink,guid,f8404ab3-e3e6-4933-a5bc-b69348deedba.aspx
 * Would be nice if install script installed custom rules somehow?
 * NonLocalizedString
 	- string literal is used with Windows.Forms.Controls::Text and the like
 	- require at least instance of a localized string
 * DefineEmptyRule
 	- immutable, instantiable, and has public default ctor
-* May be able to define other rules using mutable and immutable
-* Might want to have a CustomAttributes page on the wiki instead of the readme.
-  http://code.google.com/p/procan/w/list has an example (and featured wiki link).
-  Maybe wiki could have SmokeyUsage and CustomAttributes pages
-  Seems like this would be easier to find and use than the readme
 * Should get an assert or something if xml has a violation with no rule.
 * WrongNamespace
 	- namespace matches another directory (ie not the one the class is defined in)
@@ -77,9 +89,11 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- does it make sense to support profile merging?
 	- profile-help should show a blurb about installed profiles
 * Look at other fxcop options and stuff.
+* Is Process.Start immediately followed by Process.Close legit?
 * Look at gendarme options again.
 	http://www.mono-project.com/Gendarme
 * IdenticalMethods isn't determinstic.
+* Probably need to back out of the meet zero change.
 * StructNullDeref
 	- on entry to methods private fields are assumed to be null
 	- transitive? call to method which sets a field reset field

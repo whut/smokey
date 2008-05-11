@@ -1,4 +1,4 @@
-// Copyright (C) 2007 Jesse Jones
+// Copyright (C) 2007-2008 Jesse Jones
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -43,55 +43,57 @@ namespace Smokey.Internal
 	        if (m_disposed)        
     	        throw new ObjectDisposedException("Watchdog has been disposed");
     	                    
-			lock (m_lock)
+			lock (m_mutex)
 			{
 				m_name = name;
+	            Monitor.PulseAll(m_mutex);
 			}
-
-			Ignore.Value = m_event.Set();
 		}
 				
 		// Joins the thread.
 		public void Shutdown()
 		{
-			if (m_running)
-			{
-				if (m_disposed)        
-					throw new ObjectDisposedException("Watchdog has been disposed");
+			if (m_disposed)        
+				throw new ObjectDisposedException("Watchdog has been disposed");
 				
-				lock (m_lock)
+			lock (m_mutex)
+			{
+				if (m_running)
 				{
 					m_running = false;
-				}
-				
-				Ignore.Value = m_event.Set();
+		            Monitor.PulseAll(m_mutex);
+				}				
+			}
+			
+			if (m_thread != null)
+			{
 				bool terminated = m_thread.Join(1000);
 				DBC.Assert(terminated, "thread didn't terminate");
+				
+				m_thread = null;
 			}
 		}
 		
 		public void Dispose()
 		{
-			Shutdown();		
-
 			if (!m_disposed)
 			{
-				m_event.Close();				
+				Shutdown();		
 				m_disposed = true;
 			}
 		}
 
-		#region Private methods
+		#region Private Methods -----------------------------------------------
 		[DisableRule("D1038", "DontExit2")]		// we can't really throw because we are in a thread
 		private void DoThread(object instance)
 		{
-			while (true)
+			lock (m_mutex)
 			{
-				bool signaled = m_event.WaitOne(m_timeout, false);
-
-				lock (m_lock)
+				while (m_running)
 				{
-					if (!signaled)
+					bool pulsed = Monitor.Wait(m_mutex, m_timeout);
+
+					if (!pulsed)
 					{
 						if (m_verbose)
 							Console.Error.WriteLine("...Timed out");
@@ -100,22 +102,18 @@ namespace Smokey.Internal
 	
 						Environment.Exit(2);						
 					}
-
-					if (!m_running)
-						break;
 				}
 			}
 		}
 		#endregion
 		
-		#region Fields
-		private readonly Thread m_thread;
+		#region Fields --------------------------------------------------------
+		private Thread m_thread;
 		private readonly TimeSpan m_timeout = TimeSpan.FromSeconds(30);	// TODO: may want to make this configurable
-		private readonly AutoResetEvent m_event = new AutoResetEvent(false);
 		private readonly bool m_verbose;
 		private bool m_disposed = false;
 		
-		private object m_lock = new object();
+		private object m_mutex = new object();
 			private bool m_running = true;
 			private string m_name;
 		#endregion
