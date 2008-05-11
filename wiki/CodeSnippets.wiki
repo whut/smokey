@@ -379,6 +379,7 @@ internal class ProducerConsumer
         {
             m_queue.Enqueue(o);
             
+            // Pulse when a change is made to our wait predicate.
             // If no thread is waiting then this will be a no-op. By
             // using PulseAll instead of Pulse we can ensure that as
             // many threads as possible wake up to handle the objects
@@ -401,11 +402,11 @@ internal class ProducerConsumer
         
         lock (m_mutex)
         {
-            // If multiple threads are running Consume then we must use a loop
-            // to ensure another Consume thread hasn't stolen the new object.
-            // If Consume is only run by one thread then we could technically
-            // use an if, but it's better style and less fragile to use a
-            // loop anyway.
+            // Block until we're happy with our wait predicate. If multiple 
+            // threads are running Consume then we must use a loop to ensure 
+            // another Consume thread hasn't stolen the new object. If Consume 
+            // is only run by one thread then we could technically use an if, 
+            // but it's better style and less fragile to use a loop anyway.
             while (m_queue.Count == 0)
             {
                 // The wait call will release our mutex and wait for a Pulse.
