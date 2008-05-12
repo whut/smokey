@@ -632,11 +632,18 @@ namespace Smokey.Framework.Support.Advanced
 				private static long? DoMeet(long? lhs, long? rhs)
 				{
 					// Preserve zero values because if a value may be null we want to use it
-					// so we catch more potential failures.
-					if ((lhs.HasValue && lhs.Value == 0) || (rhs.HasValue && rhs.Value == 0))
-						return 0;
+					// so we catch more potential failures. TODO: this is a good idea but it
+					// results int too many false positives, for example:
+					// string s = null;
+					// if (flag)
+					//    s = "hey";
+					// ...
+					// if (flag)
+					//    flag = s.Length > 0;
+//					if ((lhs.HasValue && lhs.Value == 0) || (rhs.HasValue && rhs.Value == 0))
+//						return 0;
 						
-					else if (!lhs.HasValue || !rhs.HasValue)
+					if (!lhs.HasValue || !rhs.HasValue)
 						return null;
 										
 					else if (lhs.Value == rhs.Value)

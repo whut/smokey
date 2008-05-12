@@ -64,4 +64,27 @@
 			</Fix>
 		</Translation>
 	</Violation>
+
+	<Violation checkID = "M1002" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "InconsistentNamespace" category = "Misc">			
+			<Cause>
+			A component of a type's namespace matches a sibling directory of the
+			type's file path. For example if the path is
+			"/Users/joebob/whizbang/source/framework/bangers/BangOn.cs" and the namespace
+			is "Framework.Helpers" then the rule will fire if bangers has a sibling
+			helprs directory. Note that this rule is only
+			run if the assembly has an associated mdb file.
+			</Cause>
+	
+			<Description>
+			Normally the directory structure should match the namespace structure.
+			But if files are moved around this constraint may fail to hold if the
+			namespaces aren't updated to match.
+			</Description>
+	
+			<Fix>
+			Move the file or change the namespace.
+			</Fix>
+		</Translation>
+	</Violation>
 </Violations>

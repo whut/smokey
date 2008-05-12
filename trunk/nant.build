@@ -223,7 +223,7 @@ profile      enables smokey's built in profiler, defaults to false
 	<target name = "test1" depends = "tests" description = "runs one unit test">
 		<!-- nant provides an nunit2 task, but we don't get stack crawls if we use it...-->
 		<exec program = "nunit-console2" failonerror = "true" commandline = 
-			"-nologo -fixture=Smokey.Tests.UnusualMonitor2Test -config=bin/tests${extension}.dll.config bin/tests${extension}.dll"/>
+			"-nologo -fixture=Smokey.Tests.SealedProtectedTest -config=bin/tests${extension}.dll.config bin/tests${extension}.dll"/>
 	</target>
 		
 	<!-- run the functional test -->

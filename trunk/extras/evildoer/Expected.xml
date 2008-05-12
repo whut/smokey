@@ -147,7 +147,6 @@
 	<Expected checkID = "P1008" typeName = "StructOverrides" fullName = "EvilDoer.XWindowAttributes"/>
 	<Expected checkID = "D1051" typeName = "PublicImplementation" fullName = "EvilDoer.InternalWorker"/>
 	<Expected checkID = "D1051" typeName = "PublicImplementation" fullName = "EvilDoer.InternalWorker3"/>
-	<Expected checkID = "C1003" typeName = "NullDeref" fullName = "System.Int32 EvilDoer.BadClass::BadMeet(System.Int32)"/>
 	<Expected checkID = "C1026" typeName = "NoStaticRemove" fullName = "EvilDoer.BadStatic1"/>
 	<Expected checkID = "C1026" typeName = "NoStaticRemove" fullName = "EvilDoer.BadStatic2"/>
 	<Expected checkID = "C1026" typeName = "NoStaticRemove" fullName = "EvilDoer.BadStatic3"/>
@@ -156,4 +155,7 @@
 	<Expected checkID = "C1027" typeName = "DisposeDoesStaticRemove" fullName = "EvilDoer.BadDisposeRemove2"/>
 	<Expected checkID = "C1027" typeName = "DisposeDoesStaticRemove" fullName = "EvilDoer.BadDisposeRemove3"/>
 	<Expected checkID = "C1028" typeName = "InconsistentProperty" fullName = "System.Int32 EvilDoer.BadProp1::get_Y()"/>
+	<Expected checkID = "D1052" typeName = "PreferMonitor" fullName = "EvilDoer.GoodManagedDisposable"/>
+	<Expected checkID = "M1002" typeName = "InconsistentNamespace" fullName = "Source.EvilDoer.BadNS1"/>
+	<Expected checkID = "M1002" typeName = "InconsistentNamespace" fullName = "MiscEvil.BadNS2"/>
 </Expectations>

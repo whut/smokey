@@ -1,4 +1,4 @@
-// Copyright (C) 2007 Jesse Jones
+// Copyright (C) 2008 Jesse Jones
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -19,47 +19,52 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Mono.Cecil;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using Smokey.Framework.Support;
+using Smokey.Internal.Rules;
 
-// MS1016/GlobalPublicType
-public static class GlobalClass
-{				
-	public static void Method(int x)
-	{
-		System.Diagnostics.Debug.WriteLine("hello" + x);
-		InternalClass.Method(x);
-	}
-}
-
-internal static class InternalClass
-{				
-	public static void Method(int x)
-	{
-		System.Diagnostics.Debug.WriteLine("hello" + x);
-	}
-}
-
-namespace Source.EvilDoer
+namespace Smokey.Tests
 {
-	// M1002/InconsistentNamespace
-	public static class BadNS1
-	{			
-		public static void Method(int x)
+	[TestFixture]
+	public class ZeroSleepTest : MethodTest
+	{	
+		#region Test classes
+		private class Cases
 		{
-			System.Diagnostics.Debug.WriteLine("hello" + x);
-		}
-	}
-}
-
-namespace MiscEvil
-{
-	// M1002/InconsistentNamespace
-	public static class BadNS2
-	{			
-		public static void Method(int x)
+			public void Good1()
+			{
+				System.Threading.Thread.Sleep(1);
+			}
+			
+			public void Bad1()
+			{
+				System.Threading.Thread.Sleep(0);
+			}
+			
+			public void Bad2()
+			{
+				int x = 0;
+				System.Threading.Thread.Sleep(x);
+			}
+		}		
+		#endregion
+		
+		// test code
+		public ZeroSleepTest() : base(
+			new string[]{"Cases.Good1"},
+			new string[]{"Cases.Bad1", "Cases.Bad2"})	
 		{
-			System.Diagnostics.Debug.WriteLine("hello" + x);
 		}
-	}
+						
+		protected override Rule OnCreate(AssemblyCache cache, IReportViolations reporter)
+		{
+			return new ZeroSleepRule(cache, reporter);
+		}
+	} 
 }

@@ -85,8 +85,7 @@ namespace EvilDoer
 			}
 		}
 		
-		// C1003/NullDeref
-		public static int BadMeet(int x)
+		public static int GoodMeet2(int x)
 		{
 			string s = null;
 			

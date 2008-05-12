@@ -96,6 +96,18 @@ namespace EvilDoer
 		internal IntPtr		your_event_mask;
 	}
 
+	[DisableRule("R1000", "DisposableFields")]	
+	[DisableRule("D1052", "PreferMonitor")]	
+	public class GoodResetEvent
+	{						
+		public object Use()
+		{
+			return sync;
+		}
+		
+		private AutoResetEvent sync = new AutoResetEvent(false);
+	}			
+
 	public class GoodClass2
 	{				
 		public event EventHandler<NameChangedEventArgs> NameChanged;

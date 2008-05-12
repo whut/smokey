@@ -2028,5 +2028,123 @@
 			</Fix>
 		</Translation>
 	</Violation>
+	
+	<Violation checkID = "D1052" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "PreferMonitor" category = "Design">			
+			<Cause>
+			A type has a field of type System.Threading.AutoResetEvent, System.Threading.ManualResetEvent, 
+			or System.Threading.Semaphore.
+			</Cause>
+		
+			<Description>
+			AutoResetEvent, ManualResetEvent, and Semaphore are low level synchronization primitives
+			that can be difficult to use. An often better alternative is to use System.Threading.Monitor.
+			Monitor allows complex synchronization code to be very easily written and there's a well
+			known monitor pattern that allows the resulting code to be easily inspected for correctness.
+			See &lt;http://www.yoda.arachsys.com/csharp/threads/deadlocks.shtml&gt; and
+			&lt;http://www.albahari.com/threading/part4.html#_Wait_and_Pulse&gt; for more details.
+			</Description>
+	
+			<Fix>
+			Consider rewriting the code to use System.Threading.Monitor. If not decorate the type
+			with DisableRuleAttribute.
+			</Fix>
+	
+			<CSharp>
+			using System.Threading;
+			
+			internal class MonitorPattern
+			{
+				public void ChangeState(int value)
+				{
+					lock (m_mutex)
+					{
+						// In the monitor pattern we have a thread which waits on a
+						// boolean expression (the condition variable). Whenever state
+						// used in the expression is changed we need to signal the
+						// thread using Pulse or PulseAll so that it can wake up, test
+						// the condition, and possibly do some work.
+						m_state = value;
+						
+						// Pulse will wakeup one thread blocking on the mutex, PulseAll 
+						// will wake up all threads. It's generally better to use PulseAll
+						// because it will be as efficient as Pulse if we have one worker
+						// thread. And, because pulsing is a no-op if no threads are waiting,
+						// PulseAll allows multiple threads to wake up if one of our pulses
+						// was missed.
+						Monitor.PulseAll(m_mutex);
+					}
+				}
+				
+				// Provides a clean way to shutdown our thread. In production code we'd
+				// probably also want to use IDisposable.
+				public void Shutdown()
+				{
+					lock (m_mutex)
+					{
+						m_quitting = true;
+						
+						Monitor.PulseAll(m_mutex);
+					}
+				}
+				
+				public void WorkerThread()
+				{
+					while (true)
+					{						
+						lock (m_mutex)
+						{
+							// When we do a wait it has to happen within a lock and the
+							// wait should be inside a loop which checks the condition
+							// variable. Using a loop is required if there are multiple
+							// worker threads and makes the code more robust if there
+							// is only one thread.
+							while (m_state == 0 &amp;&amp; !m_quitting)
+							{
+								// Wait will 1) release the mutex 2) block until another
+								// thread pulses us (this is the part that you can timeout
+								// with the overloaded versions of Wait) 3) block until it 
+								// can reacquire the mutex.
+								//
+								// Note that this lock management, and the standardized
+								// pattern, are why monitors tend to result in better
+								// code than the lower level synchronization primitives.
+								Ignore.Value = Monitor.Wait(m_mutex);
+							}	
+							
+							// Once we're happy with our condition variable we can do
+							// some real work. Of course, if we're going to do anything
+							// time consuming we should try to do it outside the lock.
+							
+							if (m_quitting)
+								break;
+						}
+					}
+				}
+				
+				private object m_mutex = new object();
+				private bool m_quitting;
+				private int m_state;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1053" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "SealedProtected" category = "Design">			
+			<Cause>
+			A sealed type declares a new protected member.
+			</Cause>
+		
+			<Description>
+			Sealed types cannot be subclassed so declaring a new protected member doesn't
+			make much sense.
+			</Description>
+	
+			<Fix>
+			Make the member private.
+			</Fix>
+		</Translation>
+	</Violation>
 </Violations>
 

@@ -1,0 +1,224 @@
+<http://msdn2.microsoft.com/en-us/library/ee1hzekz(VS.80).aspx>
+
++ in smokey
+- won't add
+! may add
+
+Design
+	+Abstract types should not have constructors
+	+Assemblies should have valid strong names
+	+Avoid empty interfaces
+	-Avoid excessive parameters on generic types
+	-Avoid namespaces with few types
+	-Avoid out parameters
+	+Collections should implement generic interface
+	+Consider passing base types as parameters
+	+Declare event handlers correctly
+	+Declare types in namespaces
+	-Default parameters should not be used
+	+Define accessors for attribute arguments
+	+Do not catch general exception types
+	+Do not declare protected members in sealed types
+	-Do not declare static members on generic types
+	-Do not declare virtual members in sealed types			compiler warns for this
+	+Do not declare visible instance fields
+	-Do not expose generic lists
+	+Do not hide base class methods
+	-Do not nest generic types in member signatures
+	-Do not overload operator equals on reference types
+	-Do not pass types by reference
+	-Enum Storage should be Int32
+	+Enumerators should be strongly typed
+	+Enums should have zero value
+	+Generic methods should provide type parameter
+	+ICollection implementations have strongly typed members
+	+Implement IDisposable Correctly
+	+Implement standard exception constructors
+	-Indexers should not be multidimensional
+	Interface methods should be callable by child types
+	Lists are strongly typed
+	Mark assemblies with assembly version
+	Mark assemblies with CLSCompliant
+	Mark assemblies with ComVisible
+	Mark attributes with AttributeUsageAttribute
+	Mark enums with FlagsAttribute
+	Members should not expose certain concrete types
+	Move pinvokes to native methods class
+	Nested types should not be visible
+	Override methods on comparable types
+	Override operator equals on overloading add and subtract
+	Properties should not be write only
+	Provide ObsoleteAttribute message
+	Replace repetitive arguments with params array
+	Static holder types should be sealed
+	Static holder types should not have constructors
+	String uri overloads call system uri overloads
+	Types should not extend certain base types
+	Types that own disposable fields should be disposable
+	Types that own native resources should be disposable
+	Uri parameters should not be strings
+	Uri properties should not be strings
+	Uri return values should not be strings
+	Use events where appropriate
+	Use generic event handler instances
+	Use generics where appropriate
+	Use integral or string argument for indexers
+	Use properties where appropriate
+
+Avoid duplicate accelerators
+	Do not hardcode locale specific strings
+	Do not pass literals as localized parameters
+	Set locale for data types
+	Specify CultureInfo
+	Specify IFormatProvider
+	Specify MessageBoxOptions
+
+Interoperability
+	Auto layout types should not be ComVisible
+	Avoid int64 arguments for VB6 clients
+	Avoid non-public fields in ComVisible value types
+	Avoid overloads in ComVisible interfaces
+	Avoid static members in ComVisible types
+	Call GetLastError immediately after pinvoke
+	Com registration methods should be matched
+	Com registration methods should not be visible
+	Com visible type base types should be ComVisible
+	Com visible types should be creatable
+	Declare PInvokes correctly
+	Do not use AutoDual ClassInterfaceType
+	Mark boolean pinvoke arguments with MarshalAs
+	Mark ComSource interfaces as IDispatch
+	PInvoke entry points should exist
+	PInvokes should not be visible
+
+Maintainability
+	Avoid excessive complexity
+	Avoid excessive inheritance
+	Variable names should not match field names
+
+Mobility
+	Do not use idle process priority
+	Do not use timers that prevent power state changes 
+
+Naming
+	Avoid language specific type names in parameters
+	Avoid type names in parameters
+	Do not name enum values 'Reserved'
+	Do not prefix enum values with type name
+	Events should not have before or after prefix
+	Identifiers should be cased correctly
+	Identifiers should differ by more than case
+	Identifiers should have correct prefix
+	Identifiers should have correct suffix
+	Identifiers should not contain underscores
+	Identifiers should not have incorrect prefix
+	Identifiers should not have incorrect suffix
+	Identifiers should not match keywords
+	Long acronyms should be pascal-cased
+	Parameter names should match base declaration
+	Parameter names should not match member names
+	Property names should not match get methods
+	Short acronyms should be uppercase
+	Type names should not match namespaces
+	Use preferred terms
+
+Performance
+	Avoid excessive locals
+	Avoid uncalled private code
+	Avoid uninstantiated internal classes
+	Avoid unnecessary string creation
+	Avoid unsealed attributes
+	Review unused parameters
+	Dispose methods should call SuppressFinalize
+	Do not call properties that clone values in loops
+	Do not cast unnecessarily
+	Do not concatenate strings inside loops
+	Do not initialize unnecessarily
+	Initialize reference type static fields inline
+	Override equals and operator equals on value types
+	Prefer jagged arrays over multidimensional
+	Properties should not return arrays
+	Remove unused locals
+	Test for empty strings using string length
+	Use literals where appropriate
+
+Portability
+	PInvoke declarations should be portable
+	Value type fields should be portable 
+
+Reliability
+	Dispose objects before losing scope
+	Do not lock on objects with weak identity
+	Do not treat fibers as threads
+	Remove calls to GC.KeepAlive
+	Use SafeHandle to encapsulate native resources
+
+Security
+	Aptca methods should only call aptca methods
+	Aptca types should only extend aptca base types
+	Array fields should not be read only
+	Call GC.KeepAlive when using native resources
+	Catch non-CLSCompliant exceptions in general handlers
+	Do not declare read only mutable reference types
+	Do not indirectly expose methods with link demands
+	Method security should be a superset of type
+	Override link demands should be identical to base
+	Pointers should not be visible
+	Review declarative security on value types
+	Review deny and permit only usage
+	Review imperative security
+	Review sql queries for security vulnerabilities
+	Review suppress unmanaged code security usage
+	Review visible event handlers
+	Seal methods that satisfy private interfaces
+	Secure asserts
+	Secure GetObjectData overrides
+	Secure serialization constructors
+	Secured types should not expose fields
+	Security transparent assemblies should not contain security critical code
+	Security transparent code should not assert
+	Security transparent methods should not call non-public members
+	Specify marshaling for pinvoke string arguments
+	Static constructors should be private
+	Type link demands require inheritance demands
+	Wrap vulnerable finally clauses in outer try
+
+Usage
+	Assemblies should declare minimum security
+	Call base class methods on ISerializable types
+	Collection properties should be read only
+	Disposable fields should be disposed
+	Disposable types should declare finalizer
+	Do not call overridable methods in constructors
+	Do not decrease inherited member visibility
+	Do not ignore method results
+	Do not mark enums with FlagsAttribute
+	Do not mark serviced components with WebMethod
+	Do not raise exceptions in filter blocks
+	Do not raise reserved exception types
+	Do not ship unreleased resource formats
+	Finalizers should be protected
+	Finalizers should call base class finalizer
+	Implement ISerializable correctly
+	Implement serialization constructors
+	Implement serialization methods correctly
+	Initialize value type static fields inline
+	Instantiate argument exceptions correctly
+	Mark all non-serializable fields
+	Mark ISerializable types with serializable
+	Mark Windows Forms entry points with STAThread
+	Members should differ by more than return type
+	Non-constant fields should not be visible
+	Operations should not overflow
+	Operator overloads have named alternates
+	Operators should have symmetrical overloads
+	Override equals on overloading operator equals
+	Override GetHashCode on overriding Equals
+	Overload operator equals on overriding value type equals
+	Pass system uri objects instead of strings
+	Provide correct arguments to formatting methods
+	Provide deserialization methods for optional fields
+	Rethrow to preserve stack details
+	Use managed equivalents of win32 api
+	Use params for variable arguments
+	

@@ -21,14 +21,17 @@
 
 using Mono.Cecil;
 using NUnit.Framework;
-using System;
-using System.Collections.Specialized;
-using System.Collections.Generic;
-using System.Configuration;
+
 using Smokey.Framework;
 using Smokey.Framework.Support;
 using Smokey.Framework.Support.Advanced;
 using Smokey.Internal;
+
+using System;
+using System.Collections.Specialized;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 
 namespace Smokey.Tests
 {
@@ -145,13 +148,15 @@ namespace Smokey.Tests
 			DBC.Fail("shouldn't get method failed for an assembly rule!");
 		}
 
-		#region Protected methods
+		#region Protected Methods ---------------------------------------------
 		protected abstract Rule OnCreate(AssemblyCache cache, IReportViolations reporter);
 		#endregion
 		
-		#region Private methods
+		#region Private Methods -----------------------------------------------
 		private void DoGetTypes(List<TypeDefinition> types, string[] names)
 		{
+			DBC.Assert(names.Distinct().Count() == names.Length, "duplicate name in " + string.Join(", ", names));
+
 			string testName = GetType().FullName;
 			
 			foreach (string name in names)
@@ -168,7 +173,7 @@ namespace Smokey.Tests
 		}
 		#endregion 
 		
-		#region Fields
+		#region Fields --------------------------------------------------------
 		private AssemblyDefinition m_assembly;
 		private List<TypeDefinition> m_good = new List<TypeDefinition>();
 		private List<TypeDefinition> m_bad = new List<TypeDefinition>();
