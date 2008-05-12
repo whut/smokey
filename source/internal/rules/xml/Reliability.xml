@@ -1191,4 +1191,23 @@
 			</CSharp>
 		</Translation>
 	</Violation>
+
+	<Violation checkID = "R1029" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ZeroSleep" category = "Reliability">			
+			<Cause>
+			System.Threading.Thread.Sleep(0) was used.
+			</Cause>
+		
+			<Description>
+			Sleep(0) doesn't allow lower priority threads to run which can lead to 
+			priority inversion bugs. See 
+			&lt;http://www.bluebytesoftware.com/blog/PermaLink,guid,f8404ab3-e3e6-4933-a5bc-b69348deedba.aspx&gt; 
+			for more details.
+			</Description>
+	
+			<Fix>
+			Use Sleep(1).
+			</Fix>
+		</Translation>
+	</Violation>
 </Violations>

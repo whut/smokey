@@ -30,54 +30,14 @@ mono bin/smokey.exe -set:ignoreList:SysIgnore.txt /ex6/lib/mono/gac/System/2.0.0
 <http://msdn2.microsoft.com/en-us/library/ee1hzekz(VS.80).aspx>
 Essential .NET Volume 1, The Common Language Runtime - Don Box
 
-* InconsistentProperty
-	- may want to change this to check for trivial properties
-		protected Rectangle MaximizedBounds {
-			get {
-				if (maximized_bounds != Rectangle.Empty) {
-					return maximized_bounds;
-				}
-				return default_maximized_bounds;
-			}
 
-			set {
-				maximized_bounds = value;
-				OnMaximizedBoundsChanged(EventArgs.Empty);
-				if (IsHandleCreated) {
-					XplatUI.SetWindowMinMax(Handle, maximized_bounds, minimum_size, maximum_size);
-				}
-			}
-		}
-* Unit tests should assert that type and method names aren't repeated.
-* Fields used within a monitor lock are used elsewhere with no lock or a different
-  lock.
-* Use Thread.Sleep(1) instead of Thread.Sleep(0)
-* Can we have a rule which checks to see that locks are acquired in the same order?
-* Don't Thread.Abort or Interrupt
-	- http://www.yoda.arachsys.com/csharp/threads/abort.shtml
-* http://www.styledesign.biz/weblogs/macinnesm/archive/2004/09/21/196.aspx
-	- enumerators suck
-	- ContainsKey followed by a lookup is hosed
-* Apart from Control.BeginInvoke, asynchronous BeginXXX method calls should always 
-  make sure there is a matching EndXXX call.
-* When passing an EventHandler delegate to Control.Invoke (or Control.BeginInvoke), 
-  any parameters you specify are ignored - the sender is always set to the control 
-  it is executed for, and the EventArgs is always set to EventArgs.Empty.
-* Can we use a lock leveling attribute?
-	- http://www.bluebytesoftware.com/blog/PermaLink,guid,f8404ab3-e3e6-4933-a5bc-b69348deedba.aspx
-* Would be nice if install script installed custom rules somehow?
-* NonLocalizedString
-	- string literal is used with Windows.Forms.Controls::Text and the like
-	- require at least instance of a localized string
-* DefineEmptyRule
-	- immutable, instantiable, and has public default ctor
-* Should get an assert or something if xml has a violation with no rule.
-* WrongNamespace
-	- namespace matches another directory (ie not the one the class is defined in)
-	- note that we want to catch wrong usage so it's ok to have namespaces like
-	  dir1.dir2.foo
-* Using Parse instead of TryParse?
-* See if google shows the googlecode project.
+* StructNullDeref
+	- on entry to methods private fields are assumed to be null
+	- transitive? call to method which sets a field reset field
+	- probably don't want to use dataflow
+* Do a checkin.
+* Add a few more fxcop rules (need like 8 more to have more than fxcop):
+	- Interface methods should be callable by child types
 * Need profiles like fxcop?
 	- "public API review" profile, a "bug review" profile, a "full analysis review" profile
 	- maybe a system profile
@@ -88,27 +48,18 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- proile could just be a string prepended to command line
 	- does it make sense to support profile merging?
 	- profile-help should show a blurb about installed profiles
+	- system: ignore nitpicks, force add a few
 * Look at other fxcop options and stuff.
-* Is Process.Start immediately followed by Process.Close legit?
 * Look at gendarme options again.
 	http://www.mono-project.com/Gendarme
 * IdenticalMethods isn't determinstic.
-* Probably need to back out of the meet zero change.
-* StructNullDeref
-	- on entry to methods private fields are assumed to be null
-	- transitive? call to method which sets a field reset field
-	- probably don't want to use dataflow
-* A mutable struct is stored in a collection
-	- verify that we can't get refs to collection elements
-	- build a set of mutable structs
-	- build a set of structs in containers
-	- get the intersection
-	- ignore methods called only by ctors? or ignore privates?
-* Add a few more fxcop rules.
+* Should get an assert or something if xml has a violation with no rule.
 * Generated html doesn't include breaking flag.
 * We require linq so need 1.2.9 or something.
 * Need install.bat and uninstall.bat
 * Try built-in profiler again. Might want to look at heapbuddy too.
+* FxCop has 197 rules...
+* See if google shows the googlecode project.
 * Do a release.
 * Add the new attrs to the wiki.
 
@@ -120,9 +71,13 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- Maintainability Warnings
 	- Naming Warnings
 * Foreign key but no update rule.
+* NonLocalizedString
+	- string literal is used with Windows.Forms.Controls::Text and the like
+	- require at least instance of a localized string
 * AssemblyResolver.Resolver.Resolve can be used to get a definition from a reference.
   a list of violations without messing with System.Process or external files.
 * Unit tests take too long to run. Maybe we can cleanup better?
+* Might want to support getting custom assembly paths from an environment variable.
 * Look at C# 3.0:
 	- extension methods
 			public static class Extensions 

@@ -21,15 +21,18 @@
 
 using Mono.Cecil;
 using NUnit.Framework;
-using System;
-using System.Collections.Specialized;
-using System.Collections.Generic;
-using System.Configuration;
-//using System.Reflection;
+
 using Smokey.Framework;
 using Smokey.Framework.Support;
 using Smokey.Framework.Support.Advanced;
 using Smokey.Internal;
+
+using System;
+using System.Collections.Specialized;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+//using System.Reflection;
 
 namespace Smokey.Tests
 {
@@ -124,14 +127,16 @@ namespace Smokey.Tests
 			m_failed = true;
 		}
 
-		#region Protected methods
+		#region Protected Methods ---------------------------------------------
 		protected abstract Rule OnCreate(AssemblyCache cache, IReportViolations reporter);
 		#endregion
 		
-		#region Private methods
+		#region Private Methods -----------------------------------------------
 		private void DoGetMethods(AssemblyDefinition assembly, List<MethodInfo> methods, string[] names, bool allowEmpty)
 		{
 			string testName = GetType().FullName;
+			
+			DBC.Assert(names.Distinct().Count() == names.Length, "duplicate name in " + string.Join(", ", names));
 			
 			foreach (string name in names)
 			{
@@ -174,7 +179,7 @@ namespace Smokey.Tests
 		}
 		#endregion 
 		
-		#region Fields
+		#region Fields --------------------------------------------------------
 		private AssemblyDefinition m_assembly;
 		private List<MethodInfo> m_good = new List<MethodInfo>();
 		private List<MethodInfo> m_bad = new List<MethodInfo>();

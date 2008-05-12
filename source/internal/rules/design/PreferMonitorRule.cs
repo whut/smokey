@@ -19,47 +19,53 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Mono.Cecil;
 using System;
-using System.Collections.Generic;
+using Smokey.Framework;
+using Smokey.Framework.Support;
 
-// MS1016/GlobalPublicType
-public static class GlobalClass
-{				
-	public static void Method(int x)
-	{
-		System.Diagnostics.Debug.WriteLine("hello" + x);
-		InternalClass.Method(x);
-	}
-}
-
-internal static class InternalClass
-{				
-	public static void Method(int x)
-	{
-		System.Diagnostics.Debug.WriteLine("hello" + x);
-	}
-}
-
-namespace Source.EvilDoer
-{
-	// M1002/InconsistentNamespace
-	public static class BadNS1
-	{			
-		public static void Method(int x)
+namespace Smokey.Internal.Rules
+{	
+	internal class PreferMonitorRule : Rule
+	{				
+		public PreferMonitorRule(AssemblyCache cache, IReportViolations reporter) 
+			: base(cache, reporter, "D1052")
 		{
-			System.Diagnostics.Debug.WriteLine("hello" + x);
+		}
+				
+		public override void Register(RuleDispatcher dispatcher) 
+		{
+			dispatcher.Register(this, "VisitType");
+		}
+				
+		public void VisitType(TypeDefinition type)
+		{		
+			FieldDefinition field = DoGetBadField(type);
+			
+			if (field != null)
+			{
+				string details = "Field: " + field.Name;
+				Reporter.TypeFailed(type, CheckID, details);
+			}
+		}
+
+		private FieldDefinition DoGetBadField(TypeDefinition type)
+		{
+			foreach (FieldDefinition field in type.Fields)
+			{
+				Log.DebugLine(this, "{0} is of type {1}", field.Name, field.FieldType);
+			
+				switch (field.FieldType.FullName)
+				{
+					case "System.Threading.AutoResetEvent":
+					case "System.Threading.ManualResetEvent":
+					case "System.Threading.Semaphore":
+						return field;
+				}
+			}
+			
+			return null;
 		}
 	}
 }
 
-namespace MiscEvil
-{
-	// M1002/InconsistentNamespace
-	public static class BadNS2
-	{			
-		public static void Method(int x)
-		{
-			System.Diagnostics.Debug.WriteLine("hello" + x);
-		}
-	}
-}
