@@ -35,37 +35,38 @@ Design
 	+Implement IDisposable Correctly
 	+Implement standard exception constructors
 	-Indexers should not be multidimensional
-	Interface methods should be callable by child types
-	Lists are strongly typed
-	Mark assemblies with assembly version
-	Mark assemblies with CLSCompliant
-	Mark assemblies with ComVisible
-	Mark attributes with AttributeUsageAttribute
-	Mark enums with FlagsAttribute
-	Members should not expose certain concrete types
-	Move pinvokes to native methods class
-	Nested types should not be visible
-	Override methods on comparable types
-	Override operator equals on overloading add and subtract
-	Properties should not be write only
-	Provide ObsoleteAttribute message
-	Replace repetitive arguments with params array
-	Static holder types should be sealed
-	Static holder types should not have constructors
-	String uri overloads call system uri overloads
-	Types should not extend certain base types
-	Types that own disposable fields should be disposable
-	Types that own native resources should be disposable
-	Uri parameters should not be strings
-	Uri properties should not be strings
-	Uri return values should not be strings
-	Use events where appropriate
-	Use generic event handler instances
+	+Interface methods should be callable by child types
+	+Lists are strongly typed
+	+Mark assemblies with assembly version
+	+Mark assemblies with CLSCompliant
+	-Mark assemblies with ComVisible
+	+Mark attributes with AttributeUsageAttribute
+	+Mark enums with FlagsAttribute
+	!Members should not expose certain concrete types
+	+Move pinvokes to native methods class
+	-Nested types should not be visible
+	+Override methods on comparable types
+	*Override operator equals on overloading add and subtract
+	!Properties should not be write only
+	+Provide ObsoleteAttribute message
+	+Replace repetitive arguments with params array
+	-Static holder types should be sealed				ClassCanBeMadeStatic (mostly) handles this
+	-Static holder types should not have constructors	ditto
+	+String uri overloads call system uri overloads
+	!Types should not extend certain base types
+	+Types that own disposable fields should be disposable
+	+Types that own native resources should be disposable
+	+Uri parameters should not be strings
+	+Uri properties should not be strings
+	+Uri return values should not be strings
+	!Use events where appropriate
+	+Use generic event handler instances
 	Use generics where appropriate
 	Use integral or string argument for indexers
 	Use properties where appropriate
 
-Avoid duplicate accelerators
+Globalization
+	Avoid duplicate accelerators
 	Do not hardcode locale specific strings
 	Do not pass literals as localized parameters
 	Set locale for data types

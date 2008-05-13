@@ -2146,5 +2146,145 @@
 			</Fix>
 		</Translation>
 	</Violation>
+	
+	<Violation checkID = "D1054" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "BadExplicitImplementation" category = "Design">			
+			<Cause>
+			An externally visible unsealed type explicity implements an interface method, but does
+			not provide an alternative non-private method with the same name.
+			</Cause>
+		
+			<Description>
+			The problem with this is that the derived class cannot call the base implementation.
+			It cannot use the base syntax because the base method is explicit. And it cannot call 
+			the method thru the interface because that will call the derived method.
+			</Description>
+	
+			<Fix>
+			Make the class sealed, add a protected or public method with the same name as the explicitly implemented
+			method to the base class, or use a different name and disable the warning on the base
+			class.
+			</Fix>
+	
+			<CSharp>			
+			public interface ITest
+			{
+				void SomeMethod();
+			}
+			
+			public class BaseClass : ITest
+			{
+				// Explicit so it may only be called via ITest.
+				void ITest.SomeMethod() 
+				{
+					// Forward to the guy doing the real work.
+					SomeMethod();
+				}
+			
+				// This allows our derived classes to call the base implementation.
+				protected void SomeMethod()
+				{
+					// Do the real work here.
+				}	
+			}
+			
+			public class DerivedClass : BaseClass, ITest
+			{
+				// Explicit so calls to SomeMethod thru ITest will call this
+				// method.
+				public new void SomeMethod()
+				{			
+					// Do some prolog type stuff and then call the base implementation.
+					// Note that this is only possible because BaseClass has a non-explicit
+					// method.
+					base.SomeMethod();	
+				}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1055" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ArithmeticButNoEquals" category = "Design">			
+			<Cause>
+			An type overloads the addition and subtraction operators, but does not override
+			Equals(object).
+			</Cause>
+		
+			<Description>
+			If a class supports arithmetic it should normally override Equals because the default
+			implementation compares references which will usually be incorrect. If a struct supports
+			arithmetic the default implementation  will use reflection to compare fields which will 
+			usually be correct but very slow.
+			</Description>
+	
+			<Fix>
+			Override Equals(object).
+			</Fix>
+	
+			<CSharp>			
+			internal struct TwoDPoint : IEquatable&lt;TwoDPoint&gt;
+			{		
+				public TwoDPoint(int x, int y)
+				{
+					this.x = x;
+					this.y = y;
+				}
+				
+				public static TwoDPoint operator+(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return new TwoDPoint(lhs.x + rhs.x, lhs.y + rhs.y);
+				}
+
+				public static TwoDPoint operator-(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return new TwoDPoint(lhs.x - rhs.x, lhs.y - rhs.y);
+				}
+      
+      			// Need this override if operator+ and - are defined.
+      			public override bool Equals(object rhsObj)
+				{
+					if (rhsObj == null)						// objects may be null
+						return false;
+					
+					if (GetType() != rhsObj.GetType()) 
+						return false;
+				
+					TwoDPoint rhs = (TwoDPoint) rhsObj;					
+					return this == rhs;
+				}
+					
+				public bool Equals(TwoDPoint rhs)	// provide a typed overload for efficiency
+				{
+					return this == rhs;
+				}
+
+				public static bool operator==(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return lhs.x == rhs.x &amp;&amp; lhs.y == rhs.y;
+				}
+				
+				public static bool operator!=(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return !(lhs == rhs);
+				}
+				
+				public override int GetHashCode()
+				{
+					int hash;
+					
+					unchecked
+					{
+						hash = x.GetHashCode() + y.GetHashCode();
+					}
+					
+					return hash;
+				}
+				
+				private int x, y;
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
 </Violations>
 

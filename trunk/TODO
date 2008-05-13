@@ -30,14 +30,22 @@ mono bin/smokey.exe -set:ignoreList:SysIgnore.txt /ex6/lib/mono/gac/System/2.0.0
 <http://msdn2.microsoft.com/en-us/library/ee1hzekz(VS.80).aspx>
 Essential .NET Volume 1, The Common Language Runtime - Don Box
 
+			  throw new ObjectDisposedException(GetType().Name);
+   
 
-* StructNullDeref
-	- on entry to methods private fields are assumed to be null
-	- transitive? call to method which sets a field reset field
-	- probably don't want to use dataflow
-* Do a checkin.
 * Add a few more fxcop rules (need like 8 more to have more than fxcop):
 	- Interface methods should be callable by child types
+* Add more gendarme rules:
+	- use a Gendarm Rules.txt file
+* Tweak dispatcher
+	- BeginChecking AssmDef CheckTypes CheckMethods CallGraph EndChecking
+	- also change comments so it's clear what the order is
+	- most of the rules that use CallGraph should use EndChecking instead
+* NewVersionRule
+	- in BeginChecking download a version file
+	- in EndChecking if we got the file verify versin numbers, otherwise log warning
+	- should be able to disable this rule
+* No error if name in method test is bogus?
 * Need profiles like fxcop?
 	- "public API review" profile, a "bug review" profile, a "full analysis review" profile
 	- maybe a system profile

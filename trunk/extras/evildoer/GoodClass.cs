@@ -38,6 +38,10 @@ namespace EvilDoer
 		{
 			System.Diagnostics.Debug.WriteLine("hi");
 		}
+
+		public void Greet()
+		{
+		}
 	}
 
 	[Serializable]

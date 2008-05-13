@@ -1210,4 +1210,95 @@
 			</Fix>
 		</Translation>
 	</Violation>
+
+	<Violation checkID = "R1030" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "StringUriOverload" category = "Reliability">			
+			<Cause>
+			A type has two methods with the same names, the same signatures, except that
+			one method uses string for an argument, and the second uses System.Uri for that
+			argument. The method that takes a string does not call the method that takes a Uri.
+			</Cause>
+		
+			<Description>
+			The string is assumed to be a URI, but the string representation is prone
+			to parsing and encoding errors. By converting the string to a URI and calling
+			the Uri version of the method you can leverage all of the sanity checking code
+			in Uri and avoid potential security vulnerabilities.
+			</Description>
+	
+			<Fix>
+			Change the string method to call the Uri method, or disable the rule by
+			decorating the type with DisableRuleAttribute.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "R1031" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "StringUri1" category = "Reliability">			
+			<Cause>
+			A type declares a method one of whose decomposed argument names
+			has a component named "uri", "Uri", "urn", "Urn", "url", or "Url", but there
+			is no corresponding overload that takes a System.Uri for that argument position.
+			The decomposition splits the argument name based on case changes (so "inUri"
+			becomes ["in", "Uri"]).
+			</Cause>
+		
+			<Description>
+			The string is assumed to be a URI, but the string representation is prone
+			to parsing and encoding errors. By using a URI you can leverage all of the 
+			sanity checking code in Uri and avoid potential security vulnerabilities.
+			</Description>
+	
+			<Fix>
+			Change the argument type to a System.Uri or add an overload with a System.Uri
+			argument and call it from the original method, or disable the rule by
+			decorating the type with DisableRuleAttribute.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "R1032" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "StringUri2" category = "Reliability">			
+			<Cause>
+			A type declares a property and the decomposed property name
+			has a component named "uri", "Uri", "urn", "Urn", "url", or "Url".
+			The decomposition splits the argument name based on case changes (so "inUri"
+			becomes ["in", "Uri"]).
+			</Cause>
+		
+			<Description>
+			The string is assumed to be a URI, but the string representation is prone
+			to parsing and encoding errors. By using a URI you can leverage all of the 
+			sanity checking code in Uri and avoid potential security vulnerabilities.
+			</Description>
+	
+			<Fix>
+			Change the property type to a System.Uri, or disable the rule by
+			decorating the type with DisableRuleAttribute.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "R1033" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "StringUri3" category = "Reliability">			
+			<Cause>
+			A decomposed name of a method
+			has a component named "uri", "Uri", "urn", "Urn", "url", or "Url" and the
+			method returns System.String.
+			The decomposition splits the argument name based on case changes (so "inUri"
+			becomes ["in", "Uri"]).
+			</Cause>
+		
+			<Description>
+			The string is assumed to be a URI, but the string representation is prone
+			to parsing and encoding errors. By using a URI you can leverage all of the 
+			sanity checking code in Uri and avoid potential security vulnerabilities.
+			</Description>
+	
+			<Fix>
+			Change the method so that it returns a System.Uri, or disable the rule by
+			decorating the method with DisableRuleAttribute.
+			</Fix>
+		</Translation>
+	</Violation>
 </Violations>
