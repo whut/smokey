@@ -1301,4 +1301,377 @@
 			</Fix>
 		</Translation>
 	</Violation>
+
+	<Violation checkID = "R1034" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ValidateArgs1" category = "Reliability">			
+			<Cause>
+			An externally visible method has a reference argument, and a method on that
+			argument is called without first comparing the argument against null.
+			</Cause>
+		
+			<Description>
+			A method can be thought of as having a (possibly implicit) contract between
+			itself and its caller. The method guarantees that it will do its job when
+			called correctly. To check that the contract isn't violated the method
+			verifies its arguments and possibly other state when it is entered, if all
+			is well it then does its work, and on exit verifies that its work was done.
+			See &lt;http://archive.eiffel.com/doc/manuals/technology/contract/&gt; for
+			more details.
+			
+			Normally an exception should be thrown if a reference argument is null so
+			that the error can be caught as soon as possible and so that the source of
+			the error can be clearly identified. If it may be null there should still
+			be a test against null before calling a method on the argument.
+			</Description>
+	
+			<Fix>
+			Use a custom assert method, use an if statement and ArgumentNullException, or
+			use System.Diagnostics.Debug.Assert (although this last one is iffy because
+			it's compiled out in release).
+			</Fix>
+	
+			<CSharp>
+			using System;
+			using System.Diagnostics;
+			using System.Runtime.Serialization;
+			
+			public static class ListExtensions 
+			{
+				// This is the way arguments are usually checked.
+				public static T Back1&lt;T&gt;(this List&lt;T&gt; list) 
+				{ 
+					if (list == null)
+						throw new ArgumentNullException("list");
+					
+					if (list.Count == 0)
+						throw new ArgumentException("list is empty");
+					
+					return list[list.Count - 1];
+				} 
+			
+				// Some people do this, but the checks are compiled out in release
+				// which is especially bad for externally visible methods.
+				public static T Back2&lt;T&gt;(this List&lt;T&gt; list) 
+				{ 
+					Debug.Assert(list != null, "list is null");
+					Debug.Assert(list.Count &gt; 0, "list is empty");
+					
+					return list[list.Count - 1];
+				} 
+			
+				// This uses custom assert methods which are not compiled out in
+				// release (see below).
+				public static T Back3&lt;T&gt;(this List&lt;T&gt; list) 
+				{ 
+					DBC.Pre(list != null, "list is null");
+					DBC.Pre(list.Count &gt; 0, "list is empty");
+					
+					return list[list.Count - 1];
+				} 
+			}
+			
+			// --------------------------------------------------------
+			
+			/// &lt;summary&gt;Thrown by Dbc.Assert and FastAssert.&lt;/summary&gt;
+			public class AssertException : Exception
+			{
+				public AssertException(string text) : base(text) 
+				{
+				}
+			
+				protected AssertException(SerializationInfo info, StreamingContext context) : base(info, context)
+				{
+				}
+			}
+			
+			/// &lt;summary&gt;Thrown by Dbc.Pre and FastPre.&lt;/summary&gt;
+			public class PreconditionException : AssertException
+			{
+				public PreconditionException(string text) : base(text) 
+				{
+				}
+			
+				protected PreconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
+				{
+				}
+			}
+			
+			/// &lt;summary&gt;Thrown by Dbc.Post and FastPost.&lt;/summary&gt;
+			public class PostconditionException : AssertException
+			{
+				public PostconditionException(string text) : base(text) 
+				{
+				}
+			
+				protected PostconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
+				{
+				}
+			}
+			
+			/// &lt;summary&gt;Asserts used to verify the contract between the caller of
+			/// a method and the method.&lt;/summary&gt;
+			///
+			/// &lt;remarks&gt;&lt;para&gt;In the Design By Contract methodology methods act as a contract 
+			/// between the caller of the method and the method itself. The client guarantees
+			/// to call the method correctly and the method guarantees to some work
+			/// if called correctly (or throw an exception if it is unable to do so).&lt;/para&gt;
+			///
+			/// &lt;para&gt;The client side of the contract is checked by the Dbc.Pre methods. The
+			/// method side of the contract is checked with Dbc.Post methods. The Dbc.
+			/// Assert methods can be used to verify that the state of the world is as
+			/// expected within a method. There are also Fast versions of these methods
+			/// which are compiled out in release. These should only be used for code
+			/// that is known to be time critical.&lt;/para&gt;
+			///
+			/// &lt;para&gt;Dbc also makes use of invariants, but these are outside the scope of the
+			/// Dbc class. See http://archive.eiffel.com/doc/manuals/technology/contract/
+			/// for more details.&lt;/para&gt;&lt;/remarks&gt;
+			public static class Dbc
+			{		
+				public static void Pre(bool f, string s)									{if (!f) throw new PreconditionException(s);}
+				public static void Pre&lt;A1&gt;(bool f, string format, A1 arg1)					{if (!f) throw new PreconditionException(string.Format(format, arg1));}
+				public static void Pre&lt;A1, A2&gt;(bool f, string format, A1 arg1, A2 arg2)		{if (!f) throw new PreconditionException(string.Format(format, arg1, arg2));}
+				public static void Pre(bool f, string format, params object[] args)			{if (!f) throw new PreconditionException(string.Format(format, args));}
+			
+				public static void Post(bool f, string s)									{if (!f) throw new PostconditionException(s);}
+				public static void Post&lt;A1&gt;(bool f, string format, A1 arg1)					{if (!f) throw new PostconditionException(string.Format(format, arg1));}
+				public static void Post&lt;A1, A2&gt;(bool f, string format, A1 arg1, A2 arg2)	{if (!f) throw new PostconditionException(string.Format(format, arg1, arg2));}
+				public static void Post(bool f, string format, params object[] args)		{if (!f) throw new PostconditionException(string.Format(format, args));}
+			
+				public static void Assert(bool f, string s)									{if (!f) throw new AssertException(s);}
+				public static void Assert&lt;A1&gt;(bool f, string format, A1 arg1)				{if (!f) throw new AssertException(string.Format(format, arg1));}
+				public static void Assert&lt;A1, A2&gt;(bool f, string format, A1 arg1, A2 arg2)	{if (!f) throw new AssertException(string.Format(format, arg1, arg2));}
+				public static void Assert(bool f, string format, params object[] args)		{if (!f) throw new AssertException(string.Format(format, args));}
+			
+				public static void Fail(string s)											{throw new AssertException(s);}
+				public static void Fail&lt;A1&gt;(string format, A1 arg1)							{throw new AssertException(string.Format(format, arg1));}
+				public static void Fail&lt;A1, A2&gt;(string format, A1 arg1, A2 arg2)			{throw new AssertException(string.Format(format, arg1, arg2));}
+				public static void Fail(string format, params object[] args)				{throw new AssertException(string.Format(format, args));}
+			
+				[Conditional("DEBUG")]
+				public static void FastPre(bool f, string s)									{if (!f) throw new PreconditionException(s);}
+				[Conditional("DEBUG")]
+				public static void FastPre&lt;A1&gt;(bool f, string format, A1 arg1)					{if (!f) throw new PreconditionException(string.Format(format, arg1));}
+				[Conditional("DEBUG")]
+				public static void FastPre&lt;A1, A2&gt;(bool f, string format, A1 arg1, A2 arg2)		{if (!f) throw new PreconditionException(string.Format(format, arg1, arg2));}
+				[Conditional("DEBUG")]
+				public static void FastPre(bool f, string format, params object[] args)			{if (!f) throw new PreconditionException(string.Format(format, args));}
+			
+				[Conditional("DEBUG")]
+				public static void FastPost(bool f, string s)									{if (!f) throw new PostconditionException(s);}
+				[Conditional("DEBUG")]
+				public static void FastPost&lt;A1&gt;(bool f, string format, A1 arg1)					{if (!f) throw new PostconditionException(string.Format(format, arg1));}
+				[Conditional("DEBUG")]
+				public static void FastPost&lt;A1, A2&gt;(bool f, string format, A1 arg1, A2 arg2)	{if (!f) throw new PostconditionException(string.Format(format, arg1, arg2));}
+				[Conditional("DEBUG")]
+				public static void FastPost(bool f, string format, params object[] args)		{if (!f) throw new PostconditionException(string.Format(format, args));}
+			
+				[Conditional("DEBUG")]
+				public static void FastAssert(bool f, string s)									{if (!f) throw new AssertException(s);}
+				[Conditional("DEBUG")]
+				public static void FastAssert&lt;A1&gt;(bool f, string format, A1 arg1)				{if (!f) throw new AssertException(string.Format(format, arg1));}
+				[Conditional("DEBUG")]
+				public static void FastAssert&lt;A1, A2&gt;(bool f, string format, A1 arg1, A2 arg2)	{if (!f) throw new AssertException(string.Format(format, arg1, arg2));}
+				[Conditional("DEBUG")]
+				public static void FastAssert(bool f, string format, params object[] args)		{if (!f) throw new AssertException(string.Format(format, args));}
+			
+				[Conditional("DEBUG")]
+				public static void FastFail(string s)											{throw new AssertException(s);}
+				[Conditional("DEBUG")]
+				public static void FastFail&lt;A1&gt;(string format, A1 arg1)							{throw new AssertException(string.Format(format, arg1));}
+				[Conditional("DEBUG")]
+				public static void FastFail&lt;A1, A2&gt;(string format, A1 arg1, A2 arg2)			{throw new AssertException(string.Format(format, arg1, arg2));}
+				[Conditional("DEBUG")]
+				public static void FastFail(string format, params object[] args)				{throw new AssertException(string.Format(format, args));}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "R1035" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ValidateArgs2" category = "Reliability">			
+			<Cause>
+			A method with internal visibility has a reference argument, and 
+			a method on that argument is called without first comparing the argument against
+			null.
+			</Cause>
+		
+			<Description>
+			A method can be thought of as having a (possibly implicit) contract between
+			itself and its caller. The method guarantees that it will do its job when
+			called correctly. To check that the contract isn't violated the method
+			verifies its arguments and possibly other state when it is entered, if all
+			is well it then does its work, and on exit verifies that its work was done.
+			See &lt;http://archive.eiffel.com/doc/manuals/technology/contract/&gt; for
+			more details.
+			
+			Normally an exception should be thrown if a reference argument is null so
+			that the error can be caught as soon as possible and so that the source of
+			the error can be clearly identified. If it may be null there should still
+			be a test against null before calling a method on the argument.
+			</Description>
+	
+			<Fix>
+			Use a custom assert method, use an if statement and ArgumentNullException, or
+			use System.Diagnostics.Debug.Assert (although this last one is iffy because
+			it's compiled out in release).
+			</Fix>
+	
+			<CSharp>
+			using System;
+			using System.Diagnostics;
+			using System.Runtime.Serialization;
+			
+			public static class ListExtensions 
+			{
+				// This is the way arguments are usually checked.
+				public static T Back1&lt;T&gt;(this List&lt;T&gt; list) 
+				{ 
+					if (list == null)
+						throw new ArgumentNullException("list");
+					
+					if (list.Count == 0)
+						throw new ArgumentException("list is empty");
+					
+					return list[list.Count - 1];
+				} 
+			
+				// Some people do this, but the checks are compiled out in release
+				// which is especially bad for externally visible methods.
+				public static T Back2&lt;T&gt;(this List&lt;T&gt; list) 
+				{ 
+					Debug.Assert(list != null, "list is null");
+					Debug.Assert(list.Count &gt; 0, "list is empty");
+					
+					return list[list.Count - 1];
+				} 
+			
+				// This uses custom assert methods which are not compiled out in
+				// release (see below).
+				public static T Back3&lt;T&gt;(this List&lt;T&gt; list) 
+				{ 
+					DBC.Pre(list != null, "list is null");
+					DBC.Pre(list.Count &gt; 0, "list is empty");
+					
+					return list[list.Count - 1];
+				} 
+			}
+			
+			// --------------------------------------------------------
+			
+			/// &lt;summary&gt;Thrown by Dbc.Assert and FastAssert.&lt;/summary&gt;
+			public class AssertException : Exception
+			{
+				public AssertException(string text) : base(text) 
+				{
+				}
+			
+				protected AssertException(SerializationInfo info, StreamingContext context) : base(info, context)
+				{
+				}
+			}
+			
+			/// &lt;summary&gt;Thrown by Dbc.Pre and FastPre.&lt;/summary&gt;
+			public class PreconditionException : AssertException
+			{
+				public PreconditionException(string text) : base(text) 
+				{
+				}
+			
+				protected PreconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
+				{
+				}
+			}
+			
+			/// &lt;summary&gt;Thrown by Dbc.Post and FastPost.&lt;/summary&gt;
+			public class PostconditionException : AssertException
+			{
+				public PostconditionException(string text) : base(text) 
+				{
+				}
+			
+				protected PostconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
+				{
+				}
+			}
+			
+			/// &lt;summary&gt;Asserts used to verify the contract between the caller of
+			/// a method and the method.&lt;/summary&gt;
+			///
+			/// &lt;remarks&gt;&lt;para&gt;In the Design By Contract methodology methods act as a contract 
+			/// between the caller of the method and the method itself. The client guarantees
+			/// to call the method correctly and the method guarantees to some work
+			/// if called correctly (or throw an exception if it is unable to do so).&lt;/para&gt;
+			///
+			/// &lt;para&gt;The client side of the contract is checked by the Dbc.Pre methods. The
+			/// method side of the contract is checked with Dbc.Post methods. The Dbc.
+			/// Assert methods can be used to verify that the state of the world is as
+			/// expected within a method. There are also Fast versions of these methods
+			/// which are compiled out in release. These should only be used for code
+			/// that is known to be time critical.&lt;/para&gt;
+			///
+			/// &lt;para&gt;Dbc also makes use of invariants, but these are outside the scope of the
+			/// Dbc class. See http://archive.eiffel.com/doc/manuals/technology/contract/
+			/// for more details.&lt;/para&gt;&lt;/remarks&gt;
+			public static class Dbc
+			{		
+				public static void Pre(bool f, string s)									{if (!f) throw new PreconditionException(s);}
+				public static void Pre&lt;A1&gt;(bool f, string format, A1 arg1)					{if (!f) throw new PreconditionException(string.Format(format, arg1));}
+				public static void Pre&lt;A1, A2&gt;(bool f, string format, A1 arg1, A2 arg2)		{if (!f) throw new PreconditionException(string.Format(format, arg1, arg2));}
+				public static void Pre(bool f, string format, params object[] args)			{if (!f) throw new PreconditionException(string.Format(format, args));}
+			
+				public static void Post(bool f, string s)									{if (!f) throw new PostconditionException(s);}
+				public static void Post&lt;A1&gt;(bool f, string format, A1 arg1)					{if (!f) throw new PostconditionException(string.Format(format, arg1));}
+				public static void Post&lt;A1, A2&gt;(bool f, string format, A1 arg1, A2 arg2)	{if (!f) throw new PostconditionException(string.Format(format, arg1, arg2));}
+				public static void Post(bool f, string format, params object[] args)		{if (!f) throw new PostconditionException(string.Format(format, args));}
+			
+				public static void Assert(bool f, string s)									{if (!f) throw new AssertException(s);}
+				public static void Assert&lt;A1&gt;(bool f, string format, A1 arg1)				{if (!f) throw new AssertException(string.Format(format, arg1));}
+				public static void Assert&lt;A1, A2&gt;(bool f, string format, A1 arg1, A2 arg2)	{if (!f) throw new AssertException(string.Format(format, arg1, arg2));}
+				public static void Assert(bool f, string format, params object[] args)		{if (!f) throw new AssertException(string.Format(format, args));}
+			
+				public static void Fail(string s)											{throw new AssertException(s);}
+				public static void Fail&lt;A1&gt;(string format, A1 arg1)							{throw new AssertException(string.Format(format, arg1));}
+				public static void Fail&lt;A1, A2&gt;(string format, A1 arg1, A2 arg2)			{throw new AssertException(string.Format(format, arg1, arg2));}
+				public static void Fail(string format, params object[] args)				{throw new AssertException(string.Format(format, args));}
+			
+				[Conditional("DEBUG")]
+				public static void FastPre(bool f, string s)									{if (!f) throw new PreconditionException(s);}
+				[Conditional("DEBUG")]
+				public static void FastPre&lt;A1&gt;(bool f, string format, A1 arg1)					{if (!f) throw new PreconditionException(string.Format(format, arg1));}
+				[Conditional("DEBUG")]
+				public static void FastPre&lt;A1, A2&gt;(bool f, string format, A1 arg1, A2 arg2)		{if (!f) throw new PreconditionException(string.Format(format, arg1, arg2));}
+				[Conditional("DEBUG")]
+				public static void FastPre(bool f, string format, params object[] args)			{if (!f) throw new PreconditionException(string.Format(format, args));}
+			
+				[Conditional("DEBUG")]
+				public static void FastPost(bool f, string s)									{if (!f) throw new PostconditionException(s);}
+				[Conditional("DEBUG")]
+				public static void FastPost&lt;A1&gt;(bool f, string format, A1 arg1)					{if (!f) throw new PostconditionException(string.Format(format, arg1));}
+				[Conditional("DEBUG")]
+				public static void FastPost&lt;A1, A2&gt;(bool f, string format, A1 arg1, A2 arg2)	{if (!f) throw new PostconditionException(string.Format(format, arg1, arg2));}
+				[Conditional("DEBUG")]
+				public static void FastPost(bool f, string format, params object[] args)		{if (!f) throw new PostconditionException(string.Format(format, args));}
+			
+				[Conditional("DEBUG")]
+				public static void FastAssert(bool f, string s)									{if (!f) throw new AssertException(s);}
+				[Conditional("DEBUG")]
+				public static void FastAssert&lt;A1&gt;(bool f, string format, A1 arg1)				{if (!f) throw new AssertException(string.Format(format, arg1));}
+				[Conditional("DEBUG")]
+				public static void FastAssert&lt;A1, A2&gt;(bool f, string format, A1 arg1, A2 arg2)	{if (!f) throw new AssertException(string.Format(format, arg1, arg2));}
+				[Conditional("DEBUG")]
+				public static void FastAssert(bool f, string format, params object[] args)		{if (!f) throw new AssertException(string.Format(format, args));}
+			
+				[Conditional("DEBUG")]
+				public static void FastFail(string s)											{throw new AssertException(s);}
+				[Conditional("DEBUG")]
+				public static void FastFail&lt;A1&gt;(string format, A1 arg1)							{throw new AssertException(string.Format(format, arg1));}
+				[Conditional("DEBUG")]
+				public static void FastFail&lt;A1, A2&gt;(string format, A1 arg1, A2 arg2)			{throw new AssertException(string.Format(format, arg1, arg2));}
+				[Conditional("DEBUG")]
+				public static void FastFail(string format, params object[] args)				{throw new AssertException(string.Format(format, args));}
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
 </Violations>

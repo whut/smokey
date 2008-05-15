@@ -35,12 +35,17 @@ namespace Smokey.Internal.Rules
 		public MessageBoxOptionsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "G1001")
 		{
+			m_enabled = Settings.Get("*localized*", "true") == "true";
+			Log.TraceLine(this, "enabled: {0}", m_enabled);			
 		}
 				
 		public override void Register(RuleDispatcher dispatcher) 
 		{
-			dispatcher.Register(this, "VisitBegin");
-			dispatcher.Register(this, "VisitCall");
+			if (m_enabled)
+			{
+				dispatcher.Register(this, "VisitBegin");
+				dispatcher.Register(this, "VisitCall");
+			}
 		}
 								
 		public void VisitBegin(BeginMethod begin)
@@ -62,6 +67,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 		
-		MethodDefinition m_method;
+		private bool m_enabled;
+		private MethodDefinition m_method;
 	}
 }

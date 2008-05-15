@@ -46,6 +46,47 @@ namespace Smokey.Framework.Support
 			return parts.ToArray();
 		}
 		
+		/// <summary>Pattern may have a '*' at the start, at the end, at both the
+		/// start and the end, or in the middle.</summary>
+		public static bool Match(this string text, string pattern)
+		{
+			DBC.Pre(text != null, "text is null");
+			DBC.Pre(pattern != null, "pattern is null");
+			DBC.Pre(pattern.Length > 0, "pattern is empty");
+			
+			string p;
+			if (pattern[0] == '*')
+			{
+				if (pattern[pattern.Length - 1] == '*')
+				{
+					p = pattern.Substring(1, pattern.Length - 2);
+					DBC.Pre(p.IndexOf('*') < 0, "pattern has extra *'s: {0}", pattern);
+					return text.Contains(p);
+				}
+				else
+				{
+					p = pattern.Substring(1);
+					DBC.Pre(p.IndexOf('*') < 0, "pattern has extra *'s: {0}", pattern);
+					return text.EndsWith(p);
+				}
+			}
+			else if (pattern[pattern.Length - 1] == '*')
+			{
+				p = pattern.Substring(0, pattern.Length - 1);
+				DBC.Pre(p.IndexOf('*') < 0, "pattern has extra *'s: {0}", pattern);
+				return text.StartsWith(p);
+			}
+			else if (pattern.IndexOf('*') >= 0)
+			{
+				string[] patterns = pattern.Split('*');
+				return text.StartsWith(patterns[0]) && text.EndsWith(patterns[1]);
+			}
+			else
+			{
+				return text == pattern;
+			}
+		}
+		
 		#region Private Methods -----------------------------------------------
 		private static int FindCapsRun(string str, int index)
 		{

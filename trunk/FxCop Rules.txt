@@ -61,16 +61,17 @@ Design
 	+Uri return values should not be strings
 	!Use events where appropriate
 	+Use generic event handler instances
-	Use generics where appropriate
-	Use integral or string argument for indexers
-	Use properties where appropriate
+	!Use generics where appropriate
+	-Use integral or string argument for indexers
+	-Use properties where appropriate					too many false positives
+	+Validate arguments of public methods
 
 Globalization
-	Avoid duplicate accelerators
-	Do not hardcode locale specific strings
-	Do not pass literals as localized parameters
-	Set locale for data types
-	Specify CultureInfo
+	!Avoid duplicate accelerators
+	+Do not hardcode locale specific strings
+	+Do not pass literals as localized parameters		
+	+Set locale for data types
+	+Specify CultureInfo
 	Specify IFormatProvider
 	Specify MessageBoxOptions
 

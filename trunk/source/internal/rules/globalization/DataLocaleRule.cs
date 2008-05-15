@@ -35,14 +35,19 @@ namespace Smokey.Internal.Rules
 		public DataLocaleRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "G1000")
 		{
+			m_enabled = Settings.Get("*localized*", "true") == "true";
+			Log.TraceLine(this, "enabled: {0}", m_enabled);			
 		}
 				
 		public override void Register(RuleDispatcher dispatcher) 
 		{
-			dispatcher.Register(this, "VisitBegin");
-			dispatcher.Register(this, "VisitNewObj");
-			dispatcher.Register(this, "VisitCall");
-			dispatcher.Register(this, "VisitEnd");
+			if (m_enabled)
+			{
+				dispatcher.Register(this, "VisitBegin");
+				dispatcher.Register(this, "VisitNewObj");
+				dispatcher.Register(this, "VisitCall");
+				dispatcher.Register(this, "VisitEnd");
+			}
 		}
 				
 		public void VisitBegin(BeginMethod begin)
@@ -94,6 +99,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 						
+		private bool m_enabled;
 		private int m_offset;
 		private bool m_foundCtor;
 		private bool m_foundLocale;

@@ -31,6 +31,7 @@ namespace EvilDoer
 			Console.Error.WriteLine(s);		// trivial methods are OK
 		}
 		
+		[DisableRule("R1034", "ValidateArgs1")]	
 		public static void Bad(string s)
 		{
 			Console.Error.WriteLine("value: {0}", s);		
@@ -43,6 +44,7 @@ namespace EvilDoer
 			Console.Error.WriteLine("summation: {0}", sum);
 		} 		
 		
+		[DisableRule("R1034", "ValidateArgs1")]	
 		public static void Normalize(string s)
 		{
 			Console.Error.WriteLine("value: {0}", s);		
@@ -68,6 +70,7 @@ namespace EvilDoer
 			Console.Error.WriteLine(s);		// trivial methods are OK
 		}
 		
+		[DisableRule("R1034", "ValidateArgs1")]	
 		public static void MyBad(string s)
 		{
 			Console.Error.WriteLine("value: {0}", s);		
@@ -80,7 +83,8 @@ namespace EvilDoer
 			Console.Error.WriteLine("summation: {0}", sum);
 		} 		
 
-		public static void MyBad2(string ms)
+		// R1034/ValidateArgs1
+		internal static void MyBad2(string ms)
 		{
 			Console.Error.WriteLine("value: {0}", ms);		
 			Console.Error.WriteLine("sum: {0}, product: {1}", ms + ms, ms.Substring(10));		
@@ -92,6 +96,7 @@ namespace EvilDoer
 			Console.Error.WriteLine("summation: {0}", sum);
 		} 		
 
+		[DisableRule("R1034", "ValidateArgs1")]	
 		public static void MyBad3(string ms)
 		{
 			Console.Error.WriteLine("value: {0}", ms);		
@@ -104,6 +109,7 @@ namespace EvilDoer
 			Console.Error.WriteLine("summation: {0}", sumX);
 		} 		
 		
+		[DisableRule("R1034", "ValidateArgs1")]	
 		public static void Normalize(string s)
 		{
 			Console.Error.WriteLine("value: {0}", s);		

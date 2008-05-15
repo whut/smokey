@@ -102,7 +102,7 @@ namespace Smokey.Internal
 			return err;
 		}
 				
-		#region Private methods
+		#region Private Methods -----------------------------------------------
 		private static bool DoProcessOptions(GetOptions options)
 		{
 			bool processed = true;
@@ -129,6 +129,11 @@ namespace Smokey.Internal
 				HtmlViolations html = new HtmlViolations();
 				html.Write(options.Value("-generate-html-violations"));
 			}
+			else if (options.Has("-dump-strings"))
+			{
+				string assemblyPath = options.Operands[0];
+				DumpStrings.Dump(assemblyPath);
+			}
 #endif
 			else	
 				processed = false;
@@ -144,6 +149,7 @@ namespace Smokey.Internal
 			options.Add("-help", "-?", "Show this help list and exit");
 			options.Add("-html", "Generate an html report");
 			options.Add("-ignore-breaking", "Skip rules where the fix may break binary compatibility");
+			options.Add("-not-localized", "Disable localization rules");
 			options.Add("-out=stdout", "Path to write the report to");
 			options.Add("-quiet", "Don't print progress");
 			options.Add("-only-type=", "Only check types where the full name contains PARAM");
@@ -157,6 +163,7 @@ namespace Smokey.Internal
 #if DEBUG			
 			options.Add("-check-xml", "Compiles the C# code examples in the xml and reports any errors");
 			options.Add("-generate-html-violations=", "Generates html docs from the xml");
+			options.Add("-dump-strings", "Dump setters and ctors with string parameters");
 #endif
 
 			options.Parse(args);
@@ -278,6 +285,9 @@ namespace Smokey.Internal
 			NameValueCollection nv = ConfigurationManager.AppSettings;
 			for (int i = 0; i < nv.Count; ++i)
 				Settings.Add(nv.GetKey(i), nv.Get(i));
+				
+			if (options.Has("-not-localized"))
+				Settings.Add("*localized*", "false");
 
 			string paths = Settings.Get("custom", string.Empty);
 			foreach (string path in paths.Split(':'))

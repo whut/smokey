@@ -62,8 +62,8 @@ namespace Smokey.Framework
 			return backup;
 		}
 		
-		/// If the key exists the associated value is returned. Otherwise
-		/// backup is returned.
+		/// <summary>If the key exists the associated value is returned. Otherwise
+		/// backup is returned.</summary>
 		public static int Get(string key, int backup)
 		{
 			DBC.Pre(!string.IsNullOrEmpty(key), "key is null or empty");
