@@ -73,6 +73,8 @@ namespace EvilDoer
 		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
+			System.Diagnostics.Debug.Assert(info != null, "info is null");
+			
 			info.AddValue("key", key, typeof(string));
 			base.GetObjectData(info, context);
 		}
@@ -236,6 +238,9 @@ namespace EvilDoer
 
 		public string ToString(string format, IFormatProvider provider)
 		{
+			if (format == null)
+				throw new ArgumentNullException("format");
+				
 			if (provider != null)
 			{
 				ICustomFormatter formatter = provider.GetFormat(GetType()) as ICustomFormatter;

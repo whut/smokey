@@ -161,4 +161,12 @@
 	<Expected checkID = "R1030" typeName = "StringUriOverload" fullName = "EvilDoer.BadStringUri1"/>
 	<Expected checkID = "R1030" typeName = "StringUriOverload" fullName = "EvilDoer.BadStringUri2"/>
 	<Expected checkID = "R1030" typeName = "StringUriOverload" fullName = "EvilDoer.BadStringUri3"/>
+	<Expected checkID = "R1034" typeName = "ValidateArgs1" fullName = "System.String EvilDoer.BadClass2::SillyString(System.String)"/>
+	<Expected checkID = "R1034" typeName = "ValidateArgs1" fullName = "System.Boolean EvilDoer.BadClass2::Equals(System.Object)"/>
+	<Expected checkID = "R1035" typeName = "ValidateArgs2" fullName = "System.Void EvilDoer.Identical2::MyBad2(System.String)"/>
+	<Expected checkID = "G1001" typeName = "MessageBoxOptions" fullName = "System.Object EvilDoer.NonLocalized::Bad3(System.String)"/>
+	<Expected checkID = "G1002" typeName = "NonLocalizedGui" fullName = "System.Void EvilDoer.NonLocalized::Bad1()"/>
+	<Expected checkID = "G1002" typeName = "NonLocalizedGui" fullName = "System.Object EvilDoer.NonLocalized::Bad2(System.String)"/>
+	<Expected checkID = "G1002" typeName = "NonLocalizedGui" fullName = "System.Object EvilDoer.NonLocalized::Bad3(System.String)"/>
+	<Expected checkID = "G1002" typeName = "NonLocalizedGui" fullName = "System.Object EvilDoer.NonLocalized::Bad4()"/>
 </Expectations>

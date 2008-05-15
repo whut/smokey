@@ -15,7 +15,8 @@
 			</Description>
 	
 			<Fix>
-			Explicitly set the culture.
+			Explicitly set the culture. Note that
+			you can disable this rule using the -not-localized command line switch.
 			</Fix>
 	
 			<CSharp>
@@ -58,7 +59,8 @@
 	
 			<Fix>
 			Use the Show overload that takes a MessageBoxOptions and set RightAlign and
-			RtlReading using the containing control.
+			RtlReading using the containing control. Note that
+			you can disable this rule using the -not-localized command line switch.
 			</Fix>
 	
 			<CSharp>
@@ -89,6 +91,69 @@
 				}
 			}
 			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "G1002" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "NonLocalizedGui" category = "Globalization">			
+			<Cause>
+			A method calls a gui method using a string literal which contains letters.
+			</Cause>
+	
+			<Description>
+			This rule checks the following properties:
+			* System.Windows.Forms.*::set_BalloonTipText
+			* System.Windows.Forms.*::set_BalloonTipTitle
+			* System.Windows.Forms.*::set_Caption
+			* System.Windows.Forms.*::set_Description
+			* System.Windows.Forms.*::set_ErrorText
+			* System.Windows.Forms.*::set_HeaderText
+			* System.Windows.Forms.*::set_ShortcutKeyDisplayString
+			* System.Windows.Forms.*::set_Text
+			* System.Windows.Forms.*::set_Title
+			* System.Windows.Forms.*::set_ToolTipText
+			* Gtk.*::set_Comments
+			* Gtk.*::set_Copyright
+			* Gtk.*::set_CustomTabLabel
+			* Gtk.*::set_Label
+			* Gtk.*::set_MenuLabel
+			* Gtk.*::set_SecondaryText
+			* Gtk.*::set_ShortLabel
+			* Gtk.*::set_TabLabel
+			* Gtk.*::set_TearoffTitle
+			* Gtk.*::set_Title
+			* Gtk.*::set_TranslatorCredits
+			* Gtk.*::set_WebsiteLabel
+			
+			The following methods:
+			* System.Void System.Windows.Forms.Help::ShowPopup(System.Windows.Forms.Control,System.String,System.Drawing.Point)
+			* System.Windows.Forms.DialogResult System.Windows.Forms.MessageBox::Show(*
+			* System.Void System.Windows.Forms.NotifyIcon::ShowBalloonTip(System.Int32,System.String,System.String,System.Windows.Forms.ToolTipIcon)
+			* System.Void System.Windows.Forms.TextRenderer::DrawText(*
+			* System.Void System.Windows.Forms.ToolTip::Show(*
+			* Gtk.Button Gtk.*::NewWithLabel(System.String)
+			* Gtk.CellView Gtk.*::NewWithText(System.String)
+			
+			In addition the rule checks winforms and gtk constructors with a string
+			argument named caption, displayname, displaytext, header, initialtext, 
+			label, message, text, or title. When matching arguments underscores are removed and
+			the name is lower cased.
+			
+			You can also check custom methods using the "localize" key in the config file or
+			the -set command line switch. The value is a semicolon seperated list of method names
+			of the form {namespace}.{type name}::{method name}. Note that the method name can
+			be ".ctor" if you want to match a constructor. For example, 
+			"-set:localize:System.Console::WriteLine". String literals are flagged if they are
+			assigned to an argument with one of the above names.
+			</Description>
+	
+			<Fix>
+			The standard ways to localize are Mono.Unix.Catalog (see 
+			&lt;http://www.mono-project.com/I18N_with_Mono.Unix&gt;) and
+			System.Resources.ResourceManager (see 
+			&lt;http://www.ondotnet.com/pub/a/dotnet/2002/09/30/manager.html&gt;). Note that
+			you can disable this rule using the -not-localized command line switch.
+			</Fix>
 		</Translation>
 	</Violation>
 </Violations>

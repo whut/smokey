@@ -80,6 +80,7 @@ namespace Unsecure
 			
 		// R1015/STAThread
 		// PO1007/ExitCode 
+		[DisableRule("G1002", "NonLocalizedGui")]
 		public static int Main(string[] args)
 		{ 
 			int err = 0; 	

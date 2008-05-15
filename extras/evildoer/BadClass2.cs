@@ -205,6 +205,7 @@ namespace EvilDoer
 
 		// P1010/ToStringOnString
 		// D1007/UseBaseTypes
+		// R1034/ValidateArgs1
 		public static string SillyString(string x)
 		{
 			return x.ToString();
@@ -246,6 +247,7 @@ namespace EvilDoer
 		}
 
 		// MS1020/EqualsRequiresNullCheck1
+		// R1034/ValidateArgs1
 		public override bool Equals(object rhsObj)
 		{			
 			if (GetType() != rhsObj.GetType())
