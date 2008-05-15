@@ -17,7 +17,7 @@ internal class Log : IDisposable
         // All public methods (except Dispose) should throw 
         // ObjectDisposedException if Dispose has been called.
         if (m_disposed)        
-            throw new ObjectDisposedException("Log has been disposed");
+            throw new ObjectDisposedException(GetType().Name);
             
         m_writer.WriteLine(line);
     }
@@ -59,7 +59,7 @@ internal class MyResource : IDisposable
         // All public methods (except Dispose) should throw 
         // ObjectDisposedException if Dispose has been called.
         if (m_disposed)        
-            throw new ObjectDisposedException("MyResource has been disposed");
+            throw new ObjectDisposedException(GetType().Name);
             
         NativeMethods.WorkIt(m_handle);
         GC.KeepAlive(this);
@@ -130,7 +130,7 @@ internal class MyResource : IDisposable
         // All public methods (except Dispose) should throw 
         // ObjectDisposedException if Dispose has been called.
         if (m_disposed)        
-            throw new ObjectDisposedException("MyResource has been disposed");
+            throw new ObjectDisposedException(GetType().Name);
             
         NativeMethods.WorkIt(m_handle);
         GC.KeepAlive(this);
