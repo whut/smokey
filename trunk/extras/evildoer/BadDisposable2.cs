@@ -33,6 +33,7 @@ namespace EvilDoer
 			this.handle = handle;
 		}
 	
+		// R1036/ObjectDisposedException
 		public void Work()
 		{				
 			if (disposed)		

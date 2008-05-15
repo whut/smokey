@@ -169,4 +169,11 @@
 	<Expected checkID = "G1002" typeName = "NonLocalizedGui" fullName = "System.Object EvilDoer.NonLocalized::Bad2(System.String)"/>
 	<Expected checkID = "G1002" typeName = "NonLocalizedGui" fullName = "System.Object EvilDoer.NonLocalized::Bad3(System.String)"/>
 	<Expected checkID = "G1002" typeName = "NonLocalizedGui" fullName = "System.Object EvilDoer.NonLocalized::Bad4()"/>
+	<Expected checkID = "R1036" typeName = "ObjectDisposedException" fullName = "System.Void EvilDoer.BadDisposable2::Work()"/>
+	<Expected checkID = "D1007" typeName = "UseBaseTypes" fullName = "System.String EvilDoer.FormatProviderCases::Bad5(EvilDoer.DerivedStringer)"/>
+	<Expected checkID = "G1003" typeName = "FormatProvider" fullName = "System.Object EvilDoer.FormatProviderCases::Bad1(System.Object)"/>
+	<Expected checkID = "G1003" typeName = "FormatProvider" fullName = "System.Int32 EvilDoer.FormatProviderCases::Bad2(System.String)"/>
+	<Expected checkID = "G1003" typeName = "FormatProvider" fullName = "System.String EvilDoer.FormatProviderCases::Bad3(System.Object)"/>
+	<Expected checkID = "G1003" typeName = "FormatProvider" fullName = "System.Int32 EvilDoer.FormatProviderCases::Bad4(System.String)"/>
+	<Expected checkID = "G1003" typeName = "FormatProvider" fullName = "System.String EvilDoer.FormatProviderCases::Bad5(EvilDoer.DerivedStringer)"/>
 </Expectations>

@@ -72,25 +72,25 @@ Globalization
 	+Do not pass literals as localized parameters		
 	+Set locale for data types
 	+Specify CultureInfo
-	Specify IFormatProvider
-	Specify MessageBoxOptions
+	+Specify IFormatProvider
+	+Specify MessageBoxOptions
 
 Interoperability
-	Auto layout types should not be ComVisible
-	Avoid int64 arguments for VB6 clients
-	Avoid non-public fields in ComVisible value types
-	Avoid overloads in ComVisible interfaces
-	Avoid static members in ComVisible types
-	Call GetLastError immediately after pinvoke
-	Com registration methods should be matched
-	Com registration methods should not be visible
-	Com visible type base types should be ComVisible
-	Com visible types should be creatable
-	Declare PInvokes correctly
-	Do not use AutoDual ClassInterfaceType
-	Mark boolean pinvoke arguments with MarshalAs
-	Mark ComSource interfaces as IDispatch
-	PInvoke entry points should exist
+	!Auto layout types should not be ComVisible
+	!Avoid int64 arguments for VB6 clients
+	!Avoid non-public fields in ComVisible value types
+	!Avoid overloads in ComVisible interfaces
+	!Avoid static members in ComVisible types
+	!Call GetLastError immediately after pinvoke
+	!Com registration methods should be matched
+	!Com registration methods should not be visible
+	!Com visible type base types should be ComVisible
+	!Com visible types should be creatable
+	!Declare PInvokes correctly						narrow and windows specific rule
+	!Do not use AutoDual ClassInterfaceType
+	+Mark boolean pinvoke arguments with MarshalAs
+	!Mark ComSource interfaces as IDispatch
+	!PInvoke entry points should exist				this sounds like a nice rule
 	PInvokes should not be visible
 
 Maintainability

@@ -215,6 +215,7 @@ namespace EvilDoer
 		}
 		
 		// C1002/MalformedFormatString
+		[DisableRule("G1003", "FormatProvider")]
 		public static string SkippedFormat(int x, int y)
 		{
 			return string.Format("x = {1}, y = {2}", x, y);

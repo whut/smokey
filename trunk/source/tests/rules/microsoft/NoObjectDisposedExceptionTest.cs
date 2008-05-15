@@ -47,7 +47,7 @@ namespace Smokey.Tests
 			public void Work()
 			{
 				if (m_disposed)		
-					throw new ObjectDisposedException("");
+					throw new ObjectDisposedException(GetType().Name);
 					
 				Console.WriteLine(m_handle);
 			}
