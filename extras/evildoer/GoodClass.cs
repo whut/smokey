@@ -221,6 +221,7 @@ namespace EvilDoer
 			return ToString("G", null);
 		}
 		
+		[DisableRule("G1003", "FormatProvider")]
 		public static string OuOfOrder(int x, int y)
 		{
 			return string.Format("x = {1,3:X2}, y = {0}", x, y);

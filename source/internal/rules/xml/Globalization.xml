@@ -156,4 +156,34 @@
 			</Fix>
 		</Translation>
 	</Violation>
+
+	<Violation checkID = "G1003" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "FormatProvider" category = "Globalization">			
+			<Cause>
+			A method with an overload which takes an IFormatProvider is called, but the
+			IFormatProvider overload isn't the one being called.
+			</Cause>
+	
+			<Description>
+			If you don't supply an IFormatProvider the framework will use a default, but this
+			won't always be correct. You can select a provider using the following guidelines:
+				* If the value is being shown to the user then use the current culture (see
+				System.Globalization.CultureInfo.CurrentCulture).
+				* If the value is being persisted (e.g. into a file or database) then use the
+				invariant culture (see System.Globalization.CultureInfo.InvariantCulture).
+				* If you do not know how the value will be used have the caller of your method
+				pass in an IFormatProvider.
+
+			This rule checks the System.Convert methods which aren't documented as ignoring the
+			IFormatProvider argument, System.String::Format, System.Text.StringBuilder::AppendFormat,
+			and overloaded ToString/Parse/TryParse methods.
+			</Description>
+	
+			<Fix>
+			Call the overload which takes an IFormatProvider (this is good style even if the
+			default is OK). Note that
+			you can disable this rule using the -not-localized command line switch.
+			</Fix>
+		</Translation>
+	</Violation>
 </Violations>

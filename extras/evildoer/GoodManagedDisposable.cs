@@ -30,7 +30,7 @@ namespace EvilDoer
 		public void Work(string mesg)
 		{
 			if (disposed)		
-				throw new ObjectDisposedException("GoodManagedDisposable is disposed!");
+				throw new ObjectDisposedException(GetType().Name);
 				
 			System.Diagnostics.Debug.WriteLine(mesg);
 			Ignore.Value = work_event.Set();

@@ -31,7 +31,7 @@
 					// All public methods (except Dispose) should throw 
 					// ObjectDisposedException if Dispose has been called.
 					if (m_disposed)		
-						throw new ObjectDisposedException("Log has been disposed");
+						throw new ObjectDisposedException(GetType().Name);
 						
 					m_writer.WriteLine(line);
 				}
@@ -93,7 +93,7 @@
 					// All public methods (except Dispose) should throw 
 					// ObjectDisposedException if Dispose has been called.
 					if (m_disposed)		
-						throw new ObjectDisposedException("MyResource has been disposed");
+						throw new ObjectDisposedException(GetType().Name);
 						
 					NativeMethods.WorkIt(m_handle);
 					GC.KeepAlive(this);
@@ -178,7 +178,7 @@
 					// All public methods (except Dispose) should throw 
 					// ObjectDisposedException if Dispose has been called.
 					if (m_disposed)		
-						throw new ObjectDisposedException("Log has been disposed");
+						throw new ObjectDisposedException(GetType().Name);
 						
 					m_writer.WriteLine(line);
 				}
@@ -1672,6 +1672,28 @@
 				public static void FastFail(string format, params object[] args)				{throw new AssertException(string.Format(format, args));}
 			}
 			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "R1036" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ObjectDisposedException" category = "Reliability">			
+			<Cause>
+			A System.ObjectDisposedException object was constructed with a string literal for
+			the first argument.
+			</Cause>
+		
+			<Description>
+			ObjectDisposedException takes the name of the object and constructs a message
+			using that name and the current culture. To make maintenance simpler the name
+			should be constructed using code like: GetType().Name.
+			
+			If you want to use your own message then use the constructor which takes two
+			strings.
+			</Description> 
+	
+			<Fix>
+			Use GetType().Name instead of a string literal or use the two string constructor.
+			</Fix>
 		</Translation>
 	</Violation>
 </Violations>

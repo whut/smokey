@@ -60,7 +60,7 @@ namespace EvilDoer
 		public void Work()
 		{
 			if (Disposed)		
-				throw new ObjectDisposedException("GoodDisposable2 is disposed!");
+				throw new ObjectDisposedException(GetType().Name);
 				
 			System.Diagnostics.Debug.WriteLine(handle);
 		}

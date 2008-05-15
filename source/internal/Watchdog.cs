@@ -41,7 +41,7 @@ namespace Smokey.Internal
 		public void Add(string name)
 		{
 	        if (m_disposed)        
-    	        throw new ObjectDisposedException("Watchdog has been disposed");
+    	        throw new ObjectDisposedException(GetType().Name);
     	                    
 			lock (m_mutex)
 			{
@@ -54,7 +54,7 @@ namespace Smokey.Internal
 		public void Shutdown()
 		{
 			if (m_disposed)        
-				throw new ObjectDisposedException("Watchdog has been disposed");
+				throw new ObjectDisposedException(GetType().Name);
 				
 			lock (m_mutex)
 			{

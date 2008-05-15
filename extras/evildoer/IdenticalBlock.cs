@@ -28,6 +28,7 @@ namespace EvilDoer
 	public static class Branch
 	{
 		// D1049/IdenticalCodeBlocks
+		[DisableRule("G1003", "FormatProvider")]
 		public static void Alpha(int x, int y)
 		{
 			Console.Error.WriteLine(x);
@@ -46,6 +47,7 @@ namespace EvilDoer
 			Console.Error.WriteLine("exit");
 		}
 
+		[DisableRule("G1003", "FormatProvider")]
 		public static void Beta(int x, int y)
 		{
 			Console.Error.WriteLine("enter");
@@ -68,6 +70,7 @@ namespace EvilDoer
 	public static class SameMethod
 	{
 		// D1049/IdenticalCodeBlocks
+		[DisableRule("G1003", "FormatProvider")]
 		public static void Gamma(int x, int y)
 		{
 			List<int> l = new List<int>();
@@ -117,6 +120,7 @@ namespace EvilDoer
 	public static class ReverseBranch
 	{
 		// D1049/IdenticalCodeBlocks
+		[DisableRule("G1003", "FormatProvider")]
 		public static void Alpha(int x, int y)
 		{
 			Console.Error.WriteLine(x);
@@ -136,6 +140,7 @@ namespace EvilDoer
 			Console.Error.WriteLine("exit");
 		}
 
+		[DisableRule("G1003", "FormatProvider")]
 		public static void Beta(int x, int y)
 		{
 			Console.Error.WriteLine("enter");
@@ -159,6 +164,7 @@ namespace EvilDoer
 	public static class ExceptionHandlers
 	{
 		// D1049/IdenticalCodeBlocks
+		[DisableRule("G1003", "FormatProvider")]
 		public static void Alpha(int x, int y)
 		{
 			Console.Error.WriteLine(x);
@@ -185,6 +191,7 @@ namespace EvilDoer
 			Console.Error.WriteLine("exit");
 		}
 
+		[DisableRule("G1003", "FormatProvider")]
 		public static void Beta(int x, int y)
 		{
 			Console.Error.WriteLine("enter");

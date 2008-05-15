@@ -206,6 +206,7 @@ namespace EvilDoer
 		// P1010/ToStringOnString
 		// D1007/UseBaseTypes
 		// R1034/ValidateArgs1
+		[DisableRule("G1003", "FormatProvider")]
 		public static string SillyString(string x)
 		{
 			return x.ToString();
@@ -277,6 +278,7 @@ namespace EvilDoer
 		// C1002/MalformedFormatString
 		public string StringProp
 		{
+			[DisableRule("G1003", "FormatProvider")]
 			get {return string.Format("{0} = {1}", x);}
 		}
 		
