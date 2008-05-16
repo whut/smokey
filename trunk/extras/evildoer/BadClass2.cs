@@ -111,15 +111,15 @@ namespace EvilDoer
 	{
 		public static void BadUpdate(string text)
 		{
-			ms_text = text;
+			my_text = text;
 		}
 				
 		public static string Value()
 		{
-			return ms_text;
+			return my_text;
 		}
 
-		private static string ms_text = string.Empty;
+		private static string my_text = string.Empty;
 	}
 	
 	// MS1027/PreferredTerm
@@ -164,7 +164,7 @@ namespace EvilDoer
 		private static void DoCallback2(object state)
 		{
 			Inner.Set((int) state);
-			Console.Error.WriteLine(ms_int);
+			Console.Error.WriteLine(my_int);
 		}
 		
 		// D1001/ClassCanBeMadeStatic
@@ -172,7 +172,7 @@ namespace EvilDoer
 		{
 			public static void Set(int x)
 			{
-				BadClass2.ms_int = x;
+				BadClass2.my_int = x;
 			}
 		}
 
@@ -186,6 +186,7 @@ namespace EvilDoer
 		// PO1001/DllImportPath
 		// PO1002/DllImportExtension
 		// D1020/NativeMethods
+		// S1020/VisiblePInvoke
 		[DllImport("bin/libaspell.so")]
 		public static extern void BadExtern();
 		
@@ -356,7 +357,7 @@ namespace EvilDoer
 		private IntPtr resource;
 		protected int foo;
 		private string text = "your lock here";
-		private static int ms_int;
+		private static int my_int;
 	}
 }
 

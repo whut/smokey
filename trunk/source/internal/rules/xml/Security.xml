@@ -794,4 +794,21 @@
 			</Fix>
 		</Translation>
 	</Violation>
+
+	<Violation checkID = "S1020" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "VisiblePInvoke" category = "Security">			
+			<Cause>
+			An externally visible method is decorated with DllImportAttribute.
+			</Cause>
+	
+			<Description>
+			Allowing anyone and everyone to call into unmanaged code is a 
+			potential security vulnerabilty.
+			</Description>
+	
+			<Fix>
+			Make the type internal or the method private/protected.
+			</Fix>
+		</Translation>
+	</Violation>
 </Violations>

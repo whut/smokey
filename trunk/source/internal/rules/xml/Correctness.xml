@@ -876,4 +876,65 @@ normally be Error. -->
 			</Fix>
 		</Translation>
 	</Violation>	
+	
+	<Violation checkID = "C1029" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "DoubleCheckedLocking" category = "Correctness">			
+			<Cause>
+			A static method matches the double checked locking pattern: it has one lock in
+			which a field is checked for null, if it is null it is set to a newly created instance, 
+			and the method returns the field. But the lock is not protected by a second null check.
+			</Cause>
+		
+			<Description>
+			This pattern (see the code below) allows singletons to be safely and efficiently
+			used in multi-threaded code. It is, however, a bit tricky so it's strongly recommended
+			that you follow the pattern. This rule will catch two common variants: 1) The first
+			if uses a boolean field. This is incorrect because the two reads outside the lock (of the 
+			boolean and the instance fields) may be reordered. 2) The if outside the lock is absent.
+			This code will work but it's ineficient because we always have to acquire the lock.
+			See &lt;http://www.bluebytesoftware.com/blog/PermaLink,guid,543d89ad-8d57-4a51-b7c9-a821e3992bf6.aspx&gt; 
+			for more details.
+			</Description>
+	
+			<Fix>
+			Follow the pattern below.
+			</Fix>
+	
+			<CSharp>
+			using System.Threading;
+			
+			internal class Singleton 
+			{
+				// Private so we that our instance can only be created via Instance.
+				private Singleton() 
+				{
+				}
+				
+				// Efficient and safe way to implement a thread-safe singleton. Note that 
+				// this works because locks act as memory barriers in .NET 2.0.
+				public static Singleton Instance
+				{
+					get
+					{
+						if (ms_instance == null) 
+						{
+							lock (ms_lock) 
+							{
+								if (ms_instance == null) 
+								{
+									ms_instance = new Singleton();
+								}
+							}
+						}
+						
+						return ms_instance;
+					}
+				}
+
+				private static Singleton ms_instance;
+				private static object ms_lock = new object();
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
 </Violations>		
