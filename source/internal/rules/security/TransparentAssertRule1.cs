@@ -45,7 +45,7 @@ namespace Smokey.Internal.Rules
 			dispatcher.Register(this, "VisitCall");
 			dispatcher.Register(this, "VisitEnd");
 			dispatcher.Register(this, "VisitType");
-			dispatcher.Register(this, "VisitGraph");
+			dispatcher.Register(this, "VisitFini");
 		}
 		
 		public void VisitAssembly(AssemblyDefinition assembly)
@@ -94,7 +94,7 @@ namespace Smokey.Internal.Rules
 				m_details += end.Info.Method.ToString() + " ";
 		}
 		
-		public void VisitGraph(CallGraph graph)
+		public void VisitFini(EndTesting end)
 		{
 			if (m_details.Length > 0)
 			{

@@ -41,7 +41,7 @@ namespace Smokey.Internal.Rules
 		public override void Register(RuleDispatcher dispatcher) 
 		{
 			dispatcher.Register(this, "VisitBegin");
-			dispatcher.Register(this, "VisitGraph");
+			dispatcher.Register(this, "VisitFini");
 		}
 		
 		public void VisitBegin(BeginMethod begin)
@@ -65,7 +65,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 
-		public void VisitGraph(CallGraph graph)
+		public void VisitFini(EndTesting end)
 		{
 			string header = "Match:  ";
 

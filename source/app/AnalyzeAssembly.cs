@@ -130,6 +130,7 @@ namespace Smokey.App
 			
 			m_checker.Init(cache, errors);
 						
+			m_checker.Dispatcher.Dispatch(new BeginTesting());
 			if (onlyType == null || onlyType.Length == 0)
 				DoCheckAssembly(assembly, severity);	// note that we don't want to interleave these because our locality would suck
 			
@@ -138,6 +139,7 @@ namespace Smokey.App
 	
 			if (onlyType == null || onlyType.Length == 0)
 				m_checker.CheckCallGraph();
+			m_checker.Dispatcher.Dispatch(new EndTesting());
 
 			return errors.ToArray();
 		}

@@ -39,7 +39,7 @@ namespace Smokey.Internal.Rules
 		public override void Register(RuleDispatcher dispatcher) 
 		{
 			dispatcher.Register(this, "VisitType");
-			dispatcher.Register(this, "VisitCallGraph");
+			dispatcher.Register(this, "VisitFini");
 		}
 				
 		public void VisitType(TypeDefinition type)
@@ -56,7 +56,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 		
-		public void VisitCallGraph(CallGraph graph)
+		public void VisitFini(EndTesting end)
 		{						
 			string details = string.Empty;
 			

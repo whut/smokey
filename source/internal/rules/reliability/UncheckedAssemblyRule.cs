@@ -40,7 +40,7 @@ namespace Smokey.Internal.Rules
 		public override void Register(RuleDispatcher dispatcher) 
 		{
 			dispatcher.Register(this, "VisitBinary");
-			dispatcher.Register(this, "VisitGraph");
+			dispatcher.Register(this, "VisitFini");
 		}
 				
 		public void VisitBinary(BinaryOp op)
@@ -52,7 +52,7 @@ namespace Smokey.Internal.Rules
 				m_foundOvf = true;
 		}
 
-		public void VisitGraph(CallGraph graph)
+		public void VisitFini(EndTesting end)
 		{
 			if (m_foundAdd && !m_foundOvf)
 				Reporter.AssemblyFailed(Cache.Assembly, CheckID, string.Empty);

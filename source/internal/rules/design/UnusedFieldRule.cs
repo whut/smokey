@@ -46,7 +46,7 @@ namespace Smokey.Internal.Rules
 			dispatcher.Register(this, "VisitLoadFieldAddr");
 			dispatcher.Register(this, "VisitLoadStaticField");
 			dispatcher.Register(this, "VisitLoadStaticFieldAddress");
-			dispatcher.Register(this, "VisitGraph");
+			dispatcher.Register(this, "VisitFini");
 		}
 		
 		private enum State 
@@ -140,7 +140,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 				
-		public void VisitGraph(CallGraph graph)
+		public void VisitFini(EndTesting end)
 		{
 			List<string> fields = new List<string>();
 			

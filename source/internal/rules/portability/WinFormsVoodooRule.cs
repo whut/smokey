@@ -40,7 +40,7 @@ namespace Smokey.Internal.Rules
 		public override void Register(RuleDispatcher dispatcher) 
 		{
 			dispatcher.Register(this, "VisitCall");
-			dispatcher.Register(this, "VisitGraph");
+			dispatcher.Register(this, "VisitFini");
 		}
 				
 		public void VisitCall(Call call)
@@ -62,7 +62,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 				
-		public void VisitGraph(CallGraph graph)
+		public void VisitFini(EndTesting end)
 		{		
 			if (m_foundRun)
 			{

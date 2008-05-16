@@ -43,7 +43,7 @@ namespace Smokey.Internal.Rules
 			dispatcher.Register(this, "VisitType");
 			dispatcher.Register(this, "VisitEndTypes");
 			dispatcher.Register(this, "VisitNewObj");
-			dispatcher.Register(this, "VisitCallGraph");
+			dispatcher.Register(this, "VisitFini");
 		}
 				
 		public void VisitType(TypeDefinition type)
@@ -104,7 +104,7 @@ namespace Smokey.Internal.Rules
 		}
 				
 		// This is visited after methods.
-		public void VisitCallGraph(CallGraph graph)
+		public void VisitFini(EndTesting end)
 		{
 			DBC.Assert(m_state == State.Calls, "state is {0}", m_state);
 			m_state = State.End;

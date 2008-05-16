@@ -32,27 +32,15 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 
 /Library/Frameworks/Mono.framework/Versions/1.9/lib/mono/gac/gtk-sharp/2.10.0.0__35e10195dab3c99f/gtk-sharp.dll			  
 
-* Do a checkin
-* Add more gendarme rules:
-	- DoubleCheckLockingRule
-	- MainShouldNotBePublicRule
-	- DoNotPrefixValuesWithEnumNameRule (will hungarian catch this?)
-	- DoNotUseReservedInEnumValueNamesRule
-	- AvoidUnsealedUninheritedInternalClassesRule
-	- ExitCodeIsLimitedOnUnixRule
-		need to handle setting Environment.ExitCode
-	- UseCorrectSignatureForSerializationMethodsRule
-* ValidateIndexRule?
-* Do a checkin.
 * Tweak dispatcher
-	- BeginChecking AssmDef CheckTypes CheckMethods CallGraph EndChecking
+	- BeginTesting AssmDef CheckTypes CheckMethods CallGraph EndTesting
 	- also change comments so it's clear what the order is
 	- most of the rules that use CallGraph should use EndChecking instead
+* Do a checkin
 * NewVersionRule
 	- in BeginChecking download a version file
 	- in EndChecking if we got the file verify versin numbers, otherwise log warning
 	- should be able to disable this rule
-* No error if name in method test is bogus?
 * Need profiles like fxcop?
 	- "public API review" profile, a "bug review" profile, a "full analysis review" profile
 	- maybe a system profile
@@ -64,10 +52,8 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- does it make sense to support profile merging?
 	- profile-help should show a blurb about installed profiles
 	- system: ignore nitpicks, force add a few
+	- moonlight?
 * Look at other fxcop options and stuff.
-* Look at gendarme options again.
-	http://www.mono-project.com/Gendarme
-* IdenticalMethods isn't determinstic.
 * Should get an assert or something if xml has a violation with no rule.
 * Generated html doesn't include breaking flag.
 * We require linq so need 1.2.9 or something.
@@ -77,15 +63,17 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * See if google shows the googlecode project.
 * localize config is now supported.
 * Do a release.
-* Add the new attrs to the wiki.
 
 * AvoidUnusedParametersRule
 	- need a way to easily disable this, maybe args prefixed with "dummy" or "unused"
 * DeserializeOptionalFieldRule
 * Add a few more fxcop rules.
 * Add a few more gendarme rules.
+* IdenticalMethods isn't determinstic.
 * Might want a rule to verify that gui resources are localized.
 * PInvoke entry points should exist
+* Gendarme reports file and line numbers for .net
+* http://groups.google.com/group/gendarme/web/rules
 * Implement more FxCop rules:
 	- Globalization Warnings
 		Specify CultureInfo, once find references works in visisect
@@ -93,6 +81,12 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- Maintainability Warnings
 	- Naming Warnings
 * Foreign key but no update rule.
+* RedundantPredicate
+	- A && A			A
+	- A || A			A
+	- A && !A			false
+	- A || !A			true
+	- probably need some support for building expressions
 * AssemblyResolver.Resolver.Resolve can be used to get a definition from a reference.
   a list of violations without messing with System.Process or external files.
 * Unit tests take too long to run. Maybe we can cleanup better?
