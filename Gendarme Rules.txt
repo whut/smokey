@@ -1,0 +1,134 @@
+http://www.mono-project.com/Gendarme#Rules
+
++ in smokey
+- won't add
+! may add
+
+BadPractice
+	+CheckNewExceptionWithoutThrowingRule
+	!CheckNewThreadWithoutStartRule
+	-CloneMethodShouldNotReturnNullRule				not supposed to use ICloneable any more
+	+ConstructorShouldNotCallVirtualMethodsRule
+	+EqualsShouldHandleNullArgRule
+	!GetEntryAssemblyMayReturnNullRule
+	!ToStringReturnsNullRule
+	
+Concurrency
+	+DoubleCheckLockingRule
+	-NonConstantStaticFieldsShouldNotBeVisibleRule	too many false positives, tho we do have a rule which will catch some of the threading problems this rule tries to address
+	-WriteStaticFieldFromInstanceMethodRule			ditto
+	
+Correctness
+	+BadRecursiveInvocationRule
+	+CallingEqualsWithNullArgRule
+	+DoNotCompareWithNaNRule
+	+FloatComparisonRule
+	+NullDerefRule
+	+UseValueInPropertySetterRule
+	
+Design
+	+AbstractTypesShouldNotHavePublicConstructorsRule
+	+AttributeArgumentsShouldHaveAccessorsRule
+	+AvoidEmptyInterfaceRule
+	!AvoidPropertiesWithoutGetAccessorRule
+	+AvoidPublicInstanceFieldsRule
+	!ConsiderConvertingMethodToPropertyRule
+	+DisposableFieldsShouldBeDisposedRule
+	+DisposableTypesShouldHaveFinalizerRule
+	!EnsureSymmetryForOverloadedOperatorsRule		C# warns for most of these, but we may want to add a rule for any that don't have warnings
+	+EnumsShouldDefineAZeroValueRule
+	!EnumsShouldUseInt32Rule
+	-FlagsShouldNotDefineAZeroValueRule
+	!FinalizersShouldBeProtectedRule				C# handles this
+	!FinalizersShouldCallBaseClassFinalizerRule	ditto
+	+ImplementGenericCollectionInterfacesRule
+	-UsingCloneWithoutImplementingICloneableRule	bogus rule
+	+DontDeclareProtectedFieldsInSealedClassRule
+	+OperatorEqualsShouldBeOverloadedRule
+	+OverrideEqualsMethodRule
+	+ProvideAlternativeNamesForOperatorOverloadsRule
+	+MainShouldNotBePublicRule
+	+MissingAttributeUsageOnCustomAttributeRule
+	+TypesShouldBeInsideNamespacesRule
+	+TypesWithDisposableFieldsShouldBeDisposableRule
+	+TypesWithNativeFieldsShouldBeDisposableRule
+
+Exceptions
+	+DontSwallowErrorsCatchingNonspecificExceptionsRule
+	+DontDestroyStackTraceRule
+
+Interoperability
+	!CallGetLastErrorAfterPInvokeRule
+	!MarshalStringsInPInvokeDeclarationsRule
+	+PInvokeShouldNotBeVisibleRule
+	!UseManagedAlternativesToPInvokeRule		good rule, need to see how much gendarme checks
+
+Naming
+	!DetectNonAlphaNumericsInTypeNamesRule		iffy rule
+	+DoNotPrefixValuesWithEnumNameRule
+	+DoNotUseReservedInEnumValueNamesRule
+	+EnumNotEndsWithEnumOrFlagsSuffixRule
+	-ParameterNamesShouldMatchOverridenMethodRule
+	+UseCorrectCasingRule
+	+UseCorrectPrefixRule
+	+UseCorrectSuffixRule
+	+UsePluralNameInEnumFlagsRule
+	+UsePreferredTermsRule
+	!UseSingularNameInEnumsUnlessAreFlagsRule
+
+Performance
+	!AvoidReturningArraysOnPropertiesRule
+	+AvoidToStringOnStringsRule
+	+AvoidUncalledPrivateCodeRule
+	+AvoidUninstantiatedInternalClassesRule
+	!AvoidUnneededCallsOnStringRule
+	+AvoidUnsealedAttributesRule
+	+AvoidUnsealedUninheritedInternalClassesRule
+	!AvoidUnusedParametersRule
+	!CompareWithStringEmptyEfficientlyRule
+	+DontIgnoreMethodResultRule
+	+EmptyDestructorRule
+	+IDisposableWithDestructorWithoutSuppressFinalizeRule
+	-MathMinMaxCandidateRule
+	+OverrideValueTypeDefaultsRule
+	-UseIsOperatorRule
+	+UseStringEmptyRule
+	-UsingStringLengthInsteadOfCheckingEmptyStringRule
+
+Portability
+	+ExitCodeIsLimitedOnUnixRule
+	!FeatureRequiresRootPrivilegeOnUnixRule
+	!MonoCompatibilityReviewRule				not sure this is a good idea: lots of code can be marked with todo or not implemented for edge cases
+	+NewLineLiteralRule
+
+Security
+	+ArrayFieldsShouldNotBeReadOnlyRule
+	!NativeFieldsShouldNotBeVisibleRule
+	+MethodCallWithSubsetLinkDemandRule
+	+NonVirtualMethodWithInheritanceDemandRule
+	+SealedTypeWithInheritanceDemandRule
+	+SecureGetObjectDataOverridesRule
+	!StaticConstructorsShouldBePrivateRule		C# does this
+	+TypeExposeFieldsRule
+	+TypeIsNotSubsetOfMethodSecurityRule
+	+TypeLinkDemandRule
+
+Serialization
+	!DeserializeOptionalFieldRule
+	+MissingSerializableAttributeOnISerializableTypeRule
+	+MissingSerializationConstructorRule
+	+UseCorrectSignatureForSerializationMethodsRule
+
+Smells
+	+AvoidCodeDuplicatedInSameClassRule
+	+AvoidCodeDuplicatedInSiblingClassesRule
+	+AvoidLargeClassesRule
+	+AvoidLongMethodsRule
+	+AvoidLongParameterListsRule
+	!AvoidSpeculativeGeneralityRule
+
+Ui 
+	+GtkSharpExecutableTargetRule
+	+SystemWindowsFormsExecutableTargetRule
+	+UseSTAThreadAttributeOnSWFEntryPointsRule
+	

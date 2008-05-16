@@ -133,13 +133,23 @@ namespace Smokey.Internal.Rules
 							Log.DebugLine(this, "field {0} isn't an underscore name", field.Name); 
 						}
 						
-						// m_my_name is not legit
-						if (field.Name.Length > 1)
+						// m_my_name and the like are not legit
+						if (m_details.Length == 0 && field.Name.Length > 2)
 						{
 							if (field.Name[0] == 'm' && field.Name[1] == '_')
 							{
 								m_details = string.Format("{0}Field: {1}. ", m_details, field.Name);
 								Log.DebugLine(this, "field {0} uses m_", field.Name); 
+							}
+							else if (field.Name[0] == 's' && field.Name[1] == '_')
+							{
+								m_details = string.Format("{0}Field: {1}. ", m_details, field.Name);
+								Log.DebugLine(this, "field {0} uses s_", field.Name); 
+							}
+							else if (field.Name[0] == 'm' && field.Name[1] == 's' && field.Name[2] == '_')
+							{
+								m_details = string.Format("{0}Field: {1}. ", m_details, field.Name);
+								Log.DebugLine(this, "field {0} uses ms_", field.Name); 
 							}
 						}
 					}

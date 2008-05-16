@@ -91,16 +91,17 @@ Interoperability
 	+Mark boolean pinvoke arguments with MarshalAs
 	!Mark ComSource interfaces as IDispatch
 	!PInvoke entry points should exist				this sounds like a nice rule
-	PInvokes should not be visible
+	+PInvokes should not be visible
 
 Maintainability
-	Avoid excessive complexity
-	Avoid excessive inheritance
-	Variable names should not match field names
+	+Avoid excessive complexity
+	+Avoid excessive inheritance
+	!Review misleading field names					need to fix the .net naming rule to do this, or add a new rule just for .net naming
+	!Variable names should not match field names	probably won't do this one
 
 Mobility
-	Do not use idle process priority
-	Do not use timers that prevent power state changes 
+	!Do not use idle process priority
+	!Do not use timers that prevent power state changes 
 
 Naming
 	Avoid language specific type names in parameters

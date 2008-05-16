@@ -94,6 +94,10 @@ namespace EvilDoer
 	{ 
 		internal IntPtr		all_event_masks;
 		internal IntPtr		your_event_mask;
+
+		[DllImport("libaspell")]
+		[DisableRule("D1020", "NativeMethods")]	
+		public static extern void GoodExtern();
 	}
 
 	[DisableRule("R1000", "DisposableFields")]	
@@ -120,14 +124,14 @@ namespace EvilDoer
 		private static void DoCallback2(object state)
 		{
 			Inner.Set((int) state);
-			Console.Error.WriteLine(ms_int);
+			Console.Error.WriteLine(my_int);
 		}
 		
 		private static class Inner		// this is private so threaded static setter is ok
 		{
 			public static void Set(int x)
 			{
-				GoodClass2.ms_int = x;
+				GoodClass2.my_int = x;
 			}
 		}
 
@@ -191,6 +195,6 @@ namespace EvilDoer
 		}
 		
 		private string name = "hello", address = "goodbye";
-		private static int ms_int;
+		private static int my_int;
 	}
 }

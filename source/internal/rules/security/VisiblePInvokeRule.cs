@@ -19,43 +19,44 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Mono.Cecil;
+using Mono.Cecil.Cil;
 using System;
+using System.Security;
 using System.Collections.Generic;
+using Smokey.Framework;
+using Smokey.Framework.Instructions;
+using Smokey.Framework.Support;
+using Smokey.Framework.Support.Advanced;
 
-namespace EvilDoer
-{
-	// D1001/ClassCanBeMadeStatic
-	// P1012/NotInstantiated
-	internal class BadNaming
+namespace Smokey.Internal.Rules
+{		
+	internal class VisiblePInvokeRule : Rule
 	{				
-		// MO1000/UnusedMethod
-		public BadNaming()
+		public VisiblePInvokeRule(AssemblyCache cache, IReportViolations reporter) 
+			: base(cache, reporter, "S1020")
 		{
 		}
-		
-		// D1032/UseMonoNaming
-		// MO1000/UnusedMethod
-		public static void BadParam(int not_cool)
+				
+		public override void Register(RuleDispatcher dispatcher) 
 		{
-			System.Diagnostics.Debug.WriteLine("hello" + not_cool);
+			dispatcher.Register(this, "VisitMethod");
 		}
-
-		// MO1000/UseMonoNaming
-		// MO1000/UnusedMethod
-		public static void camelCase(int cool)
+						
+		public void VisitMethod(MethodDefinition method)
 		{
-			System.Diagnostics.Debug.WriteLine("hello" + cool);
+			Log.DebugLine(this, method);
+			Log.DebugLine(this, "   IsPInvokeImpl: {0}", method.IsPInvokeImpl);
+			Log.DebugLine(this, "   IsUnmanagedExport: {0}", method.IsUnmanagedExport);
+			
+			if (method.IsPInvokeImpl)
+			{
+				if (method.PubliclyVisible(Cache))
+				{
+					Reporter.MethodFailed(method, CheckID, 0, string.Empty);
+				}
+			}
 		}
-	}
-
-	// MO1000/UseMonoNaming
-	internal class InconsistentName1
-	{				
-		protected int s_field;
-	}
-
-	internal class InconsistentName2
-	{				
-		protected int ms_field;
 	}
 }
+
