@@ -43,7 +43,7 @@ namespace Smokey.Internal.Rules
 			dispatcher.Register(this, "VisitAssembly");
 			dispatcher.Register(this, "VisitMethod");
 			dispatcher.Register(this, "VisitType");
-			dispatcher.Register(this, "VisitGraph");
+			dispatcher.Register(this, "VisitFini");
 		}
 		
 		public void VisitAssembly(AssemblyDefinition assembly)
@@ -74,7 +74,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 		
-		public void VisitGraph(CallGraph graph)
+		public void VisitFini(EndTesting end)
 		{
 			if (m_failed)
 			{

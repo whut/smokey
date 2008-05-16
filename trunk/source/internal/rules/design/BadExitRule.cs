@@ -39,7 +39,7 @@ namespace Smokey.Internal.Rules
 		{
 			dispatcher.Register(this, "VisitBegin");
 			dispatcher.Register(this, "VisitCall");
-			dispatcher.Register(this, "VisitGraph");
+			dispatcher.Register(this, "VisitFini");
 		}
 						
 		public void VisitBegin(BeginMethod begin)
@@ -63,7 +63,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 				
-		public void VisitGraph(CallGraph graph)
+		public void VisitFini(EndTesting end)
 		{
 			if (m_callsRun && m_callsExit)
 			{

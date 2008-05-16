@@ -30,21 +30,33 @@ using System.Reflection;
 
 namespace Smokey.Framework.Support
 {				
-	/// <summary>Rules use this to register the types they want to visit.</summary>
+	/// <summary>Rules use this to register the objects they want to visit.</summary>
 	///
-	/// <remarks><para>Visits AssemblyDefinition, ModuleDefinitions, BeginTypes, 
-	/// each type, EndTypes, each method, and then CallGraph.</para>
+	/// <remarks><para>Objects are visited in the following order:
+	/// BeginTesting				the begin objects are synthesized objects used to demarcate processing
+	///	   AssemblyDefinition
+	///    ModuleDefinition			visited one or more times
+	///    BeginTypes
+	///       BeginType				visited once for each type in the assembly
+	///          TypeDefinition		
+	///          FieldDefinition	these are visited once for each corresponding member in the type
+	///          EventDefinition	
+	///          PropertyDefinition	
+	///          MethodDefinition	
+	///       EndType
+	///    EndTypes
+	///    BeginMethods				
+	///       BeginMethod			visited for each method defined in the assembly
+	///          each insruction	used to visit a TypedInstruction subclass
+	///       EndMethod
+	///    EndMethods
+	///    CallGraph
+	/// EndTesting</para>
 	///
-	/// <para>For each type BeginType is visited, TypeDefinition, FieldDefinitions, 
-	/// EventDefinitions, PropertyDefinitions, MethodDefinitions, and finally 
-	/// EndType. The MethodDefinition visit should not normally check the body
-	/// of the method.</para>
-	///
-	/// <para>For methods BeginMethods is visited, then for each method BeginMethod 
-	/// is visited, each typed instruction in the method, EndMethod, and finally 
-	/// EndMethods. Note that instructions are visited based on the control flow 
-	/// graph in depth-first order. Instructions are visited only once (including 
-	/// those in finally or fault blocks).</para></remarks>
+	/// <para>To preserve efficiency rules should not do any iteration themselves.
+	/// Note that instructions are visited based on the control flow graph in 
+	/// depth-first order. Instructions are visited only once (including those in 
+	/// finally or fault blocks).</para></remarks>
 	[DisableRule("D1041", "CircularReference")]	// Smokey.Framework.Support.Rule <-> Smokey.Framework.Support.RuleDispatcher  
 	[DisableRule("D1045", "GodClass")]
 	public class RuleDispatcher
@@ -115,6 +127,16 @@ namespace Smokey.Framework.Support
 			DoVisit(assembly);
 			foreach (ModuleDefinition module in assembly.Modules)
 				DoVisit(module);
+		}
+						
+		internal void Dispatch(BeginTesting x)
+		{			
+			DoVisit(x);
+		}
+						
+		internal void Dispatch(EndTesting x)
+		{			
+			DoVisit(x);
 		}
 						
 		internal void Dispatch(BeginTypes types)

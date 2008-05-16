@@ -134,7 +134,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 		
-		public void VisitFini(CallGraph graph)
+		public void VisitFini(EndTesting end)
 		{
 			if (m_bad.Count > 0)
 			{

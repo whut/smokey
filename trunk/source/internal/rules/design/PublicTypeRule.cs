@@ -40,7 +40,7 @@ namespace Smokey.Internal.Rules
 		public override void Register(RuleDispatcher dispatcher) 
 		{
 			dispatcher.Register(this, "VisitType");
-			dispatcher.Register(this, "VisitGraph");
+			dispatcher.Register(this, "VisitFini");
 		}
 		
 		public void VisitType(TypeDefinition type)
@@ -55,7 +55,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 		
-		public void VisitGraph(CallGraph graph)
+		public void VisitFini(EndTesting end)
 		{
 			if (Cache.Assembly.EntryPoint != null)
 			{
