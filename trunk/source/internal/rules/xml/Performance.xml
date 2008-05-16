@@ -684,4 +684,21 @@
 			</Fix>
 		</Translation>
 	</Violation>	
+
+	<Violation checkID = "P1020" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "NotSealed" category = "Performance">			
+			<Cause>
+			A concrete class has internal visibility and no derived classes, but is
+			not sealed.
+			</Cause>
+		
+			<Description>
+			Sealing allows the JIT to perform optimizations such as eliding virtual dispatch.
+			</Description>
+	
+			<Fix>
+			Make the class sealed or disable the rule using DisableRuleAttribute.
+			</Fix>
+		</Translation>
+	</Violation>	
 </Violations>

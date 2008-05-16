@@ -1115,7 +1115,7 @@ System.Collections.Generic.IDictionary
 			provide a lot of value for strongly typed languages, doesn't handle object-oriented
 			languages well, and is often confusing because there is no real standard for the prefixes.
 			
-			Note that this rule does not complain about prefixed which indicate scope. For example,
+			Note that this rule does not complain about prefixes which indicate scope. For example,
 			inName or m_name.
 			</Description>
 	

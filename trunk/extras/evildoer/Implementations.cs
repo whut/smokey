@@ -48,7 +48,7 @@ namespace EvilDoer
 	}			
 	
 	// ok: interface is internal
-	internal class Worker : IInternal
+	internal sealed class Worker : IInternal
 	{
 		public int Work(int w)
 		{
@@ -62,7 +62,7 @@ namespace EvilDoer
 	}			
 	
 	// ok: all public methods are declared in interfaces
-	internal class Worker2 : IWorker
+	internal sealed class Worker2 : IWorker
 	{
 		public Worker2(int v)
 		{
@@ -104,7 +104,7 @@ namespace EvilDoer
 	}			
 	
 	// ok: interface is indirect
-	internal class Worker4 : Worker3
+	internal sealed class Worker4 : Worker3
 	{
 		public Worker4() : base(4)
 		{
@@ -121,7 +121,7 @@ namespace EvilDoer
 	
 	// bad: More is called only by this class
 	// D1051/PublicImplementation
-	internal class InternalWorker : IWorker
+	internal sealed class InternalWorker : IWorker
 	{
 		public InternalWorker(int v)
 		{
@@ -141,7 +141,7 @@ namespace EvilDoer
 		private Worker3 worker;
 	}			
 	
-	internal class InternalWorker2 : IWorker
+	internal sealed class InternalWorker2 : IWorker
 	{
 		public InternalWorker2(int v)
 		{
@@ -183,7 +183,7 @@ namespace EvilDoer
 		private Worker3 worker;
 	}			
 	
-	internal class InternalWorker4 : InternalWorker3
+	internal sealed class InternalWorker4 : InternalWorker3
 	{
 		public InternalWorker4(int v) : base(v)
 		{

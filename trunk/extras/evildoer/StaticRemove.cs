@@ -58,7 +58,7 @@ namespace EvilDoer
 		private static Dictionary<string, int> strings = new Dictionary<string, int>();
 	}
 
-	internal class GoodStatic1
+	internal sealed class GoodStatic1
 	{				
 		public GoodStatic1()
 		{

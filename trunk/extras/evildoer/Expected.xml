@@ -179,4 +179,6 @@
 	<Expected checkID = "S1020" typeName = "VisiblePInvoke" fullName = "System.Void EvilDoer.BadClass2::BadExtern()"/>
 	<Expected checkID = "MO1000" typeName = "UseMonoNaming" fullName = "EvilDoer.InconsistentName1"/>
 	<Expected checkID = "MO1000" typeName = "UseMonoNaming" fullName = "EvilDoer.InconsistentName2"/>
+	<Expected checkID = "P1020" typeName = "NotSealed" fullName = "EvilDoer.BadNaming"/>
+	<Expected checkID = "P1020" typeName = "NotSealed" fullName = "EvilDoer.InconsistentName2"/>
 </Expectations>
