@@ -78,6 +78,10 @@ namespace Smokey.Internal.Rules
 				{					
 					DoCheckLoad(call);
 				}
+				else if (call.Target.ToString() == "System.Void System.Environment::set_ExitCode(System.Int32)")
+				{					
+					DoCheckLoad(call);
+				}
 			}
 		}
 		

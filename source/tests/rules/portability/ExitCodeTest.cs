@@ -59,6 +59,13 @@ namespace Smokey.Tests
 				Environment.Exit(err);
 			}
 
+			public void Good3()
+			{
+				Environment.ExitCode = 0;
+				Environment.ExitCode = 1;
+				Environment.ExitCode = 255;
+			}
+
 			public void Bad1(string path)
 			{
 				Environment.Exit(-1);
@@ -86,13 +93,18 @@ namespace Smokey.Tests
 			
 				Environment.Exit(err);
 			}
+
+			public void Bad4()
+			{
+				Environment.ExitCode = -1;
+			}
 		}
 		#endregion
 		
 		// test code
 		public ExitCodeTest() : base( 
-			new string[]{"Cases.Good1", "Cases.Good2"},
-			new string[]{"Cases.Bad1", "Cases.Bad2", "Cases.Bad3"})	
+			new string[]{"Cases.Good1", "Cases.Good2", "Cases.Good3"},
+			new string[]{"Cases.Bad1", "Cases.Bad2", "Cases.Bad3", "Cases.Bad4"})	
 		{
 		}
 						

@@ -90,7 +90,7 @@ namespace EvilDoer
 	}
 
 	[DisableRule("D1050", "UnusedField")]
-	internal class ZWindowAttributes 
+	internal sealed class ZWindowAttributes 
 	{ 
 		internal IntPtr		all_event_masks;
 		internal IntPtr		your_event_mask;

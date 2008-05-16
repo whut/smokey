@@ -19,48 +19,45 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Mono.Cecil;
+using Mono.Cecil.Cil;
 using System;
-using System.Collections.Generic;
+using Smokey.Framework;
+using Smokey.Framework.Instructions;
+using Smokey.Framework.Support;
 
-namespace EvilDoer
-{
-	// D1001/ClassCanBeMadeStatic
-	// P1012/NotInstantiated
-	internal class BadNaming
+namespace Smokey.Internal.Rules
+{	
+	internal class NotSealedRule : Rule
 	{				
-		// MO1000/UnusedMethod
-		public BadNaming()
+		public NotSealedRule(AssemblyCache cache, IReportViolations reporter) 
+			: base(cache, reporter, "P1020")
 		{
 		}
-		
-		// D1032/UseMonoNaming
-		// MO1000/UnusedMethod
-		public static void BadParam(int not_cool)
+				
+		public override void Register(RuleDispatcher dispatcher) 
 		{
-			System.Diagnostics.Debug.WriteLine("hello" + not_cool);
+			dispatcher.Register(this, "VisitType");
 		}
-
-		// MO1000/UseMonoNaming
-		// MO1000/UnusedMethod
-		public static void camelCase(int cool)
+				
+		public void VisitType(TypeDefinition candidate)
 		{
-			System.Diagnostics.Debug.WriteLine("hello" + cool);
+			if (!candidate.IsAbstract && candidate.IsNotPublic && candidate.IsClass && !candidate.IsSealed)
+			{
+				if (candidate.FullName != "<Module>")
+				{
+					Log.DebugLine(this, "checking {0}", candidate);	
+					
+					foreach (TypeDefinition type in Cache.Types)
+					{	
+						if (type.IsSubclassOf(candidate, Cache))
+							return;
+					}
+	
+					Reporter.TypeFailed(candidate, CheckID, string.Empty);
+				}
+			}
 		}
-	}
-
-	// MO1000/UseMonoNaming
-	internal class InconsistentName1
-	{				
-		protected int s_field;
-	}
-
-	// P1020/NotSealed
-	internal class InconsistentName2 : InconsistentName1
-	{				
-		protected int ms_field;
-	}
-
-	internal sealed class InconsistentName3 : InconsistentName1
-	{				
 	}
 }
+
