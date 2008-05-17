@@ -87,4 +87,20 @@
 			</Fix>
 		</Translation>
 	</Violation>
+
+	<Violation checkID = "M1003" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "NewVersion" category = "Misc">			
+			<Cause>
+			A new version of Smokey is available.
+			</Cause>
+	
+			<Description>
+			Newer is better...
+			</Description>
+	
+			<Fix>
+			Download the laest version &lt;http://code.google.com/p/smokey/&gt;.
+			</Fix>
+		</Translation>
+	</Violation>
 </Violations>
