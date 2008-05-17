@@ -177,7 +177,7 @@ namespace Smokey.Framework.Support.Advanced
 			get {return m_trys[index];}
 		}
 				
-		/// <summary>Returns a TryCatch if the try block, catch block, or finally block
+		/// <summary>Returns a TryCatch if the a block, catch block, or finally block
 		/// starts at index. If a suitable TryCatch cannot be found null is returned.</summary>
 		public TryCatch HandlerStartsAt(int index)
 		{
@@ -204,7 +204,7 @@ namespace Smokey.Framework.Support.Advanced
 			return null;
 		}
 				
-		#region Private methods
+		#region Private Methods -----------------------------------------------
 		// There will be separate handlers for each catch block and for the
 		// finally block (if present). Handlers that share the same try block
 		// will have equal [TryStart, TryEnd) values. The handler block will
@@ -311,7 +311,7 @@ namespace Smokey.Framework.Support.Advanced
 		}
 		#endregion
 		
-		#region Fields
+		#region Fields --------------------------------------------------------
 		private List<TryCatch> m_trys = new List<TryCatch>();
 		#endregion
 	}
