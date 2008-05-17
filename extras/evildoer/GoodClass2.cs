@@ -101,7 +101,7 @@ namespace EvilDoer
 	}
 
 	[DisableRule("R1000", "DisposableFields")]	
-	[DisableRule("D1052", "PreferMonitor")]	
+	[DisableRule("D1052", "PreferMonitor1")]	
 	public class GoodResetEvent
 	{						
 		public object Use()

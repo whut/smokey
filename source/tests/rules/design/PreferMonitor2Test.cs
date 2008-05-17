@@ -19,33 +19,70 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Mono.Cecil;
+using NUnit.Framework;
+
+using Smokey.Framework.Support;
+using Smokey.Internal.Rules;
+
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 
-namespace EvilDoer
+namespace Smokey.Tests
 {
-	// D1052/PreferMonitor1
-	public class GoodManagedDisposable : IDisposable
-	{
-		public void Work(string mesg)
-		{
-			if (disposed)		
-				throw new ObjectDisposedException(GetType().Name);
-				
-			System.Diagnostics.Debug.WriteLine(mesg);
-			Ignore.Value = work_event.Set();
-		}
-		
-		public void Dispose()
-		{
-			if (!disposed)
+	[TestFixture]
+	public class PreferMonitor2Test : MethodTest
+	{	
+		// test classes
+		public class Cases
+		{						
+			public object Good()
 			{
-				work_event.Close();				
-				disposed = true;
+				List<object> r = new List<object>();
+				
+				r.Add(new Mutex());
+				r.Add(new Mutex(true));
+				r.Add(new Semaphore(2, 3));
+				
+				return r;
 			}
+
+			public object Bad1()
+			{
+				return new Mutex(false, "bad");
+			}
+
+			public object Bad2()
+			{
+				bool state;
+				return new Mutex(false, "bad", out state);
+			}
+
+			public object Bad3()
+			{
+				return new Semaphore(2, 3, "bad");
+			}
+
+			public object Bad4()
+			{
+				bool state;
+				return new Semaphore(2, 3, "bad", out state);
+			}
+		}			
+												
+		// test code
+		public PreferMonitor2Test() : base(
+			new string[]{"Cases.Good"},		
+			new string[]{"Cases.Bad1", "Cases.Bad2", "Cases.Bad3", "Cases.Bad4"})	
+		{
 		}
-			
-		private readonly AutoResetEvent work_event = new AutoResetEvent(false);
-		private bool disposed = false;
-	}
+						
+		protected override Rule OnCreate(AssemblyCache cache, IReportViolations reporter)
+		{
+			return new PreferMonitor2Rule(cache, reporter);
+		}
+	} 
 }

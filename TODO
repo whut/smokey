@@ -32,42 +32,32 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 
 /Library/Frameworks/Mono.framework/Versions/1.9/lib/mono/gac/gtk-sharp/2.10.0.0__35e10195dab3c99f/gtk-sharp.dll			  
 
-* NewVersionRule
-	- write a unit test and then the rule
-	- in BeginTesting download a version file		1.2
-		http://home.comcast.net/~jesse98/public/SmokeyVersion
-	- xml should have a link to googlecode
-	- in EndTesting if we got the file verify version numbers, otherwise log warning, only compare
-	  major and minor
-			Version version = Assembly.GetExecutingAssembly().GetName().Version;
-	- cancel download if it hasn't finished in time
-	- should be able to disable this rule
-			try {
-				WebClient wc = new WebClient ();
-				wc.DownloadFile (new Uri (definitionsUri), definitionsFile);	// use DownloadStringAsync
-			}
-			catch (WebException e) {
-				if (Runner.VerbosityLevel > 0)
-					Console.WriteLine (e);
-				return false;
-			}
-	- update release checklist with the file to update
+* PreferMonitor2
+	- unnamed mutex or semaphore
+* PreferMonitor2
+	- event
+* Straighten out command line switches:
+	- process these last:
+	   -include-check=PARAM             Undo an -exclude-check 
+	   -include-name=PARAM              Undo -exclude-name
+	   -include-breaking                Undo -ignore-breaking
+	   -include-localized               Undo -not-localized
 * Need profiles like fxcop?
 	- "public API review" profile, a "bug review" profile, a "full analysis review" profile
 	- maybe a system profile
 	- should be able to make custom profiles
-	- need to be able to undo most switches
 	- add --ignore-resource and add a SysIgnore resource, ignore is a little confusing
 	- ignore files should be unioned
 	- proile could just be a string prepended to command line
-	- does it make sense to support profile merging?
 	- profile-help should show a blurb about installed profiles
 	- system: ignore nitpicks, force add a few
 	- moonlight?
-* Look at other fxcop options and stuff.
-* Should get an assert or something if xml has a violation with no rule.
-* Generated html doesn't include breaking flag.
+* Should get an error log if xml has a violation with no rule.
+* Need to work with pdb files
+	- may need to revisit symbol writer loading code
+* Generated html doesn't include breaking flag. Check xml too.
 * We require linq so need 1.2.9 or something.
+* Don't overwrite config file if it exists.
 * Need install.bat and uninstall.bat
 * Try built-in profiler again. Might want to look at heapbuddy too.
 * FxCop has 197 rules...
@@ -259,6 +249,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- update CHANGES file
 	- make sure AssemblyVersion number is ok (for all the assemblies)
 	- update version number in nant file
+	- update SomkeyVersion on old web site
 	- install
 	- update README
 	- upload useful files, include revision number in the source (or a version)

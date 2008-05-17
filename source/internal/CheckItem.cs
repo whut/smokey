@@ -20,11 +20,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Mono.Cecil;
+
 using Smokey.App;
 using Smokey.Framework;
 using Smokey.Framework.Support;
+
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Smokey.Internal
 {	
@@ -49,12 +52,12 @@ namespace Smokey.Internal
 			get {return m_dispatcher;}
 		}
 		
-		public string[] ExcludedChecks
+		public IEnumerable<string> ExcludedChecks
 		{
 			set {m_excludedChecks = value;}
 		}
 		
-		internal string[] ExcludedNames	// of types, methods, etc
+		internal IEnumerable<string> ExcludedNames	// of types, methods, etc
 		{
 			set 	
 			{
@@ -276,7 +279,7 @@ namespace Smokey.Internal
 			if (ignoreBreaks && violation.Breaking)
 				return false;
 		
-			if (Array.IndexOf(m_excludedChecks, checkID) >= 0)
+			if (m_excludedChecks.Contains(checkID))
 				return false;
 		
 			return true;
@@ -287,7 +290,7 @@ namespace Smokey.Internal
 		private RuleDispatcher m_dispatcher;
 		private List<Rule> m_rules = new List<Rule>();
 		private Rule.KeepAliveCallback m_callback;
-		private string[] m_excludedChecks = new string[0];
+		private IEnumerable<string> m_excludedChecks = new string[0];
 		private string[] m_excludedNames = new string[0];
 
 		private List<Error> m_errors;

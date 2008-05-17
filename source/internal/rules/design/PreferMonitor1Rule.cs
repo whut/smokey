@@ -26,9 +26,9 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class PreferMonitorRule : Rule
+	internal class PreferMonitor1Rule : Rule
 	{				
-		public PreferMonitorRule(AssemblyCache cache, IReportViolations reporter) 
+		public PreferMonitor1Rule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1052")
 		{
 		}

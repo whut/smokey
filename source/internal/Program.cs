@@ -21,6 +21,7 @@
 
 using Smokey.App;
 using Smokey.Framework;
+
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
@@ -149,6 +150,10 @@ namespace Smokey.Internal
 			options.Add("-help", "-?", "Show this help list and exit");
 			options.Add("-html", "Generate an html report");
 			options.Add("-ignore-breaking", "Skip rules where the fix may break binary compatibility");
+			options.Add("-include-check=", "Undo -exclude-check");
+			options.Add("-include-name=", "Undo -exclude-name");
+			options.Add("-include-breaking", "Undo -ignore-breaking");
+			options.Add("-include-localized", "Undo -not-localized");
 			options.Add("-not-localized", "Disable localization rules");
 			options.Add("-out=stdout", "Path to write the report to");
 			options.Add("-quiet", "Don't print progress");
@@ -194,17 +199,26 @@ namespace Smokey.Internal
 			
 			// -exclude-name values must be valid
 			string[] names = options.Values("-exclude-name");
-			if (!DoTypeMethodsValid(names))
+			if (!DoTypeMethodsValid(names, "-exclude-name"))
+			{
+				valid = false;
+			}
+			
+			// -include-name values must be valid
+			names = options.Values("-include-name");
+			if (!DoTypeMethodsValid(names, "-include-name"))
 			{
 				valid = false;
 			}
 			
 			// -severity must be legit
-			string severity = options.Value("-severity");
-			if (severity != "Error" && severity != "Warning" && severity != "Nitpick")
+			foreach (string severity in options.Values("-severity"))
 			{
-				Console.Error.WriteLine("severity must be Error, Warning, or Nitpick");
-				valid = false;
+				if (severity != "Error" && severity != "Warning" && severity != "Nitpick")
+				{
+					Console.Error.WriteLine("severity must be Error, Warning, or Nitpick");
+					valid = false;
+				}
 			}
 			
 			// -set must be well formed
@@ -228,7 +242,7 @@ namespace Smokey.Internal
 			return valid;
 		}		
 
-		private static bool DoTypeMethodsValid(string[] strs)
+		private static bool DoTypeMethodsValid(string[] strs, string option)
 		{
 			bool valid = true;
 			
@@ -236,7 +250,7 @@ namespace Smokey.Internal
 			{
 				if (strs[i].Contains("*"))
 				{
-					Console.Error.WriteLine("--exclude-name doesn't support wild cards");
+					Console.Error.WriteLine("{0} doesn't support wild cards", option);
 					valid = false;
 				}
 			}
@@ -286,7 +300,7 @@ namespace Smokey.Internal
 			for (int i = 0; i < nv.Count; ++i)
 				Settings.Add(nv.GetKey(i), nv.Get(i));
 				
-			if (options.Has("-not-localized"))
+			if (options.Has("-not-localized") && !options.Has("-include-localized"))
 				Settings.Add("*localized*", "false");
 
 			string paths = Settings.Get("custom", string.Empty);
@@ -333,13 +347,14 @@ namespace Smokey.Internal
 					watcher.Add(name);
 				});
 				
-				analyzer.ExcludedChecks = options.Values("-exclude-check");								
-				analyzer.ExcludeNames = options.Values("-exclude-name");
+				analyzer.ExcludedChecks = options.Values("-exclude-check").Except(options.Values("-include-check"));
+				analyzer.ExcludeNames = options.Values("-exclude-name").Except(options.Values("-include-name"));
 				
 				string[] onlyType = options.Values("-only-type");
 				
-				Severity severity = (Severity) Enum.Parse(typeof(Severity), options.Value("-severity"));
-				bool ignoreBreaks = options.Has("-ignore-breaking");
+				string[] severities = options.Values("-severity");
+				Severity severity = (Severity) Enum.Parse(typeof(Severity), severities[severities.Length - 1]);
+				bool ignoreBreaks = options.Has("-ignore-breaking") && !options.Has("-include-breaking");
 				errors = analyzer.Analyze(options.Operands[0], onlyType, severity, ignoreBreaks);
 				TimeSpan elapsed = DateTime.Now - startTime;
 				
