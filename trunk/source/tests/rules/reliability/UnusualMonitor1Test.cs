@@ -43,11 +43,11 @@ namespace Smokey.Tests
 			{
 				object result = null;
 				
-				lock (m_mutex)
+				lock (m_lock)
 				{
 					while (m_queue.Count == 0)
 					{
-						Ignore.Value = Monitor.Wait(m_mutex);
+						Ignore.Value = Monitor.Wait(m_lock);
 					}
 					
 					result = m_queue.Dequeue();
@@ -56,7 +56,7 @@ namespace Smokey.Tests
 				return result;
 			}
 			
-			private readonly object m_mutex = new object();
+			private readonly object m_lock = new object();
 			private Queue m_queue = new Queue();
 		}		
 
@@ -66,9 +66,9 @@ namespace Smokey.Tests
 			{
 				object result = null;
 				
-				lock (m_mutex)
+				lock (m_lock)
 				{
-					Ignore.Value = Monitor.Wait(m_mutex, 100);
+					Ignore.Value = Monitor.Wait(m_lock, 100);
 					
 					result = m_queue.Dequeue();
 				}
@@ -76,7 +76,7 @@ namespace Smokey.Tests
 				return result;
 			}
 			
-			private readonly object m_mutex = new object();
+			private readonly object m_lock = new object();
 			private Queue m_queue = new Queue();
 		}		
 
@@ -86,11 +86,11 @@ namespace Smokey.Tests
 			{
 				object result = null;
 				
-				lock (m_mutex)
+				lock (m_lock)
 				{
 					while (m_queue.Count == 0 && m_count == 0)
 					{
-						Ignore.Value = Monitor.Wait(m_mutex);
+						Ignore.Value = Monitor.Wait(m_lock);
 					}
 					
 					result = m_queue.Dequeue();
@@ -100,7 +100,7 @@ namespace Smokey.Tests
 				return result;
 			}
 			
-			private readonly object m_mutex = new object();
+			private readonly object m_lock = new object();
 			private Queue m_queue = new Queue();
 			private int m_count = 1;
 		}		
@@ -111,11 +111,11 @@ namespace Smokey.Tests
 			{
 				object result = null;
 				
-				lock (m_mutex)
+				lock (m_lock)
 				{
 					while (m_queue.Count == 0)
 					{
-						Monitor.Wait(m_mutex);
+						Monitor.Wait(m_lock);
 					}
 					
 					result = m_queue.Dequeue();
@@ -124,7 +124,7 @@ namespace Smokey.Tests
 				return result;
 			}
 			
-			private readonly object m_mutex = new object();
+			private readonly object m_lock = new object();
 			private Queue m_queue = new Queue();
 		}		
 
@@ -134,11 +134,11 @@ namespace Smokey.Tests
 			{
 				object result = null;
 				
-				lock (m_mutex)
+				lock (m_lock)
 				{
 					while (m_queue.Count == 0)
 					{
-						Ignore.Value = Monitor.Wait(m_mutex);
+						Ignore.Value = Monitor.Wait(m_lock);
 					}
 					
 					result = m_queue.Dequeue();
@@ -147,7 +147,7 @@ namespace Smokey.Tests
 				return result;
 			}
 			
-			private static object m_mutex = new object();
+			private static object m_lock = new object();
 			private static Queue m_queue = new Queue();
 		}		
 
@@ -157,11 +157,11 @@ namespace Smokey.Tests
 			{
 				object result = null;
 				
-				lock (m_mutex)
+				lock (m_lock)
 				{
 					while (m_queue.Count == 0)
 					{
-						Monitor.Wait(m_mutex);
+						Monitor.Wait(m_lock);
 					}
 					
 					result = m_queue.Dequeue();
@@ -170,7 +170,7 @@ namespace Smokey.Tests
 				return result;
 			}
 			
-			private static object m_mutex = new object();
+			private static object m_lock = new object();
 			private static Queue m_queue = new Queue();
 		}		
 
@@ -180,11 +180,11 @@ namespace Smokey.Tests
 			{
 				object result = null;
 				
-				lock (m_mutex)
+				lock (m_lock)
 				{
 					if (m_queue.Count == 0)
 					{
-						Ignore.Value = Monitor.Wait(m_mutex);
+						Ignore.Value = Monitor.Wait(m_lock);
 					}
 					
 					result = m_queue.Dequeue();
@@ -193,7 +193,7 @@ namespace Smokey.Tests
 				return result;
 			}
 			
-			private readonly object m_mutex = new object();
+			private readonly object m_lock = new object();
 			private Queue m_queue = new Queue();
 		}		
 
@@ -203,9 +203,9 @@ namespace Smokey.Tests
 			{
 				object result = null;
 				
-				lock (m_mutex)
+				lock (m_lock)
 				{
-					Ignore.Value = Monitor.Wait(m_mutex);
+					Ignore.Value = Monitor.Wait(m_lock);
 					
 					result = m_queue.Dequeue();
 				}
@@ -213,7 +213,7 @@ namespace Smokey.Tests
 				return result;
 			}
 			
-			private readonly object m_mutex = new object();
+			private readonly object m_lock = new object();
 			private Queue m_queue = new Queue();
 		}		
 
@@ -223,11 +223,11 @@ namespace Smokey.Tests
 			{
 				object result = null;
 				
-				lock (m_mutex)
+				lock (m_lock)
 				{
 					while (m_queue.Count == 0)
 					{
-						Ignore.Value = Monitor.Wait(m_mutex);
+						Ignore.Value = Monitor.Wait(m_lock);
 						Console.WriteLine("waiting");
 					}
 					
@@ -237,7 +237,7 @@ namespace Smokey.Tests
 				return result;
 			}
 			
-			private readonly object m_mutex = new object();
+			private readonly object m_lock = new object();
 			private Queue m_queue = new Queue();
 		}		
 
@@ -247,11 +247,11 @@ namespace Smokey.Tests
 			{
 				object result = null;
 				
-				lock (m_mutex)
+				lock (m_lock)
 				{
 					if (m_queue.Count == 0)
 					{
-						Ignore.Value = Monitor.Wait(m_mutex);
+						Ignore.Value = Monitor.Wait(m_lock);
 					}
 					
 					result = m_queue.Dequeue();
@@ -260,7 +260,7 @@ namespace Smokey.Tests
 				return result;
 			}
 			
-			private static object m_mutex = new object();
+			private static object m_lock = new object();
 			private static Queue m_queue = new Queue();
 		}		
 
@@ -270,11 +270,11 @@ namespace Smokey.Tests
 			{
 				object result = null;
 				
-				lock (m_mutex)
+				lock (m_lock)
 				{
 					while (m_queue.Count == 0)
 					{
-						Monitor.Wait(m_mutex);
+						Monitor.Wait(m_lock);
 						Console.WriteLine("waiting");
 					}
 					
@@ -284,7 +284,7 @@ namespace Smokey.Tests
 				return result;
 			}
 			
-			private static object m_mutex = new object();
+			private static object m_lock = new object();
 			private static Queue m_queue = new Queue();
 		}		
 

@@ -2057,7 +2057,7 @@
 			{
 				public void ChangeState(int value)
 				{
-					lock (m_mutex)
+					lock (m_lock)
 					{
 						// In the monitor pattern we have a thread which waits on a
 						// boolean expression (the condition variable). Whenever state
@@ -2072,7 +2072,7 @@
 						// thread. And, because pulsing is a no-op if no threads are waiting,
 						// PulseAll allows multiple threads to wake up if one of our pulses
 						// was missed.
-						Monitor.PulseAll(m_mutex);
+						Monitor.PulseAll(m_lock);
 					}
 				}
 				
@@ -2080,11 +2080,11 @@
 				// probably also want to use IDisposable.
 				public void Shutdown()
 				{
-					lock (m_mutex)
+					lock (m_lock)
 					{
 						m_quitting = true;
 						
-						Monitor.PulseAll(m_mutex);
+						Monitor.PulseAll(m_lock);
 					}
 				}
 				
@@ -2092,7 +2092,7 @@
 				{
 					while (true)
 					{						
-						lock (m_mutex)
+						lock (m_lock)
 						{
 							// When we do a wait it has to happen within a lock and the
 							// wait should be inside a loop which checks the condition
@@ -2109,7 +2109,7 @@
 								// Note that this lock management, and the standardized
 								// pattern, are why monitors tend to result in better
 								// code than the lower level synchronization primitives.
-								Ignore.Value = Monitor.Wait(m_mutex);
+								Ignore.Value = Monitor.Wait(m_lock);
 							}	
 							
 							// Once we're happy with our condition variable we can do
@@ -2122,7 +2122,7 @@
 					}
 				}
 				
-				private object m_mutex = new object();
+				private object m_lock = new object();
 				private bool m_quitting;
 				private int m_state;
 			}
