@@ -48,7 +48,7 @@ namespace Smokey.App
 				
 		/// <summary>List of checkIDs to skip when checking the assembly.</summary>
 		/// <exception cref="System.ArgumentException">Thrown if a checkID is not in the ViolationDatabase.</exception>
-		public string[] ExcludedChecks
+		public IEnumerable<string> ExcludedChecks
 		{
 			set 
 			{
@@ -65,7 +65,7 @@ namespace Smokey.App
 		/// the type/method for only that checkID. Note that the compare need not be exact 
 		/// ("AnalyzeAssembly::set_" will match all of our property setters).</remarks>
 		/// <exception cref="System.ArgumentException">Thrown if a checkID is not in the ViolationDatabase.</exception>
-		public string[] ExcludeNames
+		public IEnumerable<string> ExcludeNames
 		{
 			set 
 			{						

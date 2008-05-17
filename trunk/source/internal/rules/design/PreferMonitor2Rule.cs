@@ -22,50 +22,61 @@
 using Mono.Cecil;
 using System;
 using Smokey.Framework;
+using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
+using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class PreferMonitorRule : Rule
+	internal class PreferMonitor2Rule : Rule
 	{				
-		public PreferMonitorRule(AssemblyCache cache, IReportViolations reporter) 
-			: base(cache, reporter, "D1052")
+		public PreferMonitor2Rule(AssemblyCache cache, IReportViolations reporter) 
+			: base(cache, reporter, "D1056")
 		{
 		}
 				
 		public override void Register(RuleDispatcher dispatcher) 
 		{
-			dispatcher.Register(this, "VisitType");
+			dispatcher.Register(this, "VisitBegin");
+			dispatcher.Register(this, "VisitNew");
+			dispatcher.Register(this, "VisitFini");
+		}
+						
+		public void VisitBegin(BeginMethod begin)
+		{
+			Log.DebugLine(this, "-----------------------------------"); 
+			Log.DebugLine(this, "{0:F}", begin.Info.Instructions);				
+
+			m_offset = -1;
+		}
+		
+		public void VisitNew(NewObj newer)
+		{				
+			if (m_offset < 0)
+			{
+				if (newer.Ctor.ToString().StartsWith("System.Void System.Threading.Mutex::.ctor(") || newer.Ctor.ToString().StartsWith("System.Void System.Threading.Semaphore::.ctor("))
+				{
+					for (int i = 0; i < newer.Ctor.Parameters.Count && m_offset < 0; ++i)
+					{
+						if (newer.Ctor.Parameters[i].ParameterType.FullName == "System.String")
+						{
+							m_offset = newer.Untyped.Offset;
+							Log.DebugLine(this, "found bad call at {0:X2}", m_offset);
+						}
+					}
+				}
+			}
 		}
 				
-		public void VisitType(TypeDefinition type)
-		{		
-			FieldDefinition field = DoGetBadField(type);
-			
-			if (field != null)
+		public void VisitFini(EndMethod end)
+		{
+			if (m_offset >= 0)
 			{
-				string details = "Field: " + field.Name;
-				Reporter.TypeFailed(type, CheckID, details);
+				Reporter.MethodFailed(end.Info.Method, CheckID, m_offset, string.Empty);
 			}
 		}
 
-		private FieldDefinition DoGetBadField(TypeDefinition type)
-		{
-			foreach (FieldDefinition field in type.Fields)
-			{
-				Log.DebugLine(this, "{0} is of type {1}", field.Name, field.FieldType);
-			
-				switch (field.FieldType.FullName)
-				{
-					case "System.Threading.AutoResetEvent":
-					case "System.Threading.ManualResetEvent":
-					case "System.Threading.Semaphore":
-						return field;
-				}
-			}
-			
-			return null;
-		}
+		private int m_offset;
 	}
 }
 

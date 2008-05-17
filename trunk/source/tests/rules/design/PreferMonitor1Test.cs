@@ -32,7 +32,7 @@ using System.Threading;
 namespace Smokey.Tests
 {
 	[TestFixture]
-	public class PreferMonitorTest : TypeTest
+	public class PreferMonitor1Test : TypeTest
 	{	
 		// test classes
 		public class Good1
@@ -76,7 +76,7 @@ namespace Smokey.Tests
 		}			
 								
 		// test code
-		public PreferMonitorTest() : base(
+		public PreferMonitor1Test() : base(
 			new string[]{"Good1"},
 			new string[]{"Bad1", "Bad2", "Bad3"})	
 		{
@@ -84,7 +84,7 @@ namespace Smokey.Tests
 						
 		protected override Rule OnCreate(AssemblyCache cache, IReportViolations reporter)
 		{
-			return new PreferMonitorRule(cache, reporter);
+			return new PreferMonitor1Rule(cache, reporter);
 		}
 	} 
 }
