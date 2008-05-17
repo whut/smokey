@@ -44,7 +44,7 @@ namespace Smokey.Internal
 	        if (m_disposed)        
     	        throw new ObjectDisposedException(GetType().Name);
             
-			lock (m_mutex)
+			lock (m_lock)
 			{
 				m_name = name;	// we don't want to pulse this, we want to reply on the timeout instead
 			}
@@ -56,12 +56,12 @@ namespace Smokey.Internal
 			if (m_disposed)        
 				throw new ObjectDisposedException(GetType().Name);
 			
-			lock (m_mutex)
+			lock (m_lock)
 			{
 				if (m_running)
 				{
 					m_running = false;
-		            Monitor.PulseAll(m_mutex);
+		            Monitor.PulseAll(m_lock);
 				}
 			}
 
@@ -88,13 +88,13 @@ namespace Smokey.Internal
 		{
 			bool wrote = false;
 			
-			lock (m_mutex)
+			lock (m_lock)
 			{
 				while (m_running)
 				{
 					while (m_running && m_name == null)
 					{
-						Ignore.Value = Monitor.Wait(m_mutex, m_interval);
+						Ignore.Value = Monitor.Wait(m_lock, m_interval);
 					}
 	
 					if (m_running && m_name != null)	// only write if we got new info
@@ -123,7 +123,7 @@ namespace Smokey.Internal
 		private readonly bool m_verbose;
 		private bool m_disposed = false;
 
-		private object m_mutex = new object();
+		private object m_lock = new object();
 			private bool m_running = true;
 			private string m_name;
 		#endregion

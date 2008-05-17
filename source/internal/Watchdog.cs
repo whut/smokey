@@ -43,10 +43,10 @@ namespace Smokey.Internal
 	        if (m_disposed)        
     	        throw new ObjectDisposedException(GetType().Name);
     	                    
-			lock (m_mutex)
+			lock (m_lock)
 			{
 				m_name = name;
-	            Monitor.PulseAll(m_mutex);
+	            Monitor.PulseAll(m_lock);
 			}
 		}
 				
@@ -56,12 +56,12 @@ namespace Smokey.Internal
 			if (m_disposed)        
 				throw new ObjectDisposedException(GetType().Name);
 				
-			lock (m_mutex)
+			lock (m_lock)
 			{
 				if (m_running)
 				{
 					m_running = false;
-		            Monitor.PulseAll(m_mutex);
+		            Monitor.PulseAll(m_lock);
 				}				
 			}
 			
@@ -87,11 +87,11 @@ namespace Smokey.Internal
 		[DisableRule("D1038", "DontExit2")]		// we can't really throw because we are in a thread
 		private void DoThread(object instance)
 		{
-			lock (m_mutex)
+			lock (m_lock)
 			{
 				while (m_running)
 				{
-					bool pulsed = Monitor.Wait(m_mutex, m_timeout);
+					bool pulsed = Monitor.Wait(m_lock, m_timeout);
 
 					if (!pulsed)
 					{
@@ -113,7 +113,7 @@ namespace Smokey.Internal
 		private readonly bool m_verbose;
 		private bool m_disposed = false;
 		
-		private object m_mutex = new object();
+		private object m_lock = new object();
 			private bool m_running = true;
 			private string m_name;
 		#endregion

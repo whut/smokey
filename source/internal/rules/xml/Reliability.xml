@@ -1053,7 +1053,7 @@
 			{
 				public void Produce(object o)
 				{
-					lock (m_mutex)
+					lock (m_lock)
 					{
 						m_queue.Enqueue(o);
 						
@@ -1070,7 +1070,7 @@
 						//
 						// Note that, unlike pthreads, the lock must be held when
 						// Pulse or PulseAll is called.
-						Monitor.PulseAll(m_mutex);
+						Monitor.PulseAll(m_lock);
 					}
 				}
 				
@@ -1078,7 +1078,7 @@
 				{
 					object result = null;
 					
-					lock (m_mutex)
+					lock (m_lock)
 					{
 						// Block until we're happy with our wait predicate. If multiple 
 						// threads are running Consume then we must use a loop to ensure 
@@ -1090,7 +1090,7 @@
 							// The wait call will release our mutex and wait for a Pulse.
 							// When pulsed the mutex will be reacquired and wait will return
 							// true (always true because we don't use a timeout).
-							Ignore.Value = Monitor.Wait(m_mutex);
+							Ignore.Value = Monitor.Wait(m_lock);
 						}
 						
 						result = m_queue.Dequeue();
@@ -1099,7 +1099,7 @@
 					return result;
 				}
 				
-				private object m_mutex = new object();
+				private object m_lock = new object();
 				private Queue m_queue = new Queue();
 			}
 			</CSharp>
@@ -1133,7 +1133,7 @@
 			{
 				public void Produce(object o)
 				{
-					lock (m_mutex)
+					lock (m_lock)
 					{
 						m_queue.Enqueue(o);
 						
@@ -1150,7 +1150,7 @@
 						//
 						// Note that, unlike pthreads, the lock must be held when
 						// Pulse or PulseAll is called.
-						Monitor.PulseAll(m_mutex);
+						Monitor.PulseAll(m_lock);
 					}
 				}
 				
@@ -1158,7 +1158,7 @@
 				{
 					object result = null;
 					
-					lock (m_mutex)
+					lock (m_lock)
 					{
 						// Block until we're happy with our wait predicate. If multiple 
 						// threads are running Consume then we must use a loop to ensure 
@@ -1170,7 +1170,7 @@
 							// The wait call will release our mutex and wait for a Pulse.
 							// When pulsed the mutex will be reacquired and wait will return
 							// true (always true because we don't use a timeout).
-							bool pulsed = Monitor.Wait(m_mutex, m_timeout);
+							bool pulsed = Monitor.Wait(m_lock, m_timeout);
 							
 							// It's also possible to use the timeout to work around
 							// missed pulses.
@@ -1184,7 +1184,7 @@
 					return result;
 				}
 				
-				private object m_mutex = new object();
+				private object m_lock = new object();
 				private Queue m_queue = new Queue();
 				private TimeSpan m_timeout = TimeSpan.FromSeconds(60);
 			}

@@ -39,10 +39,10 @@ namespace Smokey.Tests
 		{						
 			public void Use()
 			{
-				Console.WriteLine(m_mutex);
+				Console.WriteLine(m_lock);
 			}
 			
-			private object m_mutex = new object();
+			private object m_lock = new object();
 		}			
 		
 		public class Bad1
