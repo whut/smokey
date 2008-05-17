@@ -64,6 +64,12 @@ namespace Smokey.Internal.Rules
 			// unused ctors.
 			if (type.HasDisableRule("P1012", Cache))
 				m_checkCtors = false;
+				
+			if (m_needsCheck)
+			{
+				Log.DebugLine(this, "-----------------------------------"); 
+				Log.DebugLine(this, "{0}", type);				
+			}
 		}
 		
 		public void VisitMethod(MethodDefinition method)
@@ -130,6 +136,7 @@ namespace Smokey.Internal.Rules
 				if (method.CustomAttributes.HasDisableRule("D1032"))
 					break;
 
+				Log.DebugLine(this, "adding {0}", method);				
 				m_methods.Add(method);
 			}
 			while (false);
@@ -147,7 +154,10 @@ namespace Smokey.Internal.Rules
 			{
 				int i = m_methods.BinarySearch(load.Method, m_comparer);
 				if (i >= 0)
+				{
+					Log.DebugLine(this, "removing {0} (address is taken)", m_methods[i]);				
 					m_methods.RemoveAt(i);
+				}
 			}
 		}
 		
@@ -157,8 +167,11 @@ namespace Smokey.Internal.Rules
 			{
 				int i = m_methods.BinarySearch(call.Target, m_comparer);
 				if (i >= 0)
+				{
+					Log.DebugLine(this, "removing {0} (it's called)", m_methods[i]);				
 					m_methods.RemoveAt(i);
 				}
+			}
 		}
 		
 		public void VisitNew(NewObj newer)
@@ -167,14 +180,18 @@ namespace Smokey.Internal.Rules
 			{
 				int i = m_methods.BinarySearch(newer.Ctor, m_comparer);
 				if (i >= 0)
+				{
+					Log.DebugLine(this, "removing {0} (ctor is called)", m_methods[i]);				
 					m_methods.RemoveAt(i);
+				}
 			}
 		}
 		
 		public void VisitFini(EndTesting end)
 		{
-			if (m_needsCheck && m_methods.Count > 0)
+			if (m_methods.Count > 0)
 			{
+				Log.DebugLine(this, "{0} methods were not called", m_methods.Count);				
 				CompareNames comparer = new CompareNames();
 				m_methods.Sort(comparer);
 				

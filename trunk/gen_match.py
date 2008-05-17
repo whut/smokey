@@ -162,7 +162,7 @@ def processLines(lines):
 		processLine(lines[i], i)
 		
 def writeProlog(lines):
-	print("		public bool DoMatch(int index)")
+	print("		private bool DoMatch(int index)")
 	print("		{")
 	print("			bool match = false;")
 	print("")

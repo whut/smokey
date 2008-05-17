@@ -28,20 +28,20 @@ namespace EvilDoer
 	// P1012/NotInstantiated
 	internal class BadNaming
 	{				
-		// MO1000/UnusedMethod
+		// D1032/UnusedMethod
 		public BadNaming()
 		{
 		}
 		
-		// D1032/UseMonoNaming
-		// MO1000/UnusedMethod
+		// D1032/UnusedMethod
+		// MO1000/UseMonoNaming
 		public static void BadParam(int not_cool)
 		{
 			System.Diagnostics.Debug.WriteLine("hello" + not_cool);
 		}
 
 		// MO1000/UseMonoNaming
-		// MO1000/UnusedMethod
+		// D1032/UnusedMethod
 		public static void camelCase(int cool)
 		{
 			System.Diagnostics.Debug.WriteLine("hello" + cool);

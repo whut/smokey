@@ -32,21 +32,32 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 
 /Library/Frameworks/Mono.framework/Versions/1.9/lib/mono/gac/gtk-sharp/2.10.0.0__35e10195dab3c99f/gtk-sharp.dll			  
 
-* Tweak dispatcher
-	- BeginTesting AssmDef CheckTypes CheckMethods CallGraph EndTesting
-	- also change comments so it's clear what the order is
-	- most of the rules that use CallGraph should use EndChecking instead
-* Do a checkin
 * NewVersionRule
-	- in BeginChecking download a version file
-	- in EndChecking if we got the file verify versin numbers, otherwise log warning
+	- write a unit test and then the rule
+	- in BeginTesting download a version file		1.2
+		http://home.comcast.net/~jesse98/public/SmokeyVersion
+	- xml should have a link to googlecode
+	- in EndTesting if we got the file verify version numbers, otherwise log warning, only compare
+	  major and minor
+			Version version = Assembly.GetExecutingAssembly().GetName().Version;
+	- cancel download if it hasn't finished in time
 	- should be able to disable this rule
+			try {
+				WebClient wc = new WebClient ();
+				wc.DownloadFile (new Uri (definitionsUri), definitionsFile);	// use DownloadStringAsync
+			}
+			catch (WebException e) {
+				if (Runner.VerbosityLevel > 0)
+					Console.WriteLine (e);
+				return false;
+			}
+	- update release checklist with the file to update
 * Need profiles like fxcop?
 	- "public API review" profile, a "bug review" profile, a "full analysis review" profile
 	- maybe a system profile
 	- should be able to make custom profiles
 	- need to be able to undo most switches
-	- add --ignore-resource and add a SysIgnore resource
+	- add --ignore-resource and add a SysIgnore resource, ignore is a little confusing
 	- ignore files should be unioned
 	- proile could just be a string prepended to command line
 	- does it make sense to support profile merging?

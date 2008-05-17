@@ -1696,4 +1696,77 @@
 			</Fix>
 		</Translation>
 	</Violation>
+
+	<Violation checkID = "R1037" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "RecursiveLock1" category = "Reliability">			
+			<Cause>
+			A method acquires a lock and calls another method on the same object which
+			acquires the same lock.
+			</Cause>
+		
+			<Description>
+			Relying on recursive locks can make threaded code easier to write, but it also
+			blurs the boundaries between threaded and serialized code which can lead to 
+			subtle bugs, especially as the code evolves. 
+			
+			Locks can be considered to be a mechanism for preserving class invariants in
+			the presence of threading. When a lock is entered the object should be in a 
+			consistent state so that the code may safely operate on the object, while the
+			lock is held the object may transition to a state where the invariant does not
+			hold, but when the lock exits the invariant should be restored. But recursive locks
+			muddy this picture and make it more difficult to verify that the code is correct.
+			
+			There are two places where recurive locks are especially dangerous. The first is
+			if the monitor pattern is used with a lock which has already been acquired. When
+			Monitor::Wait is called both locks will be released. This can lead to unexpected
+			results because now any thread can mutate the object even though the first lock
+			was never explicitly released.
+			
+			The second involves a call to an event or delegate while a lock is held. This is
+			a very bad idea in general, because there is no way to know what this code is
+			doing. It may block indefinitely, it may try to acquire a lock held by another
+			thread and deadlock, or it may call back into our object when its invariant does
+			not hold. 
+			</Description> 
+	
+			<Fix>
+			Restructure the code so that the public methods only call private methods and
+			the public methods are the only methods that lock. Also avoid calling delegates
+			or events while holding a lock.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "R1038" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "RecursiveLock2" category = "Reliability">			
+			<Cause>
+			A delegate is called or an event is fired while a lock is held.
+			</Cause>
+		
+			<Description>
+			It's very important to understand what the code is doing when a lock is held.
+			If you allow arbitrary code to execute under a lock then it's very difficult 
+			to analyze the code for correctness which can open the door to deadlocks or
+			subtle reentrancy problems.
+			
+			Locks can be considered to be a mechanism for preserving class invariants in
+			the presence of threading. When a lock is entered the object should be in a 
+			consistent state so that the code may safely operate on the object, while the
+			lock is held the object may transition to a state where the invariant does not
+			hold, but when the lock exits the invariant should be restored. 
+			
+			If you do allow arbitrary code to be called while a lock is held then you 
+			must be prepared to handle reentrant calls. This means that locks must be
+			recursive and any public method may be called while a lock is held. It's
+			certainly possible to implement such code correctly, but it's fragile and
+			can easily break as the code evolves.
+			</Description> 
+	
+			<Fix>
+			Don't allow arbitrary code to execute from within locks. If you do allow this
+			then document that the class invariant must hold when the external code is called
+			and that the external code must be very careful about acquiring other locks.
+			</Fix>
+		</Translation>
+	</Violation>
 </Violations>
