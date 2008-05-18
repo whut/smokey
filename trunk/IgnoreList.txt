@@ -1,52 +1,39 @@
 ae
 aptca
 arg
-args
 attr
 
 bitwise
 
 cancelled
 cctor
-check-xml
 complus
-Concat
 concat
 const
 css
 ctor
-Ctor
 
 destructor 
-destructors
 dll
 dtd
 dw
 
-en-us 
 enum
-Enum
-exclude-
-exclude-check 
-exclude-name 
 
 finalizer
-Formatters
+formatters
 
-generate-html-violations
 gmcs
 gt
-gtk-sharp
+gtk
 
 Hashtable
 href
 html
 http
 Http
-https
 hungarian
 
-ignore-breaking
 Impl
 indices
 instantiable
@@ -59,7 +46,6 @@ ldobj
 linq
 lhs
 logfile
-Login
 login
 logout
 lpsz
@@ -72,28 +58,20 @@ Mutex
 
 namespace 
 Namespace 
-namespaces
-Namespaces
 navbar
 newobj
-non-null 
-non-private 
-non-static
 nonserializable
 Ntlm
 num
 
 Odbc
-only-type
 opcode 
 overridable
 
 param
-params
-Params
 Posix
 
-Refactor 
+refactor 
 refactored
 Regex
 Remoting
@@ -101,15 +79,12 @@ ret
 rhs
 Rijndael
 runtime
-Runtime
 
 serializable
 signon
 signoff
 stderr
 struct
-Structs 
-structs
 subclassed
 sz
 
@@ -118,9 +93,9 @@ Tls
 tmp
 
 unbox
-unboxed 
-unboxing
 unmanaged
+uri
+url
 
 Varpop 
 

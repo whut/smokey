@@ -50,15 +50,24 @@ namespace Smokey.Internal.Rules
 		public static extern IntPtr aspell_error_message(AspellCanHaveError ths);
 		#endregion
 
-		#region Speller
+		#region Speller -------------------------------------------------------
 		[DllImport("aspell")]
 		public static extern AspellCanHaveError new_aspell_speller(AspellConfig config);
+
+		[DllImport("aspell")]
+		public static extern IntPtr aspell_speller_error(AspellSpeller ths);
+
+		[DllImport("aspell")]
+		public static extern IntPtr aspell_speller_error_message(AspellSpeller ths);
 
 		[DllImport("aspell")]
 		public static extern AspellSpeller to_aspell_speller(AspellCanHaveError ths);
 
 		[DllImport("aspell")]
 		public static extern int aspell_speller_check(AspellSpeller ths, string word, int wordSize);
+		
+		[DllImport("aspell")]
+		public static extern int aspell_speller_add_to_session(AspellSpeller ths, string word, int wordSize);
 
 //		[DllImport("aspell")]
 //		public static extern AspellWordList aspell_speller_suggest(AspellSpeller ths, string word, int wordSize);

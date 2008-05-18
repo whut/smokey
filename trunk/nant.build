@@ -48,8 +48,10 @@ profile      enables smokey's built in profiler, defaults to false
 				<include name = "Mono.Cecil.dll"/>
 				<include name = "System.Configuration.dll"/>
 			</references>
-			<resources basedir = "source/internal/rules/xml">
-				<include name="*.xml"/>
+			<resources>
+				<include name="IgnoreList.txt"/>
+				<include name="SysIgnore.txt"/>
+				<include name="source/internal/rules/xml/*.xml"/>
 			</resources>
 			<sources basedir = "source">
 				<include name = "app/*.cs"/>
