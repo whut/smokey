@@ -20,10 +20,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Smokey.Framework;
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
@@ -107,18 +109,13 @@ namespace Smokey.Internal.Rules
 				if (char.IsUpper(word[i]) || char.IsNumber(word[i]))
 					return true;
 			}
-			
-			// Or if it's in our ignore list.
-			int index = m_ignore.BinarySearch(word);
-			if (index >= 0)
-				return true;
-			
+						
 			int result = NativeMethods.aspell_speller_check(m_speller, word, -1);
 	        GC.KeepAlive(this);
 			return result == 1;
 		}
 				
-		#region Private methods
+		#region Private Methods -----------------------------------------------
 		~Aspell()
 		{
 			if (m_speller != IntPtr.Zero)
@@ -138,14 +135,19 @@ namespace Smokey.Internal.Rules
 			
 			m_speller = NativeMethods.to_aspell_speller(result);
 				
-			m_ignore.Add("exe");		// make sure this list stays sorted
-			m_ignore.Add("mdb");
-			m_ignore.Add("stdout");
-			m_ignore.Add("xml");
+			DoAdd("exe");		
+			DoAdd("mdb");
+			DoAdd("stdout");
+			DoAdd("xml");
 			
-			string path = Settings.Get("ignoreList", string.Empty);
+			string path = Settings.Get("ignoreList", string.Empty);	// TODO: remove this
 			if (path.Length > 0)
-				DoAddIgnoreFile(path);
+				DoAddDictFile(path);
+
+			path = Settings.Get("dictionary", string.Empty);
+			string[] entries = path.Split(':');
+			foreach (string s in entries)
+				DoAddDictFile(s);
 		}
 		
 		private static int DoSkipMarkup(string text, int index)
@@ -168,22 +170,53 @@ namespace Smokey.Internal.Rules
 			return count;
 		}
 		
-		private void DoAddIgnoreFile(string path)
+		private void DoAddDictFile(string path)
 		{
-			using (StreamReader stream = new StreamReader(path)) 
+			using (StreamReader stream = DoGetStream(path)) 
 			{
-				string text = stream.ReadToEnd();
-				string[] words = text.Split();
-				foreach (string word in words)
+				if (stream != null)
 				{
-					if (word.Length > 0)
+					string text = stream.ReadToEnd();
+					string[] words = text.Split();
+					foreach (string word in words)
 					{
-						int i = m_ignore.BinarySearch(word);
-						if (i < 0)
-							m_ignore.Insert(~i, word);
+						if (word.Length > 0)
+						{
+							DoAdd(word);
+						}
 					}
 				}
-			}	
+				else
+					Console.Error.WriteLine("couldn't load '{0}'", path);
+			}
+		}
+		
+		private StreamReader DoGetStream(string path)
+		{
+			StreamReader result = null;
+			
+			try
+			{
+				if (path.StartsWith("/resources/"))
+				{
+					Assembly assembly = Assembly.GetExecutingAssembly();
+					string file = path.Substring("/resources/".Length);
+					Stream stream = assembly.GetManifestResourceStream(file);
+					if (stream != null)
+						result = new StreamReader(stream);
+				}
+				else
+				{
+					result = new StreamReader(path);
+				}
+			}
+			catch (Exception e)
+			{
+				Log.ErrorLine(this, "Couldn't load '{0}':", path);
+				Log.ErrorLine(this, e);
+			}
+			
+			return result;
 		}
 		
 		private static bool DoIsWordStart(string text, int index)
@@ -209,7 +242,7 @@ namespace Smokey.Internal.Rules
 				char ch = text[index + count];
 				switch (char.GetUnicodeCategory(ch))
 				{
-					case UnicodeCategory.DashPunctuation:
+//					case UnicodeCategory.DashPunctuation:
 					case UnicodeCategory.DecimalDigitNumber:
 					case UnicodeCategory.LowercaseLetter:
 					case UnicodeCategory.NonSpacingMark:
@@ -232,14 +265,30 @@ namespace Smokey.Internal.Rules
 			
 			return count;
 		}
+		
+		// Note that we always want to do the add because the failure may have been due to
+		// a bad word (such as one that includes a dash).
+		private void DoAdd(string word)
+		{
+			Ignore.Value = NativeMethods.aspell_speller_add_to_session(m_speller, word, -1);
+
+			IntPtr result = NativeMethods.aspell_speller_error(m_speller);
+			if (result != IntPtr.Zero)
+			{
+				Log.WarningLine(true, "failed to add a custom word to aspell:");
+
+				IntPtr buffer = NativeMethods.aspell_speller_error_message(m_speller);
+				string text = Marshal.PtrToStringAnsi(buffer);
+				Log.WarningLine(true, text);
+			}
+		}
 		#endregion	
 		
-		#region Fields
+		#region Fields --------------------------------------------------------
 		private AspellSpeller m_speller;
-		private List<string> m_ignore = new List<string>();
 		
-		static Aspell ms_instance;
-		static bool ms_tried;
+		private static Aspell ms_instance;
+		private static bool ms_tried;
 		#endregion
 	} 
 }
