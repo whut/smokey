@@ -103,7 +103,7 @@ namespace Smokey.Internal.Rules
 		
 		private bool DoCallsLock(MethodReference method, FieldReference field, Entry entry, CallGraph graph, List<string> chain, int depth)
 		{
-			if (depth > 20)
+			if (depth > 8)			// this can't be too large or the rule takes a very long time to run
 				return false;
 			
 			chain.Add(method.ToString());

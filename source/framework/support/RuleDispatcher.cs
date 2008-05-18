@@ -317,7 +317,9 @@ namespace Smokey.Framework.Support
 //					Console.WriteLine("visiting {0} for {1} {2}", rule.Name, obj, obj.GetType());
 
 					if (m_excluding.IndexOf(rule.CheckID) < 0)
+					{
 						rule.Method.Invoke(rule.Instance, m_args);		
+					}
 //					Console.WriteLine("   done");
 				}
 				catch (DllNotFoundException dll)

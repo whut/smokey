@@ -180,7 +180,7 @@ namespace EvilDoer
 		public object this[int index] 
 		{ 
 			get {return null;}
-			set {Ignore.Value = value;}
+			set {Ignore.Value = index;}
 		}
 
 		// PO1001/DllImportPath

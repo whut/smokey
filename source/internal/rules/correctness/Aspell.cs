@@ -172,22 +172,25 @@ namespace Smokey.Internal.Rules
 		
 		private void DoAddDictFile(string path)
 		{
-			using (StreamReader stream = DoGetStream(path)) 
+			if (path.Length > 0)
 			{
-				if (stream != null)
+				using (StreamReader stream = DoGetStream(path)) 
 				{
-					string text = stream.ReadToEnd();
-					string[] words = text.Split();
-					foreach (string word in words)
+					if (stream != null)
 					{
-						if (word.Length > 0)
+						string text = stream.ReadToEnd();
+						string[] words = text.Split();
+						foreach (string word in words)
 						{
-							DoAdd(word);
+							if (word.Length > 0)
+							{
+								DoAdd(word);
+							}
 						}
 					}
+					else
+						Console.Error.WriteLine("couldn't load '{0}'", path);
 				}
-				else
-					Console.Error.WriteLine("couldn't load '{0}'", path);
 			}
 		}
 		

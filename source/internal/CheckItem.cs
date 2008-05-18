@@ -27,6 +27,7 @@ using Smokey.Framework.Support;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Smokey.Internal
@@ -96,6 +97,7 @@ namespace Smokey.Internal
 
 			Profile.Start("LoadRules");
 			DoLoadRules(assembly, cache, severity, ignoreBreaks);
+			DoCheckXml();
 			DoLoadCustomRules(cache, severity, ignoreBreaks);
 			Profile.Stop("LoadRules");
 		}
@@ -128,6 +130,7 @@ namespace Smokey.Internal
 		
 		public void CheckCallGraph()
 		{
+			m_callback("CallGraph");
 			m_dispatcher.DispatchCallGraph();
 		}
 		
@@ -179,7 +182,7 @@ namespace Smokey.Internal
 			}
 		}
 
-		#region Private methods				
+		#region Private Methods -----------------------------------------------
 		private void DoCheckType(TypeDefinition type)
 		{			
 			if (DoObjectRequiresCheck(type.FullName))
@@ -238,6 +241,10 @@ namespace Smokey.Internal
 		{			
 			TargetRuntime runtime = cache.Assembly.Runtime;
 			
+#if DEBUG
+			m_checkIDs.Add("C1004");			// rule failed rule
+#endif
+
 			Type[] types = assembly.GetTypes();
 			foreach (Type t in types)
 			{
@@ -256,6 +263,9 @@ namespace Smokey.Internal
 								m_rules.Add(rule);
 							}
 						}
+#if DEBUG
+						m_checkIDs.Add(rule.CheckID);
+#endif
 					}
 					catch (Exception e)
 					{
@@ -264,6 +274,16 @@ namespace Smokey.Internal
 						Log.ErrorLine(this, e.StackTrace);
 					}
 				}
+			}
+		}
+		
+		[Conditional("DEBUG")]
+		private void DoCheckXml()
+		{
+			foreach (Violation v in ViolationDatabase.Violations)
+			{				
+				if (m_checkIDs.IndexOf(v.CheckID) < 0)
+					Log.ErrorLine(this, "couldn't find a rule for {0}", v.CheckID);
 			}
 		}
 		
@@ -286,7 +306,7 @@ namespace Smokey.Internal
 		}
 		#endregion
 
-		#region Fields
+		#region Fields --------------------------------------------------------
 		private RuleDispatcher m_dispatcher;
 		private List<Rule> m_rules = new List<Rule>();
 		private Rule.KeepAliveCallback m_callback;
@@ -295,6 +315,9 @@ namespace Smokey.Internal
 
 		private List<Error> m_errors;
 		private AssemblyCache m_cache;
+#if DEBUG
+		private List<string> m_checkIDs = new List<string>();
+#endif
 		#endregion
 	}
 }

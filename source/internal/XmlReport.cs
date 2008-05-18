@@ -64,7 +64,7 @@ namespace Smokey.Internal
 			}
 		}
 				
-		#region Private methods
+		#region Private Methods -----------------------------------------------
 		private static void DoError(XmlWriter writer, Violation violation, Location location)
 		{
 			writer.WriteStartElement("Error");
