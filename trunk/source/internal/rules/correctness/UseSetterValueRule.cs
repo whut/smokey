@@ -111,7 +111,7 @@ namespace Smokey.Internal.Rules
 		{
 			if (m_needsCheck)
 			{
-				if (end.Info.Method.Name == "set_Item")
+				if (end.Info.Method.Name == "set_Item" && end.Info.Method.Parameters.Count == 2)
 				{
 					if (!m_found1 || !m_found2)
 						Reporter.MethodFailed(end.Info.Method, CheckID, 0, string.Empty);

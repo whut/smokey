@@ -23,6 +23,7 @@ using Smokey.App;
 using Smokey.Framework;
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Diagnostics;
@@ -34,7 +35,7 @@ namespace Smokey.Internal
 	// Main entry point for Smokey.
 	internal static class Program
 	{
-		public static int Main(string[] args)
+		public static int Main(string[] inArgs)
 		{ 
 			int err = 0; 	
 			
@@ -42,6 +43,9 @@ namespace Smokey.Internal
 			{
 				Profile.Start("App");
 				
+				DoPreOptionsInit();
+				string[] args = DoExpandProfile(inArgs);
+
 				GetOptions options = new GetOptions();
 				DoParse(options, args);
 				
@@ -49,7 +53,7 @@ namespace Smokey.Internal
 				{
 					if (DoValidate(options)) 
 					{
-						DoInit(options, args);
+						DoPostOptionsInit(options, args);
 						if (!DoRun(options))
 							err = 1;
 					}
@@ -156,6 +160,7 @@ namespace Smokey.Internal
 			options.Add("-include-localized", "Undo -not-localized");
 			options.Add("-not-localized", "Disable localization rules");
 			options.Add("-out=stdout", "Path to write the report to");
+			options.Add("-profile=", "Use a named option set");
 			options.Add("-quiet", "Don't print progress");
 			options.Add("-only-type=", "Only check types where the full name contains PARAM");
 			options.Add("-set=", "Change a setting, e.g. -set:maxBoxes:0");
@@ -203,7 +208,7 @@ namespace Smokey.Internal
 			{
 				valid = false;
 			}
-			
+						
 			// -include-name values must be valid
 			names = options.Values("-include-name");
 			if (!DoTypeMethodsValid(names, "-include-name"))
@@ -290,17 +295,98 @@ namespace Smokey.Internal
 			Console.WriteLine();
 			
 			options.ShowHelp();
+
+			Console.WriteLine();
+			DoShowProfileHelp();
 		}
 		
-		private static void DoInit(GetOptions options, string[] args)
+		private static void DoShowProfileHelp()
+		{
+			Console.WriteLine("Profiles:");
+			
+			int width = "system".Length;
+			foreach (KeyValuePair<string, string> entry in Settings.Entries("profile:"))
+			{
+				int i = entry.Key.IndexOf(':');
+				string name = entry.Key.Substring(i + 1);
+				if (name.Length > width)
+					width = name.Length;
+			}
+			
+			bool foundSystem = false;
+			foreach (KeyValuePair<string, string> entry in Settings.Entries("profile:"))
+			{
+				int i = entry.Key.IndexOf(':');
+				string name = entry.Key.Substring(i + 1);
+				if (name == "system")
+					foundSystem = true;
+
+				string padding = new string(' ', width - name.Length);
+				Console.WriteLine("   {0}{1}  {2}", name, padding, entry.Value);
+			}
+			
+			if (!foundSystem)
+				Console.WriteLine("   {0}   {1}", "system", string.Join(" ", ms_systemProfile));
+		}
+		
+		private static string[] DoExpandProfile(string[] args)
+		{	
+			List<string> result = new List<string>(args.Length);
+			
+			foreach (string arg in args)
+			{				
+				if (arg.StartsWith("-profile") || arg.StartsWith("--profile"))
+				{
+					int i = arg.IndexOf('=');
+					if (i < 0)
+						i = arg.IndexOf(':');
+					if (i >= 0)
+					{
+						string profile = arg.Substring(i + 1);
+						DoAppendProfile(result, profile);
+					}
+					else
+					{
+						throw new MalformedCommandLineException(string.Format("Expected '=' or ':' in '{0}'.", arg));
+					}
+				}
+				else
+					result.Add(arg);
+			}
+			
+			return result.ToArray();
+		}
+		
+		private static void DoAppendProfile(List<string> result, string name)
+		{
+			string key = "profile:" + name;
+			if (Settings.Has(key))
+			{
+				string[] args = Settings.Get(key, string.Empty).Split(new char[]{' ', '\t'}, StringSplitOptions.RemoveEmptyEntries);
+				result.AddRange(args);
+			}
+			else if (name == "system")
+			{
+				result.AddRange(ms_systemProfile);
+			}
+			else
+			{
+				throw new MalformedCommandLineException(string.Format("'{0}' is not a valid profile name.", name));
+			}
+		}
+				
+		private static void DoPreOptionsInit()
 		{
 			Settings.Add("naming", "mono");
 
 			NameValueCollection nv = ConfigurationManager.AppSettings;
 			for (int i = 0; i < nv.Count; ++i)
 				Settings.Add(nv.GetKey(i), nv.Get(i));
-				
-			if (options.Has("-not-localized") && !options.Has("-include-localized"))
+		}
+		
+		private static void DoPostOptionsInit(GetOptions options, string[] args)
+		{				
+			if (options.Has("-not-localized"))
 				Settings.Add("*localized*", "false");
 
 			string paths = Settings.Get("custom", string.Empty);
@@ -379,6 +465,27 @@ namespace Smokey.Internal
 						
 			return count == 0;
 		}
+		#endregion	
+
+		#region Fields --------------------------------------------------------
+		private static string[] ms_systemProfile = new string[]
+		{
+			"-exclude-check=D1006",		// ImplementGenericCollection
+			"-exclude-check=D1011",		// TypedEnumerator
+			"-exclude-check=D1037",		// DontExit1
+			"-exclude-check=D1038",		// DontExit2
+			"-exclude-check=MS1010",	// ReservedExceptions
+			"-exclude-check=P1003",		// AvoidBoxing
+			"-exclude-check=P1004",		// AvoidUnboxing
+			"-exclude-check=P1005",		// StringConcat
+			"-exclude-check=P1007",		// NonGenericCollections
+			"-exclude-check=PO1001",	// DllImportPath
+			"-exclude-check=PO1002",	// DllImportExtension
+			"-exclude-check=PO1009",	// WinFormsVoodoo
+			"-ignore-breaking",
+			"-not-localized",
+			"-set:dictionary:/resources/SysIgnore.txt",
+		};
 		#endregion	
 	} 
 }

@@ -32,6 +32,7 @@ namespace Smokey.Internal
 		public Watchdog(bool verbose)
 		{			
 			m_verbose = verbose;
+			m_mainThread = Thread.CurrentThread;
 
 			m_thread = new Thread(this.DoThread);
 			m_thread.Start();
@@ -100,7 +101,8 @@ namespace Smokey.Internal
 						else
 							Console.Error.WriteLine("Timed out running {0}", m_name);
 	
-						Environment.Exit(2);						
+						m_mainThread.Abort();
+//						Environment.Exit(2);						
 					}
 				}
 			}
@@ -109,6 +111,7 @@ namespace Smokey.Internal
 		
 		#region Fields --------------------------------------------------------
 		private Thread m_thread;
+		private Thread m_mainThread;
 		private readonly TimeSpan m_timeout = TimeSpan.FromSeconds(30);	// TODO: may want to make this configurable
 		private readonly bool m_verbose;
 		private bool m_disposed = false;

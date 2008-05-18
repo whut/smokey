@@ -32,32 +32,12 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 
 /Library/Frameworks/Mono.framework/Versions/1.9/lib/mono/gac/gtk-sharp/2.10.0.0__35e10195dab3c99f/gtk-sharp.dll			  
 
-* PreferMonitor2
-	- unnamed mutex or semaphore
-* PreferMonitor2
-	- event
-* Straighten out command line switches:
-	- process these last:
-	   -include-check=PARAM             Undo an -exclude-check 
-	   -include-name=PARAM              Undo -exclude-name
-	   -include-breaking                Undo -ignore-breaking
-	   -include-localized               Undo -not-localized
-* Need profiles like fxcop?
+* Look at profiles again:
 	- "public API review" profile, a "bug review" profile, a "full analysis review" profile
-	- maybe a system profile
-	- should be able to make custom profiles
-	- add --ignore-resource and add a SysIgnore resource, ignore is a little confusing
-	- ignore files should be unioned
-	- proile could just be a string prepended to command line
-	- profile-help should show a blurb about installed profiles
-	- system: ignore nitpicks, force add a few
 	- moonlight?
-* Should get an error log if xml has a violation with no rule.
-* Need to work with pdb files
-	- may need to revisit symbol writer loading code
-* Generated html doesn't include breaking flag. Check xml too.
-* We require linq so need 1.2.9 or something.
+* We require linq so need mono 1.9.
 * Don't overwrite config file if it exists.
+* Update installed config to point to custom rule dll.
 * Need install.bat and uninstall.bat
 * Try built-in profiler again. Might want to look at heapbuddy too.
 * FxCop has 197 rules...
@@ -119,6 +99,12 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Add a script to update doc comments with DBC info (including invariants).
 * Could use threading to improve performance on multi-processors.
 * Create table but no primary key.
+* Need to work with pdb files
+	- Mono.CompilerServices does not work with pdb files
+	- gendarme has a Symbols class which is supposed to work with .net
+	/Users/jessejones/New_Files/CustomFXCopRules_VS2003/bin/Debug/CustomFXCopRules_VS2003.pdb
+	/Users/jessejones/New_Files/log4net-1.2.10/bin/net/2.0/debug/log4net.pdb
+	/Users/jessejones/Source/Old Stuff/cocoV4/coco/protocol/modules/Configurator/ConfigUtils/XP/bin/Debug/ConfigUtils.pdb
 * If --html is specified colorize example code. Should also support wiki formatting...
   already using * for bulleted lists.
 * Would be nice if we smoked the xml.
@@ -252,7 +238,9 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- update SomkeyVersion on old web site
 	- install
 	- update README
-	- upload useful files, include revision number in the source (or a version)
+	- deprecate ignoreList setting
+	- add dictionary setting
+	- add profile setting
 	- mono --debug bin/smokey_d.exe -generate-html-violations:violations
 	- mono bin/smokey.exe -html -out:report.html -set:ignoreList:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/net_2_1/System.Core.dll 
 	- upload

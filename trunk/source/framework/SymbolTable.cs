@@ -22,6 +22,7 @@
 using Mono.Cecil;
 using Mono.Cecil.Metadata;
 using Mono.CompilerServices.SymbolWriter;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,7 +36,6 @@ namespace Smokey.Framework
 	// Uses the (undocumented) Mono.CompilerServices to extract file and line
 	// info from mdb files, and Cecil to process the meta data in the image
 	// file. See /Users/jessejones/New_Files/mono-1.2.6/mcs/class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
-	// TODO: what's up with Mono.Cecil.Mdb?
 	internal class SymbolTable
 	{				
 #if TEST
@@ -114,14 +114,14 @@ namespace Smokey.Framework
 			return false;
 		}
 				
-		#region Private Methods
+		#region Private Methods -----------------------------------------------
 		private void DoLoadImage(string imagePath)	// note that we're careful only to use Mono.CompilerServices.SymbolWriter within helper methods so the CLR does not load it unless we need it
 		{
 			if (m_methodEntries == null)
 				m_methodEntries = new MethodEntries();
 				
 			Assembly assembly = Assembly.LoadFrom(imagePath);	// note that a reflection only load doesn't seem to work
-			MonoSymbolFile symbols = MonoSymbolFile.ReadSymbolFile(assembly);	
+			MonoSymbolFile symbols = MonoSymbolFile.ReadSymbolFile(assembly);	// use this ctor so that we can verify that the mdb file matches the assembly
 			
 			for (int i = 1; i <= symbols.MethodCount; ++i)		// 1-based...
 			{
@@ -201,7 +201,7 @@ namespace Smokey.Framework
 		}
 		#endregion
 		
-		#region Private Types
+		#region Private Types -------------------------------------------------
 		private struct LineInfo : IComparable<LineInfo>
 		{
 			public int Offset;
@@ -235,7 +235,7 @@ namespace Smokey.Framework
 
 			public override bool Equals(object rhsObj)
 			{
-				if (rhsObj == null)                        // objects may be null
+				if (rhsObj == null)  
 					return false;
 				
 				if (GetType() != rhsObj.GetType()) 
@@ -284,7 +284,7 @@ namespace Smokey.Framework
 
 			public override bool Equals(object rhsObj)
 			{
-				if (rhsObj == null)                        // objects may be null
+				if (rhsObj == null)   
 					return false;
 				
 				if (GetType() != rhsObj.GetType()) 
@@ -301,7 +301,7 @@ namespace Smokey.Framework
 		}
 		#endregion
 		
-		#region Fields
+		#region Fields --------------------------------------------------------
 		private MethodEntries m_methodEntries;
 		#endregion
 	}

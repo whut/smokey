@@ -36,7 +36,7 @@ namespace Smokey.Internal
 			DoWriteHtml(path);
 		}
 		
-		#region Private methods
+		#region Private Methods -----------------------------------------------
 		private void DoWriteHtml(string root)
 		{
 			if (!Directory.Exists(root))
@@ -168,8 +168,9 @@ namespace Smokey.Internal
 			stream.WriteLine("<a name = \"{0}\">", violation.TypeName);
 				stream.WriteLine("<h2 class = \"category\">{0}</h2>", violation.TypeName);
 			stream.WriteLine("</a>");
-			HtmlHelpers.WriteSeverity(stream, "Severity", violation.Severity.ToString());
 			HtmlHelpers.WriteText(stream, "CheckId", violation.CheckID);
+			HtmlHelpers.WriteSeverity(stream, "Severity", violation.Severity.ToString());
+			HtmlHelpers.WriteText(stream, "Breaking", violation.Breaking ? "Yes" : "No");
 			HtmlHelpers.WriteText(stream, "Cause", violation.Cause);
 			HtmlHelpers.WriteText(stream, "Description", violation.Description);
 			HtmlHelpers.WriteText(stream, "Fix", violation.Fix);
@@ -223,7 +224,7 @@ namespace Smokey.Internal
 		}
 		#endregion
 				
-		#region Fields
+		#region Fields --------------------------------------------------------
 		private SortedList<string, List<Violation>> m_entries = new SortedList<string, List<Violation>>();
 		#endregion
 	}
