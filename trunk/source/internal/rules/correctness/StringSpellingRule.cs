@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class StringSpellingRule : Rule
+	internal sealed class StringSpellingRule : Rule
 	{				
 		public StringSpellingRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1000")

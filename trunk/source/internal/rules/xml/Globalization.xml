@@ -140,7 +140,7 @@
 			the name is lower cased.
 			
 			You can also check custom methods using the "localize" key in the config file or
-			the -set command line switch. The value is a semicolon seperated list of method names
+			the -set command line switch. The value is a semicolon separated list of method names
 			of the form {namespace}.{type name}::{method name}. Note that the method name can
 			be ".ctor" if you want to match a constructor. For example, 
 			"-set:localize:System.Console::WriteLine". String literals are flagged if they are

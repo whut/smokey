@@ -35,7 +35,7 @@ namespace Smokey.Internal.Rules
 	// When the partition table is first built the fields are all of length one
 	// and each field name appears once and only once. After the partitions are
 	// coalesced both field names and methods appear once and only once.
-	internal class Partition
+	internal sealed class Partition
 	{
 		public Partition(string field, MethodDefinition method)
 		{
@@ -43,7 +43,7 @@ namespace Smokey.Internal.Rules
 			m_methods.Add(method);
 		}
 		
-		public List<string> Fields			// TODO: in mono 1.2.9 we can replace this with HashSet
+		public List<string> Fields			// TODO: in mono 1.9 we can replace this with HashSet
 		{
 			get {return m_fields;}
 		}
@@ -93,7 +93,7 @@ namespace Smokey.Internal.Rules
 		private List<MethodDefinition> m_methods = new List<MethodDefinition>();
 	}
 	
-	internal class SchizoidTypeRule : Rule
+	internal sealed class SchizoidTypeRule : Rule
 	{				
 		public SchizoidTypeRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1046")

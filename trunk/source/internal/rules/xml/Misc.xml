@@ -32,7 +32,7 @@
 			<CSharp>
 			namespace Acme
 			{
-				internal class Factory
+				internal sealed class Factory
 				{
 					public bool HasWidget(string partNumber)
 					{
@@ -72,7 +72,7 @@
 			type's file path. For example if the path is
 			"/Users/joebob/whizbang/source/framework/bangers/BangOn.cs" and the namespace
 			is "Framework.Helpers" then the rule will fire if bangers has a sibling
-			helprs directory. Note that this rule is only
+			helpers directory. Note that this rule is only
 			run if the assembly has an associated mdb file.
 			</Cause>
 	
@@ -99,7 +99,7 @@
 			</Description>
 	
 			<Fix>
-			Download the laest version &lt;http://code.google.com/p/smokey/&gt;.
+			Download the latest version &lt;http://code.google.com/p/smokey/&gt;.
 			</Fix>
 		</Translation>
 	</Violation>

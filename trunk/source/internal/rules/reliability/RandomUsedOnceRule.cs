@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class RandomUsedOnceRule : Rule
+	internal sealed class RandomUsedOnceRule : Rule
 	{				
 		public RandomUsedOnceRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1021")

@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class UnusualMonitor2Rule : Rule
+	internal sealed class UnusualMonitor2Rule : Rule
 	{				
 		public UnusualMonitor2Rule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1028")

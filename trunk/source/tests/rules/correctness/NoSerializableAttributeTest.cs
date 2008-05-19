@@ -55,7 +55,7 @@ namespace Smokey.Tests
 			private string m_name;
 		}
 
-		internal class Good2 : ISerializable
+		internal sealed class Good2 : ISerializable
 		{
 			public Good2(string name)
 			{

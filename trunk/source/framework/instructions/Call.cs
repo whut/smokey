@@ -44,6 +44,9 @@ namespace Smokey.Framework.Instructions
 		/// type with caller's this pointer as an argument.</summary>
 		public bool IsThisCall(AssemblyCache cache, MethodInfo caller, int callIndex)
 		{
+			DBC.Pre(cache != null, "cache is null");				
+			DBC.Pre(caller != null, "caller is null");
+				
 			if (!m_isThisCall.HasValue)
 			{
 				m_isThisCall = false;

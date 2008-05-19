@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ToStringOnStringRule : Rule
+	internal sealed class ToStringOnStringRule : Rule
 	{				
 		public ToStringOnStringRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1010")

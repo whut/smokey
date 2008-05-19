@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class KeepAliveRule : Rule
+	internal sealed class KeepAliveRule : Rule
 	{				
 		public KeepAliveRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1003")

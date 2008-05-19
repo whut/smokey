@@ -26,7 +26,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class UseStrongNameRule : Rule
+	internal sealed class UseStrongNameRule : Rule
 	{				
 		public UseStrongNameRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1004")

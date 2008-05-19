@@ -34,7 +34,7 @@ using System.Linq;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class InconsistentPropertyRule : Rule
+	internal sealed class InconsistentPropertyRule : Rule
 	{				
 		public InconsistentPropertyRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1028")

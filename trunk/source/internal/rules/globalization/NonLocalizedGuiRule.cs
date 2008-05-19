@@ -33,7 +33,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class NonLocalizedGuiRule : Rule
+	internal sealed class NonLocalizedGuiRule : Rule
 	{				
 		public NonLocalizedGuiRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "G1002")

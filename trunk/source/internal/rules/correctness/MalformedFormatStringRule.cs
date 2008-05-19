@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class MalformedFormatStringRule : Rule
+	internal sealed class MalformedFormatStringRule : Rule
 	{				
 		public MalformedFormatStringRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1002")

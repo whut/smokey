@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class Aptca2Rule : BaseAptca
+	internal sealed class Aptca2Rule : BaseAptca
 	{				
 		public Aptca2Rule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1001")

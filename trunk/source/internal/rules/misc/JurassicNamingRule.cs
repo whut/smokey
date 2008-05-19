@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class JurassicNamingRule : NetNamingRule
+	internal sealed class JurassicNamingRule : NetNamingRule
 	{				
 		public JurassicNamingRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "M1000")

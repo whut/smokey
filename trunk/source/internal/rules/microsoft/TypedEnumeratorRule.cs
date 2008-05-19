@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class TypedEnumeratorRule : Rule
+	internal sealed class TypedEnumeratorRule : Rule
 	{				
 		public TypedEnumeratorRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1011")
@@ -42,7 +42,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitType(TypeDefinition type)
 		{						
-			if (type.Implements("System.Collections.IEnumerator"))
+			if (type.Implements("System.Collections.IEnumerator") && !type.IsCompilerGenerated())
 			{
 				Log.DebugLine(this, "-----------------------------------"); 
 				Log.DebugLine(this, "checking {0}", type);		

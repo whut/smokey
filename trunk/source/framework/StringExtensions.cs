@@ -31,6 +31,8 @@ namespace Smokey.Framework.Support
 		/// <remarks>So, "inName" becomes ["in", "Name"].</remarks>
 		public static string[] CapsSplit(this string str)
 		{
+			DBC.Pre(str != null, "str is null");
+				
 			List<string> parts = new List<string>();
 			
 			int index = 0;

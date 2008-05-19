@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ClassCanBeMadeStaticRule : Rule
+	internal sealed class ClassCanBeMadeStaticRule : Rule
 	{				
 		public ClassCanBeMadeStaticRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1001")
@@ -44,14 +44,18 @@ namespace Smokey.Internal.Rules
 			Log.DebugLine(this, "-----------------------------------"); 
 			Log.DebugLine(this, "checking {0}", type);				
 
-			if (!type.IsAbstract && !type.FullName.Contains("PrivateImplementationDetails"))
+			if (!type.IsCompilerGenerated())
 			{
-				if (type.BaseType != null && type.BaseType.FullName == "System.Object")
+				if (!type.IsAbstract)
+//				if (!type.IsAbstract && !type.FullName.Contains("PrivateImplementationDetails"))
 				{
-					if (DoHasNoVirtuals(type) && DoAllFieldsAreStatic(type))
+					if (type.BaseType != null && type.BaseType.FullName == "System.Object")
 					{
-						Log.DebugLine(this, "cab be made static"); 
-						Reporter.TypeFailed(type, CheckID, string.Empty);
+						if (DoHasNoVirtuals(type) && DoAllFieldsAreStatic(type))
+						{
+							Log.DebugLine(this, "cab be made static"); 
+							Reporter.TypeFailed(type, CheckID, string.Empty);
+						}
 					}
 				}
 			}

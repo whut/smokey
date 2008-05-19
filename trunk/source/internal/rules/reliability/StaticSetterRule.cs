@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class StaticSetterRule : Rule
+	internal sealed class StaticSetterRule : Rule
 	{				
 		public StaticSetterRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1014")

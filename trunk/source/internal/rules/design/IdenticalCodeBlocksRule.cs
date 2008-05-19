@@ -77,7 +77,7 @@ namespace Smokey.Internal.Rules
 		}
 	}
 	
-	internal class IdenticalCodeBlocksRule : Rule
+	internal sealed class IdenticalCodeBlocksRule : Rule
 	{				
 		public IdenticalCodeBlocksRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1049")

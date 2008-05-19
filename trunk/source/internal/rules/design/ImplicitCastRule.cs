@@ -28,7 +28,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ImplicitCastRule : Rule
+	internal sealed class ImplicitCastRule : Rule
 	{				
 		public ImplicitCastRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1035")

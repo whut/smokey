@@ -31,7 +31,7 @@ using System.IO;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class InconsistentNamespaceRule : Rule
+	internal sealed class InconsistentNamespaceRule : Rule
 	{				
 		public InconsistentNamespaceRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "M1002")

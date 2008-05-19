@@ -29,7 +29,7 @@ using Smokey.Framework.Instructions;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class HungarianRule : Rule
+	internal sealed class HungarianRule : Rule
 	{				
 		[DisableRule("C1000", "StringSpelling")]	// ignore the weird hungarian strings
 		public HungarianRule(AssemblyCache cache, IReportViolations reporter) 

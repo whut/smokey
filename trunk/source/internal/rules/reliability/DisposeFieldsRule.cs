@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class DisposeFieldsRule : Rule
+	internal sealed class DisposeFieldsRule : Rule
 	{				
 		public DisposeFieldsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1002")

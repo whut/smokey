@@ -33,7 +33,7 @@ using System.Linq;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class StringUri1Rule : Rule
+	internal sealed class StringUri1Rule : Rule
 	{				
 		public StringUri1Rule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1031")

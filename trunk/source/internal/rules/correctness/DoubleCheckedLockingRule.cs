@@ -31,7 +31,7 @@ using System.Text.RegularExpressions;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class DoubleCheckedLockingRule : Rule
+	internal sealed class DoubleCheckedLockingRule : Rule
 	{				
 		public DoubleCheckedLockingRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1029")
@@ -148,7 +148,7 @@ namespace Smokey.Internal.Rules
 		//		stsfld     field
 		private bool DoFindNew(int index, int count)
 		{
-			Log.DebugLine(this, "checking {0} instructions starting at {0:X2} for a new", count, m_info.Instructions[index].Untyped.Offset);
+			Log.DebugLine(this, "checking {0} instructions starting at {1:X2} for a new", count, m_info.Instructions[index].Untyped.Offset);
 
 			for (int i = index; i < index + count; ++i)
 			{

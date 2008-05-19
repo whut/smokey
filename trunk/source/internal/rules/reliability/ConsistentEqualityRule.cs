@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ConsistentEqualityRule : Rule
+	internal sealed class ConsistentEqualityRule : Rule
 	{				
 		public ConsistentEqualityRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1011")

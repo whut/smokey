@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class GlobalPublicTypeRule : Rule
+	internal sealed class GlobalPublicTypeRule : Rule
 	{				
 		public GlobalPublicTypeRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1016")

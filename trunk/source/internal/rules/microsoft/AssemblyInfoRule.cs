@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class AssemblyDescriptionRule : Rule
+	internal sealed class AssemblyDescriptionRule : Rule
 	{				
 		public AssemblyDescriptionRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1000")

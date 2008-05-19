@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class InternalInterfaceRule : Rule
+	internal sealed class InternalInterfaceRule : Rule
 	{				
 		public InternalInterfaceRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1009")

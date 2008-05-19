@@ -32,7 +32,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class IndirectLinkDemandRule : Rule
+	internal sealed class IndirectLinkDemandRule : Rule
 	{				
 		public IndirectLinkDemandRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1004")

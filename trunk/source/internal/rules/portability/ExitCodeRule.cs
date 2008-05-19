@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ExitCodeRule : Rule
+	internal sealed class ExitCodeRule : Rule
 	{				
 		public ExitCodeRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "PO1007")

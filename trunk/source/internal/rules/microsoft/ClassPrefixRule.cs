@@ -29,7 +29,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ClassPrefixRule : Rule
+	internal sealed class ClassPrefixRule : Rule
 	{				
 		public ClassPrefixRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1029")

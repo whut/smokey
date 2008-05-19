@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class UnusedNewRule : Rule
+	internal sealed class UnusedNewRule : Rule
 	{				
 		public UnusedNewRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1016")

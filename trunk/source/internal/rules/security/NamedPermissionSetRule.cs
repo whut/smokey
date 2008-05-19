@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class NamedPermissionSetRule : Rule
+	internal sealed class NamedPermissionSetRule : Rule
 	{				
 		public NamedPermissionSetRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1019")

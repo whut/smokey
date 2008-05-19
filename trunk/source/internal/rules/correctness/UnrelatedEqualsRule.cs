@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class UnrelatedEqualsRule : Rule
+	internal sealed class UnrelatedEqualsRule : Rule
 	{				
 		public UnrelatedEqualsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1019")

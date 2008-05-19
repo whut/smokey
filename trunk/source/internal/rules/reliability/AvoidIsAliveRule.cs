@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class AvoidIsAliveRule : Rule
+	internal sealed class AvoidIsAliveRule : Rule
 	{				
 		public AvoidIsAliveRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1026")

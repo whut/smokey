@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class ExceptionConstructorsRule : Rule
+	internal sealed class ExceptionConstructorsRule : Rule
 	{				
 		public ExceptionConstructorsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1015")

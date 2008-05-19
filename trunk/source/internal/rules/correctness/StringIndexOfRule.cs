@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class StringIndexOfRule : Rule
+	internal sealed class StringIndexOfRule : Rule
 	{				
 		public StringIndexOfRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1012")

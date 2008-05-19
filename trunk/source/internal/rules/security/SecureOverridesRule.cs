@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class SecureOverridesRule : Rule
+	internal sealed class SecureOverridesRule : Rule
 	{				
 		public SecureOverridesRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1016")

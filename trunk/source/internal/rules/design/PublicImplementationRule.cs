@@ -30,7 +30,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class PublicImplementationRule : Rule
+	internal sealed class PublicImplementationRule : Rule
 	{				
 		public PublicImplementationRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1051")
@@ -82,6 +82,9 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitMethod(BeginMethod begin)
 		{
+			Log.DebugLine(this, "++++++++++++++++++++++++"); 
+			Log.DebugLine(this, "{0:F}", begin.Info.Instructions);				
+
 			m_type = begin.Info.Type;
 		}		
 				
@@ -103,6 +106,7 @@ namespace Smokey.Internal.Rules
 		public void VisitFini(EndTesting end)
 		{
 			Dictionary<TypeDefinition, List<string>> bad = new Dictionary<TypeDefinition, List<string>>();
+			List<TypeDefinition> hasCalls = new List<TypeDefinition>();
 		
 			foreach (KeyValuePair<MethodReference, Info> entry in m_candidates)
 			{
@@ -123,14 +127,19 @@ namespace Smokey.Internal.Rules
 						
 						methods.Add(entry.Key.ToString());
 					}
+					else
+						hasCalls.Add(entry.Value.Defined);
 				}
 			}
 			
 			foreach (KeyValuePair<TypeDefinition, List<string>> entry2 in bad)
 			{
-				string details = "Methods: " + string.Join(Environment.NewLine, entry2.Value.ToArray());
-				Log.DebugLine(this, details);	
-				Reporter.TypeFailed(entry2.Key, CheckID, details);
+				if (hasCalls.IndexOf(entry2.Key) < 0)
+				{
+					string details = "Methods: " + string.Join(Environment.NewLine, entry2.Value.ToArray());
+					Log.DebugLine(this, details);	
+					Reporter.TypeFailed(entry2.Key, CheckID, details);
+				}
 			}			
 		}
 

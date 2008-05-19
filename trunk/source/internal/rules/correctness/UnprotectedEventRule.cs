@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class UnprotectedEventRule : Rule
+	internal sealed class UnprotectedEventRule : Rule
 	{				
 		public UnprotectedEventRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1023")
@@ -60,7 +60,6 @@ namespace Smokey.Internal.Rules
 				string name = call.Target.ToString();
 				if (name.StartsWith("System.Void System.EventHandler") && name.Contains("::Invoke("))
 				{
-		Log.DebugLine(this, "found event call");				
 					// Get the index of the instruction that loaded the this argument of the
 					// Invoke call.
 					int i = m_info.Tracker.GetStackIndex(call.Index, 2);
@@ -75,13 +74,11 @@ namespace Smokey.Internal.Rules
 						// 2A: ldsfld     System.EventArgs System.EventArgs::Empty
 						// 2F: callvirt   System.Void System.EventHandler::Invoke(System.Object,System.EventArgs)
 
-		Log.DebugLine(this, "first arg is loaded at {0:X2}", m_info.Instructions[i].Untyped.Offset);				
 						// We expect it to be a ldfld instruction and the type should be
 						// System.EventHandler.
 						LoadField field1 = m_info.Instructions[i] as LoadField;
 						if (field1 != null && field1.Field.FieldType.ToString().StartsWith("System.EventHandler"))
 						{
-		Log.DebugLine(this, "field1 is ok");				
 							// Typically it will be preceded by a load this, a branch, and
 							// a load of the event.
 							Load load = m_info.Instructions[i - 1] as Load;
@@ -117,7 +114,6 @@ namespace Smokey.Internal.Rules
 							LoadStaticField sfield1 = m_info.Instructions[i] as LoadStaticField;
 							if (sfield1 != null && sfield1.Field.FieldType.ToString().StartsWith("System.EventHandler"))
 							{
-		Log.DebugLine(this, "sfield1 is ok " + sfield1.Field.FieldType);				
 								// Typically it will be preceded by a branch and a load of the event.
 								ConditionalBranch sbranch = m_info.Instructions[i - 1] as ConditionalBranch;
 								LoadStaticField sfield2 = m_info.Instructions[i - 2] as LoadStaticField;
@@ -152,7 +148,6 @@ namespace Smokey.Internal.Rules
 								LoadLocal local1 = m_info.Instructions[i] as LoadLocal;
 								if (local1 != null && local1.Type.ToString().StartsWith("System.EventHandler"))
 								{
-			Log.DebugLine(this, "local1 is ok " + local1.Type);				
 									// Typically it will be preceded by a branch and a load of the event.
 									ConditionalBranch branch2 = m_info.Instructions[i - 1] as ConditionalBranch;
 									LoadLocal local2 = m_info.Instructions[i - 2] as LoadLocal;

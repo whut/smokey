@@ -33,12 +33,12 @@ namespace Smokey.Tests
 	public class VisibleFieldsTest : TypeTest
 	{	
 		#region Test cases
-		internal class Good1		// class is internal
+		internal sealed class Good1		// class is internal
 		{
 			public int line1;
 		}
 
-		internal class Good2		// class is internal
+		internal sealed class Good2		// class is internal
 		{
 			protected int line1;
 		}

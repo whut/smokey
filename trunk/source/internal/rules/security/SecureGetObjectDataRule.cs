@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class SecureGetObjectDataRule : Rule
+	internal sealed class SecureGetObjectDataRule : Rule
 	{				
 		public SecureGetObjectDataRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1011")

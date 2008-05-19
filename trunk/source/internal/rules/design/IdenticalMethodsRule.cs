@@ -31,7 +31,7 @@ using System.Text;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class IdenticalMethodsRule : Rule
+	internal sealed class IdenticalMethodsRule : Rule
 	{				
 		public IdenticalMethodsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1042")

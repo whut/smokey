@@ -58,6 +58,8 @@ namespace Smokey.Framework.Support.Advanced
 				
 		public void VisitBegin(BeginMethod begin)
 		{
+			DBC.Pre(begin != null, "begin is null");
+				
 			Log.DebugLine(this, "-----------------------------------"); 
 			Log.DebugLine(this, "{0:F}", begin.Info.Instructions);				
 

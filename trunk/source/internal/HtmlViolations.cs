@@ -28,7 +28,7 @@ using System.IO;
 namespace Smokey.Internal
 {
 #if DEBUG
-	internal class HtmlViolations
+	internal sealed class HtmlViolations
 	{			
 		public void Write(string path)
 		{

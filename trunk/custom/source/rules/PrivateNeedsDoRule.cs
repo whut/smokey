@@ -26,7 +26,7 @@ using Smokey.Framework.Support;
 
 namespace Custom
 {	
-	internal class PrivateNeedsDoRule : Rule
+	internal sealed class PrivateNeedsDoRule : Rule
 	{				
 		// The checkID must match the id in the xml. Note that multiple classes can
 		// share the same checkID.
@@ -63,7 +63,7 @@ namespace Custom
 					Log.DebugLine(this, "{0}", method);				
 			
 					// If the name does not start with Do and isn't compiler generated,
-					if (!method.Name.StartsWith("Do") && !method.ToString().Contains("CompilerGenerated"))
+					if (!method.Name.StartsWith("Do") && !method.IsCompilerGenerated())
 					{
 						// then we have a failure. For rules which fail within a
 						// method, offset should be the first offset to the instruction

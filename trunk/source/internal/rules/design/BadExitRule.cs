@@ -28,7 +28,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class BadExitRule : Rule
+	internal sealed class BadExitRule : Rule
 	{				
 		public BadExitRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1039")

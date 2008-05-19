@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class NativeMethodsRule : Rule
+	internal sealed class NativeMethodsRule : Rule
 	{				
 		public NativeMethodsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1020")

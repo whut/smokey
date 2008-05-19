@@ -26,7 +26,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class BeforeEventRule : Rule
+	internal sealed class BeforeEventRule : Rule
 	{				
 		public BeforeEventRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1027")

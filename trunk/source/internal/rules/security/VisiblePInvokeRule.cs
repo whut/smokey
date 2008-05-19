@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class VisiblePInvokeRule : Rule
+	internal sealed class VisiblePInvokeRule : Rule
 	{				
 		public VisiblePInvokeRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1020")
@@ -45,7 +45,7 @@ namespace Smokey.Internal.Rules
 						
 		public void VisitMethod(MethodDefinition method)
 		{
-			Log.DebugLine(this, method);
+			Log.DebugLine(this, "{0}", method);
 			Log.DebugLine(this, "   IsPInvokeImpl: {0}", method.IsPInvokeImpl);
 			Log.DebugLine(this, "   IsUnmanagedExport: {0}", method.IsUnmanagedExport);
 			

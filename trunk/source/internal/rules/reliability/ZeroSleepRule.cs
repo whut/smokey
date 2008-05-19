@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ZeroSleepRule : Rule
+	internal sealed class ZeroSleepRule : Rule
 	{				
 		public ZeroSleepRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1029")

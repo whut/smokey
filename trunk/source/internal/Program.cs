@@ -59,7 +59,7 @@ namespace Smokey.Internal
 					}
 					else
 					{
-						err = -2;
+						err = 2;
 					}
 				}
 				
@@ -71,7 +71,7 @@ namespace Smokey.Internal
 			catch (MalformedCommandLineException m)
 			{
 				Console.Error.WriteLine(m.Message);
-				err = -2;
+				err = 2;
 			}
 			catch (Exception e)
 			{
@@ -87,7 +87,7 @@ namespace Smokey.Internal
 				Console.Error.WriteLine("exception stack trace:");
 				Console.Error.WriteLine(e.StackTrace);
 
-				err = -1;
+				err = 3;
 			}
 			finally
 			{
@@ -96,10 +96,10 @@ namespace Smokey.Internal
 					Console.Error.WriteLine("There were {0} errors and {1} warnings!!!", Log.NumErrors, Log.NumWarnings);
 
 				else if (Log.NumErrors > 0)
-					Console.Error.WriteLine("There were {0} errors!!!", Log.NumErrors);
+					Console.Error.WriteLine("There were {0} errors!!!", Log.NumErrors.ToString());
 
 				else if (Log.NumWarnings > 0)
-					Console.Error.WriteLine("There were {0} warnings!!!", Log.NumWarnings);				
+					Console.Error.WriteLine("There were {0} warnings!!!", Log.NumWarnings.ToString());				
 #endif
 				Log.Flush();
 			}
@@ -433,7 +433,11 @@ namespace Smokey.Internal
 					watcher.Add(name);
 				});
 				
-				analyzer.ExcludedChecks = options.Values("-exclude-check").Except(options.Values("-include-check"));
+				List<string> excluded = new List<string>(options.Values("-exclude-check"));
+				if (excluded.IndexOf("R1035") < 0)		// ValidateArgs2 is disabled by default
+					excluded.Add("R1035");
+				
+				analyzer.ExcludedChecks = excluded.Except(options.Values("-include-check"));
 				analyzer.ExcludeNames = options.Values("-exclude-name").Except(options.Values("-include-name"));
 				
 				string[] onlyType = options.Values("-only-type");

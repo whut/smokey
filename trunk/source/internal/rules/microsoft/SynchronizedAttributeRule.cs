@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class SynchronizedAttributeRule : Rule
+	internal sealed class SynchronizedAttributeRule : Rule
 	{				
 		public SynchronizedAttributeRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1015")

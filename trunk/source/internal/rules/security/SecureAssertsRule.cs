@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class SecureAssertsRule : Rule
+	internal sealed class SecureAssertsRule : Rule
 	{				
 		public SecureAssertsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1010")

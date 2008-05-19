@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class NanTestRule : Rule
+	internal sealed class NanTestRule : Rule
 	{				
 		public NanTestRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1008")

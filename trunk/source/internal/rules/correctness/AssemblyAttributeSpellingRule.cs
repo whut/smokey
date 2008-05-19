@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class AssemblyAttributeSpellingRule : Rule
+	internal sealed class AssemblyAttributeSpellingRule : Rule
 	{				
 		public AssemblyAttributeSpellingRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1020")

@@ -31,7 +31,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class EmptyFinalizerRule : Rule
+	internal sealed class EmptyFinalizerRule : Rule
 	{				
 		public EmptyFinalizerRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1000")

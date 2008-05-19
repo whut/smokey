@@ -25,7 +25,7 @@ using System.Reflection;
 
 namespace FuncTest
 {
-	internal class Program
+	internal sealed class Program
 	{
 		public static int Main(string[] args)
 		{ 

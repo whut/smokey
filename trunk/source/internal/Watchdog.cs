@@ -26,7 +26,7 @@ using Smokey.Framework;
 namespace Smokey.Internal
 {
 	// Kills the process if a rule takes too long to run.
-	internal class Watchdog : IDisposable
+	internal sealed class Watchdog : IDisposable
 	{		
 		// Starts our thread up.
 		public Watchdog(bool verbose)

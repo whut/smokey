@@ -28,7 +28,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class SwallowExceptionRule : Rule
+	internal sealed class SwallowExceptionRule : Rule
 	{				
 		public SwallowExceptionRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1011")

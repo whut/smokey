@@ -1,3 +1,81 @@
+-- Version 1.2.0.0 (rXXX) ----
+
+* Added 34 new rules:
+	ArithmeticButNoEquals
+	AvoidIsAlive
+	BadExplicitImplementation
+	DisposeDoesStaticRemove
+	DoubleCheckedLocking
+	FloatZeroDivide
+	FormatProvider
+	InconsistentNamespace
+	InconsistentProperty
+	IntZeroDivide
+	NewVersion
+	NonLocalizedGui
+	NoStaticRemove
+	NotSealed
+	ObjectDisposedException
+	PreferMonitor1
+	PreferMonitor2
+	PublicImplementation
+	RecursiveLock1
+	RecursiveLock2
+	SealedProtected
+	StringUri1
+	StringUri2
+	StringUri3
+	StringUriOverload
+	UnprotectedEvent
+	UnusualMonitor1
+	UnusualMonitor2
+	UnusedField
+	UseEmpty
+	UseEmptyTypes
+	ValidateArgs
+	VisiblePInvoke
+	ZeroSleep
+* Added -include-check, -include-name, -include-breaking, and -include-localized
+  command line switches to enable profile options to be overridden.
+* Made ClassPrefixRule and HungarianRule nitpicks.
+* IgnoredReturnRule skips some more system methods.
+* ExitCodeRule works with local variables returned by the main entry point.
+* ClassPrefixRule ignores classes that start with "I".
+* Fixed a silly bug that sometimes kept UnusedMethodRule from reporting the results.
+* UseBaseTypesRule ignores parameters with generic types (they aren't handled quite
+  right by the rule).
+* MonoNamingRule complains if fields start with m_, s_, or ms_.
+* tar destfile's include the version number so that they unpack to a reasonable directory name.
+* UnusedMethodRule ignores ctors if one of the types in the declaring type's 
+  hierarchy has disabled UnusedClassRule.
+
+
+
+Index: source/internal/rules/correctness/Aspell.cs
+Index: source/internal/rules/correctness/NativeAspell.cs
+* Ignored words are now handled by aspell.
+* Added support for new dictionary setting to allow multiple dictionaries to
+  be specified. 
+* Ignore/dictionary paths now special case "/resources/file" where file is
+  SysIgnore.txt or IgnoreList.txt.
+* Words with dashes are now treated as multiple words.
+
+Index: nant.build
+* Added SysIgnore.txt and IgnoreList.txt to resources.
+
+Index: source/internal/Program.cs
+* First cut at profile support. 
+
+Index: SysIgnore.txt
+* Removed words with dashes.
+
+Index: source/internal/HtmlViolations.cs
+* Added breaking field to output.
+
+
+
+------------------------------------------------------------------------
+еееееееееееееееееееееееееееееееееее
 -- Version 1.1.0.0 (r572) ----
 * Added 3 new rules:
 	ClassPrefix

@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class IgnoredReturnRule : Rule
+	internal sealed class IgnoredReturnRule : Rule
 	{				
 		public IgnoredReturnRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1018")

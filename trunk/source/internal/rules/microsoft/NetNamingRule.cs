@@ -66,8 +66,8 @@ namespace Smokey.Internal.Rules
 			m_type = arg.Type;
 			m_needsCheck = false;
 			
-			if (!m_type.FullName.Contains("PrivateImplementationDetails"))
-				if (!m_type.Name.StartsWith("yy") && !m_type.FullName.Contains("CompilerGenerated"))
+//			if (!m_type.FullName.Contains("PrivateImplementationDetails"))
+				if (!m_type.Name.StartsWith("yy") && !m_type.IsCompilerGenerated())
 					m_needsCheck = true;
 		}
 		
@@ -93,7 +93,8 @@ namespace Smokey.Internal.Rules
 
 		public void VisitMethod(MethodDefinition method)
 		{
-			if (!m_needsCheck || method.Name.StartsWith("yy") || method.ToString().Contains("CompilerGenerated") || method.ToString().Contains("AnonymousMethod"))
+			if (!m_needsCheck || method.Name.StartsWith("yy"))
+//			if (!m_needsCheck || method.Name.StartsWith("yy") || method.IsCompilerGenerated() || method.ToString().Contains("AnonymousMethod"))
 				return;
 			
 			if ((method.Attributes & MethodAttributes.PInvokeImpl) == MethodAttributes.PInvokeImpl)

@@ -26,7 +26,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ObsoleteMessageRule : Rule
+	internal sealed class ObsoleteMessageRule : Rule
 	{				
 		public ObsoleteMessageRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1022")

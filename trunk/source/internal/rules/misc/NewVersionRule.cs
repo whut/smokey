@@ -31,7 +31,8 @@ using System.Reflection;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class DownloadFile
+	[DisableRule("R1000", "DisposableFields")]
+	internal sealed class DownloadFile
 	{
 		public DownloadFile()
 		{
@@ -95,7 +96,7 @@ namespace Smokey.Internal.Rules
 			private string m_contents;
 	}
 	
-	internal class NewVersionRule : Rule
+	internal sealed class NewVersionRule : Rule
 	{				
 		public NewVersionRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "M1003")
@@ -138,7 +139,7 @@ namespace Smokey.Internal.Rules
 					}
 					else
 					{
-						Log.DebugLine(this, "installed version is ok");		
+						Log.DebugLine(this, "installed version is OK");		
 						Log.DebugLine(this, "installed: {0}", installed);		
 						Log.DebugLine(this, "latest: {0}.{1}", newMajor, newMinor);		
 					}

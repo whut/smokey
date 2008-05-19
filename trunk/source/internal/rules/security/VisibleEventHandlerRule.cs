@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class VisibleEventHandlerRule : Rule
+	internal sealed class VisibleEventHandlerRule : Rule
 	{				
 		public VisibleEventHandlerRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1008")

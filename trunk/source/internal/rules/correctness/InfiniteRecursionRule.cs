@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {			
-	internal class InfiniteRecursionRule : Rule
+	internal sealed class InfiniteRecursionRule : Rule
 	{				
 		public InfiniteRecursionRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1001")

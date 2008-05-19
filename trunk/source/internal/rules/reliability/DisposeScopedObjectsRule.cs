@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class DisposeScopedObjectsRule : Rule
+	internal sealed class DisposeScopedObjectsRule : Rule
 	{				
 		public DisposeScopedObjectsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1004")

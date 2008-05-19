@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class BaseSerializable1Rule : Rule
+	internal sealed class BaseSerializable1Rule : Rule
 	{				
 		public BaseSerializable1Rule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1017")

@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class TempDirRule : Rule
+	internal sealed class TempDirRule : Rule
 	{				
 		public TempDirRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "PO1004")

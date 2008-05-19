@@ -31,7 +31,7 @@ using System.Text;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class UnusedMethodRule : Rule
+	internal sealed class UnusedMethodRule : Rule
 	{				
 		public UnusedMethodRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1032")
@@ -67,8 +67,8 @@ namespace Smokey.Internal.Rules
 				
 			if (m_needsCheck)
 			{
-				Log.DebugLine(this, "-----------------------------------"); 
-				Log.DebugLine(this, "{0}", type);				
+				Log.TraceLine(this, "-----------------------------------"); 
+				Log.TraceLine(this, "{0}", type);				
 			}
 		}
 		
@@ -84,8 +84,8 @@ namespace Smokey.Internal.Rules
 				if (method.IsConstructor && !m_checkCtors)
 					break;
 					
-				if (method.ToString().Contains("PrivateImplementationDetails"))
-					break;
+//				if (method.ToString().Contains("PrivateImplementationDetails"))
+//					break;
 					
 				// Method cannot be externally visible.
 				TypeAttributes vis = m_type.Attributes & TypeAttributes.VisibilityMask;
@@ -136,7 +136,12 @@ namespace Smokey.Internal.Rules
 				if (method.CustomAttributes.HasDisableRule("D1032"))
 					break;
 
-				Log.DebugLine(this, "adding {0}", method);				
+				// The method can't be conditionally compiled (for some reason the method will be fully
+				// defined even if the condition isn't met).
+				if (method.CustomAttributes.Has("ConditionalAttribute"))
+					break;
+
+				Log.TraceLine(this, "adding {0}", method);				
 				m_methods.Add(method);
 			}
 			while (false);
@@ -144,46 +149,36 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitEnd(EndTypes end)
 		{
-			if (m_needsCheck)
-				m_methods.Sort(m_comparer);
+			m_methods.Sort(m_comparer);
 		}
 		
 		public void VisitFunPtr(LoadFunctionAddress load)
 		{
-			if (m_needsCheck)
+			int i = m_methods.BinarySearch(load.Method, m_comparer);
+			if (i >= 0)
 			{
-				int i = m_methods.BinarySearch(load.Method, m_comparer);
-				if (i >= 0)
-				{
-					Log.DebugLine(this, "removing {0} (address is taken)", m_methods[i]);				
-					m_methods.RemoveAt(i);
-				}
+				Log.TraceLine(this, "removing {0} (address is taken)", m_methods[i]);				
+				m_methods.RemoveAt(i);
 			}
 		}
-		
+				
 		public void VisitCall(Call call)
 		{
-			if (m_needsCheck)
+			int i = m_methods.BinarySearch(call.Target, m_comparer);
+			if (i >= 0)
 			{
-				int i = m_methods.BinarySearch(call.Target, m_comparer);
-				if (i >= 0)
-				{
-					Log.DebugLine(this, "removing {0} (it's called)", m_methods[i]);				
-					m_methods.RemoveAt(i);
-				}
+				Log.TraceLine(this, "removing {0} (it's called)", m_methods[i]);				
+				m_methods.RemoveAt(i);
 			}
 		}
 		
 		public void VisitNew(NewObj newer)
 		{
-			if (m_needsCheck)
+			int i = m_methods.BinarySearch(newer.Ctor, m_comparer);
+			if (i >= 0)
 			{
-				int i = m_methods.BinarySearch(newer.Ctor, m_comparer);
-				if (i >= 0)
-				{
-					Log.DebugLine(this, "removing {0} (ctor is called)", m_methods[i]);				
-					m_methods.RemoveAt(i);
-				}
+				Log.TraceLine(this, "removing {0} (ctor is called)", m_methods[i]);				
+				m_methods.RemoveAt(i);
 			}
 		}
 		
@@ -191,7 +186,7 @@ namespace Smokey.Internal.Rules
 		{
 			if (m_methods.Count > 0)
 			{
-				Log.DebugLine(this, "{0} methods were not called", m_methods.Count);				
+				Log.TraceLine(this, "{0} methods were not called", m_methods.Count);				
 				CompareNames comparer = new CompareNames();
 				m_methods.Sort(comparer);
 				
@@ -206,7 +201,7 @@ namespace Smokey.Internal.Rules
 			
 				string details = builder.ToString();
 				
-				Log.DebugLine(this, details);
+				Log.TraceLine(this, details);
 				Reporter.AssemblyFailed(Cache.Assembly, CheckID, details);
 			}
 		}

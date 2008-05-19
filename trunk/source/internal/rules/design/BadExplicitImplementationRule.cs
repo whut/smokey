@@ -26,7 +26,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class BadExplicitImplementationRule : Rule
+	internal sealed class BadExplicitImplementationRule : Rule
 	{				
 		public BadExplicitImplementationRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1054")
@@ -49,7 +49,7 @@ namespace Smokey.Internal.Rules
 				{
 					if (method.IsPrivate && !method.IsReuseSlot)
 					{
-						Log.DebugLine(this, "{0} is an explicit impl", method);
+						Log.DebugLine(this, "{0} is an explicit implementation", method);
 						
 						string name = method.Name.Substring(method.Name.LastIndexOf('.') + 1);
 						

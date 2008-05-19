@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class DontExit1Rule : Rule
+	internal sealed class DontExit1Rule : Rule
 	{				
 		public DontExit1Rule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1037")
@@ -59,7 +59,7 @@ namespace Smokey.Internal.Rules
 		MethodDefinition m_method;
 	}
 
-	internal class DontExit2Rule : Rule
+	internal sealed class DontExit2Rule : Rule
 	{				
 		public DontExit2Rule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1038")

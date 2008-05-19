@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class WinExeRule : Rule
+	internal sealed class WinExeRule : Rule
 	{				
 		public WinExeRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "PO1008")

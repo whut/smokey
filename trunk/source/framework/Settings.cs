@@ -28,6 +28,7 @@ namespace Smokey.Framework
 	
 	/// <summary>Key/value pairs set via the config file or the command line. Used
 	/// by some of the rules.</summary>
+	[DisableRule("C1026", "NoStaticRemove")]
 	public static class Settings
 	{		
 		/// <summary>Overwrites any existing entries.</summary>
@@ -92,7 +93,7 @@ namespace Smokey.Framework
 			return entries.ToArray();
 		}
 		
-		#region Fields
+		#region Fields --------------------------------------------------------
 		private static Table ms_table = new Table();
 		#endregion
 	}

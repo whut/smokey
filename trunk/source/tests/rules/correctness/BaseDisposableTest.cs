@@ -86,7 +86,7 @@ namespace Smokey.Tests
 			private bool m_disposed;
 		}			
 
-		internal class Good1 : MyResource
+		internal sealed class Good1 : MyResource
 		{
 			public Good1(IntPtr handle) : base(handle)
 			{
@@ -102,7 +102,7 @@ namespace Smokey.Tests
 			}
 		}			
 
-		internal class Bad1 : MyResource
+		internal sealed class Bad1 : MyResource
 		{
 			public Bad1(IntPtr handle) : base(handle)
 			{

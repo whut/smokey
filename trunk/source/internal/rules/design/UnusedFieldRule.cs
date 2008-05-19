@@ -31,7 +31,7 @@ using System.Text;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class UnusedFieldRule : Rule
+	internal sealed class UnusedFieldRule : Rule
 	{				
 		public UnusedFieldRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1050")
@@ -56,14 +56,16 @@ namespace Smokey.Internal.Rules
 			Referenced			// field has been used, but we don't know if it's internal
 		};
 		
-		public void VisitType(BeginType type)
+		public void VisitType(BeginType begin)
 		{
-			m_type = type.Type;
+			m_needsCheck = !begin.Type.IsCompilerGenerated();
+			m_type = begin.Type;
 		}
 		
 		public void VisitField(FieldDefinition field)
 		{
-			if (field.IsAssembly && m_type.IsClass && !m_type.FullName.Contains("PrivateImplementationDetails"))
+			if (m_needsCheck && field.IsAssembly && m_type.IsClass)
+//			if (m_needsCheck && field.IsAssembly && m_type.IsClass && !m_type.FullName.Contains("PrivateImplementationDetails"))
 			{
 				if (!m_type.CustomAttributes.HasDisableRule("D1050"))
 				{
@@ -86,78 +88,94 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitLoadField(LoadField load)
 		{
-			State state;
-			if (m_fields.TryGetValue(load.Field, out state))
+			if (m_needsCheck)
 			{
-				if (state == State.Defined)
-					m_fields[load.Field] = State.Used;
-			}
-			else
-			{
-				m_fields.Add(load.Field, State.Referenced);
+				State state;
+				if (m_fields.TryGetValue(load.Field, out state))
+				{
+					if (state == State.Defined)
+						m_fields[load.Field] = State.Used;
+				}
+				else
+				{
+					m_fields.Add(load.Field, State.Referenced);
+				}
 			}
 		}
 				
 		public void VisitLoadFieldAddr(LoadFieldAddress load)
 		{
-			State state;
-			if (m_fields.TryGetValue(load.Field, out state))
+			if (m_needsCheck)
 			{
-				if (state == State.Defined)
-					m_fields[load.Field] = State.Used;
-			}
-			else
-			{
-				m_fields.Add(load.Field, State.Referenced);
+				State state;
+				if (m_fields.TryGetValue(load.Field, out state))
+				{
+					if (state == State.Defined)
+						m_fields[load.Field] = State.Used;
+				}
+				else
+				{
+					m_fields.Add(load.Field, State.Referenced);
+				}
 			}
 		}
 				
 		public void VisitLoadStaticField(LoadStaticField load)
 		{
-			State state;
-			if (m_fields.TryGetValue(load.Field, out state))
+			if (m_needsCheck)
 			{
-				if (state == State.Defined)
-					m_fields[load.Field] = State.Used;
-			}
-			else
-			{
-				m_fields.Add(load.Field, State.Referenced);
+				State state;
+				if (m_fields.TryGetValue(load.Field, out state))
+				{
+					if (state == State.Defined)
+						m_fields[load.Field] = State.Used;
+				}
+				else
+				{
+					m_fields.Add(load.Field, State.Referenced);
+				}
 			}
 		}
 				
 		public void VisitLoadStaticFieldAddress(LoadStaticFieldAddress load)
 		{
-			State state;
-			if (m_fields.TryGetValue(load.Field, out state))
+			if (m_needsCheck)
 			{
-				if (state == State.Defined)
-					m_fields[load.Field] = State.Used;
-			}
-			else
-			{
-				m_fields.Add(load.Field, State.Referenced);
+				State state;
+				if (m_fields.TryGetValue(load.Field, out state))
+				{
+					if (state == State.Defined)
+						m_fields[load.Field] = State.Used;
+				}
+				else
+				{
+					m_fields.Add(load.Field, State.Referenced);
+				}
 			}
 		}
 				
 		public void VisitFini(EndTesting end)
 		{
-			List<string> fields = new List<string>();
-			
-			foreach (KeyValuePair<FieldReference, State> entry in m_fields)
+			if (m_needsCheck)
 			{
-				if (entry.Value == State.Defined)
-					fields.Add(entry.Key.ToString());
-			}
-			
-			if (fields.Count > 0)
-			{
-				string details = "Fields: " + string.Join(Environment.NewLine, fields.ToArray());
-				Log.DebugLine(this, details);
-				Reporter.AssemblyFailed(Cache.Assembly, CheckID, details);
+				List<string> fields = new List<string>();
+				
+				foreach (KeyValuePair<FieldReference, State> entry in m_fields)
+				{
+					if (entry.Value == State.Defined)
+						fields.Add(entry.Key.ToString());
+				}
+				
+				if (fields.Count > 0)
+				{
+					string details = "Fields: " + string.Join(Environment.NewLine, fields.ToArray());
+					Log.DebugLine(this, details);
+					Reporter.AssemblyFailed(Cache.Assembly, CheckID, details);
+				}
 			}
 		}
 		
+		private bool m_needsCheck;
 		private TypeDefinition m_type;
 		private Dictionary<FieldReference, State> m_fields = new Dictionary<FieldReference, State>();
 	}

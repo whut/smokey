@@ -26,6 +26,7 @@ namespace EvilDoer
 {
 	// D1001/ClassCanBeMadeStatic
 	// P1012/NotInstantiated
+	// P1020/NotSealed
 	internal class BadNaming
 	{				
 		// D1032/UnusedMethod

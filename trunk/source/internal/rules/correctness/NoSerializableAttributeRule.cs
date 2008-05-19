@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class NoSerializableAttributeRule : Rule
+	internal sealed class NoSerializableAttributeRule : Rule
 	{				
 		public NoSerializableAttributeRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1006")

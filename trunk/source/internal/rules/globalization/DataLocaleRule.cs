@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class DataLocaleRule : Rule
+	internal sealed class DataLocaleRule : Rule
 	{				
 		public DataLocaleRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "G1000")

@@ -105,7 +105,7 @@
 			</Fix>
 	
 			<CSharp>
-			internal class MyException : Exception	// use Exception not ApplicationException
+			internal sealed class MyException : Exception	// use Exception not ApplicationException
 			{
 				public MyException(string message) : base(message)
 				{
@@ -186,7 +186,7 @@
 			</Fix>
 	
 			<CSharp>
-			internal class Customer : IEquatable&lt;Customer&gt;
+			internal sealed class Customer : IEquatable&lt;Customer&gt;
 			{		
 				public override bool Equals(object rhsObj)
 				{
@@ -353,7 +353,7 @@
 			</Fix>
 	
 			<CSharp>
-			internal class MyResource : IDisposable
+			internal sealed class MyResource : IDisposable
 			{
 				~MyResource()		
 				{					
@@ -442,7 +442,7 @@
 			</Fix>
 	
 			<CSharp>
-			internal class Engine
+			internal sealed class Engine
 			{
 				public void Work()
 				{
@@ -486,7 +486,7 @@
 			<CSharp>
 			using System.IO;
 			
-			internal class Log : IDisposable
+			internal sealed class Log : IDisposable
 			{
 				public Log()
 				{
@@ -600,7 +600,7 @@
 			</Fix>
 	
 			<CSharp>
-			internal class MyResource : IDisposable
+			internal sealed class MyResource : IDisposable
 			{
 				~MyResource()		
 				{					
@@ -707,7 +707,7 @@
 			</Fix>
 	
 			<CSharp>
-			internal class Engine
+			internal sealed class Engine
 			{
 				public void Work()
 				{
@@ -780,7 +780,7 @@
 			<CSharp>
 			namespace Acme
 			{
-				internal class Factory
+				internal sealed class Factory
 				{
 					public bool HasWidget(string partNumber)
 					{
@@ -852,7 +852,7 @@
 			</Fix>
 	
 			<CSharp>
-			internal class Customer : IEquatable&lt;Customer&gt;
+			internal sealed class Customer : IEquatable&lt;Customer&gt;
 			{		
 				public override bool Equals(object rhsObj)
 				{

@@ -75,6 +75,21 @@ namespace Smokey.Tests
 			private int x, y;
 		}
 
+		private struct Good3
+		{		
+			public override bool Equals(object rhs)
+			{
+				return object.ReferenceEquals(this, rhs);
+			}
+							
+			public override int GetHashCode()
+			{
+				return x.GetHashCode() ^ y.GetHashCode();
+			}
+			
+			private int x, y;
+		}
+
 		internal struct Bad1
 		{		
 			public override bool Equals(object rhsObj)
@@ -93,7 +108,7 @@ namespace Smokey.Tests
 
 		// test code
 		public EqualityOperatorTest() : base(
-			new string[]{"Good1", "Good2"},
+			new string[]{"Good1", "Good2", "Good3"},
 			new string[]{"Bad1"})	
 		{
 		}

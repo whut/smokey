@@ -31,7 +31,7 @@ using System.Text.RegularExpressions;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class BadRegExRule : Rule
+	internal sealed class BadRegExRule : Rule
 	{				
 		public BadRegExRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1015")

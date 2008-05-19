@@ -32,6 +32,9 @@ namespace Smokey.Framework.Support
 	{ 
 		public static bool Has(this CustomAttributeCollection attrs, string name)
 		{
+			DBC.Pre(attrs != null, "attrs is null");
+			DBC.Pre(name != null, "name is null");
+				
 			foreach (CustomAttribute attr in attrs)
 			{
 //				Log.InfoLine(true, "   {0}", attr.Constructor.DeclaringType.Name);
@@ -44,6 +47,9 @@ namespace Smokey.Framework.Support
 		
 		public static bool HasDisableRule(this CustomAttributeCollection attrs, string checkID)
 		{
+			DBC.Pre(attrs != null, "attrs is null");
+			DBC.Pre(checkID != null, "checkID is null");
+								
 			foreach (CustomAttribute attr in attrs)
 			{	
 				if (attr.Constructor.ToString().Contains("DisableRuleAttribute"))
@@ -62,6 +68,10 @@ namespace Smokey.Framework.Support
 		
 		public static bool HasDisableRule(this TypeDefinition derived, string checkID, AssemblyCache cache)
 		{				
+			DBC.Pre(derived != null, "derived is null");
+			DBC.Pre(checkID != null, "checkID is null");
+			DBC.Pre(cache != null, "cache is null");
+
 			TypeDefinition type = derived;
 			
 			while (type != null)
@@ -85,6 +95,9 @@ namespace Smokey.Framework.Support
 		/// <summary>Returns true if type directly implements the interface (e.g. "System.ICloneable").</summary>
 		public static bool Implements(this TypeDefinition type, string name)
 		{
+			DBC.Pre(type != null, "type is null");
+			DBC.Pre(name != null, "name is null");
+				
 			bool implements = false;
 			
 			for (int i = 0; i < type.Interfaces.Count && !implements; ++i)
@@ -104,6 +117,10 @@ namespace Smokey.Framework.Support
 		/// <summary>Returns true if a base class implements the interface (e.g. "System.IDisposable").</summary>
 		public static bool BaseImplements(this TypeDefinition derived, string name, AssemblyCache cache)
 		{				
+			DBC.Pre(derived != null, "derived is null");
+			DBC.Pre(name != null, "name is null");
+			DBC.Pre(cache != null, "cache is null");
+				
 			if (derived.BaseType != null)
 			{
 				TypeDefinition type = cache.FindType(derived.BaseType);
@@ -134,6 +151,8 @@ namespace Smokey.Framework.Support
 		/// <summary>Returns true if type is an enum with the Flags attribute.</summary>
 		public static bool IsFlagsEnum(this TypeDefinition type)
 		{
+			DBC.Pre(type != null, "type is null");
+				
 			if (type.IsEnum)
 			{
 				foreach (CustomAttribute attr in type.CustomAttributes)
@@ -149,6 +168,8 @@ namespace Smokey.Framework.Support
 		/// <summary>Returns true if the assembly makes use of System.Windows.Forms or gtk.</summary>
 		public static bool IsGui(this AssemblyDefinition assembly)
 		{
+			DBC.Pre(assembly != null, "assembly is null");
+				
 			foreach (AssemblyNameReference r in assembly.MainModule.AssemblyReferences) 
 			{
 				if (r.Name == "gtk-sharp")
@@ -183,6 +204,9 @@ namespace Smokey.Framework.Support
 		/// <summary>Returns true if the two instructions are equal.</summary>
 		public static bool Matches(this Instruction lhs, Instruction rhs)
 		{
+			DBC.Pre(lhs != null, "lhs is null");				
+			DBC.Pre(rhs != null, "rhs is null");
+				
 //			if (lhs.Operand != null)
 //				Log.InfoLine(true, "lhs operand: {0} ({1})", lhs.Operand, lhs.Operand.GetType()); 
 //			else
@@ -235,6 +259,9 @@ namespace Smokey.Framework.Support
 		/// public.</summary>
 		public static bool PubliclyVisible(this MethodDefinition method, AssemblyCache cache)	// TODO: shouldn't this be externally visible?
 		{
+			DBC.Pre(method != null, "method is null");				
+			DBC.Pre(cache != null, "cache is null");
+				
 			bool pblc = (method.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Public;
 			
 			TypeReference tr = method.DeclaringType;
@@ -257,6 +284,9 @@ namespace Smokey.Framework.Support
 		/// private.</summary>
 		public static bool PrivatelyVisible(this MethodDefinition method, AssemblyCache cache)
 		{
+			DBC.Pre(method != null, "method is null");				
+			DBC.Pre(cache != null, "cache is null");
+				
 			bool prvt = (method.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Private;
 			
 			TypeReference tr = method.DeclaringType;
@@ -275,6 +305,9 @@ namespace Smokey.Framework.Support
 		/// <summary>Returns the interface or type the method was first declared in.</summary>
 		public static TypeReference GetDeclaredIn(this MethodReference method, AssemblyCache cache)
 		{
+			DBC.Pre(method != null, "method is null");
+			DBC.Pre(cache != null, "cache is null");
+								
 			TypeReference declared = method.DeclaringType;
 							
 			TypeReference candidate = DoGetDeclaringInterface(declared, new MethodMatcher(method), cache);
@@ -306,6 +339,10 @@ namespace Smokey.Framework.Support
 		/// <summary>Returns either null or the most derived class that is both a lhs and a rhs.</summary>
 		public static TypeReference CommonClass(this TypeReference lhs, TypeReference rhs, AssemblyCache cache)
 		{
+			DBC.Pre(lhs != null, "lhs is null");				
+			DBC.Pre(rhs != null, "rhs is null");
+			DBC.Pre(cache != null, "cache is null");
+				
 			TypeReference common = null;
 			
 			if (lhs.IsSubclassOf(rhs, cache))
@@ -316,13 +353,40 @@ namespace Smokey.Framework.Support
 			return common;
 		}
 		
+		public static bool IsCompilerGenerated(this TypeReference type)
+		{
+			DBC.Pre(type != null, "type is null");
+
+			if (type.Name.Contains("CompilerGenerated"))
+				return true;
+				
+			return false;
+		}
+		
+		public static bool IsCompilerGenerated(this MethodReference method)
+		{
+			DBC.Pre(method != null, "method is null");
+
+			if (IsCompilerGenerated(method.DeclaringType))
+				return true;
+				
+//			if (method.ToString().Contains("CompilerGenerated"))
+//				return true;
+				
+			return false;
+		}
+		
 		/// <summary>Returns true if lhs is a subclass of rhs. Returns false if they are the same class.
 		/// Interfaces are ignored.</summary>
 		public static bool IsSubclassOf(this TypeReference lhs, TypeReference rhs, AssemblyCache cache)
 		{			
+			DBC.Pre(lhs != null, "lhs is null");				
+			DBC.Pre(rhs != null, "rhs is null");
+			DBC.Pre(cache != null, "cache is null");
+				
 			while (lhs != null)
 			{
-				if (lhs.FullName != "System.Object" && rhs.FullName == "System.Object")
+				if (lhs.FullName != "System.Object" && rhs.FullName == "System.Object")	// everything is a subclass of object
 					return true;
 					
 				TypeDefinition type = cache.FindType(lhs);
@@ -338,6 +402,10 @@ namespace Smokey.Framework.Support
 		/// Interfaces are ignored.</summary>
 		public static bool IsSubclassOf(this TypeReference lhs, string rhs, AssemblyCache cache)
 		{			
+			DBC.Pre(lhs != null, "lhs is null");				
+			DBC.Pre(rhs != null, "rhs is null");
+			DBC.Pre(cache != null, "cache is null");
+				
 			TypeDefinition type = cache.FindType(lhs);
 
 			if (type != null && type.BaseType != null)
@@ -360,6 +428,10 @@ namespace Smokey.Framework.Support
 		/// Interfaces are ignored.</summary>
 		public static bool IsSameOrSubclassOf(this TypeReference lhs, string rhs, AssemblyCache cache)
 		{			
+			DBC.Pre(lhs != null, "lhs is null");
+			DBC.Pre(rhs != null, "rhs is null");
+			DBC.Pre(cache != null, "cache is null");
+				
 			if (lhs.FullName == rhs)
 				return true;
 				

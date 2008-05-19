@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class TypedListRule : Rule
+	internal sealed class TypedListRule : Rule
 	{				
 		public TypedListRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1016")

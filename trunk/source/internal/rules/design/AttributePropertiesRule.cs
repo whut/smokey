@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class AttributePropertiesRule : Rule
+	internal sealed class AttributePropertiesRule : Rule
 	{				
 		public AttributePropertiesRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1009")

@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class DeepInheritanceRule : Rule
+	internal sealed class DeepInheritanceRule : Rule
 	{				
 		public DeepInheritanceRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1026")

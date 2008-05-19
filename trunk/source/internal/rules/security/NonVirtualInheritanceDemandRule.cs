@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class NonVirtualInheritanceDemandRule : Rule
+	internal sealed class NonVirtualInheritanceDemandRule : Rule
 	{				
 		public NonVirtualInheritanceDemandRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1017")

@@ -30,7 +30,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class WinFormsVoodooRule : Rule
+	internal sealed class WinFormsVoodooRule : Rule
 	{				
 		public WinFormsVoodooRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "PO1009")

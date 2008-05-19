@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class StringCompareRule : Rule
+	internal sealed class StringCompareRule : Rule
 	{				
 		public StringCompareRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1015")

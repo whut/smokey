@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class BaseDisposableRule : Rule
+	internal sealed class BaseDisposableRule : Rule
 	{				
 		public BaseDisposableRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1005")

@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class WeakIdentityLockRule : Rule
+	internal sealed class WeakIdentityLockRule : Rule
 	{				
 		public WeakIdentityLockRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1013")

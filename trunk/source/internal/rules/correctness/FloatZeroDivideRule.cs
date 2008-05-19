@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced.Values;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class FloatZeroDivideRule : Rule
+	internal sealed class FloatZeroDivideRule : Rule
 	{				
 		public FloatZeroDivideRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1025")

@@ -32,7 +32,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class RecursiveLock1Rule : Rule
+	internal sealed class RecursiveLock1Rule : Rule
 	{				
 		public RecursiveLock1Rule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1037")
@@ -101,6 +101,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 		
+		[DisableRule("D1047", "TooManyArgs")]
 		private bool DoCallsLock(MethodReference method, FieldReference field, Entry entry, CallGraph graph, List<string> chain, int depth)
 		{
 			if (depth > 8)			// this can't be too large or the rule takes a very long time to run
@@ -190,6 +191,7 @@ namespace Smokey.Internal.Rules
 		// 05: stloc.N    V_0
 		// 06: ldloc.N    V_0
 		// 07: call       System.Void System.Threading.Monitor::Enter(System.Object)
+		[DisableRule("D1042", "IdenticalMethods")]		// TODO: matches RecursiveLock2Rule
 		private bool DoMatchLock1(int index)
 		{
 			bool match = false;
@@ -236,6 +238,7 @@ namespace Smokey.Internal.Rules
 		// 06: stloc.N    V_0
 		// 07: ldloc.N    V_0
 		// 08: call       System.Void System.Threading.Monitor::Enter(System.Object)
+		[DisableRule("D1042", "IdenticalMethods")]		// TODO: matches RecursiveLock2Rule
 		private bool DoMatchLock2(int index)
 		{
 			bool match = false;
@@ -292,7 +295,31 @@ namespace Smokey.Internal.Rules
 				Method = m;
 				Field = f;
 			}
-		}
+
+			public override bool Equals(object rhsObj)
+			{
+				if (rhsObj == null)                  
+					return false;
+				
+				if (GetType() != rhsObj.GetType()) 
+					return false;
+			
+				Source rhs = (Source) rhsObj;                    
+				return Method == rhs.Method && Field == rhs.Field;
+			}
+				
+			public override int GetHashCode()
+			{
+				int hash;
+				
+				unchecked
+				{
+					hash = Method.GetHashCode() + Field.GetHashCode();
+				}
+				
+				return hash;
+			}
+ 		}
 		
 		private class Entry
 		{

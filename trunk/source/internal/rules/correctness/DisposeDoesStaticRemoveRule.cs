@@ -33,7 +33,7 @@ using System.Diagnostics;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class DisposeDoesStaticRemoveRule : Rule
+	internal sealed class DisposeDoesStaticRemoveRule : Rule
 	{				
 		public DisposeDoesStaticRemoveRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1027")
@@ -175,7 +175,7 @@ namespace Smokey.Internal.Rules
 							Reporter.TypeFailed(type, CheckID, details);
 						}
 						else
-							Log.ErrorLine(this, "Couldn't find type definition for {0}", type.FullName);
+							Log.ErrorLine(this, "Couldn't find type definition for {0}", method.DeclaringType.FullName);
 					}
 				}
 			}
@@ -241,6 +241,7 @@ namespace Smokey.Internal.Rules
 			return isNull;
 		}
 
+		[DisableRule("D1042", "IdenticalMethods")]	// TODO: shared with NoStaticRemoveRule
 		private bool DoHasReferenceElements(TypeReference tr)
 		{
 			GenericInstanceType gt = tr as GenericInstanceType;

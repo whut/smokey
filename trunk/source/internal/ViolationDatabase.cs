@@ -33,6 +33,7 @@ using Smokey.Framework;
 namespace Smokey.Internal
 {	
 	// Loads Violation objects from xml.
+	[DisableRule("C1026", "NoStaticRemove")]
 	internal static class ViolationDatabase
 	{							
 		// Use Init instead of a type ctor so we have more control over when it's executed.
@@ -107,6 +108,7 @@ namespace Smokey.Internal
 			return index >= 0;
 		}
 				
+#if DEBUG
 		public static IEnumerable<Violation> Violations
 		{
 			get
@@ -120,8 +122,9 @@ namespace Smokey.Internal
 		{
 			return (string[]) ms_xmlFiles.Clone();
 		}
+#endif
 				
-		#region Private methods
+		#region Private Methods -----------------------------------------------
 		private static void DoViolations(XmlNode violations)
 		{
 			foreach (XmlNode child in violations.ChildNodes)
@@ -243,7 +246,7 @@ namespace Smokey.Internal
 		}
 		#endregion
 
-		#region Internal types
+		#region Internal Types ------------------------------------------------
 		private struct Entry : IComparable<Entry>
 		{
 			public string Lang;
@@ -295,7 +298,7 @@ namespace Smokey.Internal
 		}
 		#endregion
 
-		#region Fields
+		#region Fields --------------------------------------------------------
 		private static XmlReaderSettings ms_settings;
 		private static List<Entry> ms_entries = new List<Entry>();
 #if DEBUG

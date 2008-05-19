@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class UnsealedAttributeRule : Rule
+	internal sealed class UnsealedAttributeRule : Rule
 	{				
 		public UnsealedAttributeRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1013")

@@ -26,7 +26,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class EventSignatureRule : Rule
+	internal sealed class EventSignatureRule : Rule
 	{				
 		public EventSignatureRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1008")

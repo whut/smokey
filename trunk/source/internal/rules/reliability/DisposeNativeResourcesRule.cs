@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class DisposeNativeResourcesRule : Rule
+	internal sealed class DisposeNativeResourcesRule : Rule
 	{				
 		public DisposeNativeResourcesRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1001")

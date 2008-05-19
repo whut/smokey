@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ThrowDerivedRule : Rule
+	internal sealed class ThrowDerivedRule : Rule
 	{				
 		public ThrowDerivedRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1012")

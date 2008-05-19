@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class NoObjectDisposedExceptionRule : Rule
+	internal sealed class NoObjectDisposedExceptionRule : Rule
 	{				
 		public NoObjectDisposedExceptionRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1009")
@@ -42,7 +42,7 @@ namespace Smokey.Internal.Rules
 		// Another lame inter-procedual test.
 		public void VisitType(TypeDefinition type)
 		{						
-			if (type.Implements("System.IDisposable"))
+			if (type.Implements("System.IDisposable") && !type.IsCompilerGenerated())
 			{
 				Log.DebugLine(this, "-----------------------------------"); 
 				Log.DebugLine(this, "checking {0}", type);				

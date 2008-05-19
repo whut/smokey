@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class DllImportExtensionRule : Rule
+	internal sealed class DllImportExtensionRule : Rule
 	{				
 		public DllImportExtensionRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "PO1002")
