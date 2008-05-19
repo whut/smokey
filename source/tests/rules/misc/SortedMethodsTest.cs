@@ -33,14 +33,14 @@ namespace Smokey.Tests
 	public class SortedMethodsTest : TypeTest
 	{	
 		#region Test cases
-		internal class Good1		
+		internal sealed class Good1		
 		{
 			public void A1()
 			{
 			}
 		}
 
-		internal class Good2	
+		internal sealed class Good2	
 		{
 			public void A2()
 			{
@@ -51,7 +51,7 @@ namespace Smokey.Tests
 			}
 		}
 
-		internal class Good3
+		internal sealed class Good3
 		{
 			public void A1()
 			{
@@ -66,7 +66,7 @@ namespace Smokey.Tests
 			}
 		}
 
-		internal class Good4
+		internal sealed class Good4
 		{
 			public void A1()
 			{
@@ -85,7 +85,7 @@ namespace Smokey.Tests
 			}
 		}
 
-		internal class Good5
+		internal sealed class Good5
 		{
 			public void A1()
 			{
@@ -108,7 +108,7 @@ namespace Smokey.Tests
 			}
 		}
 
-		internal class Good6
+		internal sealed class Good6
 		{
 			public void A1()
 			{
@@ -136,7 +136,7 @@ namespace Smokey.Tests
 			}
 		}
 
-		internal class Good7
+		internal sealed class Good7
 		{
 			public void A3()
 			{
@@ -159,7 +159,7 @@ namespace Smokey.Tests
 			}
 		}
 
-		internal class Good8
+		internal sealed class Good8
 		{
 			public Good8()
 			{
@@ -190,7 +190,7 @@ namespace Smokey.Tests
 			}
 		}
 
-		internal class Good9
+		internal sealed class Good9
 		{
 			public Good9()
 			{
@@ -223,7 +223,7 @@ namespace Smokey.Tests
 			}
 		}
 
-		internal class Bad1		
+		internal sealed class Bad1		
 		{
 			public void A1()
 			{
@@ -250,7 +250,7 @@ namespace Smokey.Tests
 			}
 		}
 
-		internal class Bad2
+		internal sealed class Bad2
 		{
 			protected void A1()
 			{
@@ -277,7 +277,7 @@ namespace Smokey.Tests
 			}
 		}
 
-		internal class Bad3
+		internal sealed class Bad3
 		{
 			public Bad3()
 			{
@@ -310,7 +310,7 @@ namespace Smokey.Tests
 			}
 		}
 
-		internal class Bad4
+		internal sealed class Bad4
 		{			
 			public event EventHandler Alpha;
 			

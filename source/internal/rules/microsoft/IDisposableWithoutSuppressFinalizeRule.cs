@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class IDisposableWithoutSuppressFinalizeRule : Rule
+	internal sealed class IDisposableWithoutSuppressFinalizeRule : Rule
 	{				
 		public IDisposableWithoutSuppressFinalizeRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1007")
@@ -103,7 +103,7 @@ namespace Smokey.Internal.Rules
 		{
 			bool yup = false;
 			
-			if (method.Name == "Dispose" && !method.ToString().Contains("CompilerGenerated"))
+			if (method.Name == "Dispose" && !method.IsCompilerGenerated())
 			{
 				if ((method.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Public)
 				{

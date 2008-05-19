@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class NullDerefRule : Rule
+	internal sealed class NullDerefRule : Rule
 	{				
 		public NullDerefRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1003")

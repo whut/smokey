@@ -32,7 +32,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class UseDefaultInitRule : Rule
+	internal sealed class UseDefaultInitRule : Rule
 	{				
 		public UseDefaultInitRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1011")

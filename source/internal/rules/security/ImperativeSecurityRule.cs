@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class ImperativeSecurityRule : Rule
+	internal sealed class ImperativeSecurityRule : Rule
 	{				
 		public ImperativeSecurityRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1006")

@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class GodClassRule : Rule
+	internal sealed class GodClassRule : Rule
 	{				
 		public GodClassRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1045")

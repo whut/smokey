@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class CompareFloatsRule : Rule
+	internal sealed class CompareFloatsRule : Rule
 	{				
 		// This is inspired by the Gendarme rule authored by Lukasz Knop
 		// although the code is completely different.

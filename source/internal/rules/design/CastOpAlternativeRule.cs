@@ -28,7 +28,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class CastOpAlternativeRule : Rule
+	internal sealed class CastOpAlternativeRule : Rule
 	{				
 		public CastOpAlternativeRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1034")

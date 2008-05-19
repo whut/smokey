@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ImplementGenericCollectionRule : Rule
+	internal sealed class ImplementGenericCollectionRule : Rule
 	{				
 		public ImplementGenericCollectionRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1006")

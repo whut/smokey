@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class SuffixName3Rule : Rule
+	internal sealed class SuffixName3Rule : Rule
 	{				
 		public SuffixName3Rule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1025")

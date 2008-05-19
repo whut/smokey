@@ -32,7 +32,7 @@ using System.Diagnostics;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class NullFieldRule : Rule
+	internal sealed class NullFieldRule : Rule
 	{				
 		public NullFieldRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1017")

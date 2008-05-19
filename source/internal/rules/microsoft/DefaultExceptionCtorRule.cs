@@ -30,7 +30,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class DefaultExceptionCtorRule : Rule
+	internal sealed class DefaultExceptionCtorRule : Rule
 	{				
 		public DefaultExceptionCtorRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1028")

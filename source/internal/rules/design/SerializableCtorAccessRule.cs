@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class SerializableCtorAccessRule : Rule
+	internal sealed class SerializableCtorAccessRule : Rule
 	{				
 		public SerializableCtorAccessRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1029")

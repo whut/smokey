@@ -73,6 +73,9 @@ namespace Smokey.Framework.Support
 		
 		public static bool Match(MethodReference lhs, MethodReference rhs)
 		{
+			DBC.Pre(lhs != null, "lhs is null");				
+			DBC.Pre(rhs != null, "rhs is null");
+				
 			if (lhs.Name != rhs.Name)
 			{
 				return false;

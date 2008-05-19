@@ -32,7 +32,7 @@ using System.Diagnostics;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class NoStaticRemoveRule : Rule
+	internal sealed class NoStaticRemoveRule : Rule
 	{				
 		public NoStaticRemoveRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1026")

@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ExplicitGCRule : Rule
+	internal sealed class ExplicitGCRule : Rule
 	{				
 		public ExplicitGCRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1017")

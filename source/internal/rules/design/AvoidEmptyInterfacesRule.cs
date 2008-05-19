@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class AvoidEmptyInterfacesRule : Rule
+	internal sealed class AvoidEmptyInterfacesRule : Rule
 	{				
 		public AvoidEmptyInterfacesRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1005")

@@ -28,7 +28,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class CollectionToStringRule : Rule
+	internal sealed class CollectionToStringRule : Rule
 	{				
 		public CollectionToStringRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1040")

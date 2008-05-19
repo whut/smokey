@@ -27,20 +27,20 @@ namespace Smokey.Internal
 {	
 	[DisableRule("R1019", "RequireSerializableCtor")]
 	[DisableRule("D1012", "InternalException")]			// this really is an internal exception
-	internal class MalformedCommandLineException : Exception
+	internal sealed class MalformedCommandLineException : Exception
 	{
 		public MalformedCommandLineException(string message) : base(message) 
 		{
 		}
 		
-		public MalformedCommandLineException(string message, Exception innerException) : 
-			base (message, innerException)
-		{
-		}
+//		public MalformedCommandLineException(string message, Exception innerException) : 
+//			base (message, innerException)
+//		{
+//		}
 	}  			
 
 	// Mono.GetOptions is deprecated as of mono 1.2.6 so we provide our own version.
-	internal class GetOptions
+	internal sealed class GetOptions
 	{
 		// Typical usage is Add("-help", "-h", "-?", "blah blah"). The first string
 		// is the primary option key used to identify the option. The middle strings

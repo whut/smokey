@@ -35,7 +35,7 @@ namespace Smokey.Tests
 	public class KeepAliveTest : TypeTest
 	{	
 		#region Test classes
-		internal class Good1 
+		internal sealed class Good1 
 		{
 			~Good1()		
 			{					
@@ -65,7 +65,7 @@ namespace Smokey.Tests
 			private IntPtr m_handle;
 		}
 
-		internal class Good2
+		internal sealed class Good2
 		{
 			public Good2(IntPtr handle)
 			{
@@ -90,7 +90,7 @@ namespace Smokey.Tests
 			private IntPtr m_handle;
 		}
 	
-		internal class Bad1 
+		internal sealed class Bad1 
 		{
 			~Bad1()		
 			{					
@@ -120,7 +120,7 @@ namespace Smokey.Tests
 			private IntPtr m_handle;
 		}
 	
-		internal class Bad2 
+		internal sealed class Bad2 
 		{
 			~Bad2()		
 			{					

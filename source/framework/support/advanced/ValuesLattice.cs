@@ -35,7 +35,7 @@ namespace Smokey.Framework.Support.Advanced
 	{			
 		// Used to compute the state of arguments, locals, and the stack on 
 		// entry and exit from BasicBlocks.
-		internal class Lattice
+		internal sealed class Lattice
 		{
 			private Lattice()
 			{
@@ -467,7 +467,7 @@ namespace Smokey.Framework.Support.Advanced
 			#endregion
 							
 			#region Functions class
-			internal class Functions : LatticeFunctions<Lattice>
+			internal sealed class Functions : LatticeFunctions<Lattice>
 			{
 				public override Lattice Meet(Lattice lhs, Lattice rhs)
 				{

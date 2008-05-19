@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class HiddenMethodRule : Rule
+	internal sealed class HiddenMethodRule : Rule
 	{				
 		public HiddenMethodRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1010")

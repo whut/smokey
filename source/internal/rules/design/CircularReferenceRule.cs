@@ -30,7 +30,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class CircularReferenceRule : Rule
+	internal sealed class CircularReferenceRule : Rule
 	{				
 		public CircularReferenceRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1041")
@@ -51,46 +51,55 @@ namespace Smokey.Internal.Rules
 			Log.DebugLine(this, "-----------------------------------"); 
 			Log.DebugLine(this, "checking {0}", begin.Type);				
 
-			m_refs = new List<TypeReference>();
-			
-			TypeReference super = begin.Type.BaseType;
-			while (super != null && super.FullName != "System.Object")
+			m_needsCheck = !begin.Type.IsCompilerGenerated();
+			if (m_needsCheck)
 			{
-				DoAdd(super);
+				m_refs = new List<TypeReference>();
 				
-				TypeDefinition t = Cache.FindType(super);
-				super = t != null ? t.BaseType : null;
+				TypeReference super = begin.Type.BaseType;
+				while (super != null && super.FullName != "System.Object")
+				{
+					DoAdd(super);
+					
+					TypeDefinition t = Cache.FindType(super);
+					super = t != null ? t.BaseType : null;
+				}
 			}
 		}
 		
 		public void VisitField(FieldDefinition field)
 		{
-			DoAdd(field.FieldType);
+			if (m_needsCheck)
+				DoAdd(field.FieldType);
 		}
 		
 		public void VisitMethod(MethodDefinition method)
 		{
-			DoAdd(method.ReturnType.ReturnType);
-			foreach (ParameterDefinition p in method.Parameters)
+			if (m_needsCheck)
 			{
-				DoAdd(p.ParameterType);
-			}
-			foreach (GenericParameter g in method.GenericParameters)
-			{
-				DoAdd(g);
-			}
-			if (method.Body != null)
-			{
-				foreach (VariableDefinition v in method.Body.Variables)
+				DoAdd(method.ReturnType.ReturnType);
+				foreach (ParameterDefinition p in method.Parameters)
 				{
-					DoAdd(v.VariableType);
+					DoAdd(p.ParameterType);
+				}
+				foreach (GenericParameter g in method.GenericParameters)
+				{
+					DoAdd(g);
+				}
+				if (method.Body != null)
+				{
+					foreach (VariableDefinition v in method.Body.Variables)
+					{
+						DoAdd(v.VariableType);
+					}
 				}
 			}
 		}
 		
 		public void VisitEnd(EndType end)
 		{
-			m_table.Add(end.Type, m_refs);
+			if (m_needsCheck)
+				m_table.Add(end.Type, m_refs);
 		}
 						
 		public void VisitFini(EndTesting end)
@@ -132,6 +141,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 
+		private bool m_needsCheck;
 		private List<TypeReference> m_refs;
 		private Dictionary<TypeReference, List<TypeReference>> m_table = new Dictionary<TypeReference, List<TypeReference>>();
 	}

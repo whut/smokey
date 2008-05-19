@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class SealedInheritanceDemandRule : Rule
+	internal sealed class SealedInheritanceDemandRule : Rule
 	{				
 		public SealedInheritanceDemandRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1018")

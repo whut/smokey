@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class PermitDenySecurityRule : Rule
+	internal sealed class PermitDenySecurityRule : Rule
 	{				
 		public PermitDenySecurityRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1005")

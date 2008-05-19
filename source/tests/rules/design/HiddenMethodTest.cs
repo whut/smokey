@@ -57,7 +57,7 @@ namespace Smokey.Tests
 			}
 		}
 		
-		internal class DerivedType : BaseType
+		internal sealed class DerivedType : BaseType
 		{
 			public void Good1(string x, string y)
 			{

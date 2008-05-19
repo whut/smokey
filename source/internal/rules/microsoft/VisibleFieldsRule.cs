@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class VisibleFieldsRule : Rule
+	internal sealed class VisibleFieldsRule : Rule
 	{				
 		public VisibleFieldsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1018")

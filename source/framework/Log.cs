@@ -50,6 +50,7 @@ namespace Smokey.Framework
     //
 	// Didn't see a lot of C# logging classes when I googled, but there is log4net
 	// which seems to have a lot of functionality.
+	[DisableRule("C1026", "NoStaticRemove")]
 	public static class Log
 	{		
 		/// <summary>Log message severity.</summary>
@@ -196,7 +197,7 @@ namespace Smokey.Framework
 		public static void DebugLine(object instance, string format, params object[] args)		{}
 #endif
 
-		#region Private methods	
+		#region Private Methods	-----------------------------------------------
 		// Converting arguments to strings can be quite expensive so we use these helpers to
 		// avoid the conversion if we're not going to actually log anything.
 		private static void DoLog(Level level, Type topic, string arg1)								
@@ -341,7 +342,7 @@ namespace Smokey.Framework
 		}
 		#endregion
 
-		#region Fields
+		#region Fields --------------------------------------------------------
 		private static bool ms_inited;
 		private static TextWriter ms_log;
 		private static Dictionary<Type, Level> ms_levels = new Dictionary<Type, Level>();

@@ -38,7 +38,7 @@ namespace Smokey.Tests
 	public class ValidateArgs2Test : MethodTest
 	{	
 		#region Test classes
-		internal class Cases
+		internal sealed class Cases
 		{
 			public int Good1(List<int> list) 
 			{ 

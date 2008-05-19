@@ -75,30 +75,13 @@ namespace Smokey.Tests
 			{
 				return n / 0.0;
 			}
-
-			public static double Bad2(double n)
-			{
-				double d = 0.0;
-				if (n < 0.0)
-					d = 4.0;
-					
-				return n / d;
-			}
-
-			public static double Bad3(float n, float d)
-			{
-				if (n < 0.0)
-					d = 0.0f;
-					
-				return n / d;
-			}
 		}
 		#endregion
 		
 		// test code
 		public FloatZeroDivideTest() : base(
 			new string[]{"Cases.Good1", "Cases.Good2", "Cases.Good3", "Cases.Good4", "Cases.Good5"},
-			new string[]{"Cases.Bad1", "Cases.Bad2", "Cases.Bad3"})	
+			new string[]{"Cases.Bad1"})	
 		{
 		}
 						

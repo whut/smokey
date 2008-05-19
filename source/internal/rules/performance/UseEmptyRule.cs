@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class UseEmptyRule : Rule
+	internal sealed class UseEmptyRule : Rule
 	{				
 		public UseEmptyRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1018")

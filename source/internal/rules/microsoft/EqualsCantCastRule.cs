@@ -176,7 +176,7 @@ namespace Smokey.Internal.Rules
 		private bool m_foundTypeCheck;
 	}
 
-	internal class EqualsCantCastRule1 : EqualsCantCastRule
+	internal sealed class EqualsCantCastRule1 : EqualsCantCastRule
 	{				
 		public EqualsCantCastRule1(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1004")
@@ -194,7 +194,7 @@ namespace Smokey.Internal.Rules
 		}
 	}
 
-	internal class EqualsCantCastRule2 : EqualsCantCastRule
+	internal sealed class EqualsCantCastRule2 : EqualsCantCastRule
 	{				
 		public EqualsCantCastRule2(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1005")

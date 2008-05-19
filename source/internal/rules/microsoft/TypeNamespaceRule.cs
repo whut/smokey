@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class TypeNamespaceRule : Rule
+	internal sealed class TypeNamespaceRule : Rule
 	{				
 		public TypeNamespaceRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1026")

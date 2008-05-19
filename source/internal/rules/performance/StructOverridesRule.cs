@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class StructOverridesRule : Rule
+	internal sealed class StructOverridesRule : Rule
 	{				
 		public StructOverridesRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1008")
@@ -42,7 +42,8 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitType(TypeDefinition type)
 		{						
-			if (type.IsValueType && !type.IsEnum && !type.FullName.Contains("PrivateImplementationDetails"))
+			if (type.IsValueType && !type.IsEnum)
+//			if (type.IsValueType && !type.IsEnum && !type.FullName.Contains("PrivateImplementationDetails"))
 			{				
 				Log.DebugLine(this, "-----------------------------------"); 
 				Log.DebugLine(this, "checking {0}", type);				

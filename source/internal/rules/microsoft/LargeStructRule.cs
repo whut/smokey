@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class LargeStructRule : Rule
+	internal sealed class LargeStructRule : Rule
 	{				
 		public LargeStructRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1019")

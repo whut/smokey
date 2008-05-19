@@ -52,6 +52,8 @@ namespace Smokey.App
 		{
 			set 
 			{
+				DBC.Pre(value != null, "value is null");
+				
 				foreach (string checkID in value)
 					if (!ViolationDatabase.IsValid(checkID))
 						throw new ArgumentException(string.Format("{0} is not a valid checkID", checkID));
@@ -69,6 +71,8 @@ namespace Smokey.App
 		{
 			set 
 			{						
+				DBC.Pre(value != null, "value is null");
+				
 				foreach (string exclude in value)
 				{
 					int index = exclude.IndexOf('@', 1);

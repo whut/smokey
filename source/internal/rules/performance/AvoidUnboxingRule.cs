@@ -30,7 +30,7 @@ namespace Smokey.Internal.Rules
 {	
 	// The idea for this rule comes from John Robbins. See:
 	// <http://msdn.microsoft.com/msdnmag/issues/04/09/Bugslayer/>.
-	internal class AvoidUnboxingRule : Rule
+	internal sealed class AvoidUnboxingRule : Rule
 	{				
 		public AvoidUnboxingRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1004")

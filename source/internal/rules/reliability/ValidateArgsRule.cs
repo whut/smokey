@@ -33,7 +33,7 @@ namespace Smokey.Internal.Rules
 {	
 	internal abstract class BaseValidateArgsRule : Rule
 	{				
-		public BaseValidateArgsRule(AssemblyCache cache, IReportViolations reporter, string checkID) 
+		protected BaseValidateArgsRule(AssemblyCache cache, IReportViolations reporter, string checkID) 
 			: base(cache, reporter, checkID)
 		{
 		}
@@ -75,24 +75,6 @@ namespace Smokey.Internal.Rules
 		}
 		
 		// ldarg.1    list
-		// brtrue     11
-		public void VisitBranch(ConditionalBranch branch)
-		{
-			if (m_needsCheck && m_offset < 0)
-			{
-				if (branch.Untyped.OpCode.Code == Code.Brtrue || branch.Untyped.OpCode.Code == Code.Brtrue_S || branch.Untyped.OpCode.Code == Code.Brfalse || branch.Untyped.OpCode.Code == Code.Brfalse_S)
-				{
-					LoadArg load = m_info.Instructions[branch.Index - 1] as LoadArg;
-					if (load != null)
-					{
-						m_table[load.Name] = true;
-						Log.DebugLine(this, "found a compare at {0:X2}", branch.Untyped.Offset); 
-					}
-				}
-			}
-		}
-
-		// ldarg.1    list
 		// ldnull     
 		// ceq 
 		public void VisitCeq(Ceq ceq)
@@ -112,6 +94,24 @@ namespace Smokey.Internal.Rules
 				{
 					m_table[load2.Name] = true;
 					Log.DebugLine(this, "found a compare at {0:X2}", ceq.Untyped.Offset); 
+				}
+			}
+		}
+
+		// ldarg.1    list
+		// brtrue     11
+		public void VisitBranch(ConditionalBranch branch)
+		{
+			if (m_needsCheck && m_offset < 0)
+			{
+				if (branch.Untyped.OpCode.Code == Code.Brtrue || branch.Untyped.OpCode.Code == Code.Brtrue_S || branch.Untyped.OpCode.Code == Code.Brfalse || branch.Untyped.OpCode.Code == Code.Brfalse_S)
+				{
+					LoadArg load = m_info.Instructions[branch.Index - 1] as LoadArg;
+					if (load != null)
+					{
+						m_table[load.Name] = true;
+						Log.DebugLine(this, "found a compare at {0:X2}", branch.Untyped.Offset); 
+					}
 				}
 			}
 		}
@@ -172,7 +172,7 @@ namespace Smokey.Internal.Rules
 		private Dictionary<string, bool> m_table = new Dictionary<string, bool>();
 	}
 
-	internal class ValidateArgs1Rule : BaseValidateArgsRule
+	internal sealed class ValidateArgs1Rule : BaseValidateArgsRule
 	{				
 		public ValidateArgs1Rule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1034")
@@ -190,7 +190,7 @@ namespace Smokey.Internal.Rules
 		}
 	}
 
-	internal class ValidateArgs2Rule : BaseValidateArgsRule
+	internal sealed class ValidateArgs2Rule : BaseValidateArgsRule
 	{				
 		public ValidateArgs2Rule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1035")

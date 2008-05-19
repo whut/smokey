@@ -33,7 +33,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class FormatProviderRule : Rule
+	internal sealed class FormatProviderRule : Rule
 	{				
 		public FormatProviderRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "G1003")
@@ -60,7 +60,7 @@ namespace Smokey.Internal.Rules
 			m_offset = -1;
 			m_bad = null;
 			m_info = begin.Info;
-			m_needsCheck = !begin.Info.Type.FullName.Contains("CompilerGenerated");	// TODO: why are we even called for these?
+			m_needsCheck = !begin.Info.Type.IsCompilerGenerated();	// TODO: why are we even called for these?
 		}
 
 		public void VisitCall(Call call)

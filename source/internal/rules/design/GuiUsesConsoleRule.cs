@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class GuiUsesConsoleRule : Rule
+	internal sealed class GuiUsesConsoleRule : Rule
 	{				
 		public GuiUsesConsoleRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1048")

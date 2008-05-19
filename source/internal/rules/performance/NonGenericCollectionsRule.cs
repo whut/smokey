@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class NonGenericCollectionsRule : Rule
+	internal sealed class NonGenericCollectionsRule : Rule
 	{				
 		public NonGenericCollectionsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1007")

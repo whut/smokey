@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class EmptyOverrideRule : Rule
+	internal sealed class EmptyOverrideRule : Rule
 	{				
 		public EmptyOverrideRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1044")

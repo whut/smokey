@@ -30,7 +30,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class UncheckedAssemblyRule : Rule
+	internal sealed class UncheckedAssemblyRule : Rule
 	{				
 		public UncheckedAssemblyRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1024")

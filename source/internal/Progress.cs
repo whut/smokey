@@ -27,7 +27,7 @@ namespace Smokey.Internal
 {
 	// Prints progress information to stderr. Note that we only print if the
 	// main thread is actually making progress.
-	internal class Progress : IDisposable
+	internal sealed class Progress : IDisposable
 	{		
 		// Starts our thread up.
 		public Progress(bool verbose)
@@ -51,6 +51,7 @@ namespace Smokey.Internal
 		}
 				
 		// Joins the thread.
+		[DisableRule("D1042", "IdenticalMethods")]	// TODO: should have a base class for progress and watchdog
 		public void Shutdown()
 		{
 			if (m_disposed)        

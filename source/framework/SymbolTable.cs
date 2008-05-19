@@ -36,7 +36,7 @@ namespace Smokey.Framework
 	// Uses the (undocumented) Mono.CompilerServices to extract file and line
 	// info from mdb files, and Cecil to process the meta data in the image
 	// file. See /Users/jessejones/New_Files/mono-1.2.6/mcs/class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
-	internal class SymbolTable
+	internal sealed class SymbolTable
 	{				
 #if TEST
 		public SymbolTable()

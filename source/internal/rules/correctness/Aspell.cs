@@ -35,18 +35,14 @@ namespace Smokey.Internal.Rules
 	using AspellCanHaveError = IntPtr;
 	using AspellSpeller = IntPtr;
 
-	internal class AspellException : InvalidOperationException
+	internal sealed class AspellException : InvalidOperationException
 	{
 		public AspellException(string mesg) : base(mesg)
 		{
 		}
-
-		protected AspellException(SerializationInfo info, StreamingContext context) : base(info, context)
-		{
-		}
 	}
 	
-	internal class Aspell 
+	internal sealed class Aspell 
 	{
 		// If Aspell can't load this will throw an exception the first
 		// time. Thereafter it will return null.

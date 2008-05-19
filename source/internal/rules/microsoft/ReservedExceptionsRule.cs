@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ReservedExceptionsRule : Rule
+	internal sealed class ReservedExceptionsRule : Rule
 	{				
 		public ReservedExceptionsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1010")

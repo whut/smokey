@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class PreferredTermRule : Rule
+	internal sealed class PreferredTermRule : Rule
 	{				
 		public PreferredTermRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1027")

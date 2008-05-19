@@ -32,7 +32,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class RecursiveLock2Rule : Rule
+	internal sealed class RecursiveLock2Rule : Rule
 	{				
 		public RecursiveLock2Rule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1038")
@@ -101,6 +101,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 		
+		[DisableRule("D1047", "TooManyArgs")]
 		private bool DoCallsExternal(MethodReference method, Entry entry, CallGraph graph, List<string> chain, int depth, ref string name)
 		{
 			if (depth > 8)			// this can't be too large or the rule takes a very long time to run

@@ -27,7 +27,7 @@ using Smokey.Framework;
 
 namespace Smokey.Internal
 {	
-//	internal class Report {}
+//	internal sealed class Report {}
 	
 	// Reports rule violations as xml. This is useful for tools such as
 	// daily build systems.

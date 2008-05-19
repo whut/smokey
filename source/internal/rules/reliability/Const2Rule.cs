@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class Const2Rule : Rule
+	internal sealed class Const2Rule : Rule
 	{				
 		public Const2Rule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1016")

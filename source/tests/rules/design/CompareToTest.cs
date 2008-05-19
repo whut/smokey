@@ -34,7 +34,7 @@ namespace Smokey.Tests
 	public class CompareToTest : TypeTest
 	{	
 		// test classes
-		internal class Good1 : IComparable<Good1>
+		internal sealed class Good1 : IComparable<Good1>
 		{		
 			public int CompareTo(Good1 rhs)	
 			{					
@@ -63,7 +63,7 @@ namespace Smokey.Tests
 			private string m_address = "main street";
 		}
 								
-		internal class Good2
+		internal sealed class Good2
 		{		
 			public int CompareTo(Good2 rhs)	
 			{					
@@ -78,7 +78,7 @@ namespace Smokey.Tests
 			private string m_address = "main street";
 		}
 								
-		internal class Bad1 : IComparable<Bad1>
+		internal sealed class Bad1 : IComparable<Bad1>
 		{		
 			public int CompareTo(Bad1 rhs)	
 			{					

@@ -42,7 +42,7 @@ namespace Smokey.Tests
 		{
 		}			
 				
-		internal class Good3 : Attribute
+		internal sealed class Good3 : Attribute
 		{
 		}			
 				

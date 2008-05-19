@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class PathCombineRule : Rule
+	internal sealed class PathCombineRule : Rule
 	{				
 		public PathCombineRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "PO1006")

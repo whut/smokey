@@ -225,7 +225,7 @@ profile      enables smokey's built in profiler, defaults to false
 	<target name = "test1" depends = "tests" description = "runs one unit test">
 		<!-- nant provides an nunit2 task, but we don't get stack crawls if we use it...-->
 		<exec program = "nunit-console2" failonerror = "true" commandline = 
-			"-nologo -fixture=Smokey.Tests.UseSetterValueTest -config=bin/tests${extension}.dll.config bin/tests${extension}.dll"/>
+			"-nologo -fixture=Smokey.Tests.IntZeroDivideTest -config=bin/tests${extension}.dll.config bin/tests${extension}.dll"/>
 	</target>
 		
 	<!-- run the functional test -->
@@ -243,8 +243,8 @@ profile      enables smokey's built in profiler, defaults to false
 	<!-- smoke test smokey -->
 	<target name = "smoke" depends = "app" description = "runs smokey on smokey">
 		<exec program = "mono" failonerror = "true" commandline = "--debug ${path::get-full-path(app_path)} 
-		-set:ignoreList:IgnoreList.txt -set:naming:jurassic -exclude-name:D1002@DoCheckJurassicFields  
-		-exclude-check:D1031 -exclude-name:C1000@Smokey.Internal.HtmlHelpers -exclude-check:D1024 -exclude-check:D1015 
+		-not-localized -set:ignoreList:IgnoreList.txt -set:naming:jurassic -exclude-name:D1002@DoCheckJurassicFields  
+		-exclude-check:P1005 -exclude-check:D1031 -exclude-name:C1000@Smokey.Internal.HtmlHelpers -exclude-check:D1024 -exclude-check:D1015 
 		${path::get-full-path(app_path)}"/>
 	</target>
 		
@@ -257,6 +257,7 @@ profile      enables smokey's built in profiler, defaults to false
 			<fileset basedir = ".">
 				<include name = "CHANGES"/>		
 				<include name = "CHANGE_LOG"/>		
+				<include name = "OLD_CHANGE_LOG"/>		
 				<include name = "README"/>		
 			</fileset>
 			<fileset basedir = "." filemode = "755">
@@ -276,6 +277,7 @@ profile      enables smokey's built in profiler, defaults to false
 				<include name = "AUTHORS"/>		
 				<include name = "CHANGES"/>		
 				<include name = "CHANGE_LOG"/>		
+				<include name = "OLD_CHANGE_LOG"/>		
 				<include name = "README"/>		
 				<include name = "MIT.X11"/>
 				<include name = "IgnoreList.txt"/>

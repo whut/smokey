@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 namespace Smokey.Internal.Rules
 {		
 	// Based on <http://www.mono-project.com/Coding_Guidelines>.
-	internal class MonoNamingRule : Rule
+	internal sealed class MonoNamingRule : Rule
 	{				
 		public MonoNamingRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MO1000")
@@ -61,8 +61,8 @@ namespace Smokey.Internal.Rules
 			m_type = arg.Type;
 			m_needsCheck = false;
 			
-			if (!m_type.FullName.Contains("PrivateImplementationDetails"))
-				if (!m_type.Name.StartsWith("yy") && !m_type.FullName.Contains("CompilerGenerated"))
+//			if (!m_type.FullName.Contains("PrivateImplementationDetails"))
+				if (!m_type.Name.StartsWith("yy") && !m_type.IsCompilerGenerated())
 					m_needsCheck = true;
 		}
 		
@@ -88,7 +88,8 @@ namespace Smokey.Internal.Rules
 
 		public void VisitMethod(MethodDefinition method)	
 		{
-			if (!m_needsCheck || method.Name.StartsWith("yy") || method.ToString().Contains("CompilerGenerated") || method.ToString().Contains("AnonymousMethod"))
+			if (!m_needsCheck || method.Name.StartsWith("yy"))
+//			if (!m_needsCheck || method.Name.StartsWith("yy") || method.IsCompilerGenerated() || method.ToString().Contains("AnonymousMethod"))
 				return;
 			
 			// Method name must be PascalCase.

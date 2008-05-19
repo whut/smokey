@@ -55,28 +55,28 @@ namespace Smokey.Tests
 			}
 		}			
 				
-		internal class Good4 : InvalidOperationException
+		internal sealed class Good4 : InvalidOperationException
 		{
 			public Good4(string e) : base(e)
 			{
 			}
 		}			
 				
-		internal class Bad1 : Exception
+		internal sealed class Bad1 : Exception
 		{
 			public Bad1(string e) : base(e)
 			{
 			}
 		}			
 				
-		internal class Bad2 : SystemException
+		internal sealed class Bad2 : SystemException
 		{
 			public Bad2(string e) : base(e)
 			{
 			}
 		}			
 				
-		internal class Bad3 : ApplicationException
+		internal sealed class Bad3 : ApplicationException
 		{
 			public Bad3(string e) : base(e)
 			{

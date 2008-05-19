@@ -28,7 +28,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class OperatorAlternativeRule : Rule
+	internal sealed class OperatorAlternativeRule : Rule
 	{				
 		public OperatorAlternativeRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1033")

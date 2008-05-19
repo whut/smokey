@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class SealedProtectedRule : Rule
+	internal sealed class SealedProtectedRule : Rule
 	{				
 		public SealedProtectedRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1053")

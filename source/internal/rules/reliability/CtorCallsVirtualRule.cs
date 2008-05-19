@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class CtorCallsVirtualRule : Rule
+	internal sealed class CtorCallsVirtualRule : Rule
 	{				
 		public CtorCallsVirtualRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1005")

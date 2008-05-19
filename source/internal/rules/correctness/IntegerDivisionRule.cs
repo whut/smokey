@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class IntegerDivisionRule : Rule
+	internal sealed class IntegerDivisionRule : Rule
 	{				
 		public IntegerDivisionRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1009")

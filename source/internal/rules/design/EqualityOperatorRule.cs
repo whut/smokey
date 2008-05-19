@@ -28,7 +28,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class EqualityOperatorRule : Rule
+	internal sealed class EqualityOperatorRule : Rule
 	{				
 		public EqualityOperatorRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1036")
@@ -55,7 +55,7 @@ namespace Smokey.Internal.Rules
 		{			
 			Log.DebugLine(this, "{0}", method.Name);				
 
-			if (m_type.IsValueType && !m_needsCheck && method.IsVirtual)
+			if (!m_type.IsNestedPrivate && m_type.IsValueType && !m_needsCheck && method.IsVirtual)
 			{
 				MethodAttributes vtable = method.Attributes & MethodAttributes.VtableLayoutMask;
 				if (vtable == MethodAttributes.ReuseSlot)

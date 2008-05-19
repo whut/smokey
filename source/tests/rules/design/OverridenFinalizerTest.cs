@@ -71,7 +71,7 @@ namespace Smokey.Tests
 			private bool m_disposed;
 		}			
 
-		internal class Good1 : MyResource
+		internal sealed class Good1 : MyResource
 		{
 			protected override void Dispose(bool disposing)
 			{
@@ -79,7 +79,7 @@ namespace Smokey.Tests
 			}
 		}			
 
-		internal class Bad1 : MyResource
+		internal sealed class Bad1 : MyResource
 		{
 			~Bad1()
 			{

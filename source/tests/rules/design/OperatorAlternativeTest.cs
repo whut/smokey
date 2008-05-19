@@ -54,7 +54,7 @@ namespace Smokey.Tests
 			private int m_value;
 		}
 				
-		internal class Good2
+		internal sealed class Good2
 		{
 			public Good2(int value)
 			{

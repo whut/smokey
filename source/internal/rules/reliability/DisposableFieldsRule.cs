@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class DisposableFieldsRule : Rule
+	internal sealed class DisposableFieldsRule : Rule
 	{				
 		public DisposableFieldsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1000")

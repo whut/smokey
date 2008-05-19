@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class TooManyArgsRule : Rule
+	internal sealed class TooManyArgsRule : Rule
 	{				
 		public TooManyArgsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1047")

@@ -32,7 +32,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class StringUriOverloadRule : Rule
+	internal sealed class StringUriOverloadRule : Rule
 	{				
 		public StringUriOverloadRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1030")
@@ -157,7 +157,6 @@ namespace Smokey.Internal.Rules
 			public Entry(MethodDefinition uri)
 			{
 				m_uri = uri;
-				m_callsUri = false;
 			}
 			
 			public MethodDefinition Uri

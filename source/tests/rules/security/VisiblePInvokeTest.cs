@@ -52,7 +52,7 @@ namespace Smokey.Tests
 			}
 		}
 
-		internal class GoodCases2
+		internal sealed class GoodCases2
 		{
 			[System.Runtime.InteropServices.DllImport("Kernel32")]
 			public extern static bool M1(IntPtr handle);			

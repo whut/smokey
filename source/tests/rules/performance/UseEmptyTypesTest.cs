@@ -54,6 +54,18 @@ namespace Smokey.Tests
 			{
 				return new string[0];
 			}
+
+			public void AddDictFile(string text)
+			{
+				string[] words = text.Split();
+				foreach (string word in words)
+				{
+					if (word.Length > 0)
+					{
+						Console.WriteLine(word);
+					}
+				}
+			}		
 		}
 
 		private class BadCases
@@ -78,7 +90,9 @@ namespace Smokey.Tests
 
 		// test code
 		public UseEmptyTypesTest() : base(
-			new string[]{"GoodCases.E", "GoodCases.NE1", "GoodCases.NE2", "GoodCases.S"},
+			new string[]{"GoodCases.E", "GoodCases.NE1", "GoodCases.NE2", 
+				"GoodCases.S", "GoodCases.AddDictFile"},
+				
 			new string[]{"BadCases.E1", "BadCases.E2", "BadCases.E3"})	
 		{
 		}

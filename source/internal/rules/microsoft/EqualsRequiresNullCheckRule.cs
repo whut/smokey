@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced.Values;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class EqualsRequiresNullCheckRule : Rule
+	internal sealed class EqualsRequiresNullCheckRule : Rule
 	{				
 		public EqualsRequiresNullCheckRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1020")

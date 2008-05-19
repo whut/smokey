@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ObjectDisposedExceptionRule : Rule
+	internal sealed class ObjectDisposedExceptionRule : Rule
 	{				
 		public ObjectDisposedExceptionRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1036")

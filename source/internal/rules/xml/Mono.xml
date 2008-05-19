@@ -31,7 +31,7 @@
 			<CSharp>
 			namespace Acme
 			{
-				internal class Factory
+				internal sealed class Factory
 				{
 					public bool HasWidget(string partNumber)
 					{

@@ -401,14 +401,14 @@
 			
 			// Required arguments are positional.
 			[Platform("Windows")]
-			internal class WinClass
+			internal sealed class WinClass
 			{
 			}
 			
 			// Optional arguments appear after the positional arguments and
 			// are named.
 			[Platform("Unix", Vendor = "Sun")]
-			internal class UnixClass
+			internal sealed class UnixClass
 			{
 			}
 			</CSharp>
@@ -449,7 +449,7 @@
 				}
 			}
 			
-			internal class DerivedType : BaseType
+			internal sealed class DerivedType : BaseType
 			{
 				public void MethodOne(string x, string y)
 				{
@@ -669,7 +669,7 @@
 				private bool m_disposed;
 			}			
 
-			internal class DerivedResource : MyResource
+			internal sealed class DerivedResource : MyResource
 			{
 				public DerivedResource(IntPtr handle) : base(handle)
 				{
@@ -913,7 +913,7 @@
 			</Fix>
 	
 			<CSharp>
-			internal class Customer : IComparable&lt;Customer&gt;, IEquatable&lt;Customer&gt;
+			internal sealed class Customer : IComparable&lt;Customer&gt;, IEquatable&lt;Customer&gt;
 			{		
 				public int CompareTo(Customer rhs)	
 				{
@@ -1057,7 +1057,7 @@
 			</Fix>
 	
 			<CSharp>
-			internal class AddressEventArgs : EventArgs
+			internal sealed class AddressEventArgs : EventArgs
 			{
 				public readonly string Address;
 				
@@ -1067,7 +1067,7 @@
 				}
 			}
 
-			internal class Names
+			internal sealed class Names
 			{
 				public EventHandler NameChanged;
 				public EventHandler&lt;AddressEventArgs&gt; AddressChanged;
@@ -1536,7 +1536,7 @@
 	<Violation checkID = "D1036" severity = "Warning" breaking = "false">
 		<Translation lang = "en" typeName = "EqualityOperator" category = "Design">			
 			<Cause>
-			A value type overrides Equals, but does not define operator== and operator!=.
+			A non-private value type overrides Equals, but does not define operator== and operator!=.
 			</Cause>
 		
 			<Description>
@@ -1668,7 +1668,7 @@
 			using System.Collections.Generic;
 			using System.Linq;
 
-			internal class Printer
+			internal sealed class Printer
 			{		
 				// Prints "System.Int32[]".
 				public static void Print1(int[] a)
@@ -1841,7 +1841,7 @@
 			// Instead of providing a constructor with a zillion arguments we provide
 			// a very simple constructor and allow users to override the default values
 			// via properties. Note that this idiom is used a lot in the .NET framework.
-			internal class Rectangle : Shape
+			internal sealed class Rectangle : Shape
 			{		
 				public Rectangle()
 				{
@@ -1898,14 +1898,14 @@
 			// the arguments away into a helper struct. This makes it easier to see
 			// which argument does what since when they are used they will be named,
 			// but it's usually better to use properties for constructors.
-			internal class Triangle : Shape
+			internal sealed class Triangle : Shape
 			{		
 				public Triangle(TriangleData data)
 				{
 				}
 			}
 
-			internal class Renderer
+			internal sealed class Renderer
 			{		
 				// This can be called with any number of arguments
 				public void Draw(params Shape[] shapes)
@@ -1937,7 +1937,7 @@
 			using System.Diagnostics;
 			using System.Windows.Forms;
 			
-			internal class Program
+			internal sealed class Program
 			{			
 				[Conditional("DEBUG")]
 				public static void DumpState1()
@@ -2011,10 +2011,9 @@
 	<Violation checkID = "D1051" severity = "Warning" breaking = "false">
 		<Translation lang = "en" typeName = "PublicImplementation" category = "Design">			
 			<Cause>
-			An internal class directly implements one or more public interfaces, has non-private/protected 
+			An internal sealed class directly implements one or more public interfaces, has non-private/protected 
 			methods not declared in an interface, and those methods are only called by the class or
-			a subclass
-			(constructors and overrides are ignored).
+			a subclass (constructors and overrides are ignored).
 			</Cause>
 		
 			<Description>
@@ -2053,7 +2052,7 @@
 			<CSharp>
 			using System.Threading;
 			
-			internal class MonitorPattern
+			internal sealed class MonitorPattern
 			{
 				public void ChangeState(int value)
 				{
@@ -2130,7 +2129,7 @@
 		</Translation>
 	</Violation>
 	
-	<Violation checkID = "D1053" severity = "Warning" breaking = "true">
+	<Violation checkID = "D1053" severity = "Warning" breaking = "false">
 		<Translation lang = "en" typeName = "SealedProtected" category = "Design">			
 			<Cause>
 			A sealed type declares a new protected member.
@@ -2150,7 +2149,7 @@
 	<Violation checkID = "D1054" severity = "Warning" breaking = "false">
 		<Translation lang = "en" typeName = "BadExplicitImplementation" category = "Design">			
 			<Cause>
-			An externally visible unsealed type explicity implements an interface method, but does
+			An externally visible unsealed type explicitly implements an interface method, but does
 			not provide an alternative non-private method with the same name.
 			</Cause>
 		
@@ -2308,7 +2307,7 @@
 			<CSharp>			
 			using System.Threading;
 			
-			internal class MonitorPattern
+			internal sealed class MonitorPattern
 			{
 				public void ChangeState(int value)
 				{

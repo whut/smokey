@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class NotInstantiatedRule : Rule
+	internal sealed class NotInstantiatedRule : Rule
 	{				
 		public NotInstantiatedRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1012")

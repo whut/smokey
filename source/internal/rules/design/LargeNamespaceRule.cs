@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class LargeNamespaceRule : Rule
+	internal sealed class LargeNamespaceRule : Rule
 	{				
 		public LargeNamespaceRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1000")

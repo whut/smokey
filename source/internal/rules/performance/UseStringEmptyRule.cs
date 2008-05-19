@@ -32,7 +32,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class UseStringEmptyRule : Rule
+	internal sealed class UseStringEmptyRule : Rule
 	{				
 		public UseStringEmptyRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1002")

@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class TypedDictionaryRule : Rule
+	internal sealed class TypedDictionaryRule : Rule
 	{				
 		public TypedDictionaryRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1017")

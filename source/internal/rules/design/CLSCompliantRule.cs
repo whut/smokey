@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 namespace Smokey.Internal.Rules
 {	
 	[DisableRule("M1000", "UseJurassicNaming")]	// this should be enabled, but i dont want to try svn moving a file with only case changes
-	internal class CLSCompliantRule : Rule
+	internal sealed class CLSCompliantRule : Rule
 	{				
 		public CLSCompliantRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1018")

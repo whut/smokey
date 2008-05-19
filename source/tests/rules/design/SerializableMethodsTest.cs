@@ -33,7 +33,7 @@ namespace Smokey.Tests
 	public class SerializableMethodsTest : MethodTest
 	{	
 		#region Test classes
-		internal class GoodCases
+		internal sealed class GoodCases
 		{
 			public void Use(StreamingContext context)
 			{
@@ -57,7 +57,7 @@ namespace Smokey.Tests
 			}
 		}
 
-		internal class BadCases
+		internal sealed class BadCases
 		{
 			public void Use(StreamingContext context)
 			{

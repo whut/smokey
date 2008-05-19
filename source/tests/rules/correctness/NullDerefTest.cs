@@ -271,15 +271,6 @@ namespace Smokey.Tests
 				public bool HasNext {get {return next != null;}}
 			}
 
-			public bool IsReadOnly(object x)
-			{
-				DictionaryNode attrib = (DictionaryNode) x;
-				if (attrib != null)
-					Console.WriteLine("blech");
-
-				return attrib.HasNext;
-			}
-
 			public List<int> CreateList(int c)
 			{
 				List<int> result = null;         
@@ -302,7 +293,7 @@ namespace Smokey.Tests
 			"GoodCases.CreateListThrow2", "GoodCases.Add", "GoodCases.Static", "GoodCases.ResolveFunction", 
 			"GoodCases.GetURI", "GoodCases.OutParam", "GoodCases.Remove", "GoodCases.BytesToRead"},
 			
-			new string[]{"BadCases.Add", "BadCases.CreateList", "BadCases.IsReadOnly"})	
+			new string[]{"BadCases.Add", "BadCases.CreateList"})	
 		{
 		}
 						

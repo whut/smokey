@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class UnmanagedCodeSecurityRule : Rule
+	internal sealed class UnmanagedCodeSecurityRule : Rule
 	{				
 		public UnmanagedCodeSecurityRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1007")

@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class NewLineLiteralRule : Rule
+	internal sealed class NewLineLiteralRule : Rule
 	{				
 		public NewLineLiteralRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "PO1000")

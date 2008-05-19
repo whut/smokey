@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Custom
 {	
-	internal class LogStartsWithStringRule : Rule
+	internal sealed class LogStartsWithStringRule : Rule
 	{				
 		// The checkID must match the id in the xml. Note that multiple classes can
 		// share the same checkID.

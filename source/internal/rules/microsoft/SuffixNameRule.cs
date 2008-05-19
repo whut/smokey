@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class SuffixNameRule : Rule
+	internal sealed class SuffixNameRule : Rule
 	{				
 		public SuffixNameRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1023")
@@ -45,9 +45,12 @@ namespace Smokey.Internal.Rules
 			Log.DebugLine(this, "-----------------------------------"); 
 			Log.DebugLine(this, "checking {0}", type);				
 
-			if (DoBaseFailed(type) || DoInterfaceFailed(type))
+			if (!type.IsCompilerGenerated())
 			{
-				Reporter.TypeFailed(type, CheckID, string.Empty);
+				if (DoBaseFailed(type) || DoInterfaceFailed(type))
+				{
+					Reporter.TypeFailed(type, CheckID, string.Empty);
+				}
 			}
 		}
 		

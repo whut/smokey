@@ -19,7 +19,7 @@
 			<CSharp>
 			using System.IO;
 
-			internal class Log : IDisposable
+			internal sealed class Log : IDisposable
 			{
 				public Log()
 				{
@@ -58,7 +58,7 @@
 	<Violation checkID = "R1001" severity = "Error" breaking = "false">
 		<Translation lang = "en" typeName = "DisposeNativeResources" category = "Reliability">			
 			<Cause>
-			A class creates an IntPtr or HandleRef field does not have a finalizer, overriden
+			A class creates an IntPtr or HandleRef field does not have a finalizer, overridden
 			Dispose(bool), overridden OnDispose(bool), or overridden DoDispose(bool) method.
 			</Cause>
 	
@@ -75,7 +75,7 @@
 			<CSharp>
 			using System.IO;
 
-			internal class MyResource : IDisposable
+			internal sealed class MyResource : IDisposable
 			{
 				~MyResource()		
 				{					
@@ -166,7 +166,7 @@
 			<CSharp>
 			using System.IO;
 
-			internal class Log : IDisposable
+			internal sealed class Log : IDisposable
 			{
 				public Log()
 				{
@@ -274,7 +274,7 @@
 				}
 			}			
 
-			internal class Dog : Animal
+			internal sealed class Dog : Animal
 			{
 				public Dog(string breed)
 				{
@@ -421,7 +421,7 @@
 			</Fix>
 	
 			<CSharp>
-			internal class Customer : IEquatable&lt;Customer&gt;
+			internal sealed class Customer : IEquatable&lt;Customer&gt;
 			{		
 				public override bool Equals(object rhsObj)
 				{
@@ -501,7 +501,7 @@
 			</Fix>
 			
 			<CSharp>
-			internal class Engine
+			internal sealed class Engine
 			{
 				public void Work()
 				{
@@ -894,7 +894,7 @@
 			</Fix>
 	
 			<CSharp>
-			internal class Vector3
+			internal sealed class Vector3
 			{		
 				public override int GetHashCode()
 				{
@@ -936,7 +936,7 @@
 			</Fix>
 	
 			<CSharp>
-			internal class Vector3
+			internal sealed class Vector3
 			{		
 				public override int GetHashCode()
 				{
@@ -1049,7 +1049,7 @@
 			using System.Collections;
 			using System.Threading;
 			
-			internal class ProducerConsumer
+			internal sealed class ProducerConsumer
 			{
 				public void Produce(object o)
 				{
@@ -1129,7 +1129,7 @@
 			using System.Collections;
 			using System.Threading;
 			
-			internal class ProducerConsumer
+			internal sealed class ProducerConsumer
 			{
 				public void Produce(object o)
 				{
@@ -1233,7 +1233,7 @@
 		</Translation>
 	</Violation>
 
-	<Violation checkID = "R1031" severity = "Warning" breaking = "true">
+	<Violation checkID = "R1031" severity = "Warning" breaking = "false">
 		<Translation lang = "en" typeName = "StringUri1" category = "Reliability">			
 			<Cause>
 			A type declares a method one of whose decomposed argument names
@@ -1331,7 +1331,6 @@
 			</Fix>
 	
 			<CSharp>
-			using System;
 			using System.Diagnostics;
 			using System.Runtime.Serialization;
 			
@@ -1493,7 +1492,7 @@
 			<Cause>
 			A method with internal visibility has a reference argument, and 
 			a method on that argument is called without first comparing the argument against
-			null.
+			null. Note that this rule is disabled by default.
 			</Cause>
 		
 			<Description>
@@ -1518,7 +1517,6 @@
 			</Fix>
 	
 			<CSharp>
-			using System;
 			using System.Diagnostics;
 			using System.Runtime.Serialization;
 			
@@ -1716,7 +1714,7 @@
 			hold, but when the lock exits the invariant should be restored. But recursive locks
 			muddy this picture and make it more difficult to verify that the code is correct.
 			
-			There are two places where recurive locks are especially dangerous. The first is
+			There are two places where recursive locks are especially dangerous. The first is
 			if the monitor pattern is used with a lock which has already been acquired. When
 			Monitor::Wait is called both locks will be released. This can lead to unexpected
 			results because now any thread can mutate the object even though the first lock

@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class IdenticalCaseRule : Rule
+	internal sealed class IdenticalCaseRule : Rule
 	{				
 		public IdenticalCaseRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1023")

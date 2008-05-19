@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class FlagsUseNoneRule : Rule
+	internal sealed class FlagsUseNoneRule : Rule
 	{				
 		public FlagsUseNoneRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1022")

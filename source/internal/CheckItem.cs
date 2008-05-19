@@ -33,7 +33,7 @@ using System.Linq;
 namespace Smokey.Internal
 {	
 	// Uses introspection to find and store the type rules.
-	internal class CheckItem : IReportViolations
+	internal sealed class CheckItem : IReportViolations
 	{				
 #if UNUSED
 		public CheckItem()
@@ -118,8 +118,7 @@ namespace Smokey.Internal
 		
 		public void Check(TypeDefinition type)
 		{			
-			if (!type.Name.Contains("CompilerGenerated"))
-				DoCheckType(type);
+			DoCheckType(type);
 		}
 		
 		public void Check(MethodInfo method)
@@ -157,15 +156,15 @@ namespace Smokey.Internal
 		{
 			if (!type.CustomAttributes.HasDisableRule(checkID))
 			{
-			DBC.Assert(m_cache != null, "m_cache is null");
-			DBC.Assert(m_cache.Symbols != null, "m_cache.Symbols is null");
-			DBC.Assert(type != null, "type is null");
-			DBC.Assert(details != null, "details is null");
+				DBC.Assert(m_cache != null, "m_cache is null");
+				DBC.Assert(m_cache.Symbols != null, "m_cache.Symbols is null");
+				DBC.Assert(type != null, "type is null");
+				DBC.Assert(details != null, "details is null");
 
 				Location location = m_cache.Symbols.Location(type, details);
 				Violation violation = ViolationDatabase.Get(checkID);
-			DBC.Assert(violation != null, "violation is null");
-			DBC.Assert(m_errors != null, "m_errors is null");
+				DBC.Assert(violation != null, "violation is null");
+				DBC.Assert(m_errors != null, "m_errors is null");
 						
 				m_errors.Add(new Error(location, violation));
 			}
@@ -280,11 +279,13 @@ namespace Smokey.Internal
 		[Conditional("DEBUG")]
 		private void DoCheckXml()
 		{
+#if DEBUG
 			foreach (Violation v in ViolationDatabase.Violations)
 			{				
 				if (m_checkIDs.IndexOf(v.CheckID) < 0)
 					Log.ErrorLine(this, "couldn't find a rule for {0}", v.CheckID);
 			}
+#endif
 		}
 		
 		// Don't bother with a rule if the user doesn't care about rules of that

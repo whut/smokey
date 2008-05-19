@@ -75,30 +75,13 @@ namespace Smokey.Tests
 			{
 				return n / 0;
 			}
-
-			public static int Bad2(int n)
-			{
-				int d = 0;
-				if (n < 0)
-					d = 4;
-					
-				return n / d;
-			}
-
-			public static int Bad3(int n, int d)
-			{
-				if (n < 0)
-					d = 0;
-					
-				return n / d;
-			}
 		}
 		#endregion
 		
 		// test code
 		public IntZeroDivideTest() : base(
 			new string[]{"Cases.Good1", "Cases.Good2", "Cases.Good3", "Cases.Good4", "Cases.Good5"},
-			new string[]{"Cases.Bad1", "Cases.Bad2", "Cases.Bad3"})	
+			new string[]{"Cases.Bad1"})	
 		{
 		}
 						

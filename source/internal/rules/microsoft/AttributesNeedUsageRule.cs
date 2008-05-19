@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class AttributesNeedUsageRule : Rule
+	internal sealed class AttributesNeedUsageRule : Rule
 	{				
 		public AttributesNeedUsageRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1001")

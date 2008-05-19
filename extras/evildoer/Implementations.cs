@@ -193,5 +193,35 @@ namespace EvilDoer
 		{
 			return base.More(w) + 1;
 		}
+
+		public int SomeMore(InternalWorker5 w)
+		{
+			if (w == null)
+				throw new ArgumentNullException("w");
+
+			return w.More(100);
+		}	
 	}			
+
+	// good: More is called (although Work isn't)
+	internal sealed class InternalWorker5 : IWorker
+	{
+		public InternalWorker5(int v)
+		{
+			worker = new Worker3(v);
+		}
+		
+		public int Work(int w)
+		{
+			return worker.More(w) + 1;
+		}
+
+		public int More(int w)
+		{
+			return worker.More(w);
+		}
+		
+		private Worker3 worker;
+	}			
+	
 }

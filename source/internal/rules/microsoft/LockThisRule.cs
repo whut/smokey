@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class LockThisRule : Rule
+	internal sealed class LockThisRule : Rule
 	{				
 		public LockThisRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1008")

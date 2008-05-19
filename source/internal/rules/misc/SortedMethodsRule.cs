@@ -28,7 +28,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class SortedMethodsRule : Rule
+	internal sealed class SortedMethodsRule : Rule
 	{				
 		public SortedMethodsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "M1001")

@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class TransparentAssertRule2 : Rule
+	internal sealed class TransparentAssertRule2 : Rule
 	{				
 		public TransparentAssertRule2(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1014")

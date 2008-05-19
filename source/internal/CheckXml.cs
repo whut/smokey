@@ -32,7 +32,7 @@ using Smokey.Internal.Rules;
 namespace Smokey.Internal
 {
 #if DEBUG
-	internal class CheckXml
+	internal sealed class CheckXml
 	{			
 		public void Check()
 		{

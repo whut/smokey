@@ -36,7 +36,7 @@ namespace Smokey.Tests
 	{	
 		#region Test classes
 		[Serializable]
-		internal class Good1
+		internal sealed class Good1
 		{		
 			public void Use()
 			{
@@ -54,7 +54,7 @@ namespace Smokey.Tests
 		}
 
 		[Serializable]
-		internal class Good2
+		internal sealed class Good2
 		{		
 			public void Use()
 			{
@@ -72,7 +72,7 @@ namespace Smokey.Tests
 		}
 
 		[Serializable]
-		internal class Bad1
+		internal sealed class Bad1
 		{		
 			public void Use()
 			{

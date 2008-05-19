@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class BoolMarshalingRule : Rule
+	internal sealed class BoolMarshalingRule : Rule
 	{				
 		public BoolMarshalingRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "PO1005")

@@ -32,7 +32,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class PartitionAssemblyRule : Rule
+	internal sealed class PartitionAssemblyRule : Rule
 	{				
 		public PartitionAssemblyRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1015")

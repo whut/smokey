@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class ReadOnlyArrayRule : Rule
+	internal sealed class ReadOnlyArrayRule : Rule
 	{				
 		public ReadOnlyArrayRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1002")

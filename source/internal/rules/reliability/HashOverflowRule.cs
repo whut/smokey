@@ -30,7 +30,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class HashOverflowRule : Rule
+	internal sealed class HashOverflowRule : Rule
 	{				
 		public HashOverflowRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1025")

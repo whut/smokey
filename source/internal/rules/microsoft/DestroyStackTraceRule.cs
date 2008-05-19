@@ -29,7 +29,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class DestroyStackTraceRule : Rule
+	internal sealed class DestroyStackTraceRule : Rule
 	{				
 		public DestroyStackTraceRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1003")

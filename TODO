@@ -32,18 +32,59 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 
 /Library/Frameworks/Mono.framework/Versions/1.9/lib/mono/gac/gtk-sharp/2.10.0.0__35e10195dab3c99f/gtk-sharp.dll			  
 
-* Look at profiles again:
-	- "public API review" profile, a "bug review" profile, a "full analysis review" profile
-	- moonlight?
-* We require linq so need mono 1.9.
-* Don't overwrite config file if it exists.
-* Update installed config to point to custom rule dll.
-* Need install.bat and uninstall.bat
-* Try built-in profiler again. Might want to look at heapbuddy too.
-* FxCop has 197 rules...
-* See if google shows the googlecode project.
-* localize config is now supported.
-* Do a release.
+	[DisableRule("R1000", "DisposableFields")]
+
+* Get rid of ValidateArgs2? Or disable it by default? If disable need to mention it in the xml.
+* StaticMethod back and disable it by default?
+* UnusedMethod should not complain about inner exception ctors or streaming ctors.
+* PublicImplementation isn't working (probably because we call the methods via a delegate)
+* UseEmptyTypes is getting confused
+		string[] words = text.Split();
+* Maybe text report should auto-add [DisableRule("D1047", "TooManyArgs")] to "How to Fix Violations"
+  if it doesn't already mention DisableRule?
+* Release checklist:
+	- nant -D:debug=true smoke>tmp.txt
+	- nant -D:debug=true test
+	- nant -D:debug=true ftest
+	- nant -D:optimize=true smoke>tmp.txt
+	- nant -D:optimize=true test
+	- nant -D:optimize=true ftest (doesnt work)
+	- review severity of new rules
+	- make sure custom lib builds
+	- make sure custom test runs
+	- make sure custom test smokes
+	- update /usr/local/bin/smokey.exe.config to point to the custom dll
+	- try on .net (smoke fxcop)
+	- smoke a mono assembly, eg mscorlib.dll
+	- smoke reflector
+	- make sure everything is checked in
+	- use svn log -r 1:HEAD > CHANGE_LOG
+	- update CHANGES file (from r59)
+	- make sure AssemblyVersion number is ok (for all the assemblies)
+	- update version number in nant file
+	- update SmokeyVersion on old web site
+	- install
+	- update README
+	- we require linq so need mono 1.9.
+	- deprecate ignoreList setting
+	- add dictionary setting
+	- add profile setting
+	- localize config?
+	- mono --debug bin/smokey_d.exe -generate-html-violations:violations
+	- mono bin/smokey.exe -html -out:report.html -set:ignoreList:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/net_2_1/System.Core.dll 
+	- upload
+		report.html
+		violations
+		smokey_bin
+		smokey_src
+		latest cecil
+	- update index.html (eg prepend new downloads)
+	- update googlecode description
+	- update wiki todo
+	- send an announcement
+	- make sure everything is checked in
+	- do the following (be sure to fix the versions):
+		svn copy file:///Users/jessejones/projects/Smokey file:///Users/jessejones/projects/releases/smokey-1.X.0.0 -m "Tagging 1.X.0.0"
 
 * AvoidUnusedParametersRule
 	- need a way to easily disable this, maybe args prefixed with "dummy" or "unused"
@@ -62,15 +103,23 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- Maintainability Warnings
 	- Naming Warnings
 * Foreign key but no update rule.
+* Watchdog timeout should be configurable.
 * RedundantPredicate
 	- A && A			A
 	- A || A			A
 	- A && !A			false
 	- A || !A			true
 	- probably need some support for building expressions
+* Rename the PubliclyVisible method ExternallyVisible.
+* Try profiling on linux.
+* Remove support for ignoreList config setting.
+* Handle the CompilerGenerated types and methods in the dispatcher not the rules.
 * AssemblyResolver.Resolver.Resolve can be used to get a definition from a reference.
   a list of violations without messing with System.Process or external files.
 * Unit tests take too long to run. Maybe we can cleanup better?
+* Try heapbuddy.
+* Remove OLD_CHANGE_LOG from tarballs?
+* Need install.bat and uninstall.bat
 * Might want to support getting custom assembly paths from an environment variable.
 * Look at C# 3.0:
 	- extension methods
@@ -109,6 +158,9 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
   already using * for bulleted lists.
 * Would be nice if we smoked the xml.
 * as not followed by a null check (null deref should catch this). What about asserts?
+* Add some more profiles:
+	- "public API review" profile, a "bug review" profile, a "full analysis review" profile?
+	- moonlight?
 * Framework needs to be in its own assembly so that it can be separately
   versioned (so custom rules don't have to be recompiled if core changes),
 * NonLocalizedException
@@ -213,16 +265,16 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Release checklist:
 	- search for TODO
 	- use mono --debug bin/smokey_d.exe -check-xml>tmp.txt
-	- profile
-		rm bin/smokey.exe
-		nant -D:profile=true app
-		look at stdout
 	- nant -D:debug=true smoke>tmp.txt
 	- nant -D:debug=true test
 	- nant -D:debug=true ftest
 	- nant -D:optimize=true smoke>tmp.txt
 	- nant -D:optimize=true test
 	- nant -D:optimize=true ftest (doesnt work)
+	- profile
+		rm bin/smokey.exe				# nant doesn't rebuild if just a define changed
+		nant -D:profile=true app
+		look at stdout
 	- review severity of new rules
 	- make sure custom lib builds
 	- make sure custom test runs
@@ -231,16 +283,18 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- smoke a mono assembly, eg mscorlib.dll
 	- smoke reflector
 	- make sure everything is checked in
-	- use svn log -r 141:HEAD > CHANGE_LOG
+	- use svn log -r 1:HEAD > CHANGE_LOG
 	- update CHANGES file
 	- make sure AssemblyVersion number is ok (for all the assemblies)
 	- update version number in nant file
-	- update SomkeyVersion on old web site
+	- update SmokeyVersion on old web site
 	- install
 	- update README
+	- we require linq so need mono 1.9.
 	- deprecate ignoreList setting
 	- add dictionary setting
 	- add profile setting
+	- localize config?
 	- mono --debug bin/smokey_d.exe -generate-html-violations:violations
 	- mono bin/smokey.exe -html -out:report.html -set:ignoreList:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/net_2_1/System.Core.dll 
 	- upload

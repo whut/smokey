@@ -30,7 +30,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class TemplateMethodRule : Rule
+	internal sealed class TemplateMethodRule : Rule
 	{				
 		public TemplateMethodRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1043")

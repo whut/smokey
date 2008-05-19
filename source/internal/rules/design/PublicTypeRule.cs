@@ -30,7 +30,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class PublicTypeRule : Rule
+	internal sealed class PublicTypeRule : Rule
 	{				
 		public PublicTypeRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1031")

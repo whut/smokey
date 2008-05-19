@@ -34,7 +34,7 @@ normally be Error. -->
 			</Fix>
 	
 			<CSharp>
-			internal class Recursion
+			internal sealed class Recursion
 			{								
 				public override int GetHashCode()
 				{
@@ -69,7 +69,7 @@ normally be Error. -->
 			</Fix>
 	
 			<CSharp>
-			internal class Point
+			internal sealed class Point
 			{
 				public override string ToString()
 				{
@@ -167,7 +167,7 @@ normally be Error. -->
 			</Fix>
 	
 			<CSharp>
-			internal class MyResource : IDisposable
+			internal sealed class MyResource : IDisposable
 			{
 				~MyResource()		
 				{					
@@ -239,7 +239,7 @@ normally be Error. -->
 				private bool m_disposed;
 			}			
 
-			internal class DerivedResource : MyResource
+			internal sealed class DerivedResource : MyResource
 			{
 				public DerivedResource(IntPtr handle) : base(handle)
 				{
@@ -333,7 +333,7 @@ normally be Error. -->
 			using System.Runtime.Serialization;
 			
 			[Serializable]
-			internal class Optional
+			internal sealed class Optional
 			{		
 				[OnDeserialized]
 				protected void OnDeserialized(StreamingContext context)
@@ -628,7 +628,7 @@ normally be Error. -->
 			</Fix>
 	
 			<CSharp>
-			internal class Customer : IEquatable&lt;Customer&gt;
+			internal sealed class Customer : IEquatable&lt;Customer&gt;
 			{		
 				public override bool Equals(object rhsObj)
 				{
@@ -708,7 +708,7 @@ normally be Error. -->
 				}
 			}
 
-			internal class Ship
+			internal sealed class Ship
 			{		
 				public string Name 
 				{
@@ -731,7 +731,7 @@ normally be Error. -->
 		</Translation>
 	</Violation>	
 	
-	<Violation checkID = "C1023" severity = "Error" breaking = "true">
+	<Violation checkID = "C1023" severity = "Error" breaking = "false">
 		<Translation lang = "en" typeName = "UnprotectedEvent" category = "Correctness">			
 			<Cause>
 			An event is fired without first checking to see that the event is non-null,
@@ -748,7 +748,7 @@ normally be Error. -->
 			</Fix>
 	
 			<CSharp>
-			internal class Customer
+			internal sealed class Customer
 			{		
 				public event EventHandler NameChanged;
 				
@@ -768,6 +768,7 @@ normally be Error. -->
 							// To be safe we need to check for null.
 							if (NameChanged != null)
 								NameChanged(this, EventArgs.Empty);
+						}
 					}
 				}
 								
@@ -847,7 +848,7 @@ normally be Error. -->
 			<Fix>
 			This code is delicate and should be analyzed carefully to check that the objects
 			in the collection are always collected. Also verify that Dispose is always explicitly
-			called when appropiate (in general we can't rely on the finalizer because our
+			called when appropriate (in general we can't rely on the finalizer because our
 			managed fields may have been collected before it's entered).
 			
 			Of course, even better, is to make the code more robust and more obviously correct.
@@ -891,7 +892,7 @@ normally be Error. -->
 			that you follow the pattern. This rule will catch two common variants: 1) The first
 			if uses a boolean field. This is incorrect because the two reads outside the lock (of the 
 			boolean and the instance fields) may be reordered. 2) The if outside the lock is absent.
-			This code will work but it's ineficient because we always have to acquire the lock.
+			This code will work but it's inefficient because we always have to acquire the lock.
 			See &lt;http://www.bluebytesoftware.com/blog/PermaLink,guid,543d89ad-8d57-4a51-b7c9-a821e3992bf6.aspx&gt; 
 			for more details.
 			</Description>
@@ -903,7 +904,7 @@ normally be Error. -->
 			<CSharp>
 			using System.Threading;
 			
-			internal class Singleton 
+			internal sealed class Singleton 
 			{
 				// Private so we that our instance can only be created via Instance.
 				private Singleton() 

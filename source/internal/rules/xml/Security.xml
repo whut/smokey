@@ -309,7 +309,7 @@
 			</Fix>
 	
 			<CSharp>
-			internal class MyResource 
+			internal sealed class MyResource 
 			{
 				~MyResource()		
 				{					
@@ -747,7 +747,7 @@
 			</Cause>
 	
 			<Description>
-			If a virtual method has an inheritance demand then it can only be overriden if
+			If a virtual method has an inheritance demand then it can only be overridden if
 			the overriding code satisfies the demand. 
 			</Description>
 	
@@ -803,7 +803,7 @@
 	
 			<Description>
 			Allowing anyone and everyone to call into unmanaged code is a 
-			potential security vulnerabilty.
+			potential security vulnerability.
 			</Description>
 	
 			<Fix>

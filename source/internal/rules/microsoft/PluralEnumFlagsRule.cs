@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class PluralEnumFlagsRule : Rule
+	internal sealed class PluralEnumFlagsRule : Rule
 	{				
 		public PluralEnumFlagsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1021")

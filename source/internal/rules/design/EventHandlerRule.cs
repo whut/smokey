@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class EventHandlerRule : Rule
+	internal sealed class EventHandlerRule : Rule
 	{				
 		public EventHandlerRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1023")

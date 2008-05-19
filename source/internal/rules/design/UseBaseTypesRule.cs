@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class UseBaseTypesRule : Rule
+	internal sealed class UseBaseTypesRule : Rule
 	{				
 		public UseBaseTypesRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1007")

@@ -29,7 +29,7 @@ using System.Collections.Generic;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class Const1Rule : Rule
+	internal sealed class Const1Rule : Rule
 	{				
 		public Const1Rule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1016")

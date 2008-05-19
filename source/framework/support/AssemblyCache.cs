@@ -191,6 +191,8 @@ namespace Smokey.Framework.Support
 		/// <summary>Returns null if the assembly cannot be found.</summary>
 		public AssemblyDefinition FindAssembly(TypeReference type)
 		{
+			DBC.Pre(type != null, "type is null");
+				
 			AssemblyDefinition assembly = null;
 			string name = type.FullName;
 
@@ -219,6 +221,8 @@ namespace Smokey.Framework.Support
 		/// a type.</summary>
 		public MethodInfo FindMethod(MethodReference m)
 		{
+			DBC.Pre(m != null, "m is null");
+				
 			MethodInfo info;
 			if (m_methods.TryGetValue(m.MetadataToken, out info))
 			{

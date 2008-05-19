@@ -31,7 +31,7 @@ using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class ConflictingTransparencyRule : Rule
+	internal sealed class ConflictingTransparencyRule : Rule
 	{				
 		public ConflictingTransparencyRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "S1012")

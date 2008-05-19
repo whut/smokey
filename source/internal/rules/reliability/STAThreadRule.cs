@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 namespace Smokey.Internal.Rules
 {	
 	[DisableRule("M1000", "UseJurassicNaming")]	// this should be enabled, but i dont want to try svn moving a file with only case changes
-	internal class STAThreadRule : Rule
+	internal sealed class STAThreadRule : Rule
 	{				
 		public STAThreadRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "R1015")

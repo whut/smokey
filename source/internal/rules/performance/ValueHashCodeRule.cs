@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ValueHashCodeRule : Rule
+	internal sealed class ValueHashCodeRule : Rule
 	{				
 		public ValueHashCodeRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1009")

@@ -33,9 +33,10 @@ namespace Smokey.Internal
 	// to a Debug.Listener to raise an exception.
 	// See http://lists.ximian.com/pipermail/mono-list/2004-January/017482.html
 	// for more details.
-	internal class AssertTraceListener : TraceListener
+	internal sealed class AssertTraceListener : TraceListener
 	{		
 		// Note that this may be called multiple times.
+		[Conditional("DEBUG")]
 		public static void Install()
 		{
 			if (!ms_installed)

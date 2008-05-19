@@ -27,7 +27,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class ICloneableRule : Rule
+	internal sealed class ICloneableRule : Rule
 	{				
 		public ICloneableRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "MS1006")

@@ -23,7 +23,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Permissions;
 using System.Security;
+using System.Runtime.Serialization;
 
 // C1000/StringSpelling
 [assembly: EvilDoer.Bad("here is a missspelled word")]
@@ -45,7 +47,7 @@ namespace EvilDoer
 		
 		private string key;
 	}			
-	
+		
 	// P1007/NonGenericCollections
 	// R1000/DisposableFields
 	// S1007/UnmanagedCodeSecurity

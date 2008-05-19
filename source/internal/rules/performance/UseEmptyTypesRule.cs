@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class UseEmptyTypesRule : Rule
+	internal sealed class UseEmptyTypesRule : Rule
 	{				
 		public UseEmptyTypesRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1019")
@@ -51,8 +51,10 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitNew(NewArr newer)
 		{
-			if (newer.Type != m_info.Method.DeclaringType && newer.Type.FullName != "System.String")
+			if (newer.Type.FullName == "System.Type")
 			{
+				Log.DebugLine(this, " new {0}[] at {1:X2}", newer.Type.FullName, newer.Untyped.Offset);				
+
 				LoadConstantInt load = m_info.Instructions[newer.Index - 1] as LoadConstantInt;
 				if (load != null)
 				{

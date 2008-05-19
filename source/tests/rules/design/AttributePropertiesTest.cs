@@ -35,7 +35,7 @@ namespace Smokey.Tests
 
 		// test classes
 		[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-		internal class Good1 : Attribute
+		internal sealed class Good1 : Attribute
 		{		
 			public Good1(string name) 
 			{
@@ -58,7 +58,7 @@ namespace Smokey.Tests
 		}
 		
 		[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-		internal class Good2 : Attribute
+		internal sealed class Good2 : Attribute
 		{		
 			public Good2(string name) 
 			{
@@ -86,7 +86,7 @@ namespace Smokey.Tests
 		}
 		
 		[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-		internal class Good3 : Attribute
+		internal sealed class Good3 : Attribute
 		{					
 			public string Name
 			{
@@ -105,7 +105,7 @@ namespace Smokey.Tests
 		}
 		
 		[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-		internal class Good4 : Attribute
+		internal sealed class Good4 : Attribute
 		{					
 			public static readonly string Foo = "hey";
 			
@@ -119,7 +119,7 @@ namespace Smokey.Tests
 		}
 		
 		[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-		internal class Bad1 : Attribute
+		internal sealed class Bad1 : Attribute
 		{		
 			public Bad1(string name) 
 			{
@@ -141,7 +141,7 @@ namespace Smokey.Tests
 		}
 		
 		[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-		internal class Bad2 : Attribute
+		internal sealed class Bad2 : Attribute
 		{		
 			public Bad2(string name) 
 			{
@@ -164,7 +164,7 @@ namespace Smokey.Tests
 		}
 		
 		[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-		internal class Bad3 : Attribute
+		internal sealed class Bad3 : Attribute
 		{		
 			public Bad3(string name) 
 			{
@@ -182,7 +182,7 @@ namespace Smokey.Tests
 		}
 		
 		[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-		internal class Bad4 : Attribute
+		internal sealed class Bad4 : Attribute
 		{		
 			public Bad4(string name) 
 			{

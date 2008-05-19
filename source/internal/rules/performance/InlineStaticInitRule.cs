@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class InlineStaticInitRule : Rule
+	internal sealed class InlineStaticInitRule : Rule
 	{				
 		public InlineStaticInitRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "P1014")
@@ -42,7 +42,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitType(TypeDefinition type)
 		{
-			if (type.Name != "<PrivateImplementationDetails>")
+//			if (type.Name != "<PrivateImplementationDetails>")
 			{
 				if (!type.IsSubclassOf("System.Delegate", Cache) && !type.IsSubclassOf("System.MulticastDelegate", Cache))
 				{

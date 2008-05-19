@@ -28,7 +28,7 @@ using Smokey.Framework.Support.Advanced;
 namespace Smokey.Tests
 {	
 	// Used by DataFlowTest to track changes to V_0.
-	internal class V0
+	internal sealed class V0
 	{	
 		// State of V_O at a particular point in the method.
 		internal struct State	
@@ -104,7 +104,7 @@ namespace Smokey.Tests
 		}
 		
 		// Used to compute the state of V_0 on entry and exit from BasicBlocks.
-		internal class Lattice
+		internal sealed class Lattice
 		{
 			private Lattice()
 			{
@@ -153,7 +153,7 @@ namespace Smokey.Tests
 			public static readonly State Indeterminate = new State();
 
 			#region Functions class
-			internal class Functions : LatticeFunctions<Lattice>
+			internal sealed class Functions : LatticeFunctions<Lattice>
 			{
 				public override Lattice Meet(Lattice lhs, Lattice rhs)
 				{
@@ -227,7 +227,7 @@ namespace Smokey.Tests
 		}
 
 		// Returns the state of V_0 for every instruction in the method.
-		internal class Tracker
+		internal sealed class Tracker
 		{
 			public Tracker(TypedInstructionCollection instructions)
 			{

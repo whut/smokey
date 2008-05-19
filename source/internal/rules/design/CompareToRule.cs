@@ -29,7 +29,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class CompareToRule : Rule
+	internal sealed class CompareToRule : Rule
 	{				
 		public CompareToRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1021")

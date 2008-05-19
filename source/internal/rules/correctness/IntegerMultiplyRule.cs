@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class IntegerMultiplyRule : Rule
+	internal sealed class IntegerMultiplyRule : Rule
 	{				
 		public IntegerMultiplyRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "C1010")

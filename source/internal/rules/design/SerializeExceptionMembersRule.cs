@@ -28,7 +28,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {		
-	internal class SerializeExceptionMembersRule : Rule
+	internal sealed class SerializeExceptionMembersRule : Rule
 	{				
 		public SerializeExceptionMembersRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1025")

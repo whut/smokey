@@ -30,7 +30,7 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal class MessageBoxOptionsRule : Rule
+	internal sealed class MessageBoxOptionsRule : Rule
 	{				
 		public MessageBoxOptionsRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "G1001")
