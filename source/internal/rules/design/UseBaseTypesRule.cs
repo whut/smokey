@@ -106,7 +106,16 @@ namespace Smokey.Internal.Rules
 							TypeDefinition type = Cache.FindType(tr);
 							if (type != null && (type.IsPublic || type.IsNestedPublic))
 							{
-								DoUseArg(load.Arg, call.Untyped.Offset, type);
+								Log.DebugLine(this, "found type {0}", type.FullName);
+							
+								if (!type.Name.StartsWith("_"))		// can get weird stuff like System.Runtime.InteropServices._Type otherwise
+								{
+									DoUseArg(load.Arg, call.Untyped.Offset, type);
+								}
+								else if ("_" + load.Type.Name != type.Name)
+								{
+									DoUseArg(load.Arg, call.Untyped.Offset, type);
+								}
 							}
 						}
 					}

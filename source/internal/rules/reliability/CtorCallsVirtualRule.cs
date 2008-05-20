@@ -113,7 +113,7 @@ namespace Smokey.Internal.Rules
 			Log.Unindent();
 			
 			if (offset >= 0)
-				m_details = info.Method + " -> " + m_details;			
+				m_details = info.Method + " -> " + Environment.NewLine + "       " + m_details;			
 			
 			return offset;
 		}

@@ -42,7 +42,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitType(TypeDefinition type)
 		{
-//			if (type.Name != "<PrivateImplementationDetails>")
+			if (!type.IsCompilerGenerated())
 			{
 				if (!type.IsSubclassOf("System.Delegate", Cache) && !type.IsSubclassOf("System.MulticastDelegate", Cache))
 				{

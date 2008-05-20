@@ -44,7 +44,7 @@ namespace Smokey.Internal.Rules
 		{
 			if (!candidate.IsAbstract && candidate.IsNotPublic && candidate.IsClass && !candidate.IsSealed)
 			{
-				if (candidate.FullName != "<Module>")
+				if (candidate.FullName != "<Module>" && !candidate.IsCompilerGenerated())
 				{
 					Log.DebugLine(this, "checking {0}", candidate);	
 					

@@ -474,10 +474,16 @@ namespace Smokey.Internal
 		#region Fields --------------------------------------------------------
 		private static string[] ms_systemProfile = new string[]
 		{
+			// Note that we don't have to disable breaking rules.
+			"-exclude-check=C1010",		// IntegerMultiply
+			"-exclude-check=C1011",		// Average
 			"-exclude-check=D1006",		// ImplementGenericCollection
 			"-exclude-check=D1011",		// TypedEnumerator
+			"-exclude-check=D1012",		// InternalException
 			"-exclude-check=D1037",		// DontExit1
 			"-exclude-check=D1038",		// DontExit2
+			"-exclude-check=D1039",		// BadExit
+			"-exclude-check=D1054",		// BadExplicitImplementation
 			"-exclude-check=MS1010",	// ReservedExceptions
 			"-exclude-check=P1003",		// AvoidBoxing
 			"-exclude-check=P1004",		// AvoidUnboxing
@@ -485,6 +491,7 @@ namespace Smokey.Internal
 			"-exclude-check=P1007",		// NonGenericCollections
 			"-exclude-check=PO1001",	// DllImportPath
 			"-exclude-check=PO1002",	// DllImportExtension
+			"-exclude-check=PO1005",	// BoolMarshaling
 			"-exclude-check=PO1009",	// WinFormsVoodoo
 			"-ignore-breaking",
 			"-not-localized",

@@ -42,8 +42,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitType(TypeDefinition type)
 		{						
-			if (type.IsValueType && !type.IsEnum)
-//			if (type.IsValueType && !type.IsEnum && !type.FullName.Contains("PrivateImplementationDetails"))
+			if (type.IsValueType && !type.IsEnum && !type.IsCompilerGenerated())
 			{				
 				Log.DebugLine(this, "-----------------------------------"); 
 				Log.DebugLine(this, "checking {0}", type);				

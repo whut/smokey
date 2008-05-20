@@ -53,121 +53,66 @@ namespace Smokey.Internal.Rules
 			m_info = begin.Info;
 		}
 		
+		// 		18: ldarg.0    this
+		// 19: ldfld      System.EventHandler Good1::Event1					3) Guard using same load instruction
+		// 1E: brfalse    34
+		// 
+		// 		23: ldarg.0    this
+		// 24: ldfld      System.EventHandler Good1::Event1					2) Load of this argument
+		// 		29: ldarg.0    this
+		// 		2A: ldsfld     System.EventArgs System.EventArgs::Empty
+		// 
+		// 2F: callvirt   System.Void System.EventHandler::Invoke(System.Object,System.EventArgs)	1) Call to invoke
 		public void VisitCall(Call call)
 		{
 			if (m_offset < 0)
 			{
+				// 1) See if invoke was called.
 				string name = call.Target.ToString();
-				if (name.StartsWith("System.Void System.EventHandler") && name.Contains("::Invoke("))
+				if (name.StartsWith("System.Void System.EventHandler") && name.Contains("::Invoke(") && call.Target.Parameters.Count == 2)
 				{
-					// Get the index of the instruction that loaded the this argument of the
-					// Invoke call.
+					Log.DebugLine(this, "found event invoke at {0:X2}", call.Untyped.Offset);				
+
+					// 2) Get the instruction used to load the this argument for invoke.
 					int i = m_info.Tracker.GetStackIndex(call.Index, 2);
 					if (i >= 0)
 					{
-						// 18: ldarg.0    this
-						// 19: ldfld      System.EventHandler Smokey.Tests.UnprotectedEventTest/Good1::Event1
-						// 1E: brfalse    34
-						// 23: ldarg.0    this
-						// 24: ldfld      System.EventHandler Smokey.Tests.UnprotectedEventTest/Good1::Event1
-						// 29: ldarg.0    this
-						// 2A: ldsfld     System.EventArgs System.EventArgs::Empty
-						// 2F: callvirt   System.Void System.EventHandler::Invoke(System.Object,System.EventArgs)
-
-						// We expect it to be a ldfld instruction and the type should be
-						// System.EventHandler.
-						LoadField field1 = m_info.Instructions[i] as LoadField;
-						if (field1 != null && field1.Field.FieldType.ToString().StartsWith("System.EventHandler"))
+						Load load1 = m_info.Instructions[i] as Load;
+						if (load1 != null)
 						{
-							// Typically it will be preceded by a load this, a branch, and
-							// a load of the event.
-							Load load = m_info.Instructions[i - 1] as Load;
-							ConditionalBranch branch = m_info.Instructions[i - 2] as ConditionalBranch;
-							LoadField field2 = m_info.Instructions[i - 3] as LoadField;
+							Log.DebugLine(this, "event target is loaded at {0:X2}", load1.Untyped.Offset);				
+
+							// 3) Backup until we find a conditional branch. If it's not brfalse or
+							// not using the same instruction as in step 2 then we have a problem.
+							bool foundGuard = false;
 							
-							// If not we have a problem.
-							if (load == null || branch == null || field2 == null)
+							int j = load1.Index - 1;
+							while (j > 0 && !foundGuard)
 							{
-								m_offset = call.Untyped.Offset;						
-								Log.DebugLine(this, "no if test for event at {0:X2}", m_offset);				
-							}
-							else if (load != null && branch != null && field2 != null)
-							{
-								// If we do have the guard it must be using the correct field.
-								if (field1.Field.Name != field2.Field.Name)
+								ConditionalBranch branch = m_info.Instructions[j] as ConditionalBranch;
+								if (branch != null)
 								{
-									m_offset = call.Untyped.Offset;						
-									Log.DebugLine(this, "if test but wrong event at {0:X2}", m_offset);				
-								}
-							}
-						}
-						else
-						{
-							// 18: ldsfld     System.EventHandler Smokey.Tests.UnprotectedEventTest/Good1::Event3
-							// 1D: brfalse    32
-							// 22: ldsfld     System.EventHandler Smokey.Tests.UnprotectedEventTest/Good1::Event3
-							// 27: ldarg.0    this
-							// 28: ldsfld     System.EventArgs System.EventArgs::Empty
-							// 2D: callvirt   System.Void System.EventHandler::Invoke(System.Object,System.EventArgs)
-
-							// Or it may be a be a ldsfld instruction.
-							LoadStaticField sfield1 = m_info.Instructions[i] as LoadStaticField;
-							if (sfield1 != null && sfield1.Field.FieldType.ToString().StartsWith("System.EventHandler"))
-							{
-								// Typically it will be preceded by a branch and a load of the event.
-								ConditionalBranch sbranch = m_info.Instructions[i - 1] as ConditionalBranch;
-								LoadStaticField sfield2 = m_info.Instructions[i - 2] as LoadStaticField;
-								
-								// If not we have a problem.
-								if (sbranch == null || sfield2 == null)
-								{
-									m_offset = call.Untyped.Offset;						
-									Log.DebugLine(this, "no if test for event at {0:X2}", m_offset);				
-								}
-								else if (sbranch != null && sfield2 != null)
-								{
-									// If we do have the guard it must be using the correct field.
-									if (sfield1.Field.Name != sfield2.Field.Name)
+									if (branch.Untyped.OpCode.Code == Code.Brfalse || branch.Untyped.OpCode.Code == Code.Brfalse_S)
 									{
-										m_offset = call.Untyped.Offset;						
-										Log.DebugLine(this, "if test but wrong event at {0:X2}", m_offset);				
-									}
-								}
-							}
-							else
-							{
-								// 29: ldloc.0    V_0
-								// 2A: brfalse    3B
-								// 2F: ldloc.0    V_0
-								// 30: ldarg.0    this
-								// 31: ldsfld     System.EventArgs System.EventArgs::Empty
-								// 36: callvirt   System.Void System.EventHandler::Invoke(System.Object,System.EventArgs)
-
-								// Or it may be a be a ldloc instruction (if handlers are stored
-								// in a table for example).
-								LoadLocal local1 = m_info.Instructions[i] as LoadLocal;
-								if (local1 != null && local1.Type.ToString().StartsWith("System.EventHandler"))
-								{
-									// Typically it will be preceded by a branch and a load of the event.
-									ConditionalBranch branch2 = m_info.Instructions[i - 1] as ConditionalBranch;
-									LoadLocal local2 = m_info.Instructions[i - 2] as LoadLocal;
-									
-									// If not we have a problem.
-									if (branch2 == null || local2 == null)
-									{
-										m_offset = call.Untyped.Offset;						
-										Log.DebugLine(this, "no if test for event at {0:X2}", m_offset);				
-									}
-									else if (branch2 != null && local2 != null)
-									{
-										// If we do have the guard it must be using the correct local.
-										if (local1.Variable != local2.Variable)
+										Load load2 = m_info.Instructions[j - 1] as Load;
+										if (load2 != null)
 										{
-											m_offset = call.Untyped.Offset;						
-											Log.DebugLine(this, "if test but wrong event at {0:X2}", m_offset);				
+											if (load2.Untyped.OpCode.Code == load1.Untyped.OpCode.Code && load2.Untyped.Operand == load1.Untyped.Operand)
+											{
+												Log.DebugLine(this, "found guard at {0:X2}", branch.Untyped.Offset);				
+												foundGuard = true;
+											}
 										}
 									}
 								}
+								
+								--j;
+							}
+							
+							if (!foundGuard)
+							{
+								m_offset = call.Untyped.Offset;						
+								Log.DebugLine(this, "no guard for event at {0:X2}", m_offset);				
 							}
 						}
 					}

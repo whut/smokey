@@ -509,7 +509,9 @@ normally be Error. -->
 		
 			<Description>	
 			This rule will fire if you do stuff like "new Exception("oops")" instead of
-			"throw new Exception("oops")".
+			"throw new Exception("oops")". Another common error is not saving a reference
+			to a new Timer object which is a problem because the timer won't fire if it
+			is garbage collected early. 
 			</Description>
 	
 			<Fix>

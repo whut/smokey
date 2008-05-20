@@ -125,11 +125,11 @@ namespace Smokey.Internal.Rules
 				chain.Clear();
 				m_visited.Clear();
 				if (DoFoundBadSetter(graph, method, chain))
-				{
-					details = string.Format("{0}. {1}", ListExtensions.Accumulate(
+				{					
+					details = string.Format("{0}{1}{1}{2}", ListExtensions.Accumulate(
 						chain, string.Empty,
-						(s, e) => s.Length > 0 ? s + " -> " + e : e),
-					details);
+						(s, e) => s.Length > 0 ? s + " -> " + Environment.NewLine + e : e),
+					Environment.NewLine, details);
 				}
 			}
 			

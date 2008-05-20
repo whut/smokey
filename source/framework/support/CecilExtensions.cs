@@ -360,6 +360,9 @@ namespace Smokey.Framework.Support
 			if (type.Name.Contains("CompilerGenerated"))
 				return true;
 				
+			else if (type.FullName.Contains("<PrivateImplementationDetails>"))
+				return true;
+				
 			return false;
 		}
 		
