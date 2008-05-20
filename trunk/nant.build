@@ -250,7 +250,7 @@ profile      enables smokey's built in profiler, defaults to false
 		
 	<!-- tar and zip the binaries plus the source code -->
 	<target name = "tar_binary" depends = "app" description = "tar and zip the smokey.exe">
-		<tar destfile = "smokey_bin-1.1.2.tar.gz" compression = "GZip">
+		<tar destfile = "smokey_bin-1.2.tar.gz" compression = "GZip">
 			<fileset basedir = "bin" prefix = "bin">
 				<include name="smokey${extension}.exe"/>
 			</fileset>
@@ -268,7 +268,7 @@ profile      enables smokey's built in profiler, defaults to false
 	</target>
 		
 	<target name = "tar_source" description = "tar and zip the source code">
-		<tar destfile = "smokey_src-1.1.2.tar.gz" compression = "GZip">
+		<tar destfile = "smokey_src-1.2.tar.gz" compression = "GZip">
 			<fileset basedir = "bin" prefix = "bin">
 				<include name = "smokey_d.exe.config"/>		
 				<include name = "tests_d.dll.config"/>		

@@ -1,4 +1,4 @@
--- Version 1.2.0.0 (rXXX) ----
+-- Version 1.2.0.0 (r60) ----
 
 * Added 34 new rules:
 	ArithmeticButNoEquals
@@ -35,47 +35,47 @@
 	ValidateArgs
 	VisiblePInvoke
 	ZeroSleep
+* Added support for a -profile command line switch. These act like named sets
+  of command line options. Currently the only supported profile is "system" 
+  which sets a bunch of options suitable for analyzing system assemblies. Custom 
+  profiles may be added via the config file. See the wiki on googlecode for 
+  details.
+* Added a -not-localized command line switch to disable a handful of rules if
+  the assembly is not localized.
 * Added -include-check, -include-name, -include-breaking, and -include-localized
   command line switches to enable profile options to be overridden.
-* Made ClassPrefixRule and HungarianRule nitpicks.
-* IgnoredReturnRule skips some more system methods.
-* ExitCodeRule works with local variables returned by the main entry point.
-* ClassPrefixRule ignores classes that start with "I".
-* Fixed a silly bug that sometimes kept UnusedMethodRule from reporting the results.
-* UseBaseTypesRule ignores parameters with generic types (they aren't handled quite
-  right by the rule).
+* ignoreList config setting is now deprecated: use the new dictionary setting
+  instead which supports multiple user dictionaries.
+* User dictionaries are now handled by aspell and words-with-dashes are split
+  on the dashes before spell checking. Any words with dashes should be removed
+  from user dictionaries.
+* The SysIgnore.txt dictionary is now a Smokey resource and can be accessed
+  with a path like "/resources/SysIgnore.txt".
+* tar destfile's include the version number so that they unpack to a reasonable 
+  directory name.
+* install.sh won't overwrite smokey.exe.config if it already exists.
+
 * MonoNamingRule complains if fields start with m_, s_, or ms_.
-* tar destfile's include the version number so that they unpack to a reasonable directory name.
+* EqualityOperatorRule ignores private structs.
 * UnusedMethodRule ignores ctors if one of the types in the declaring type's 
   hierarchy has disabled UnusedClassRule.
+* Made ClassPrefixRule and HungarianRule nitpicks.
+* IgnoredReturnRule skips some more system methods.
+
+* Compiler generated types are now processed. Among other things this means
+  that we don't report methods as unused if they are only used from anonymous
+  methods.
+* ExitCodeRule works with local variables returned by the main entry point.
+* ClassPrefixRule ignores classes that start with "I".
+* Fixed a silly bug that sometimes kept UnusedMethodRule from reporting the 
+  results.
+* UseBaseTypesRule ignores parameters with generic types (they aren't handled 
+  quite right by the rule).
+* UseBaseTypesRule special cases base types that start with _, notably _Exception 
+  and _Type.
+* Main no longer returns negative ints.
 
 
-
-Index: source/internal/rules/correctness/Aspell.cs
-Index: source/internal/rules/correctness/NativeAspell.cs
-* Ignored words are now handled by aspell.
-* Added support for new dictionary setting to allow multiple dictionaries to
-  be specified. 
-* Ignore/dictionary paths now special case "/resources/file" where file is
-  SysIgnore.txt or IgnoreList.txt.
-* Words with dashes are now treated as multiple words.
-
-Index: nant.build
-* Added SysIgnore.txt and IgnoreList.txt to resources.
-
-Index: source/internal/Program.cs
-* First cut at profile support. 
-
-Index: SysIgnore.txt
-* Removed words with dashes.
-
-Index: source/internal/HtmlViolations.cs
-* Added breaking field to output.
-
-
-
-------------------------------------------------------------------------
-еееееееееееееееееееееееееееееееееее
 -- Version 1.1.0.0 (r572) ----
 * Added 3 new rules:
 	ClassPrefix

@@ -374,3 +374,85 @@ Index: source/internal/rules/correctness/UseSetterValueRule.cs
 
 
 ------------------------------------------------------------------------
+r59 | jesjones@mindspring.com | 2008-05-18 21:57:34 -0700 (Sun, 18 May 2008) | 37 lines
+
+Index: source/internal/rules/design/PublicImplementationRule.cs
+* Only fire if none of the new public methods are called.
+
+Index: source/internal/rules/design/UnusedMethodRule.cs
+* Fixed (it only worked half the time).
+
+Index: source/tests/rules/design/EqualityOperatorTest.cs
+Index: source/internal/rules/design/EqualityOperatorRule.cs
+* Ignore private structs.
+
+Index: source/internal/CheckItem.cs
+* CompilerGenerated methods are now checked so that anonymous delegates are
+  properly processed. This means that rules may need to special case these types.
+  
+Index: source/tests/rules/performance/UseEmptyTypesTest.cs
+Index: source/internal/rules/performance/UseEmptyTypesRule.cs
+* Fixed so that it only fires if the type is "System.Type".
+
+Index: install.sh
+* Doesn't overwrite smokey.exe.config if it already exists.
+
+Index: source/app/AnalyzeAssembly.cs
+Index: source/framework/support/MethodMatcher.cs
+Index: source/framework/StringExtensions.cs
+Index: source/framework/support/CecilExtensions.cs
+Index: source/framework/support/advanced/ClassifyMethod.cs
+Index: source/framework/support/AssemblyCache.cs
+* Added some asserts.
+
+Index: source/internal/Program.cs
+* Main no longer returns negative ints.
+
+Index: source/tests/V0.cs
+...
+* Sealed lots and lots of classes.
+
+
+------------------------------------------------------------------------
+r60 | jesjones@mindspring.com | 2008-05-19 19:12:06 -0700 (Mon, 19 May 2008) | 39 lines
+
+Index: OLD_CHANGE_LOG
+* Added.
+
+Index: source/internal/rules/design/UseBaseTypesRule.cs
+Index: source/tests/rules/design/UseBaseTypesTest1.cs
+* Special case types that start with _, notably _Exception and _Type.
+
+Index: source/internal/rules/xml/Security.xml
+Index: source/internal/rules/xml/Design.xml
+* Refer to the wiki not the README.
+
+Index: source/internal/rules/performance/StructOverridesRule.cs
+Index: source/internal/rules/performance/InlineStaticInitRule.cs
+Index: source/internal/rules/design/UnusedMethodRule.cs
+* Reinstate IsCompilerGenerated check.
+
+Index: source/internal/rules/performance/NotSealedRule.cs
+* Add IsCompilerGenerated check.
+
+Index: source/internal/rules/reliability/StaticSetterRule.cs
+Index: source/internal/rules/reliability/CtorCallsVirtualRule.cs
+* Improved details formatting.
+
+Index: source/internal/rules/correctness/UnprotectedEventRule.cs
+* Rewrote to be simpler and to work with the weird, hard to reproduce, Shan code.
+
+Index: source/internal/rules/misc/InconsistentNamespaceRule.cs
+* Skip the rule if the directory names include '.'.
+
+Index: source/internal/Program.cs
+* Tweak system profile.
+
+Index: source/framework/support/CecilExtensions.cs
+* Added check to IsCompilerGenerated for "<PrivateImplementationDetails>".
+ 
+Index: custom/source/rules/Rules.xml
+* Added breaking attributes.
+
+
+------------------------------------------------------------------------
