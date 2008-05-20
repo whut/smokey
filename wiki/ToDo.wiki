@@ -6,11 +6,6 @@
 As far as I can tell Smokey is pretty much feature complete so most of the changes I envision involve new rules and bug fixes.
 
 
-== Short Term ==
-
-For the next release I have a number of new rules planned and one new feature: support for profiles which will make it easier to do things like profile system assemblies in a standard fashion.
-
-
 == Medium Term ==
 
 More rules, in particular I'd like to add more !FxCop rules (Smokey probably has 70-80% of the !FxCop already). I may also add some SQL related rules.
