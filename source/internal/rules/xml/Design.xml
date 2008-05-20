@@ -2206,7 +2206,7 @@
 	<Violation checkID = "D1055" severity = "Warning" breaking = "false">
 		<Translation lang = "en" typeName = "ArithmeticButNoEquals" category = "Design">			
 			<Cause>
-			An type overloads the addition and subtraction operators, but does not override
+			A type overloads the addition and subtraction operators, but does not override
 			Equals(object).
 			</Cause>
 		

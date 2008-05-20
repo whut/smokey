@@ -1260,7 +1260,7 @@
 	<Violation checkID = "R1032" severity = "Warning" breaking = "true">
 		<Translation lang = "en" typeName = "StringUri2" category = "Reliability">			
 			<Cause>
-			A type declares a property and the decomposed property name
+			A type declares a property of type string and the decomposed property name
 			has a component named "uri", "Uri", "urn", "Urn", "url", or "Url".
 			The decomposition splits the argument name based on case changes (so "inUri"
 			becomes ["in", "Uri"]).
