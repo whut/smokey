@@ -21,12 +21,14 @@
 
 using Mono.Cecil;
 using NUnit.Framework;
+
+using Smokey.Framework.Support;
+using Smokey.Internal.Rules;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Smokey.Framework.Support;
-using Smokey.Internal.Rules;
 
 namespace Smokey.Tests
 {
@@ -62,13 +64,18 @@ namespace Smokey.Tests
 			{
 				return e.GetType().ToString() + e.TypeName;
 			}
+
+			public object AddImplementation(Type implementation)
+			{
+				return implementation.GetConstructor(null);
+			}
 		}			
 		
 		public class Bad	
 		{
 			public string Help(TypeInitializationException e)
 			{
-				return e.HelpLink;
+				return e.Message;
 			}
 
 //			public void Clear(List<int> l)
@@ -91,7 +98,7 @@ namespace Smokey.Tests
 		// test code
 		public UseBaseTypesTest1() : base(
 			new string[]{"Good.Type", "Good.AddRange", "Good.TwoInterfaces",
-				"Good.TwoCalls", "Good.CrossCalls"},
+				"Good.TwoCalls", "Good.CrossCalls", "Good.AddImplementation"},
 			
 			new string[]{"Bad.Help", "Bad.CrossCalls"})	
 		{

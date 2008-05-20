@@ -84,8 +84,8 @@ namespace Smokey.Internal.Rules
 				if (method.IsConstructor && !m_checkCtors)
 					break;
 					
-//				if (method.ToString().Contains("PrivateImplementationDetails"))
-//					break;
+				if (method.IsCompilerGenerated())
+					break;
 					
 				// Method cannot be externally visible.
 				TypeAttributes vis = m_type.Attributes & TypeAttributes.VisibilityMask;

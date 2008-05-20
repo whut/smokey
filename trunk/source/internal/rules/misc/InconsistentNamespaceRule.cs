@@ -52,6 +52,13 @@ namespace Smokey.Internal.Rules
 				Log.DebugLine(this, "type: {0}", type);		
 
 				string[] path = Path.GetDirectoryName(p).Split(Path.DirectorySeparatorChar);
+				foreach (string pp in path)
+				{
+					// mono uses weird path names like "System.Resources" which confuses the rule
+					if (pp.IndexOf('.') >= 0)
+						return;
+				}
+				
 				if (path.Length > 0)
 				{
 					string[] names = type.Namespace.Split('.');

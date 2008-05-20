@@ -429,7 +429,7 @@
 	
 			<Fix>
 			Don't use these security actions or disable the rule with DisableRuleAttribute (see
-			the README for details).
+			the &lt;http://code.google.com/p/smokey/wiki/DisableRuleAttribute&gt; for details).
 			</Fix>
 		</Translation>
 	</Violation>
@@ -449,7 +449,7 @@
 	
 			<Fix>
 			Use declarative security or disable the rule with DisableRuleAttribute (see
-			the README for details).
+			the &lt;http://code.google.com/p/smokey/wiki/DisableRuleAttribute&gt; for details).
 			</Fix>
 		</Translation>
 	</Violation>
@@ -470,7 +470,7 @@
 	
 			<Fix>
 			Remove the attribute, or if the method is a performance bottleneck, disable the rule 
-			with DisableRuleAttribute (see the README for details).
+			with DisableRuleAttribute (see the &lt;http://code.google.com/p/smokey/wiki/DisableRuleAttribute&gt; for details).
 			</Fix>
 		</Translation>
 	</Violation>

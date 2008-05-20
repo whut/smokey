@@ -13,7 +13,7 @@ mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mo
 mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.1/System.Xml.Core.dll > tmp.txt
 mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.0/System.Windows.Forms.dll > tmp.txt
 
-mono bin/smokey.exe bin/smokey.exe	scaleable
+mono bin/smokey.exe bin/smokey.exe	
 	27.065				1.1
 	24.194				1.0
 	31.63 seconds		
@@ -32,32 +32,9 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 
 /Library/Frameworks/Mono.framework/Versions/1.9/lib/mono/gac/gtk-sharp/2.10.0.0__35e10195dab3c99f/gtk-sharp.dll			  
 
-	[DisableRule("R1000", "DisposableFields")]
+pendantic level?
 
-* Get rid of ValidateArgs2? Or disable it by default? If disable need to mention it in the xml.
-* StaticMethod back and disable it by default?
-* UnusedMethod should not complain about inner exception ctors or streaming ctors.
-* PublicImplementation isn't working (probably because we call the methods via a delegate)
-* UseEmptyTypes is getting confused
-		string[] words = text.Split();
-* Maybe text report should auto-add [DisableRule("D1047", "TooManyArgs")] to "How to Fix Violations"
-  if it doesn't already mention DisableRule?
 * Release checklist:
-	- nant -D:debug=true smoke>tmp.txt
-	- nant -D:debug=true test
-	- nant -D:debug=true ftest
-	- nant -D:optimize=true smoke>tmp.txt
-	- nant -D:optimize=true test
-	- nant -D:optimize=true ftest (doesnt work)
-	- review severity of new rules
-	- make sure custom lib builds
-	- make sure custom test runs
-	- make sure custom test smokes
-	- update /usr/local/bin/smokey.exe.config to point to the custom dll
-	- try on .net (smoke fxcop)
-	- smoke a mono assembly, eg mscorlib.dll
-	- smoke reflector
-	- make sure everything is checked in
 	- use svn log -r 1:HEAD > CHANGE_LOG
 	- update CHANGES file (from r59)
 	- make sure AssemblyVersion number is ok (for all the assemblies)
@@ -71,7 +48,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- add profile setting
 	- localize config?
 	- mono --debug bin/smokey_d.exe -generate-html-violations:violations
-	- mono bin/smokey.exe -html -out:report.html -set:ignoreList:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/net_2_1/System.Core.dll 
+	- smoke -profile=system -html -out:report.html /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll
 	- upload
 		report.html
 		violations
@@ -95,6 +72,9 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Might want a rule to verify that gui resources are localized.
 * PInvoke entry points should exist
 * Gendarme reports file and line numbers for .net
+* RandomUsedOnce
+	/Users/jessejones/New_Files/mono-1.9/mcs/class/System.Web/System.Web/HttpRequest.cs:669
+* Verify that the name passed to ArgumentNullException matches an argument.
 * http://groups.google.com/group/gendarme/web/rules
 * Implement more FxCop rules:
 	- Globalization Warnings
@@ -103,6 +83,9 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- Maintainability Warnings
 	- Naming Warnings
 * Foreign key but no update rule.
+* Re-add MethodCanBeMadeStaticRule but disable it by default.
+* Make sure .net generated assemblies smoke OK. Reflector seems a little bit whacked: lot's of names
+  are ?.
 * Watchdog timeout should be configurable.
 * RedundantPredicate
 	- A && A			A
@@ -113,7 +96,8 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Rename the PubliclyVisible method ExternallyVisible.
 * Try profiling on linux.
 * Remove support for ignoreList config setting.
-* Handle the CompilerGenerated types and methods in the dispatcher not the rules.
+* Handle the CompilerGenerated types and methods in the dispatcher not the rules. This is tricky to
+  do: we want to do stuff like visting the body of anonymous methods to see what they call for example.
 * AssemblyResolver.Resolver.Resolve can be used to get a definition from a reference.
   a list of violations without messing with System.Process or external files.
 * Unit tests take too long to run. Maybe we can cleanup better?
@@ -275,13 +259,14 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 		rm bin/smokey.exe				# nant doesn't rebuild if just a define changed
 		nant -D:profile=true app
 		look at stdout
-	- review severity of new rules
+	- review severity abd breaking of new rules
 	- make sure custom lib builds
-	- make sure custom test runs
 	- make sure custom test smokes
+	- make sure custom test runs
 	- try on .net (smoke fxcop)
+	- smoke /Users/jessejones/New_Files/Reflector\ Folder/Reflector.exe
 	- smoke a mono assembly, eg mscorlib.dll
-	- smoke reflector
+	- smoke a mono assembly with -profile=system and see if any additional rules should be disabled
 	- make sure everything is checked in
 	- use svn log -r 1:HEAD > CHANGE_LOG
 	- update CHANGES file
@@ -296,7 +281,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- add profile setting
 	- localize config?
 	- mono --debug bin/smokey_d.exe -generate-html-violations:violations
-	- mono bin/smokey.exe -html -out:report.html -set:ignoreList:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/net_2_1/System.Core.dll 
+	- smoke -profile=system -html -out:report.html /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll
 	- upload
 		report.html
 		violations

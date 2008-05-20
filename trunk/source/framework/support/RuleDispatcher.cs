@@ -246,7 +246,7 @@ namespace Smokey.Framework.Support
 			get {return m_classifier;}
 		}
 						
-		#region Private Members		
+		#region Private Members -----------------------------------------------
 		private void DoVisit(TypedInstructionCollection instructions, BasicBlock block, int lastIndex, int prevIndex, int loopIndex)
 		{
 			DBC.Assert(m_visited.IndexOf(block) < 0, "{0} has already been visited", block);
@@ -404,7 +404,7 @@ namespace Smokey.Framework.Support
 		}
 		#endregion
 		
-		#region Private types
+		#region Private Types -------------------------------------------------
 		private struct RuleCallback
 		{
 			public readonly string Name;
@@ -449,7 +449,7 @@ namespace Smokey.Framework.Support
 		}
 		#endregion
 				
-		#region Fields
+		#region Fields --------------------------------------------------------
 		private IReportViolations m_reporter;
 		private Dictionary<string, List<string>> m_excludedNames = new Dictionary<string, List<string>>();	// name -> checkIDs
 		private List<string> m_excluding = new List<string>();

@@ -1528,7 +1528,7 @@
 	
 			<Fix>
 			Use an explicit cast operator or disable the rule for that type using DisableRuleAttribute
-			(see the README).
+			(see the &lt;http://code.google.com/p/smokey/wiki/DisableRuleAttribute&gt;).
 			</Fix>	
 		</Translation>
 	</Violation>
@@ -1611,7 +1611,7 @@
 			<Fix>
 			If you're calling Exit in response to an error your application can recover from
 			throw an exception instead. If you really want to call Exit then decorate the method
-			with DisableRuleAttribute (see the README).
+			with DisableRuleAttribute (see the &lt;http://code.google.com/p/smokey/wiki/DisableRuleAttribute&gt;).
 			</Fix>
 		</Translation>
 	</Violation>	
@@ -1628,7 +1628,7 @@
 	
 			<Fix>
 			It's usually best to throw an exception and return the error code from main. If you 
-			really want to call Exit then decorate the method with DisableRuleAttribute (see the README).
+			really want to call Exit then decorate the method with DisableRuleAttribute (see the &lt;http://code.google.com/p/smokey/wiki/DisableRuleAttribute&gt;).
 			</Fix>
 		</Translation>
 	</Violation>	
