@@ -13,7 +13,7 @@ Individual settings consist of a key and a value. All the settings are optional.
 || consoleWidth || 80 || positive int (used when writing text reports) ||
 || custom || --- || colon separated list of paths to assemblies with custom rules ||
 || dictionary || "" || colon separated list of paths to files with a whitespace separated list of words to ignore when spell-checking ||
-|| ignoreList || "" || path to a file with a whitespace separated list of words to ignore when spell-checking [deprecated] ||
+|| ignoreList || "" || path to a file with a whitespace separated list of words to ignore when spell-checking (deprecated) ||
 || logfile || null || stdout, stderr, or a path ||
 || maxBoxes || 3 || non-negative int (used by the !AvoidBoxing rule) ||
 || maxBranches || 40 || used by !TooComplexRule ||
