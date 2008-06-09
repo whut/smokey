@@ -1,7 +1,7 @@
 <Expectations>
-	<Expected checkID = "D1004" typeName = "UseStrongName" fullName = "APTCA_d"/>
-	<Expected checkID = "S1000" typeName = "Aptca1" fullName = "APTCA_d"/>
-	<Expected checkID = "S1012" typeName = "ConflictingTransparency" fullName = "APTCA_d"/>
+	<Expected checkID = "D1004" typeName = "UseStrongName" fullName = "APTCA"/>
+	<Expected checkID = "S1000" typeName = "Aptca1" fullName = "APTCA"/>
+	<Expected checkID = "S1012" typeName = "ConflictingTransparency" fullName = "APTCA"/>
 	<Expected checkID = "S1006" typeName = "ImperativeSecurity" fullName = "System.Void Aptca.BadClass::Assert2()"/>
-	<Expected checkID = "S1013" typeName = "TransparentAssert1" fullName = "APTCA_d"/>
+	<Expected checkID = "S1013" typeName = "TransparentAssert1" fullName = "APTCA"/>
 </Expectations>

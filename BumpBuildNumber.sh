@@ -1,4 +1,5 @@
 #!/bin/bash
+# Usage is: ./BumpBuildNumber.sh source/internal/AssemblyVersion.cs
 FILE="$1"
 
 if [ -f "$FILE" ]

@@ -32,37 +32,141 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 
 /Library/Frameworks/Mono.framework/Versions/1.9/lib/mono/gac/gtk-sharp/2.10.0.0__35e10195dab3c99f/gtk-sharp.dll			  
 
-pendantic level?
+212 rules
+102 gendarme
+199 fxcop
 
-* Release checklist:
-	- use svn log -r 1:HEAD > CHANGE_LOG
-	- update CHANGES file (from r59)
-	- make sure AssemblyVersion number is ok (for all the assemblies)
-	- update version number in nant file
-	- update SmokeyVersion on old web site
-	- install
-	- update README
-	- we require linq so need mono 1.9.
-	- deprecate ignoreList setting
-	- add dictionary setting
-	- add profile setting
-	- localize config?
-	- mono --debug bin/smokey_d.exe -generate-html-violations:violations
-	- smoke -profile=system -html -out:report.html /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll
-	- upload
-		report.html
-		violations
-		smokey_bin
-		smokey_src
-		latest cecil
-	- update index.html (eg prepend new downloads)
-	- update googlecode description
-	- update wiki todo
-	- send an announcement
-	- make sure everything is checked in
-	- do the following (be sure to fix the versions):
-		svn copy file:///Users/jessejones/projects/Smokey file:///Users/jessejones/projects/releases/smokey-1.X.0.0 -m "Tagging 1.X.0.0"
-
+* Work on a makefile:
+	- do a checkin
+	- should we use the nunit package?
+	- do we want DEBUG to default to off or on?
+	- do we need to version anything besides the app?
+	- add  -warnaserror+ to debug flags
+	- need to support PROFILE
+	- add a smoke target
+	- add a clean target
+	- add a tar target
+	- add help, install, and uninstall targets
+	- remove BumpBuildNumber.sh, nant.build, install.sh, and uninstall.sh
+* Support DBC via a python script
+	- google for dbc and c#
+	- google for c# parser/grammar
+	- if an assert fails exception should include assert expr and names/values for the
+	  variables
+	- post should support old(argName)
+	- inject calls to Invariant if one is present, optionally disable via an attibute
+	  or comment
+* Can probably use KeyedCollection in places. Might want to check gear too.
+* NonSerializableField is all messed up:
+	public sealed class Value
+	{
+		public Value()
+		{
+			m_instance = 0;
+		}
+	
+		public Value(int value)
+		{
+			m_instance = value;
+		}
+		
+		public int TheValue
+		{
+			get {return m_instance;}
+		}
+		
+		private int m_instance;
+	}
+	
+	[Serializable]
+	public sealed class CocoaException : Exception
+	{
+		public CocoaException()
+		{
+		}
+	
+		public CocoaException(int value)
+		{
+			m_instance = new Value(value);
+		}
+		
+		private CocoaException(SerializationInfo info, StreamingContext context) : base(info, context)
+		{
+	//		m_instance = new Value(info.GetInt32("NSObject"));
+		}
+	
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+	//		
+	//		info.AddValue("NSObject", m_instance.TheValue);
+		}
+	
+		public int Value
+		{
+			get {return m_instance.TheValue;}
+		}
+		
+	//	[NonSerialized]
+		private Value m_instance;
+	}
+	
+	public class Program
+	{
+		public static void Main()
+		{ 		
+			MemoryStream stream = new MemoryStream();
+			BinaryFormatter formatter = new BinaryFormatter();
+			formatter.Serialize(stream, new CocoaException(200));
+	
+			stream.Seek(0, SeekOrigin.Begin);
+			CocoaException e = (CocoaException) formatter.Deserialize(stream);
+			Console.WriteLine(e.Value);
+		}
+	} 
+* AttributesNeedUsage should not fire for abstract types.
+* UnusedMethod should not complain about std exception ctors.
+* UnusedMethod should not complain if NewMethodAttribute or OverrideMethodAttribute.
+* NotInstantiated should not complain if ExportClassAttribute.
+* AssemblyInfo examples in xml need to explicitly include System.
+* UseStrongName should not complain about exe's?
+* UseJurassicNaming does a crappy job printing bad fields.
+* CastOpAlternative should not complain if FromType is missing.
+* File contains no types that match the class name.
+* Avoid reregisterforfinalize.
+* DisposeDoesStaticRemove language (maybe even the rule).
+* Wasn't able to disable NoStaticRemove.
+* CircularReference seems kind of annoying.
+* Fix Dipose language in XML: can touch non-IDisposable fields.
+* FinalizerTouchesDisposableRule
+	- would need to do some code flow based on the disposing flag
+* Const2
+	internal static class Duration
+	{
+		public const double kEventDurationSecond            = 1.0;
+		public const double kEventDurationMillisecond       = kEventDurationSecond/1000;
+	}
+* ReadOnlyArrayRule should only apply to exterally visible fields.
+* Might want to emphasize that Dispose should alays be used. If not unmanaged resources held
+  by managed resources (e.g. IntPtr[]) may not be freed.
+* Do we catch IntPtr[] and List<IntPtr> when we look for unmanaged fields?
+* Tweak static remove rule: finalizers are called on app domain exit apparently.
+* UnusedMethodRule:
+	- sort methods by type
+	- don't complain about event add and remove methods
+* XorHashRule
+	- ex-or throws away half the bits
+	- shan has three instances of this
+* SealPublicRule
+	- no new protected members
+	- no new virtual methods
+	- class is public but not sealed
+	- optional severity? or base class must be Object?
+* Selected exceptions are default constructed (default ctor is for serialization).
+* Probably want the fxcop override changes argument name rule
+	- important for languages like VB (and ruby?) that support named arguments
+* GetObjectData examples in the xml need to validate args.
+* Reference nunit using "-pkg:mono-nunit"?
 * AvoidUnusedParametersRule
 	- need a way to easily disable this, maybe args prefixed with "dummy" or "unused"
 * DeserializeOptionalFieldRule
@@ -72,6 +176,8 @@ pendantic level?
 * Might want a rule to verify that gui resources are localized.
 * PInvoke entry points should exist
 * Gendarme reports file and line numbers for .net
+* Really need to fix ftest in release.
+* Would be nice if nant spit out a better error message if Smokey.keys is missing.
 * RandomUsedOnce
 	/Users/jessejones/New_Files/mono-1.9/mcs/class/System.Web/System.Web/HttpRequest.cs:669
 * Verify that the name passed to ArgumentNullException matches an argument.
@@ -82,7 +188,10 @@ pendantic level?
 		Specify IFormatProvider, once find references works in visisect
 	- Maintainability Warnings
 	- Naming Warnings
+* Try YourKit Profiler
+	http://www.theserverside.net/news/thread.tss?thread_id=48141
 * Foreign key but no update rule.
+* Should we have a pendantic severity which is disabled by default?
 * Re-add MethodCanBeMadeStaticRule but disable it by default.
 * Make sure .net generated assemblies smoke OK. Reflector seems a little bit whacked: lot's of names
   are ?.
@@ -271,10 +380,10 @@ pendantic level?
 	- use svn log -r 1:HEAD > CHANGE_LOG
 	- update CHANGES file
 	- make sure AssemblyVersion number is ok (for all the assemblies)
-	- update version number in nant file
+	- update version number in nant file (for tar files)
 	- update SmokeyVersion on old web site
 	- install
-	- update README
+	- update README and wiki
 	- we require linq so need mono 1.9.
 	- deprecate ignoreList setting
 	- add dictionary setting
@@ -288,7 +397,6 @@ pendantic level?
 		smokey_bin
 		smokey_src
 		latest cecil
-	- update index.html (eg prepend new downloads)
 	- update googlecode description
 	- update wiki todo
 	- send an announcement

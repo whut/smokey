@@ -1,5 +1,5 @@
 <Expectations>
-	<Expected checkID = "D1004" typeName = "UseStrongName" fullName = "APTCA3_d"/>
-	<Expected checkID = "R1024" typeName = "UncheckedAssembly" fullName = "APTCA3_d"/>
+	<Expected checkID = "D1004" typeName = "UseStrongName" fullName = "APTCA3"/>
+	<Expected checkID = "R1024" typeName = "UncheckedAssembly" fullName = "APTCA3"/>
 	<Expected checkID = "S1006" typeName = "S1006" fullName = "System.Void Aptca3.GoodClass2::Work()"/>
 </Expectations>

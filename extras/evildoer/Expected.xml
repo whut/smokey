@@ -1,11 +1,11 @@
 <Expectations>
 	<!-- Assembly -->
-	<Expected checkID = "D1004" typeName = "UseStrongName" fullName = "evildoer_d"/>
-	<Expected checkID = "R1014" typeName = "StaticSetter" fullName = "evildoer_d"/>
-	<Expected checkID = "D1018" typeName = "CLSCompliant" fullName = "evildoer_d"/>
-	<Expected checkID = "C1020" typeName = "AttributeSpelling" fullName = "evildoer_d"/>
-	<Expected checkID = "D1000" typeName = "LargeNamespace" fullName = "evildoer_d"/>
-	<Expected checkID = "D1039" typeName = "BadExit" fullName = "evildoer_d"/>
+	<Expected checkID = "D1004" typeName = "UseStrongName" fullName = "evildoer"/>
+	<Expected checkID = "R1014" typeName = "StaticSetter" fullName = "evildoer"/>
+	<Expected checkID = "D1018" typeName = "CLSCompliant" fullName = "evildoer"/>
+	<Expected checkID = "C1020" typeName = "AttributeSpelling" fullName = "evildoer"/>
+	<Expected checkID = "D1000" typeName = "LargeNamespace" fullName = "evildoer"/>
+	<Expected checkID = "D1039" typeName = "BadExit" fullName = "evildoer"/>
 
 	<!-- BadClass -->
 	<Expected checkID = "PO1000" typeName = "NewLineLiteral" fullName = "System.Void EvilDoer.BadClass::UnixNewLine()"/>
@@ -80,8 +80,8 @@
 	<!-- BadNaming -->
 	<Expected checkID = "MO1000" typeName = "UseMonoNaming" fullName = "EvilDoer.BadNaming"/>
 	<Expected checkID = "D1001" typeName = "ClassCanBeMadeStatic" fullName = "EvilDoer.BadNaming"/>
-	<Expected checkID = "P1012" typeName = "NotInstantiated" fullName = "evildoer_d"/>
-	<Expected checkID = "D1032" typeName = "UnusedMethod" fullName = "evildoer_d"/>
+	<Expected checkID = "P1012" typeName = "NotInstantiated" fullName = "evildoer"/>
+	<Expected checkID = "D1032" typeName = "UnusedMethod" fullName = "evildoer"/>
 
 	<!-- BadStruct -->
 	<Expected checkID = "MS1019" typeName = "LargeStruct" fullName = "EvilDoer.BadStruct"/>
@@ -137,13 +137,13 @@
 	<Expected checkID = "D1049" typeName = "IdenticalCodeBlocks" fullName = "System.Void EvilDoer.ExceptionHandlers::Alpha(System.Int32,System.Int32)"/>
 	<Expected checkID = "D1049" typeName = "IdenticalCodeBlocks" fullName = "System.Void EvilDoer.SameMethod::Gamma(System.Int32,System.Int32)"/>
 
-	<Expected checkID = "MS1029" typeName = "ClassPrefix" fullName = "evildoer_d"/>
+	<Expected checkID = "MS1029" typeName = "ClassPrefix" fullName = "evildoer"/>
 	<Expected checkID = "MS1030" typeName = "MS1030" fullName = "Hungarian.Bad4"/>
 	<Expected checkID = "MS1030" typeName = "MS1030" fullName = "Hungarian.Bad3"/>
 	<Expected checkID = "MS1030" typeName = "MS1030" fullName = "Hungarian.Bad2"/>
 	<Expected checkID = "MS1030" typeName = "MS1030" fullName = "Hungarian.Bad1"/>
-	<Expected checkID = "PO1009" typeName = "WinFormsVoodoo" fullName = "evildoer_d"/>
-	<Expected checkID = "D1050" typeName = "UnusedField" fullName = "evildoer_d"/>
+	<Expected checkID = "PO1009" typeName = "WinFormsVoodoo" fullName = "evildoer"/>
+	<Expected checkID = "D1050" typeName = "UnusedField" fullName = "evildoer"/>
 	<Expected checkID = "P1008" typeName = "StructOverrides" fullName = "EvilDoer.XWindowAttributes"/>
 	<Expected checkID = "D1051" typeName = "PublicImplementation" fullName = "EvilDoer.InternalWorker"/>
 	<Expected checkID = "D1051" typeName = "PublicImplementation" fullName = "EvilDoer.InternalWorker3"/>
