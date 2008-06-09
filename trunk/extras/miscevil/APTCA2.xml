@@ -1,6 +1,6 @@
 <Expectations>
-	<Expected checkID = "D1004" typeName = "UseStrongName" fullName = "APTCA2_d"/>
+	<Expected checkID = "D1004" typeName = "UseStrongName" fullName = "APTCA2"/>
 	<Expected checkID = "S1001" typeName = "Aptca2" fullName = "Aptca2.DerivedClass"/>
-	<Expected checkID = "S1014" typeName = "TransparentAssert2" fullName = "APTCA2_d"/>
-	<Expected checkID = "S1015" typeName = "S1015" fullName = "APTCA2_d"/>
+	<Expected checkID = "S1014" typeName = "TransparentAssert2" fullName = "APTCA2"/>
+	<Expected checkID = "S1015" typeName = "S1015" fullName = "APTCA2"/>
 </Expectations>
