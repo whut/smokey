@@ -803,6 +803,7 @@
 			<CSharp>
 			// These are usually placed into an AssemblyInfo.cs file.
 			using Mono.GetOptions;
+			using System;
 			using System.Reflection;
 			using System.Runtime.CompilerServices; 
 			using System.Runtime.InteropServices;
@@ -1408,7 +1409,8 @@
 	
 			<Fix>
 			Remove or #ifdef out the unused methods, or use DisableRuleAttribute on the
-			method or the declaring type.
+			method or the declaring type. Note that you can also use DisableRuleAttribute
+			on an attribute used to decorate the method.
 			</Fix>
 		</Translation>
 	</Violation>
@@ -1445,7 +1447,7 @@
 		<Translation lang = "en" typeName = "CastOpAlternative" category = "Design">			
 			<Cause>
 			An externally visible type defines a cast operator to Foo, but does not
-			have ToFooType and FromFooType methods.
+			have a ToFooType method.
 			</Cause>
 		
 			<Description>
@@ -1454,7 +1456,8 @@
 			</Description>
 	
 			<Fix>
-			Add the named method(s). These should be static methods returning the correct type.
+			Add the ToFooType method. Normally you will also want to add a FromFooType 
+			method as well. These should be static methods returning the correct type.
 			</Fix>
 	
 			<CSharp>
@@ -2383,6 +2386,28 @@
 				private int m_state;
 			}
 			</CSharp>
+		</Translation>	
+	</Violation>
+	
+	<Violation checkID = "D1057" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "AvoidReRegisterForFinalize" category = "Design">			
+			<Cause>
+			Don't use GC.ReRegisterForFinalize.
+			</Cause>
+		
+			<Description>
+			There is rarely a good reason to use ReRegisterForFinalize. In particular, ReRegisterForFinalize
+			will not, in general, undo a call to SuppressFinalize. SuppressFinalize merely sets a flag
+			on the object which tells the GC not to add the object to the finalizer queue when it is
+			unreachable. ReRegisterForFinalize, on the other hand, immediately adds the object onto
+			the finalizer queue so it's generally only useful if you are already in the finalizer. See
+			&lt;http://www.exciton.cs.rice.edu/NETResources/Lectures/StuartWafer/RiceLectures/Garbage%20Collection%20Automatic%20Memory%20Management%20in%20the%20Microsoft%20_NET%20Framework%20--%20MSDN%20Magazine,%20November%202000.htm&gt;
+			for more details.
+			</Description>
+	
+			<Fix>
+			Don't use GC.ReRegisterForFinalize.
+			</Fix>
 		</Translation>
 	</Violation>
 </Violations>

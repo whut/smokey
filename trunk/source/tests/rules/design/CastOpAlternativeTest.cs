@@ -101,6 +101,31 @@ namespace Smokey.Tests
 			private int m_height;
 		}			
 
+		public struct Good3
+		{
+			public Good3(int width, int height)
+			{
+				m_width = width;
+				m_height = height;
+			}
+			
+			public static explicit operator Point(Good3 size)
+			{
+				return new Point(size.m_width, size.m_height);
+			}
+			
+			public static Point ToPointType(Good3 size)
+			{
+				return new Point(size.m_width, size.m_height);
+			}
+						
+			public int Width {get {return m_width;}}
+			public int Height {get {return m_height;}}
+			
+			private int m_width;
+			private int m_height;
+		}			
+
 		public struct Bad1
 		{
 			public Bad1(int width, int height)
@@ -119,31 +144,6 @@ namespace Smokey.Tests
 				return new Bad1(pt.X, pt.Y);
 			}
 			
-			public int Width {get {return m_width;}}
-			public int Height {get {return m_height;}}
-			
-			private int m_width;
-			private int m_height;
-		}			
-
-		public struct Bad2
-		{
-			public Bad2(int width, int height)
-			{
-				m_width = width;
-				m_height = height;
-			}
-			
-			public static explicit operator Point(Bad2 size)
-			{
-				return new Point(size.m_width, size.m_height);
-			}
-			
-			public static Point ToPointType(Bad2 size)
-			{
-				return new Point(size.m_width, size.m_height);
-			}
-						
 			public int Width {get {return m_width;}}
 			public int Height {get {return m_height;}}
 			
@@ -193,8 +193,8 @@ namespace Smokey.Tests
 
 		// test code
 		public CastOpAlternativeTest() : base(
-			new string[]{"Good1", "Good2"},
-			new string[]{"Bad1", "Bad2", "Bad3", "Bad4"})	
+			new string[]{"Good1", "Good2", "Good3"},
+			new string[]{"Bad1", "Bad3", "Bad4"})	
 		{
 		}
 						

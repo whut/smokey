@@ -810,17 +810,21 @@
 	<Violation checkID = "R1020" severity = "Error" breaking = "false">
 		<Translation lang = "en" typeName = "NonSerializableField" category = "Reliability">			
 			<Cause>
-			An instance field of a System.SerializableAttribute type is not serializable and
+			A type is decorated with System.SerializableAttribute, does not implement
+			ISerializable, and has an instance field which is not serializable and
 			not marked with System.NonSerializedAttribute.
 			</Cause>
 		
 			<Description>
-			If the object is serialized System.Runtime.Serialization.SerializationException
-			will be thrown when the .NET framework tries to serialize the bad field.
+			If the type does not implement ISerializable then it will be serialized using
+			reflection on each field. The field types must be decorated with System.SerializableAttribute
+			or the fields with System.NonSerializedAttribute. If not a System.Runtime.Serialization.SerializationException
+			will be thrown when the type is serialized.
 			</Description>
 	
 			<Fix>
-			Decorate the field with System.NonSerializedAttribute.
+			Decorate the field with System.NonSerializedAttribute, make the field type
+			serializable, or implement ISerializable.
 			</Fix>
 		</Translation>
 	</Violation>

@@ -66,6 +66,7 @@ namespace Smokey.Tests
 			private string m_name;
 		}
 
+		[SerializableAttribute]
 		public class Good3 : ISerializable
 		{
 			public Good3(string name)

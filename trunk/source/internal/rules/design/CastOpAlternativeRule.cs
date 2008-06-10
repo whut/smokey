@@ -68,11 +68,7 @@ namespace Smokey.Internal.Rules
 					if (method.Name == "op_Explicit" || method.Name == "op_Implicit")
 					{	
 						string name = method.ReturnType.ReturnType.Name;
-						if (!DoHas("From" + name + "Type"))
-						{
-							m_failed = true;
-						}
-						else if (!DoHas("To" + name + "Type"))
+						if (!DoHas("To" + name + "Type"))
 						{
 							m_failed = true;
 						}

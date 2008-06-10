@@ -45,14 +45,19 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitBegin(BeginType begin)
 		{
-			m_needsCheck = (begin.Type.Attributes & TypeAttributes.Serializable) == TypeAttributes.Serializable;
+			m_needsCheck = false;
 			m_hasBadField = false;
 			m_details = string.Empty;
 			
-			if (m_needsCheck)
+			if ((begin.Type.Attributes & TypeAttributes.Serializable) == TypeAttributes.Serializable)
 			{
-				Log.DebugLine(this, "-----------------------------------"); 
-				Log.DebugLine(this, "checking {0}", begin.Type);				
+				if (!begin.Type.ClassOrBaseImplements("System.Runtime.Serialization.ISerializable", Cache))
+				{
+					m_needsCheck = true;
+
+					Log.DebugLine(this, "-----------------------------------"); 
+					Log.DebugLine(this, "checking {0}", begin.Type);	
+				}
 			}
 		}
 		

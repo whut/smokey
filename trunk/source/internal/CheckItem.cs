@@ -227,11 +227,9 @@ namespace Smokey.Internal
 						DoLoadRules(assembly, cache, severity, ignoreBreaks);
 					}
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
-					Console.Error.WriteLine("Couldn't load {0}", path);
-					Console.Error.WriteLine(e.Message);
-					Console.Error.WriteLine(e.StackTrace);
+					// DoPostOptionsInit will handle alerting the user
 				}
 			}
 		}

@@ -19,6 +19,7 @@
 			<CSharp>
 			// These are usually placed into an AssemblyInfo.cs file.
 			using Mono.GetOptions;
+			using System;
 			using System.Reflection;
 			using System.Runtime.CompilerServices; 
 			using System.Runtime.InteropServices;
@@ -44,7 +45,7 @@
 	<Violation checkID = "MS1001" severity = "Warning" breaking = "false">
 		<Translation lang = "en" typeName = "AttributesNeedUsage" category = "Microsoft Design Guidelines">			
 			<Cause>
-			An attribute was defined without an AttributeUsage.
+			A concrete attribute was defined without an AttributeUsage.
 			</Cause>
 	
 			<Description>

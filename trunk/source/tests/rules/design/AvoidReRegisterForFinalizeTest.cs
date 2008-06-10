@@ -20,53 +20,43 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Mono.Cecil;
-using Mono.Cecil.Cil;
+using NUnit.Framework;
 using System;
-using Smokey.Framework;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using Smokey.Framework.Support;
+using Smokey.Internal.Rules;
 
-namespace Smokey.Internal.Rules
-{	
-	internal sealed class AttributesNeedUsageRule : Rule
-	{				
-		public AttributesNeedUsageRule(AssemblyCache cache, IReportViolations reporter) 
-			: base(cache, reporter, "MS1001")
+namespace Smokey.Tests
+{
+	[TestFixture]
+	public class AvoidReRegisterForFinalizeTest : MethodTest
+	{	
+		// test cases
+		public class Cases
 		{
-		}
-				
-		public override void Register(RuleDispatcher dispatcher) 
-		{
-			dispatcher.Register(this, "VisitType");
-		}
-				
-		public void VisitType(TypeDefinition type)
-		{				
-			if (!type.IsAbstract)
+			public void Good1()
 			{
-				Log.DebugLine(this, "-----------------------------------"); 
-				Log.DebugLine(this, "checking {0}", type);				
-	
-				if (type.BaseType != null)
-				{			
-					bool passed = !type.IsSubclassOf("System.Attribute", Cache);
-	
-					for (int i = 0; i < type.CustomAttributes.Count && !passed; ++i)
-					{
-						string name = type.CustomAttributes[i].Constructor.ToString();
-						if (name.Contains("System.AttributeUsageAttribute"))
-						{
-							passed = true;
-						}
-					}
-					
-					if (!passed)
-					{
-						Log.DebugLine(this, "{0} has no usage attribute", type.Name); 
-						Reporter.TypeFailed(type, CheckID, string.Empty);
-					}
-				}
+				GC.SuppressFinalize(this);
+			}
+			
+			public void Bad1()
+			{
+				GC.ReRegisterForFinalize(this);
 			}
 		}
-	}
+				
+		// test code
+		public AvoidReRegisterForFinalizeTest() : base(
+			new string[]{"Cases.Good1"},
+			new string[]{"Cases.Bad1"})	
+		{
+		}
+						
+		protected override Rule OnCreate(AssemblyCache cache, IReportViolations reporter)
+		{
+			return new AvoidReRegisterForFinalizeRule(cache, reporter);
+		}
+	} 
 }
-

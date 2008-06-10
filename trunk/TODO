@@ -36,98 +36,19 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 102 gendarme
 199 fxcop
 
-#		-reference:nunit.framework.dll,Mono.CompilerServices.SymbolWriter.dll,Mono.Cecil.dll		\
-
-* Work on a makefile:
-	- remove BumpBuildNumber.sh, nant.build, install.sh, uninstall.sh.sh, and SmokeyVersion
-* Support DBC via a python script
-	- google for dbc and c#
-	- google for c# parser/grammar
-	- if an assert fails exception should include assert expr and names/values for the
-	  variables
-	- post should support old(argName)
-	- inject calls to Invariant if one is present, optionally disable via an attibute
-	  or comment
-* Can probably use KeyedCollection in places. Might want to check gear too.
-* NonSerializableField is all messed up:
-	public sealed class Value
-	{
-		public Value()
-		{
-			m_instance = 0;
-		}
-	
-		public Value(int value)
-		{
-			m_instance = value;
-		}
-		
-		public int TheValue
-		{
-			get {return m_instance;}
-		}
-		
-		private int m_instance;
-	}
-	
-	[Serializable]
-	public sealed class CocoaException : Exception
-	{
-		public CocoaException()
-		{
-		}
-	
-		public CocoaException(int value)
-		{
-			m_instance = new Value(value);
-		}
-		
-		private CocoaException(SerializationInfo info, StreamingContext context) : base(info, context)
-		{
-	//		m_instance = new Value(info.GetInt32("NSObject"));
-		}
-	
-		public override void GetObjectData(SerializationInfo info, StreamingContext context)
-		{
-			base.GetObjectData(info, context);
-	//		
-	//		info.AddValue("NSObject", m_instance.TheValue);
-		}
-	
-		public int Value
-		{
-			get {return m_instance.TheValue;}
-		}
-		
-	//	[NonSerialized]
-		private Value m_instance;
-	}
-	
-	public class Program
-	{
-		public static void Main()
-		{ 		
-			MemoryStream stream = new MemoryStream();
-			BinaryFormatter formatter = new BinaryFormatter();
-			formatter.Serialize(stream, new CocoaException(200));
-	
-			stream.Seek(0, SeekOrigin.Begin);
-			CocoaException e = (CocoaException) formatter.Deserialize(stream);
-			Console.WriteLine(e.Value);
-		}
-	} 
-* AttributesNeedUsage should not fire for abstract types.
-* UnusedMethod should not complain about std exception ctors.
-* UnusedMethod should not complain if NewMethodAttribute or OverrideMethodAttribute.
-* NotInstantiated should not complain if ExportClassAttribute.
-* AssemblyInfo examples in xml need to explicitly include System.
-* UseStrongName should not complain about exe's?
-* UseJurassicNaming does a crappy job printing bad fields.
-* CastOpAlternative should not complain if FromType is missing.
-* File contains no types that match the class name.
-* Avoid reregisterforfinalize.
-* DisposeDoesStaticRemove language (maybe even the rule).
-* Wasn't able to disable NoStaticRemove.
+* Add an optional severity level:
+	- disabled by default
+	- will need a way to enable these (or override profiles/cmd line) from config file
+	- can enable em via style or personal profile
+	- be sure to list the optional rules in some place like config
+* Optional rules:
+	- old StaticMethod
+	- internal method declared public
+	- private members are not after public members
+	- private method name doesn't start with Do
+	- public method name starts with Do
+	- some of the crappier FxCop rules (like no out parameters)
+* Make sure text and html reports both handle optional rules correctly.
 * CircularReference seems kind of annoying.
 * Fix Dipose language in XML: can touch non-IDisposable fields.
 * FinalizerTouchesDisposableRule
