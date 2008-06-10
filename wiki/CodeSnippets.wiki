@@ -82,12 +82,12 @@ internal class MyResource : IDisposable
             if (disposing)
             {
                 // dispose of managed fields, including any fields which
-                // are themselves IDisposable.
+                // are themselves finalizeable.
             }
 
             // This code will execute if we were called by our finalizer
             // We can use any of our fields except those which are 
-            // IDisposable (because they may have already been finalized).
+            // finalizeable (because they may have already been finalized).
             NativeMethods.CloseHandle(m_handle);
             m_handle = IntPtr.Zero;
 
@@ -158,13 +158,13 @@ internal class MyResource : IDisposable
             // If we've been called via Dispose we can,
             if (disposing)
             {
-                // dispose of managed fields, including any fields which
+                // dispose of finalizeable, including any fields which
                 // are themselves IDisposable.
             }
 
             // This code will execute if we were called by our finalizer
             // We can use any of our fields except those which are 
-            // IDisposable (because they may have already been finalized).
+            // finalizeable (because they may have already been finalized).
             NativeMethods.CloseHandle(m_handle);
             m_handle = IntPtr.Zero;
 
