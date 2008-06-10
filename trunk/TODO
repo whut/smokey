@@ -36,18 +36,10 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 102 gendarme
 199 fxcop
 
+#		-reference:nunit.framework.dll,Mono.CompilerServices.SymbolWriter.dll,Mono.Cecil.dll		\
+
 * Work on a makefile:
-	- do a checkin
-	- should we use the nunit package?
-	- do we want DEBUG to default to off or on?
-	- do we need to version anything besides the app?
-	- add  -warnaserror+ to debug flags
-	- need to support PROFILE
-	- add a smoke target
-	- add a clean target
-	- add a tar target
-	- add help, install, and uninstall targets
-	- remove BumpBuildNumber.sh, nant.build, install.sh, and uninstall.sh
+	- remove BumpBuildNumber.sh, nant.build, install.sh, uninstall.sh.sh, and SmokeyVersion
 * Support DBC via a python script
 	- google for dbc and c#
 	- google for c# parser/grammar
@@ -383,6 +375,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- update version number in nant file (for tar files)
 	- update SmokeyVersion on old web site
 	- install
+	- make sure the install and uninstall work
 	- update README and wiki
 	- we require linq so need mono 1.9.
 	- deprecate ignoreList setting

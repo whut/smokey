@@ -1,14 +1,22 @@
 # -----------------------------------------------------------------------------
 # Public variables
-export CSC ?= gmcs
-export NUNIT ?= nunit-console2
+CSC ?= gmcs
+NUNIT ?= nunit-console2
+MONO ?= $(shell which mono)
 
-# TODO: need PROFILE var
-
+LOG_PATH ?= /tmp/smokey.log
+INSTALL_DIR ?= /usr/local/bin
+	
+# TODO: should probably default to building release
 ifdef RELEASE
-	CSC_FLAGS ?= -checked+ -warn:4 -nowarn:1591 -optimize+
+	CSC_FLAGS ?= -checked+ -nowarn:1591 -optimize+
 else
-	CSC_FLAGS ?= -checked+ -debug+ -warn:4 -nowarn:1591 -define:DEBUG
+	CSC_FLAGS ?= -checked+ -debug+ -nowarn:1591 -define:DEBUG
+endif
+
+APP_CSC_FLAGS ?= $(CSC_FLAGS) -warn:4 -warnaserror+
+ifdef PROFILE
+	APP_CSC_FLAGS := $(APP_CSC_FLAGS) -define:PROFILE
 endif
 
 # -----------------------------------------------------------------------------
@@ -32,8 +40,9 @@ extra_test_files := source/internal/AssertTraceListener.cs source/internal/Break
 xml_files := $(strip $(shell find source/internal/rules/xml -name "*.xml" -print))
 xml_resources := $(shell echo $(xml_files) | sed "s/source/-resource:source/g")
 
-base_version := 1.3.xxx.0										# major.minor.build.revision
+base_version := 1.2.xxx.0										# major.minor.build.revision
 version := $(shell ./get_version.sh $(base_version) build_num)	# this will increment the build number stored in build_num
+version := $(strip $(version))
 
 # -----------------------------------------------------------------------------
 # Primary targets
@@ -49,7 +58,7 @@ check1: $(tests_path) $(tests_path).config
 
 ftest_asms := $(bin_path)/evildoer.dll,$(bin_path)/NoSecurity.exe,$(bin_path)/APTCA.dll,$(bin_path)/APTCA2.dll,$(bin_path)/APTCA3.dll
 fcheck: $(app_path) $(subst $(comma), ,$(ftest_asms)) $(bin_path)/FullTrust.dll $(ftest_path)
-	mono --debug $(ftest_path) -exe:$(app_path) -asm:$(ftest_asms)
+	$(MONO) --debug $(ftest_path) -exe:$(app_path) -asm:$(ftest_asms)
 	
 # -----------------------------------------------------------------------------
 # Generated targets
@@ -57,7 +66,7 @@ exe_files := $(app_files) $(framework_files) $(internal_files)
 $(app_path):keys $(exe_files) IgnoreList.txt SysIgnore.txt $(xml_files)
 	@echo "building $(app_path)"
 	@./gen_version.sh $(version) source/internal/AssemblyVersion.cs
-	@$(CSC) $(CSC_FLAGS) -keyfile:keys -target:exe -doc:docs.xml -out:$(app_path) 					\
+	@$(CSC) $(APP_CSC_FLAGS) -keyfile:keys -target:exe -doc:docs.xml -out:$(app_path)				\
 		-reference:Mono.CompilerServices.SymbolWriter.dll,Mono.Cecil.dll,System.Configuration.dll	\
 		-resource:IgnoreList.txt -resource:SysIgnore.txt $(xml_resources)							\
 		$(exe_files)
@@ -65,9 +74,9 @@ $(app_path):keys $(exe_files) IgnoreList.txt SysIgnore.txt $(xml_files)
 tests_files := $(extra_test_files) $(framework_files) $(rules_files) $(test_files)
 $(tests_path): $(tests_files) 
 	@echo "building $(tests_path)"
-	@$(CSC) $(CSC_FLAGS) -define:TEST -target:library -out:$(tests_path) 							\
-		-reference:nunit.framework.dll,Mono.CompilerServices.SymbolWriter.dll,Mono.Cecil.dll		\
-		-reference:System.Configuration.dll,System.Data.dll,System.Windows.Forms.dll				\
+	@$(CSC) $(CSC_FLAGS) -define:TEST -pkg:mono-nunit -target:library -out:$(tests_path)	\
+		-reference:Mono.CompilerServices.SymbolWriter.dll,Mono.Cecil.dll					\
+		-reference:System.Configuration.dll,System.Data.dll,System.Windows.Forms.dll		\
 		$(tests_files) 
 		
 $(bin_path)/evildoer.dll: extras/evildoer/Expected.xml extras/evildoer/*.cs
@@ -132,7 +141,7 @@ $(app_path).config:
 	@echo "<?xml version = \"1.0\" encoding = \"utf-8\" ?>" > $(app_path).config
 	@echo "<configuration>" >> $(app_path).config
 	@echo "	<appSettings>" >> $(app_path).config
-	@echo "		<add key = \"logfile\" value = \"$(cur_dir)/smokey.log\"/>" >> $(app_path).config
+	@echo "		<add key = \"logfile\" value = \"$(LOG_PATH)\"/>" >> $(app_path).config
 	@echo "		<add key = \"topic:System.Object\" value = \"Info\"/>	<!-- may be off, Error, Warning, Info, Trace, or Debug -->" >> $(app_path).config
 	@echo "		<add key = \"topic:Smokey.Internal.Rules.AttributePropertiesRule\" value = \"Debug\"/>" >> $(app_path).config
 	@echo "		<add key = \"consoleWidth\" value = \"80\"/>			<!-- TextReport breaks lines so that that they aren't longer than this -->" >> $(app_path).config
@@ -144,7 +153,7 @@ $(tests_path).config:
 	@echo "<?xml version = \"1.0\" encoding = \"utf-8\" ?>" > $(tests_path).config
 	@echo "<configuration>" >> $(tests_path).config
 	@echo "	<appSettings>" >> $(tests_path).config
-	@echo "		<add key = \"logfile\" value = \"$(cur_dir)/smokey.log\"/>" >> $(tests_path).config
+	@echo "		<add key = \"logfile\" value = \"$(LOG_PATH)\"/>" >> $(tests_path).config
 	@echo "		<add key = \"topic:System.Object\" value = \"Info\"/>	<!-- may be off, Error, Warning, Info, Trace, or Debug -->" >> $(tests_path).config
 	@echo "		<add key = \"topic:Smokey.Internal.Rules.AttributePropertiesRule\" value = \"Debug\"/>" >> $(tests_path).config
 	@echo "		<add key = \"consoleWidth\" value = \"80\"/>			<!-- TextReport breaks lines so that that they aren't longer than this -->" >> $(tests_path).config
@@ -157,10 +166,58 @@ keys:
 	sn -k keys
 	
 bin:
-	-mkdir "$(bin_path)"
+	-mkdir $(bin_path)
 	
+smokey_flags := --not-localized -set:naming:jurassic -set:ignoreList:IgnoreList.txt
+smokey_flags += -exclude-check:D1015	# ExceptionConstructors
+smokey_flags += -exclude-check:D1024	# SerializeException
+smokey_flags += -exclude-check:D1031	# PublicType
+smokey_flags += -exclude-check:P1005	# StringConcat
+smoke: $(app_path)
+	@-$(MONO) --debug $(app_path) $(smokey_flags) $(app_path)
+	
+help:
+	@echo "smokey version $(version)"
+	@echo " "
+	@echo "The primary targets are:"
+	@echo "app       - build smokey exe"
+	@echo "check     - run the unit tests"
+	@echo "fcheck    - run the functional test"
+	@echo "install   - install the exe and a simple smoke script"
+	@echo "uninstall - remove the exe and the smoke script"
+	@echo " "
+	@echo "Variables include:"
+	@echo "RELEASE - define to enable release builds, defaults to not defined"
+	@echo "LOG_PATH - file smokey writes its logs to, defaults to $(LOG_PATH)"
+	@echo "INSTALL_DIR - where to put the exe, defaults to $(INSTALL_DIR)"
+	@echo " "
+	@echo "Here's an example:"	
+	@echo "sudo make LOG_PATH=~/smokey.log install"	
+
+install: bin $(app_path) $(app_path).config
+	cp $(app_path) $(INSTALL_DIR)
+	chmod -x $(INSTALL_DIR)/smokey.exe
+	cp $(app_path).config $(INSTALL_DIR)
+	echo "#!/bin/sh" > $(INSTALL_DIR)/smoke
+	echo "exec -a smokey.exe $MONO $(INSTALL_DIR)/smokey.exe \$@" >> $(INSTALL_DIR)/smoke
+	chmod +x $(INSTALL_DIR)/smoke
+	
+uninstall:
+	-rm $(INSTALL_DIR)/smokey.exe
+	-rm $(INSTALL_DIR)/smokey.exe.config
+	-rm $(INSTALL_DIR)/smoke
+	-rm $(LOG_PATH)
+
 clean:
 	-rm  $(bin_path)/TestResult.xml
 	-rm  $(bin_path)/*.exe
 	-rm  $(bin_path)/*.dll
 	-rm  $(bin_path)/*.mdb
+	
+tar_binary: $(app_path)
+	tar --create --compress --file=smokey_bin-$(version).tar.gz $(app_path) CHANGES CHANGE_LOG README
+	
+tar_source: 
+	tar --create --compress --file=smokey_src-$(version).tar.gz AUTHORS CHANGES CHANGE_LOG IgnoreList.txt MIT.X11 Makefile README SysIgnore.txt gen_docs.sh gen_match.py gen_version.sh get_version.sh custom extras source
+
+tar: tar_binary tar_source
