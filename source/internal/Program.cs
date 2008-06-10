@@ -389,16 +389,27 @@ namespace Smokey.Internal
 			if (options.Has("-not-localized"))
 				Settings.Add("*localized*", "false");
 
+			Log.Init(options.Has("-append"));
+			Log.InfoLine(true, "started up on {0}, version {1}", DateTime.Now, Assembly.GetExecutingAssembly().GetName().Version);
+			Log.InfoLine(true, "arguments are '{0}'", string.Join(", ", args));
+
 			string paths = Settings.Get("custom", string.Empty);
 			foreach (string path in paths.Split(':'))
 			{
 				if (path.Length > 0)
-					Ignore.Value = System.Reflection.Assembly.LoadFrom(path);	// need to load these before we init the logger
+				{
+					try
+					{
+						Ignore.Value = System.Reflection.Assembly.LoadFrom(path);	// need to load these before we init the logger
+					}
+					catch (Exception e)
+					{
+						Console.Error.WriteLine("Couldn't load the '{0}' custom assembly. See the log for details.", path);
+						Log.ErrorLine(true, e.Message);
+						Log.ErrorLine(true, e.StackTrace);
+					}
+				}
 			}
-
-			Log.Init(options.Has("-append"));
-			Log.InfoLine(true, "started up on {0}, version {1}", DateTime.Now, Assembly.GetExecutingAssembly().GetName().Version);
-			Log.InfoLine(true, "arguments are '{0}'", string.Join(", ", args));
 
 #if DEBUG
 			AssertTraceListener.Install();

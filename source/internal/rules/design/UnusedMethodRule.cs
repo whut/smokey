@@ -136,11 +136,47 @@ namespace Smokey.Internal.Rules
 				if (method.CustomAttributes.HasDisableRule("D1032"))
 					break;
 
+				// The method can't have an attribute which is disabled.
+				foreach (CustomAttribute attr in method.CustomAttributes)
+				{
+					TypeDefinition act = Cache.FindType(attr.Constructor.DeclaringType);
+					if (act != null && act.CustomAttributes.HasDisableRule("D1032"))
+						return;
+				}
+				
 				// The method can't be conditionally compiled (for some reason the method will be fully
 				// defined even if the condition isn't met).
 				if (method.CustomAttributes.Has("ConditionalAttribute"))
 					break;
-
+					
+				// If the type is serializeable then two of the constructors will be called by the runtime.
+				if ((m_type.Attributes & TypeAttributes.Serializable) != 0 && method.IsConstructor)
+				{
+					if (method.Parameters.Count == 0)
+						break;
+						
+					else if (method.Parameters.Count == 2)
+					{
+						if (method.Parameters[0].ParameterType.FullName == "System.Runtime.Serialization.SerializationInfo" && 
+							method.Parameters[1].ParameterType.FullName == "System.Runtime.Serialization.StreamingContext")
+							break;
+					}
+				}
+				
+				// Don't complain about inner exception constructors.
+				if (method.IsConstructor && m_type.IsSubclassOf("System.Exception", Cache))
+				{
+					if (method.Parameters.Count == 2)
+						if (method.Parameters[1].ParameterType.FullName == "System.Exception")
+							break;
+				}
+								
+				// Don't complain about objc3-sharp NSObject ctors.
+				if (method.IsConstructor && (m_type.IsSubclassOf("ObjC3.NSObject", Cache) || m_type.IsSubclassOf("Objc3.NSObject", Cache)))
+					if (method.Parameters.Count == 1)
+						if (method.Parameters[0].ParameterType.FullName == "System.IntPtr")
+							break;
+				
 				Log.TraceLine(this, "adding {0}", method);				
 				m_methods.Add(method);
 			}

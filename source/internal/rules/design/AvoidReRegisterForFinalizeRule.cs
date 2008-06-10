@@ -20,53 +20,43 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Mono.Cecil;
-using Mono.Cecil.Cil;
 using System;
 using Smokey.Framework;
+using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {	
-	internal sealed class AttributesNeedUsageRule : Rule
+	internal sealed class AvoidReRegisterForFinalizeRule : Rule
 	{				
-		public AttributesNeedUsageRule(AssemblyCache cache, IReportViolations reporter) 
-			: base(cache, reporter, "MS1001")
+		public AvoidReRegisterForFinalizeRule(AssemblyCache cache, IReportViolations reporter) 
+			: base(cache, reporter, "D1057")
 		{
 		}
 				
 		public override void Register(RuleDispatcher dispatcher) 
 		{
-			dispatcher.Register(this, "VisitType");
+			dispatcher.Register(this, "VisitBegin");
+			dispatcher.Register(this, "VisitCall");
 		}
 				
-		public void VisitType(TypeDefinition type)
+		public void VisitBegin(BeginMethod begin)
+		{
+			Log.DebugLine(this, "-----------------------------------"); 
+			Log.DebugLine(this, "{0:F}", begin.Info.Instructions);				
+
+			m_method = begin.Info.Method;
+		}
+		
+		public void VisitCall(Call call)
 		{				
-			if (!type.IsAbstract)
+			if (call.Target.ToString().Contains("System.GC::ReRegisterForFinalize("))
 			{
-				Log.DebugLine(this, "-----------------------------------"); 
-				Log.DebugLine(this, "checking {0}", type);				
-	
-				if (type.BaseType != null)
-				{			
-					bool passed = !type.IsSubclassOf("System.Attribute", Cache);
-	
-					for (int i = 0; i < type.CustomAttributes.Count && !passed; ++i)
-					{
-						string name = type.CustomAttributes[i].Constructor.ToString();
-						if (name.Contains("System.AttributeUsageAttribute"))
-						{
-							passed = true;
-						}
-					}
-					
-					if (!passed)
-					{
-						Log.DebugLine(this, "{0} has no usage attribute", type.Name); 
-						Reporter.TypeFailed(type, CheckID, string.Empty);
-					}
-				}
+				Reporter.MethodFailed(m_method, CheckID, call.Untyped.Offset, string.Empty);
 			}
 		}
+
+		MethodDefinition m_method;
 	}
 }
 

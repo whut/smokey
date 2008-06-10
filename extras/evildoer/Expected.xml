@@ -151,9 +151,6 @@
 	<Expected checkID = "C1026" typeName = "NoStaticRemove" fullName = "EvilDoer.BadStatic2"/>
 	<Expected checkID = "C1026" typeName = "NoStaticRemove" fullName = "EvilDoer.BadStatic3"/>
 	<Expected checkID = "P1007" typeName = "NonGenericCollections" fullName = "EvilDoer.BadStatic2"/>
-	<Expected checkID = "C1027" typeName = "DisposeDoesStaticRemove" fullName = "EvilDoer.BadDisposeRemove1"/>
-	<Expected checkID = "C1027" typeName = "DisposeDoesStaticRemove" fullName = "EvilDoer.BadDisposeRemove2"/>
-	<Expected checkID = "C1027" typeName = "DisposeDoesStaticRemove" fullName = "EvilDoer.BadDisposeRemove3"/>
 	<Expected checkID = "C1028" typeName = "InconsistentProperty" fullName = "System.Int32 EvilDoer.BadProp1::get_Y()"/>
 	<Expected checkID = "D1052" typeName = "PreferMonitor1" fullName = "EvilDoer.GoodManagedDisposable"/>
 	<Expected checkID = "M1002" typeName = "InconsistentNamespace" fullName = "Source.EvilDoer.BadNS1"/>

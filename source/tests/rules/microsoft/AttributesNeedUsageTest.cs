@@ -48,6 +48,21 @@ namespace Smokey.Tests
 			private readonly string m_address;
 		}
 		
+		public abstract class GoodAttribute2 : Attribute
+		{		
+			public GoodAttribute2(string address) 
+			{
+				m_address = address;
+			}
+			
+			public string Address
+			{
+				get {return m_address;}
+			}
+		
+			private readonly string m_address;
+		}
+		
 		public class BadAttribute : Attribute
 		{		
 			public BadAttribute(string address) 
@@ -65,7 +80,7 @@ namespace Smokey.Tests
 		
 		// test code
 		public AttributesNeedUsageTest() : base(
-			new string[]{"GoodAttribute"},
+			new string[]{"GoodAttribute", "GoodAttribute2"},
 			new string[]{"BadAttribute"})	
 		{
 		}
