@@ -384,6 +384,19 @@ namespace EvilDoer
 
 			Console.Error.WriteLine(o.Count);
 		}
+		
+		public void Foobar()
+		{
+		}
+			
+		public void FooBar()
+		{
+		}
+		
+		// D1059/IdentifierCasing
+		public void Baz(int xx, int yy, int xX)
+		{
+		}
 			
 		private int x;
 		private IntPtr resource;

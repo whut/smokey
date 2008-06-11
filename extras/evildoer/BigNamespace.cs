@@ -21,6 +21,23 @@
 
 using System;
 
+namespace Cased
+{
+	namespace Inner
+	{
+		public class SomeType
+		{
+		}
+	}
+
+	namespace INNER
+	{
+		public class SomeType
+		{
+		}
+	}
+}
+
 // D1000/LargeNamespace
 namespace Big
 {

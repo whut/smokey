@@ -352,7 +352,7 @@ namespace FuncTest
 			File.Delete(m_outFile);			// make sure we're using the file we think we are
 			
 			string ap = append ? "-append" : string.Empty;
-			string cmdLine = string.Format("--debug {0} -include-check:R1035 -xml -out:{1} {2} {3}", smokePath, m_outFile, ap, evilPath);
+			string cmdLine = string.Format("--debug {0} -include-check:R1035 -exclude-check:C1030 -xml -out:{1} {2} {3}", smokePath, m_outFile, ap, evilPath);
 			Process process = Process.Start("mono", cmdLine);
 			
 			if (!process.WaitForExit(60*1000))

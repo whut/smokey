@@ -188,4 +188,7 @@
 	<Expected checkID = "R1001" typeName = "DisposeNativeResources" fullName = "EvilDoer.NativeArray"/>
 	<Expected checkID = "R1001" typeName = "DisposeNativeResources" fullName = "EvilDoer.NativeList"/>
 	<Expected checkID = "D1058" typeName = "HashUsesXor" fullName = "System.Int32 EvilDoer.BadClass2::GetHashCode()"/>
+	<Expected checkID = "D1059" typeName = "IdentifierCasing" fullName = "evildoer"/>
+	<Expected checkID = "D1059" typeName = "IdentifierCasing" fullName = "EvilDoer.BadClass2"/>
+	<Expected checkID = "D1059" typeName = "IdentifierCasing" fullName = "System.Void EvilDoer.BadClass2::Baz(System.Int32,System.Int32,System.Int32)"/>
 </Expectations>

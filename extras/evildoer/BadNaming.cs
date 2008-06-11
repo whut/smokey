@@ -24,6 +24,25 @@ using System.Collections.Generic;
 
 namespace EvilDoer
 {
+	public class CasedClass
+	{
+	}
+	
+	public class Casedclass
+	{
+	}
+	
+	public class CasedclaSS
+	{
+	}
+	
+	public class AnotherCasedClass
+	{
+	}
+	
+	public class AnotherCasedclass
+	{
+	}
 	// D1001/ClassCanBeMadeStatic
 	// P1012/NotInstantiated
 	// P1020/NotSealed
