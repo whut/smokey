@@ -38,12 +38,13 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 
 69.847788
 
-* RandomUsedOnce
-	/Users/jessejones/New_Files/mono-1.9/mcs/class/System.Web/System.Web/HttpRequest.cs:669
 * Add a few more fxcop rules.
 * Add a few more gendarme rules.
 * IdenticalMethods isn't determinstic.
 * Might want a rule to verify that gui resources are localized.
+* RandomUsedOnce
+	/Users/jessejones/New_Files/mono-1.9/mcs/class/System.Web/System.Web/HttpRequest.cs:669
+	- loop detection falls down for do/while
 * PInvoke entry points should exist
 * http://groups.google.com/group/gendarme/web/rules
 * Implement more FxCop rules:

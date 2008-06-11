@@ -104,22 +104,24 @@ Mobility
 	!Do not use timers that prevent power state changes 
 
 Naming
-	Avoid language specific type names in parameters
-	Avoid type names in parameters
-	Do not name enum values 'Reserved'
-	Do not prefix enum values with type name
-	Events should not have before or after prefix
-	Identifiers should be cased correctly
-	Identifiers should differ by more than case
-	Identifiers should have correct prefix
-	Identifiers should have correct suffix
-	Identifiers should not contain underscores
-	Identifiers should not have incorrect prefix
-	Identifiers should not have incorrect suffix
-	Identifiers should not match keywords
-	Long acronyms should be pascal-cased
-	Parameter names should match base declaration
-	Parameter names should not match member names
+	!Avoid language specific type names in parameters
+	!Avoid type names in parameters
+	!Compound words should be cased correctly
+	!Do not name enum values 'Reserved'
+	+Do not prefix enum values with type name
+	+Events should not have before or after prefix
+	+Flags enums should have plural names
+	!Identifiers should be cased correctly
+	+Identifiers should differ by more than case
+	+Identifiers should have correct prefix
+	+Identifiers should have correct suffix
+	+Identifiers should not contain underscores
+	+Identifiers should not have incorrect prefix
+	+Identifiers should not have incorrect suffix
+	!Identifiers should not match keywords
+	!Long acronyms should be pascal-cased
+	!Parameter names should match base declaration
+	!Parameter names should not match member names
 	Property names should not match get methods
 	Short acronyms should be uppercase
 	Type names should not match namespaces

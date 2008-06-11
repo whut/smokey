@@ -2496,5 +2496,22 @@
 			</CSharp>
 		</Translation>
 	</Violation>
+	
+	<Violation checkID = "D1059" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "IdentifierCasing" category = "Design">			
+			<Cause>
+			The names of two or more externally visible types, members, arguments, or
+			namespaces are identical when converted to lower case.
+			</Cause>
+		
+			<Description>
+			Languages like VB are case-insensitive so they will not work with these types.
+			</Description>
+	
+			<Fix>
+			Use better names.
+			</Fix>
+		</Translation>
+	</Violation>
 </Violations>
 
