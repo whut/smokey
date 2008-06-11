@@ -1,4 +1,4 @@
-// Copyright (C) 2007 Jesse Jones
+// Copyright (C) 2008 Jesse Jones
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -19,50 +19,29 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Generic;
+using Mono.Cecil;
+using System;
 
-namespace EvilDoer
+namespace Smokey.Tests
 {
-	public struct GoodStruct
-	{				
-		public GoodStruct(int x, int y)
+	public abstract class CecilTest : BaseTest
+	{	
+		public CecilTest()
 		{
-			this.x = x;
-			this.y = y;
+			if (ms_assembly == null)
+			{
+				string loc = System.Reflection.Assembly.GetExecutingAssembly().Location;
+				ms_assembly = AssemblyFactory.GetAssembly(loc);
+			}
 		}
-							
-		public override bool Equals(object rhsObj)
+								
+		protected AssemblyDefinition Assembly
 		{
-			if (rhsObj == null)						
-				return false;
-			
-			if (GetType() != rhsObj.GetType()) 
-				return false;
-		
-			GoodStruct rhs = (GoodStruct) rhsObj;					
-			return x == rhs.x && y == rhs.y;
-		}
-			
-		public bool Equals(GoodStruct rhs)	
-		{					
-			return x == rhs.x && y == rhs.y;
+			get {return ms_assembly;}
 		}
 
-		public static bool operator==(GoodStruct lhs, GoodStruct rhs)
-		{
-			return lhs.x == rhs.x && lhs.y == rhs.y;
-		}
-		
-		public static bool operator!=(GoodStruct lhs, GoodStruct rhs)
-		{
-			return !(lhs == rhs);
-		}
-		
-		public override int GetHashCode()
-		{
-			return x + y;
-		}
-		
-		private int x, y;
-	}
+		#region Fields --------------------------------------------------------
+		private static AssemblyDefinition ms_assembly;
+		#endregion
+	} 
 }

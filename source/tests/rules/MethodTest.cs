@@ -37,32 +37,31 @@ using System.Linq;
 namespace Smokey.Tests
 {
 	/// <summary>Base class for tests for method rules.</summary>
-	public abstract class MethodTest : BaseTest, IReportViolations
+	public abstract class MethodTest : CecilTest, IReportViolations
 	{	
+		[TestFixtureTearDown]
+		public void TearDown()
+		{
+			m_good.Clear();
+			m_bad.Clear();
+			m_used.Clear();
+		}
+		
 		/// <summary>Good and bad names should be of the form "TestClass.TestMethod".</summary>
-		public MethodTest(string[] good, string[] bad) : this(good, bad, new string[0], System.Reflection.Assembly.GetExecutingAssembly().Location)
+		public MethodTest(string[] good, string[] bad) : this(good, bad, new string[0])
 		{
 		}
-				
+								
 		/// <summary>Good and bad names should be of the form "TestClass.TestMethod". Used may
 		/// have no method in which case all of the methods that haven't already been
 		/// added are added.</summary>
-		public MethodTest(string[] good, string[] bad, string[] used) : this(good, bad, used, System.Reflection.Assembly.GetExecutingAssembly().Location)
-		{
-		}
-				
-		/// <summary>Good and bad names should be of the form "TestClass.TestMethod". Used may
-		/// have no method in which case all of the methods that haven't already been
-		/// added are added.</summary>
-		public MethodTest(string[] good, string[] bad, string[] used, string loc)
+		public MethodTest(string[] good, string[] bad, string[] used)
 		{
 			try
 			{			
-				m_assembly = AssemblyFactory.GetAssembly(loc);
-
-				DoGetMethods(m_assembly, m_good, good, false);	
-				DoGetMethods(m_assembly, m_bad, bad, false);
-				DoGetMethods(m_assembly, m_used, used, true);
+				DoGetMethods(Assembly, m_good, good, false);	
+				DoGetMethods(Assembly, m_bad, bad, false);
+				DoGetMethods(Assembly, m_used, used, true);
 			}
 			catch (Exception e)
 			{
@@ -81,7 +80,7 @@ namespace Smokey.Tests
 			methods.AddRange(m_bad);
 			methods.AddRange(m_used);
 			
-			AssemblyCache cache = new AssemblyCache(m_assembly, methods);
+			AssemblyCache cache = new AssemblyCache(Assembly, methods);
 			RuleDispatcher dispatcher = new RuleDispatcher();
 
 			// Create the rule.
@@ -180,7 +179,6 @@ namespace Smokey.Tests
 		#endregion 
 		
 		#region Fields --------------------------------------------------------
-		private AssemblyDefinition m_assembly;
 		private List<MethodInfo> m_good = new List<MethodInfo>();
 		private List<MethodInfo> m_bad = new List<MethodInfo>();
 		private List<MethodInfo> m_used = new List<MethodInfo>();

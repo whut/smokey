@@ -47,7 +47,7 @@ namespace EvilDoer
 		// P1009/ValueHashCode
 		public override int GetHashCode()
 		{
-			return x ^ y ^ a ^ b ^ c ^ base.GetHashCode();
+			return x + y + a + b + c + base.GetHashCode();
 		}
 		
 		private int x, y, a, b, c;

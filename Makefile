@@ -54,15 +54,15 @@ check: $(tests_path) $(tests_path).config
 	$(NUNIT) -nologo -config=$(tests_path).config $(tests_path)
 
 check1: $(tests_path) $(tests_path).config
-	$(NUNIT) -nologo -config=$(tests_path).config -fixture=Smokey.Tests.ArgumentException2Test $(tests_path)
+	$(NUNIT) -nologo -config=$(tests_path).config -fixture=Smokey.Tests.BoolMarshalingTest $(tests_path)
 
 ftest_asms := $(bin_path)/evildoer.dll,$(bin_path)/NoSecurity.exe,$(bin_path)/APTCA.dll,$(bin_path)/APTCA2.dll,$(bin_path)/APTCA3.dll
 fcheck: $(app_path) $(subst $(comma), ,$(ftest_asms)) $(bin_path)/FullTrust.dll $(ftest_path)
-	$(MONO) --debug $(ftest_path) -exe:$(app_path) -asm:$(ftest_asms)
+	$(MONO) --debug $(ftest_path) -exe:$(app_path) -exclude-check:C1030 -asm:$(ftest_asms)
 	
 ftest_asm := $(bin_path)/evildoer.dll
 fcheck1: $(app_path) $(ftest_asm) $(ftest_path)
-	$(MONO) --debug $(ftest_path) -exe:$(app_path) -asm:$(ftest_asm)
+	$(MONO) --debug $(ftest_path) -exe:$(app_path) -exclude-check:C1030 -asm:$(ftest_asm)
 	
 # -----------------------------------------------------------------------------
 # Generated targets

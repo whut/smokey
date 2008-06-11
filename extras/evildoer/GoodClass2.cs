@@ -173,7 +173,7 @@ namespace EvilDoer
 		
 		public override int GetHashCode()
 		{
-			return name.GetHashCode() ^ address.GetHashCode();
+			return name.GetHashCode() + address.GetHashCode();
 		}
 		
 		public override bool Equals(object rhsObj)

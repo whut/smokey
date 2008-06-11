@@ -36,10 +36,8 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 102 gendarme
 199 fxcop
 
-* ArgumentException(string) but string is an argument name.
-* ArgumentNullException or ArgumentOutOfRangeException(string) but string is not an argument.
-* Gendarme reports file and line numbers for .net
-* Really need to fix ftest in release.
+69.847788
+
 * RandomUsedOnce
 	/Users/jessejones/New_Files/mono-1.9/mcs/class/System.Web/System.Web/HttpRequest.cs:669
 * Add a few more fxcop rules.
@@ -95,6 +93,11 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- no new virtual methods
 	- class is public but not sealed
 	- optional severity? or base class must be Object?
+* Use Cecil to get file and line number:
+	- write some unit tests
+	- SequencePoint is the key class (but it's always null with the 1.9 cecil)
+	- see if it works with a pdb file
+	- see if we can drop the Mono.CompilerServices.SymbolWriter.dll dependency
 * Look at C# 3.0:
 	- extension methods
 			public static class Extensions 

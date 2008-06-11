@@ -36,27 +36,27 @@ using System.Linq;
 namespace Smokey.Tests
 {
 	/// <summary>Base class for tests for assembly rules.</summary>
-	public abstract class AssemblyTest : BaseTest, IReportViolations
+	public abstract class AssemblyTest : CecilTest, IReportViolations
 	{	
+		[TestFixtureTearDown]
+		public void TearDown()
+		{
+			m_good.Clear();
+			m_bad.Clear();
+			m_used.Clear();
+		}
+		
 		/// <summary>Good and bad names should be of the form "TestClass".</summary>
-		public AssemblyTest(string[] good, string[] bad) : this(good, bad, new string[0], System.Reflection.Assembly.GetExecutingAssembly().Location)
+		public AssemblyTest(string[] good, string[] bad) : this(good, bad, new string[0])
 		{
 		}
-								
+																
 		/// <summary>Good, badm and used names should be of the form "TestClass". Used is a list
 		/// of type names that aren't checked, but are used during testing.</summary>
-		public AssemblyTest(string[] good, string[] bad, string[] used) : this(good, bad, used, System.Reflection.Assembly.GetExecutingAssembly().Location)
-		{
-		}
-								
-		/// <summary>Good, badm and used names should be of the form "TestClass". Used is a list
-		/// of type names that aren't checked, but are used during testing.</summary>
-		public AssemblyTest(string[] good, string[] bad, string[] used, string loc)
+		public AssemblyTest(string[] good, string[] bad, string[] used)
 		{
 			try
 			{			
-				m_assembly = AssemblyFactory.GetAssembly(loc);
-
 				DoGetTypes(m_good, good);	
 				DoGetTypes(m_bad, bad);
 				DoGetTypes(m_used, used);
@@ -76,7 +76,7 @@ namespace Smokey.Tests
 			List<TypeDefinition> types = new List<TypeDefinition>(m_good);
 			types.AddRange(m_used);
 			
-			AssemblyCache cache = new AssemblyCache(m_assembly, types);
+			AssemblyCache cache = new AssemblyCache(Assembly, types);
 			Rule rule = OnCreate(cache, this);		
 
 			foreach (TypeDefinition type in m_good)
@@ -85,7 +85,7 @@ namespace Smokey.Tests
 				rule.Register(dispatcher);
 				m_failed = false;
 
-				dispatcher.Dispatch(m_assembly);
+				dispatcher.Dispatch(Assembly);
 				dispatcher.Dispatch(type);
 				
 				foreach (MethodInfo info in cache.Methods)
@@ -106,7 +106,7 @@ namespace Smokey.Tests
 			types = new List<TypeDefinition>(m_bad);
 			types.AddRange(m_used);
 			
-			cache = new AssemblyCache(m_assembly, types);
+			cache = new AssemblyCache(Assembly, types);
 			rule = OnCreate(cache, this);		
 
 			foreach (TypeDefinition type in m_bad)
@@ -115,7 +115,7 @@ namespace Smokey.Tests
 				rule.Register(dispatcher);
 				m_failed = false;
 
-				dispatcher.Dispatch(m_assembly);
+				dispatcher.Dispatch(Assembly);
 				dispatcher.Dispatch(type);
 
 				foreach (MethodInfo info in cache.Methods)
@@ -164,7 +164,7 @@ namespace Smokey.Tests
 				if (name.IndexOf('.') < 0)
 				{
 					string fullName = string.Format("{0}/{1}", testName, name);
-					TypeDefinition type = m_assembly.MainModule.Types[fullName];
+					TypeDefinition type = Assembly.MainModule.Types[fullName];
 					DBC.Assert(type != null, "Couldn't find {0}", fullName);
 
 					types.Add(type);
@@ -174,7 +174,6 @@ namespace Smokey.Tests
 		#endregion 
 		
 		#region Fields --------------------------------------------------------
-		private AssemblyDefinition m_assembly;
 		private List<TypeDefinition> m_good = new List<TypeDefinition>();
 		private List<TypeDefinition> m_bad = new List<TypeDefinition>();
 		private List<TypeDefinition> m_used = new List<TypeDefinition>();

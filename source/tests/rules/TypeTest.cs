@@ -33,30 +33,30 @@ using Smokey.Internal;
 namespace Smokey.Tests
 {
 	/// <summary>Base class for tests for type rules.</summary>
-	public abstract class TypeTest : BaseTest, IReportViolations
+	public abstract class TypeTest : CecilTest, IReportViolations
 	{	
+		[TestFixtureTearDown]
+		public void TearDown()
+		{
+			m_good.Clear();
+			m_bad.Clear();
+			m_used.Clear();
+		}
+		
 		/// <summary>Good and bad names should be a list of type names.</summary>
-		public TypeTest(string[] good, string[] bad) : this(good, bad, new string[0], Assembly.GetExecutingAssembly().Location)
+		public TypeTest(string[] good, string[] bad) : this(good, bad, new string[0])
 		{
 		}
-				
+								
 		/// <summary>Good and bad names should be a list of type names. Used is a list
 		/// of type names that aren't checked, but are used during testing.</summary>
-		public TypeTest(string[] good, string[] bad, string[] used) : this(good, bad, used, Assembly.GetExecutingAssembly().Location)
-		{
-		}
-				
-		/// <summary>Good and bad names should be a list of type names. Used is a list
-		/// of type names that aren't checked, but are used during testing.</summary>
-		public TypeTest(string[] good, string[] bad, string[] used, string loc)
+		public TypeTest(string[] good, string[] bad, string[] used)
 		{
 			try
-			{				
-				m_assembly = AssemblyFactory.GetAssembly(loc);
-	
-				DoGetTypes(m_assembly, m_good, good);	
-				DoGetTypes(m_assembly, m_bad, bad);
-				DoGetTypes(m_assembly, m_used, used);
+			{					
+				DoGetTypes(Assembly, m_good, good);	
+				DoGetTypes(Assembly, m_bad, bad);
+				DoGetTypes(Assembly, m_used, used);
 			}
 			catch (Exception e)
 			{
@@ -74,7 +74,7 @@ namespace Smokey.Tests
 			types.AddRange(m_bad);
 			types.AddRange(m_used);
 			
-			AssemblyCache cache = new AssemblyCache(m_assembly, types);
+			AssemblyCache cache = new AssemblyCache(Assembly, types);
 			RuleDispatcher dispatcher = new RuleDispatcher();
 
 			// Create the rule.
@@ -140,7 +140,6 @@ namespace Smokey.Tests
 		#endregion 
 		
 		#region Fields
-		private AssemblyDefinition m_assembly;
 		private List<TypeDefinition> m_good = new List<TypeDefinition>();
 		private List<TypeDefinition> m_bad = new List<TypeDefinition>();
 		private List<TypeDefinition> m_used = new List<TypeDefinition>();
