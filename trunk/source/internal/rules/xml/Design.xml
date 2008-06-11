@@ -2513,5 +2513,23 @@
 			</Fix>
 		</Translation>
 	</Violation>
+	
+	<Violation checkID = "D1060" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "PropertyMatchesAccessor" category = "Design">			
+			<Cause>
+			A type has a property named Foo and either a GetFoo or SetFoo method.
+			</Cause>
+		
+			<Description>
+			It's very confusing to have both a Foo property and a GetFoo or SetFoo method.
+			</Description>
+	
+			<Fix>
+			If the method and the property do different things then give them different names.
+			if they do the same thing then pick one: if the property can be implemented without
+			using much CPU then use that. Otherwise use a method.
+			</Fix>
+		</Translation>
+	</Violation>
 </Violations>
 

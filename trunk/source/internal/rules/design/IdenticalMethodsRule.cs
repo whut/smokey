@@ -68,8 +68,25 @@ namespace Smokey.Internal.Rules
 		public void VisitFini(EndTesting end)
 		{
 			string header = "Match:  ";
+			
+			// m_table is not deterministic so we need to make a new table which is deterministically ordered.
+			List<List<BeginMethod>> table = new List<List<BeginMethod>>(m_table.Values);
+			table.Sort((a, b) => 
+			{
+				if (a.Count > 0 && b.Count > 0)
+					return a[0].Info.Method.ToString().CompareTo(b[0].Info.Method.ToString());
+					
+				else if (a.Count == 0 && b.Count > 0)
+					return -1;
+					
+				else if (a.Count > 0 && b.Count == 0)
+					return 1;
+					
+				else
+					return 0; 
+			});
 
-			foreach (List<BeginMethod> methods in m_table.Values)
+			foreach (List<BeginMethod> methods in table)
 			{
 				List<int> found = new List<int>();
 						

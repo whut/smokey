@@ -315,6 +315,11 @@ namespace EvilDoer
 			get {return string.Format("{0} = {1}", x);}
 		}
 		
+		public string GetStringProp()
+		{
+			return "hey";
+		}
+		
 		// R1013/WeakIdentityLock
 		public void StringLock(int a)
 		{
@@ -396,6 +401,81 @@ namespace EvilDoer
 		// D1059/IdentifierCasing
 		public void Baz(int xx, int yy, int xX)
 		{
+		}
+		
+		// P1021/TooManyLocals
+		public int TooManyLocals(int x0)
+		{
+			int x1 = x0 * 37;
+			int x2 = x1 * 37;
+			int x3 = x2 * 37;
+			int x4 = x3 * 37;
+			int x5 = x4 * 37;
+			int x6 = x5 * 37;
+			int x7 = x6 * 37;
+			int x8 = x7 * 37;
+			int x9 = x8 * 37;
+			int x10 = x9 * 37;
+			int x11 = x10 * 37;
+			int x12 = x11 * 37;
+			int x13 = x12 * 37;
+			int x14 = x13 * 37;
+			int x15 = x14 * 37;
+			int x16 = x15 * 37;
+			int x17 = x16 * 37;
+			int x18 = x17 * 37;
+			int x19 = x18 * 37;
+			int x20 = x19 * 37;
+			int x21 = x20 * 37;
+			int x22 = x21 * 37;
+			int x23 = x22 * 37;
+			int x24 = x23 * 37;
+			int x25 = x24 * 37;
+			int x26 = x25 * 37;
+			int x27 = x26 * 37;
+			int x28 = x27 * 37;
+			int x29 = x28 * 37;
+			int x30 = x29 * 37;
+			int x31 = x30 * 37;
+			int x32 = x31 * 37;
+			int x33 = x32 * 37;
+			int x34 = x33 * 37;
+			int x35 = x34 * 37;
+			int x36 = x35 * 37;
+			int x37 = x36 * 37;
+			int x38 = x37 * 37;
+			int x39 = x38 * 37;
+			int x40 = x39 * 37;
+			int x41 = x40 * 37;
+			int x42 = x41 * 37;
+			int x43 = x42 * 37;
+			int x44 = x43 * 37;
+			int x45 = x44 * 37;
+			int x46 = x45 * 37;
+			int x47 = x46 * 37;
+			int x48 = x47 * 37;
+			int x49 = x48 * 37;
+			int x50 = x49 * 37;
+			int x51 = x50 * 37;
+			int x52 = x51 * 37;
+			int x53 = x52 * 37;
+			int x54 = x53 * 37;
+			int x55 = x54 * 37;
+			int x56 = x55 * 37;
+			int x57 = x56 * 37;
+			int x58 = x57 * 37;
+			int x59 = x58 * 37;
+			int x60 = x59 * 37;
+			int x61 = x60 * 37;
+			int x62 = x61 * 37;
+			int x63 = x62 * 37;
+			int x64 = x63 * 37;
+			int x65 = x64 * 37;
+			int x66 = x65 * 37;
+			int x67 = x66 * 37;
+			int x68 = x67 * 37;
+			int x69 = x68 * 37;
+			return x69;
 		}
 			
 		private int x;
