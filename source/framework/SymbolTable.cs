@@ -74,7 +74,7 @@ namespace Smokey.Framework
 			location.Details = details;
 			
 			if (m_methodEntries != null)
-				DoLocation(type, details, ref location);
+				DoLocation(type, ref location);
 					
 			return 	location;
 		}
@@ -88,7 +88,7 @@ namespace Smokey.Framework
 			location.Details = details;
 
 			if (m_methodEntries != null)
-				DoLocation(method, offset, details, ref location);
+				DoLocation(method, offset, ref location);
 					
 			return location;
 		}
@@ -130,7 +130,7 @@ namespace Smokey.Framework
 			}
 		}
 
-		private void DoLocation(TypeDefinition type, string details, ref Location location)
+		private void DoLocation(TypeDefinition type, ref Location location)
 		{
 			List<MetadataToken> tokens = new List<MetadataToken>();
 			foreach (MethodDefinition method in type.Methods)
@@ -152,7 +152,7 @@ namespace Smokey.Framework
 			}
 		}
 		
-		private void DoLocation(MethodDefinition method, int offset, string details, ref Location location)
+		private void DoLocation(MethodDefinition method, int offset, ref Location location)
 		{
 			MethodInfo info;
 			if (m_methodEntries.TryGetValue(method.MetadataToken, out info))

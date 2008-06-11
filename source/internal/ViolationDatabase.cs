@@ -239,6 +239,8 @@ namespace Smokey.Internal
 		
 		private static void DoValidationEvent(object sender, ValidationEventArgs e)
 		{
+			Unused.Arg(sender);
+			
 			if (e.Severity == XmlSeverityType.Warning)
 				Console.WriteLine("{0}", e.Message);
 			else 

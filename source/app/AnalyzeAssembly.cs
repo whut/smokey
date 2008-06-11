@@ -150,6 +150,8 @@ namespace Smokey.App
 
 		private void DoCheckAssembly(AssemblyDefinition assembly, Severity severity)
 		{
+			Unused.Arg(severity);
+			
 			Profile.Start("CheckAssembly");
 			m_checker.Check(assembly);
 			Profile.Stop("CheckAssembly");
@@ -157,6 +159,8 @@ namespace Smokey.App
 
 		private void DoCheckMethods(AssemblyCache cache, string[] onlyType, Severity severity)
 		{
+			Unused.Arg(severity);
+			
 			Profile.Start("CheckMethods");
 			
 			foreach (KeyValuePair<TypeDefinition, List<MethodInfo>> entry in cache.TypeMethods)
@@ -181,6 +185,8 @@ namespace Smokey.App
 		
 		private void DoCheckTypes(AssemblyCache cache, string[] onlyType, Severity severity)
 		{
+			Unused.Arg(severity);
+			
 			Profile.Start("CheckTypes");
 			BeginTypes begin = new BeginTypes();
 			m_checker.Dispatcher.Dispatch(begin);

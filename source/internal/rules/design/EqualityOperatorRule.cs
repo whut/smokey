@@ -70,6 +70,8 @@ namespace Smokey.Internal.Rules
 
 		public void VisitEnd(EndType end)
 		{
+			Unused.Arg(end);
+			
 			if (m_needsCheck)
 			{
 				MethodDefinition[] methods = m_type.Methods.GetMethod("op_Equality");

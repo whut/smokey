@@ -7,6 +7,7 @@ attr
 attrs
 
 bitwise
+bool
 
 cancelled
 cctor
@@ -27,13 +28,19 @@ dll
 dtd
 dw
 
+elif
+endif
+endregion
 Enqueue
 enum
+extern
 
 finalizer
+foreach
 formatters
 
 gmcs
+goto
 gt
 gtk
 
@@ -42,6 +49,7 @@ href
 html
 http
 Http
+https
 hungarian
 
 Impl
@@ -85,7 +93,9 @@ param
 params
 Params
 Posix
+pragma
 
+readonly
 refactor 
 refactored
 Regex
@@ -95,10 +105,13 @@ rhs
 Rijndael
 runtime
 
+sbyte
 serializable
 Shan
 signon
 signoff
+sizeof
+stackalloc
 stderr
 str
 struct
@@ -110,14 +123,19 @@ sz
 Tds
 Tls
 tmp
+typeof
 txt
 
+uint
+ulong
 unbox
 unboxed
 unboxing
+undef
 unmanaged
 uri
 url
+ushort
 
 Varpop 
 

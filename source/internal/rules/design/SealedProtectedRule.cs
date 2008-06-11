@@ -80,6 +80,8 @@ namespace Smokey.Internal.Rules
 
 		public void VisitEnd(EndType end)
 		{
+			Unused.Arg(end);
+			
 			if (m_name != null)
 			{
 				string details = "Member: " + m_name;

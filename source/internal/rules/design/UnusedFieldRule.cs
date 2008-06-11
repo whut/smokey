@@ -156,6 +156,8 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitFini(EndTesting end)
 		{
+			Unused.Arg(end);
+			
 			if (m_needsCheck)
 			{
 				List<string> fields = new List<string>();

@@ -61,8 +61,10 @@ namespace Smokey.Internal.Rules
 			}
 		}
 
-		public void VisitEnd(EndTypes method)
+		public void VisitEnd(EndTypes end)
 		{
+			Unused.Arg(end);
+			
 			int maxNames = Settings.Get("maxNamespace", 40);
 			
 			string details = string.Empty;

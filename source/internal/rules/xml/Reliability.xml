@@ -1336,6 +1336,7 @@
 			</Fix>
 	
 			<CSharp>
+			using System.Collections.Generic;
 			using System.Diagnostics;
 			using System.Runtime.Serialization;
 			
@@ -1522,6 +1523,7 @@
 			</Fix>
 	
 			<CSharp>
+			using System.Collections.Generic;
 			using System.Diagnostics;
 			using System.Runtime.Serialization;
 			

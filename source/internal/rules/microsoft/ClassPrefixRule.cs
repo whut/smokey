@@ -58,6 +58,8 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitFini(EndTesting end)
 		{						
+			Unused.Arg(end);
+			
 			string details = string.Empty;
 			
 			foreach (KeyValuePair<string, List<string>> entry in m_table)

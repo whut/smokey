@@ -83,6 +83,8 @@ namespace Smokey.Internal.Rules
 		
 		private void DoCompleted(object sender, DownloadStringCompletedEventArgs e)
 		{
+			Unused.Arg(sender);
+			
 			lock (m_lock)
 			{
 				m_contents = e.Result;
@@ -111,6 +113,8 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitBegin(BeginTesting begin)
 		{		
+			Unused.Arg(begin);
+			
 			Log.DebugLine(this, "starting download");	
 			
 			m_startTime = DateTime.Now;
@@ -119,6 +123,8 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitEnd(EndTesting end)
 		{			
+			Unused.Arg(end);
+			
 			if (m_downloader.Complete)
 			{
 				string[] parts = m_downloader.Contents.Trim().Split('.');

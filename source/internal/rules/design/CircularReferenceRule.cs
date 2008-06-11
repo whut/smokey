@@ -104,6 +104,8 @@ namespace Smokey.Internal.Rules
 						
 		public void VisitFini(EndTesting end)
 		{
+			Unused.Arg(end);
+			
 			foreach (KeyValuePair<TypeReference, List<TypeReference>> entry in m_table)
 			{
 				TypeReference type = entry.Key;

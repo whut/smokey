@@ -38,6 +38,7 @@ namespace Smokey.Internal
 			stream.WriteLine("<!-- machine generated on {0} -->", DateTime.Now);
 		}
 		
+		[DisableRule("C1000", "StringSpelling")]
 		public static void WriteCss(TextWriter stream)	
 		{
 			string text = @"
