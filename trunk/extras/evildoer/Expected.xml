@@ -187,4 +187,5 @@
 	<Expected checkID = "R1038" typeName = "RecursiveLock2" fullName = "EvilDoer.BadHook3"/>
 	<Expected checkID = "R1001" typeName = "DisposeNativeResources" fullName = "EvilDoer.NativeArray"/>
 	<Expected checkID = "R1001" typeName = "DisposeNativeResources" fullName = "EvilDoer.NativeList"/>
+	<Expected checkID = "D1058" typeName = "HashUsesXor" fullName = "System.Int32 EvilDoer.BadClass2::GetHashCode()"/>
 </Expectations>

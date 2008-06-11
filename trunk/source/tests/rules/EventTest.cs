@@ -29,34 +29,30 @@ using Smokey.Framework.Support;
 namespace Smokey.Tests
 {
 	/// <summary>Base class for tests for events.</summary>
-	public abstract class EventTest : BaseTest, IReportViolations
+	public abstract class EventTest : CecilTest, IReportViolations
 	{	
+		[TestFixtureTearDown]
+		public void TearDown()
+		{
+			m_good.Clear();
+			m_bad.Clear();
+			m_used.Clear();
+		}
+		
 		/// <summary>Good and bad names should be of the form "TestClass.EventName".</summary>
-		public EventTest(string[] good, string[] bad) : this(good, bad, new string[0], System.Reflection.Assembly.GetExecutingAssembly().Location)
+		public EventTest(string[] good, string[] bad) : this(good, bad, new string[0])
 		{
 		}
-								
-		/// <summary>Good and bad names should be of the form "TestClass.EventName". Used should be type names.</summary>
-		public EventTest(string[] good, string[] bad, string[] used) : this(good, bad, used, System.Reflection.Assembly.GetExecutingAssembly().Location)
-		{
-		}
-								
-		/// <summary>Good and bad names should be of the form "TestClass.EventName".</summary>
-		public EventTest(string[] good, string[] bad, string loc) : this(good, bad, new string[0], loc)
-		{
-		}
-				
+																				
 		/// <summary>Good and bad names should be of the form "TestClass.EventName". 
 		/// Used should be type names.</summary>
-		public EventTest(string[] good, string[] bad, string[] used, string loc)
+		public EventTest(string[] good, string[] bad, string[] used)
 		{
 			try
 			{			
-				m_assembly = AssemblyFactory.GetAssembly(loc);
-
-				DoGetEvents(m_assembly, m_good, good);	
-				DoGetEvents(m_assembly, m_bad, bad);
-				DoGetUsed(m_assembly, m_used, used);
+				DoGetEvents(Assembly, m_good, good);	
+				DoGetEvents(Assembly, m_bad, bad);
+				DoGetUsed(Assembly, m_used, used);
 			}
 			catch (Exception e)
 			{
@@ -77,7 +73,7 @@ namespace Smokey.Tests
 			List<TypeDefinition> types = new List<TypeDefinition>();
 			types.AddRange(m_used);
 			
-			AssemblyCache cache = new AssemblyCache(m_assembly, types);
+			AssemblyCache cache = new AssemblyCache(Assembly, types);
 			RuleDispatcher dispatcher = new RuleDispatcher();
 
 			// Create the rule.
@@ -167,7 +163,6 @@ namespace Smokey.Tests
 		#endregion 
 		
 		#region Fields
-		private AssemblyDefinition m_assembly;
 		private List<EventDefinition> m_good = new List<EventDefinition>();
 		private List<EventDefinition> m_bad = new List<EventDefinition>();
 		private List<TypeDefinition> m_used = new List<TypeDefinition>();
