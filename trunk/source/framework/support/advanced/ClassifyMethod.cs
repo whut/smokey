@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
+using Smokey.Internal;
 
 namespace Smokey.Framework.Support.Advanced
 {			
@@ -52,6 +53,8 @@ namespace Smokey.Framework.Support.Advanced
 		#region Visitors
 		public void VisitAssembly(AssemblyDefinition assembly)
 		{
+			Unused.Arg(assembly);
+			
 			Log.DebugLine(this, "++++++++++++++++++++++++++++++++++"); 
 			m_threadRoots.Clear();		// need to do this here for unit tests
 		}

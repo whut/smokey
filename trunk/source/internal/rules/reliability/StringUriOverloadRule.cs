@@ -90,6 +90,8 @@ namespace Smokey.Internal.Rules
 
 		public void VisitFini(EndTesting end)
 		{			
+			Unused.Arg(end);
+			
 			foreach (KeyValuePair<MethodDefinition, Entry> entry in m_table)
 			{
 				if (!entry.Value.CallsUri)

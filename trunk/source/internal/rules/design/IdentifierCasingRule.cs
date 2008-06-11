@@ -45,6 +45,8 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitBegin(BeginType begin)
 		{						
+			Unused.Arg(begin);
+			
 			m_methods.Clear();
 		}
 		
@@ -94,6 +96,8 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitFini(EndTesting end)
 		{		
+			Unused.Arg(end);
+			
 			List<string> bad = new List<string>();
 			DoGetMatches(bad, m_namespaces, "Namespaces: ");
 			DoGetMatches(bad, m_types, "Types: ");
@@ -107,6 +111,7 @@ namespace Smokey.Internal.Rules
 		}
 		
 		// line := prefix + badName1/badName2 + badName3/badName4/badName5
+		[DisableRule("PO1006", "PathCombine")]
 		private void DoGetMatches(List<string> bad, List<string> candidates, string prefix)
 		{
 			string line = prefix;

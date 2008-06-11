@@ -121,6 +121,8 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitEnd(EndMethod end)
 		{
+			Unused.Arg(end);
+			
 			if (m_checkMethod)
 			{
 				foreach (string name in m_candidates)
@@ -136,6 +138,8 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitFini(EndTesting end)
 		{
+			Unused.Arg(end);
+			
 			if (m_bad.Count > 0)
 			{
 				string details = "Bad Calls: " + string.Join(Environment.NewLine, m_bad.ToArray());

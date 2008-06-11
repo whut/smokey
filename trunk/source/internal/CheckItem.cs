@@ -213,6 +213,7 @@ namespace Smokey.Internal
 			return true;
 		}
 
+		[DisableRule("MS1011", "DontSwallowException")]
 		private void DoLoadCustomRules(AssemblyCache cache, Severity severity, bool ignoreBreaks)
 		{
 			string paths = Settings.Get("custom", string.Empty);

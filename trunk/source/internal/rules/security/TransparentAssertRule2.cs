@@ -122,6 +122,8 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitFini(EndTesting end)
 		{
+			Unused.Arg(end);
+			
 			if (m_details.Length > 0)
 			{
 				m_details = "Asserting: " + m_details;

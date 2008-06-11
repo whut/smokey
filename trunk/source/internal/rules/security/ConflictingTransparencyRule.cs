@@ -76,6 +76,8 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitFini(EndTesting end)
 		{
+			Unused.Arg(end);
+			
 			if (m_failed)
 			{
 				Reporter.AssemblyFailed(Cache.Assembly, CheckID, string.Empty);

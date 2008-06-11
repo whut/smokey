@@ -64,6 +64,8 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitFini(EndTesting end)
 		{		
+			Unused.Arg(end);
+			
 			if (m_foundRun)
 			{
 				if (!m_foundStyle || !m_foundCompatible)

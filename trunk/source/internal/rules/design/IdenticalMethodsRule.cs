@@ -67,6 +67,8 @@ namespace Smokey.Internal.Rules
 
 		public void VisitFini(EndTesting end)
 		{
+			Unused.Arg(end);
+			
 			string header = "Match:  ";
 			
 			// m_table is not deterministic so we need to make a new table which is deterministically ordered.

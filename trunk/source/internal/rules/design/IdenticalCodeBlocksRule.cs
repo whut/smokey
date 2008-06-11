@@ -99,6 +99,8 @@ namespace Smokey.Internal.Rules
 		// useful.
 		public void VisitBegin(BeginMethods begin)
 		{			
+			Unused.Arg(begin);
+			
 			m_table.Clear();
 		}
 
@@ -140,6 +142,8 @@ namespace Smokey.Internal.Rules
 
 		public void VisitEnd(EndMethods end)
 		{
+			Unused.Arg(end);
+			
 			foreach (KeyValuePair<int, List<CodeBlock>> entry in m_table)
 			{
 				Log.DebugLine(this, "there are {0} blocks of length {1}", entry.Value.Count, entry.Key);

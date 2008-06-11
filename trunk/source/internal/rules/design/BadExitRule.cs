@@ -65,6 +65,8 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitFini(EndTesting end)
 		{
+			Unused.Arg(end);
+			
 			if (m_callsRun && m_callsExit)
 			{
 				m_details = "Calls Exit: " + m_details;

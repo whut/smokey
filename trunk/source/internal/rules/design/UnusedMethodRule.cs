@@ -72,6 +72,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 		
+		[DisableRule("D1002", "MethodTooComplex")]
 		public void VisitMethod(MethodDefinition method)
 		{
 			DBC.Assert(m_type.MetadataToken == method.DeclaringType.MetadataToken, "type mismatch");
@@ -202,6 +203,8 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitEnd(EndTypes end)
 		{
+			Unused.Arg(end);
+			
 			m_methods.Sort(m_comparer);
 		}
 		
@@ -237,6 +240,8 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitFini(EndTesting end)
 		{
+			Unused.Arg(end);
+			
 			if (m_methods.Count > 0)
 			{
 				Log.TraceLine(this, "{0} methods were not called", m_methods.Count);				

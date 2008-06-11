@@ -101,6 +101,8 @@ namespace Smokey.Internal.Rules
 
 		private bool DoNeedsDispose(List<int> original, int index)
 		{
+			Unused.Arg(index);			// hmm...
+			
 			List<int> loads = new List<int>(original);
 			
 			// First look at all the call instructions and remove from loads the local

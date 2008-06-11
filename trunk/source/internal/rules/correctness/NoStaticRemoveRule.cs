@@ -133,7 +133,7 @@ namespace Smokey.Internal.Rules
 
 						if (m_adders[entry.Key].IndexOf(call.Target.Name) >= 0)
 						{
-							if (!DoIsNullSet(entry, call.Index, call.Target.Name))
+							if (!DoIsNullSet(call.Index, call.Target.Name))
 							{
 								if (!entry.FoundAdd)
 								{
@@ -165,7 +165,7 @@ namespace Smokey.Internal.Rules
 		}
 		
 		// Check for table[key] = null
-		private bool DoIsNullSet(Entry entry, int index, string name)
+		private bool DoIsNullSet(int index, string name)
 		{
 			bool isNull = false;
 			

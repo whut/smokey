@@ -166,6 +166,7 @@ smokey_flags += -exclude-check:D1015	# ExceptionConstructors
 smokey_flags += -exclude-check:D1024	# SerializeException
 smokey_flags += -exclude-check:D1031	# PublicType
 smokey_flags += -exclude-check:P1005	# StringConcat
+smokey_flags += -exclude-check:P1022	# PropertyReturnsCollection
 smoke: bin/smokey.exe
 	@-$(MONO) --debug bin/smokey.exe $(smokey_flags) bin/smokey.exe
 	

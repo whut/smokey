@@ -79,6 +79,8 @@ namespace Smokey.Internal.Rules
 
 		public void VisitEnd(EndType end)
 		{
+			Unused.Arg(end);
+			
 			if (m_needsCheck && m_failed)
 			{
 				Reporter.TypeFailed(m_type, CheckID, string.Empty);

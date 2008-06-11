@@ -167,7 +167,7 @@ normally be Error. -->
 			</Fix>
 	
 			<CSharp>
-			internal sealed class MyResource : IDisposable
+			internal class MyResource : IDisposable
 			{
 				~MyResource()		
 				{					
@@ -334,7 +334,7 @@ normally be Error. -->
 			using System.Runtime.Serialization;
 			
 			[Serializable]
-			internal sealed class Optional
+			internal class Optional
 			{		
 				[OnDeserialized]
 				protected void OnDeserialized(StreamingContext context)
@@ -938,7 +938,7 @@ normally be Error. -->
 			
 			internal static class Worker 
 			{
-				public int Work(int x, int hint)
+				public static int Work(int x, int hint)
 				{
 					Unused.Arg(hint);
 					

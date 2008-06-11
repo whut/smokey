@@ -57,6 +57,8 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitFini(EndTesting end)
 		{
+			Unused.Arg(end);
+			
 			if (Cache.Assembly.EntryPoint != null)
 			{
 				Log.DebugLine(this, "entry point: {0}", Cache.Assembly.EntryPoint);

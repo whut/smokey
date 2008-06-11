@@ -105,6 +105,8 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitFini(EndTesting end)
 		{
+			Unused.Arg(end);
+			
 			Dictionary<TypeDefinition, List<string>> bad = new Dictionary<TypeDefinition, List<string>>();
 			List<TypeDefinition> hasCalls = new List<TypeDefinition>();
 		

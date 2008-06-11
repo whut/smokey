@@ -87,6 +87,8 @@ namespace Smokey.Internal
 		#region Private Methods -----------------------------------------------
 		private void DoThread(object instance)
 		{
+			Unused.Arg(instance);
+			
 			bool wrote = false;
 			
 			lock (m_lock)

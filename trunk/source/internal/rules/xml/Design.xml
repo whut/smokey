@@ -1797,7 +1797,7 @@
 	<Violation checkID = "D1046" severity = "Warning" breaking = "true">
 		<Translation lang = "en" typeName = "SchizoidType" category = "Design">			
 			<Cause>
-			A type's fields can be partioned in such a way that some non-virtual methods use one partition
+			A type's fields can be partitioned in such a way that some non-virtual methods use one partition
 			and other non-virtual methods use a different partition.
 			</Cause>
 		

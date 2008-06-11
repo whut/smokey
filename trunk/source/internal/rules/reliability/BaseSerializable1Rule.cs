@@ -90,6 +90,8 @@ namespace Smokey.Internal.Rules
 
 		public void VisitEnd(EndMethod end)
 		{
+			Unused.Arg(end);
+			
 			if (m_needsCheck && m_missingBaseCall)
 			{		
 				Reporter.MethodFailed(m_method, CheckID, 0, string.Empty);
