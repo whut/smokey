@@ -44,25 +44,28 @@ namespace Smokey.Internal.Rules
 		}
 		
 		public void VisitBegin(BeginType begin)
-		{								
+		{						
 			m_methods.Clear();
 		}
 		
 		public void VisitMethod(MethodDefinition method)
-		{								
-			m_methods.Add(method.Name);
-			
-			List<string> args = new List<string>();
-			foreach (ParameterDefinition p in method.Parameters)
-				args.Add(p.Name);
-
-			List<string> bad = new List<string>();
-			DoGetMatches(bad, args, "Arguments: ");
-
-			if (bad.Count == 1)
+		{						
+			if (method.PubliclyVisible(Cache))
 			{
-				Log.DebugLine(this, bad[0]);
-				Reporter.MethodFailed(method, CheckID, 0, bad[0]);
+				m_methods.Add(method.Name);
+				
+				List<string> args = new List<string>();
+				foreach (ParameterDefinition p in method.Parameters)
+					args.Add(p.Name);
+	
+				List<string> bad = new List<string>();
+				DoGetMatches(bad, args, "Arguments: ");
+	
+				if (bad.Count == 1)
+				{
+					Log.DebugLine(this, bad[0]);
+					Reporter.MethodFailed(method, CheckID, 0, bad[0]);
+				}
 			}
 		}
 		
@@ -79,11 +82,14 @@ namespace Smokey.Internal.Rules
 		}
 		
 		public void VisitType(TypeDefinition type)
-		{								
-			m_types.Add(type.FullName);
+		{						
+			if (type.IsPublic || type.IsNestedPublic)
+			{
+				m_types.Add(type.FullName);
 			
-			if (m_namespaces.IndexOf(type.Namespace) < 0)
-				m_namespaces.Add(type.Namespace);
+				if (m_namespaces.IndexOf(type.Namespace) < 0)	// namespaces only matter if they have a public type
+					m_namespaces.Add(type.Namespace);
+			}
 		}
 		
 		public void VisitFini(EndTesting end)

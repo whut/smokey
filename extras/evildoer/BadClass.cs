@@ -87,6 +87,18 @@ namespace EvilDoer
 			}
 		}
 		
+		// P1022/PropertyReturnsCollection
+		public int[] ArrayProp
+		{
+			get {return my_list.ToArray();}
+		}
+				
+		// P1022/PropertyReturnsCollection
+		public List<int> ListProp
+		{
+			get {return my_list;}
+		}
+				
 		public static int GoodMeet2(int x)
 		{
 			string s = null;
@@ -326,5 +338,6 @@ namespace EvilDoer
 		private string text2;
 		private string text3;
 		private string text4;		// this is bad too
+		private List<int> my_list = new List<int>();
 	}
 }

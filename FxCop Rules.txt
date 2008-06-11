@@ -122,39 +122,43 @@ Naming
 	!Long acronyms should be pascal-cased
 	!Parameter names should match base declaration
 	!Parameter names should not match member names
-	Property names should not match get methods
-	Short acronyms should be uppercase
-	Type names should not match namespaces
-	Use preferred terms
+	+Property names should not match get methods
+	!Resource string compound words should be cased correctly
+	!Resource strings should be spelled correctly
+	!Short acronyms should be uppercase
+	+Type names should not match namespaces
+	+Use preferred terms
 
 Performance
-	Avoid excessive locals
-	Avoid uncalled private code
-	Avoid uninstantiated internal classes
-	Avoid unnecessary string creation
-	Avoid unsealed attributes
-	Review unused parameters
-	Dispose methods should call SuppressFinalize
-	Do not call properties that clone values in loops
-	Do not cast unnecessarily
-	Do not concatenate strings inside loops
-	Do not initialize unnecessarily
-	Initialize reference type static fields inline
-	Override equals and operator equals on value types
-	Prefer jagged arrays over multidimensional
-	Properties should not return arrays
-	Remove unused locals
-	Test for empty strings using string length
-	Use literals where appropriate
+	+Avoid excessive locals
+	+Avoid uncalled private code
+	+Avoid uninstantiated internal classes
+	!Avoid unnecessary string creation
+	+Avoid unsealed attributes
+	+Review unused parameters
+	+Dispose methods should call SuppressFinalize
+	!Do not call properties that clone values in loops
+	!Do not cast unnecessarily
+	+Do not concatenate strings inside loops
+	+Do not initialize unnecessarily
+	+Initialize reference type static fields inline
+	-Mark Members As Static
+	+Override equals and operator equals on value types
+	!Prefer jagged arrays over multidimensional
+	+Properties should not return arrays
+	+Remove empty finalizers
+	-Remove unused locals							gmcs warns for this
+	+Test for empty strings using string length
+	+Use literals where appropriate
 
 Portability
-	PInvoke declarations should be portable
-	Value type fields should be portable 
+	!PInvoke declarations should be portable
+	!Value type fields should be portable 
 
 Reliability
-	Dispose objects before losing scope
-	Do not lock on objects with weak identity
-	Do not treat fibers as threads
+	+Dispose objects before losing scope
+	+Do not lock on objects with weak identity
+	!Do not treat fibers as threads
 	Remove calls to GC.KeepAlive
 	Use SafeHandle to encapsulate native resources
 

@@ -191,4 +191,8 @@
 	<Expected checkID = "D1059" typeName = "IdentifierCasing" fullName = "evildoer"/>
 	<Expected checkID = "D1059" typeName = "IdentifierCasing" fullName = "EvilDoer.BadClass2"/>
 	<Expected checkID = "D1059" typeName = "IdentifierCasing" fullName = "System.Void EvilDoer.BadClass2::Baz(System.Int32,System.Int32,System.Int32)"/>
+	<Expected checkID = "D1060" typeName = "PropertyMatchesAccessor" fullName = "EvilDoer.BadClass2"/>
+	<Expected checkID = "P1021" typeName = "TooManyLocals" fullName = "System.Int32 EvilDoer.BadClass2::TooManyLocals(System.Int32)"/>
+	<Expected checkID = "P1022" typeName = "PropertyReturnsCollection" fullName = "System.Int32[] EvilDoer.BadClass::get_ArrayProp()"/>
+	<Expected checkID = "P1022" typeName = "PropertyReturnsCollection" fullName = "System.Collections.Generic.List`1&lt;System.Int32&gt; EvilDoer.BadClass::get_ListProp()"/>
 </Expectations>

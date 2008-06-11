@@ -701,4 +701,39 @@
 			</Fix>
 		</Translation>
 	</Violation>	
+
+	<Violation checkID = "P1021" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "TooManyLocals" category = "Performance">			
+			<Cause>
+			A method has more than 64 local variables.
+			</Cause>
+		
+			<Description>
+			The CLR will only consider up to 64 locals when deciding which to place in
+			registers.
+			</Description>
+	
+			<Fix>
+			Refactor the code so that it uses fewer locals.
+			</Fix>
+		</Translation>
+	</Violation>	
+
+	<Violation checkID = "P1022" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "PropertyReturnsCollection" category = "Performance">			
+			<Cause>
+			An externally visible property returns a mutable collection.
+			</Cause>
+		
+			<Description>
+			In order to prevent clients from tampering with the collection the property
+			should return a copy of the data. However this can be an expensive operation
+			which is not what clients expect from a property.
+			</Description>
+	
+			<Fix>
+			Use a method instead of a property.
+			</Fix>
+		</Translation>
+	</Violation>	
 </Violations>
