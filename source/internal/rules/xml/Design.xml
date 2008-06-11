@@ -643,12 +643,13 @@
 						// If we've been called via Dispose we can,
 						if (disposing)
 						{
-							// dispose of managed fields.
+							// dispose of managed fields, including any fields which
+               				// are themselves finalizeable.
 						}
 			
-						// If we've been called via the finalizer any references we have to
-						// managed objects may have been finalized so we have to be
-						// very careful and only dispose of unmanaged resources here.
+						// This code will execute if we were called by our finalizer
+           				// We can use any of our fields except those which are 
+			            // finalizeable (because they may have already been finalized).
 						NativeMethods.CloseHandle(m_handle);
 						m_handle = IntPtr.Zero;
 			
@@ -681,10 +682,10 @@
 					{
 						if (disposing)
 						{
-							// Dispose of derived managed fields.
+							// Dispose of derived fields.
 						}
 			
-						// Dispose of derived unmanaged fields.
+						// Dispose of derived fields.
 	
 						base.Dispose(disposing);
 					}					
@@ -1410,7 +1411,8 @@
 			<Fix>
 			Remove or #ifdef out the unused methods, or use DisableRuleAttribute on the
 			method or the declaring type. Note that you can also use DisableRuleAttribute
-			on an attribute used to decorate the method.
+			on an attribute used to decorate the method or on a base class constructor to
+			disable the rule for derived constructors with the same signature.
 			</Fix>
 		</Translation>
 	</Violation>
@@ -2408,6 +2410,90 @@
 			<Fix>
 			Don't use GC.ReRegisterForFinalize.
 			</Fix>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1058" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "HashUsesXor" category = "Design">			
+			<Cause>
+			GetHashCode uses an exclusive-or.
+			</Cause>
+		
+			<Description>
+			When combining hash codes you want to preserve as much information as possible.
+			Exclusive-or doesn't do a very good job with this. Addition is a bit better and
+			multiplying by a prime and then adding is better still.
+			</Description>
+	
+			<Fix>
+			Use addition instead of xor.
+			</Fix>
+	
+			<CSharp>			
+			internal struct TwoDPoint : IEquatable&lt;TwoDPoint&gt;
+			{		
+				public TwoDPoint(int x, int y)
+				{
+					this.x = x;
+					this.y = y;
+				}
+				
+				public static TwoDPoint operator+(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return new TwoDPoint(lhs.x + rhs.x, lhs.y + rhs.y);
+				}
+
+				public static TwoDPoint operator-(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return new TwoDPoint(lhs.x - rhs.x, lhs.y - rhs.y);
+				}
+      
+      			// Need this override if operator+ and - are defined.
+      			public override bool Equals(object rhsObj)
+				{
+					if (rhsObj == null)						// objects may be null
+						return false;
+					
+					if (GetType() != rhsObj.GetType()) 
+						return false;
+				
+					TwoDPoint rhs = (TwoDPoint) rhsObj;					
+					return this == rhs;
+				}
+					
+				public bool Equals(TwoDPoint rhs)	// provide a typed overload for efficiency
+				{
+					return this == rhs;
+				}
+
+				public static bool operator==(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return lhs.x == rhs.x &amp;&amp; lhs.y == rhs.y;
+				}
+				
+				public static bool operator!=(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return !(lhs == rhs);
+				}
+				
+				public override int GetHashCode()
+				{
+					int hash = 23;
+					
+					unchecked
+					{
+						// Multiplying by a prime and then summing will normally provide a much
+						// better hash distribution than simply xoring the hashes together.
+						hash = hash*37 + x.GetHashCode();
+						hash = hash*37 + y.GetHashCode();
+					}
+					
+					return hash;
+				}
+				
+				private int x, y;
+			}
+			</CSharp>
 		</Translation>
 	</Violation>
 </Violations>

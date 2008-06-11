@@ -115,12 +115,13 @@
 						// If we've been called via Dispose we can,
 						if (disposing)
 						{
-							// dispose of managed fields.
+							// dispose of managed fields, including any fields which
+               				 // are themselves finalizeable.
 						}
-			
-						// If we've been called via the finalizer any references we have to
-						// managed objects may have been finalized so we have to be
-						// very careful and only dispose of unmanaged resources here.
+									
+						// This code will execute if we were called by our finalizer
+           				// We can use any of our fields except those which are 
+			            // finalizeable (because they may have already been finalized).
 						NativeMethods.CloseHandle(m_handle);
 						m_handle = IntPtr.Zero;
 			

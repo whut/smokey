@@ -122,6 +122,10 @@ namespace Smokey.Internal.Rules
 				if (method.IsSpecialName && method.Name.StartsWith("op_"))
 					break;
 
+				// The method can't be an event add or remove method
+				if (method.IsSpecialName && (method.Name.StartsWith("add_") || method.Name.StartsWith("remove_")))
+					break;
+
 				if (method.Name == "Equals")
 					break;
 					
@@ -171,11 +175,24 @@ namespace Smokey.Internal.Rules
 							break;
 				}
 								
-				// Don't complain about objc3-sharp NSObject ctors.
-				if (method.IsConstructor && (m_type.IsSubclassOf("ObjC3.NSObject", Cache) || m_type.IsSubclassOf("Objc3.NSObject", Cache)))
-					if (method.Parameters.Count == 1)
-						if (method.Parameters[0].ParameterType.FullName == "System.IntPtr")
-							break;
+				// Don't complain about constructors if a base constructor with the same signature is disabled.
+				if (method.IsConstructor)
+				{					
+					TypeReference[] parms = new TypeReference[method.Parameters.Count];
+					for (int i = 0; i < method.Parameters.Count; ++i)
+						parms[i] = method.Parameters[i].ParameterType;
+					
+					TypeDefinition t = Cache.FindType(m_type.BaseType);
+					while (t != null)
+					{
+						MethodDefinition ctor = t.Constructors.GetConstructor(method.IsStatic, parms);
+						if (ctor != null)
+							if (ctor.CustomAttributes.HasDisableRule("D1032"))
+								return;
+						
+						t = Cache.FindType(t.BaseType);
+					}
+				}
 				
 				Log.TraceLine(this, "adding {0}", method);				
 				m_methods.Add(method);
@@ -257,7 +274,16 @@ namespace Smokey.Internal.Rules
 		{
 			public int Compare(MethodReference lhs, MethodReference rhs)
 			{
-				return lhs.ToString().CompareTo(rhs.ToString());
+				string ls = lhs.ToString();		// order by declaring type and method name, not return values
+				string rs = rhs.ToString();
+				
+				int li = ls.IndexOf(' ');
+				int ri = rs.IndexOf(' ');
+				
+				ls = ls.Substring(li);
+				rs = rs.Substring(ri);
+				
+				return ls.CompareTo(rs);
 			}
 		}
 		

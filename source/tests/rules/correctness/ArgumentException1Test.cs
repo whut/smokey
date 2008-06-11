@@ -22,7 +22,6 @@
 using Mono.Cecil;
 using NUnit.Framework;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using Smokey.Framework.Support;
@@ -31,35 +30,43 @@ using Smokey.Internal.Rules;
 namespace Smokey.Tests
 {
 	[TestFixture]
-	public class Const2Test : TypeTest
+	public class ArgumentException1Test : MethodTest
 	{	
-		// test classes		
-		public sealed class Good1
+		#region Test classes
+		public class Cases
 		{
-			public static readonly int Value = 12;
-			private const int LinesPerPage = 40;
-		}			
-										
-		internal sealed class Good2
-		{
-			public const int LinesPerPage = 40;
-		}			
-										
-		public class Bad1
-		{
-			public const int LinesPerPage = 40;
-		}			
+			public static void Good1(int s)
+			{
+				throw new ArgumentException("s < 0");
+			}
+			
+			public static void Good2(int s)
+			{
+				throw new ArgumentException("foobar");
+			}
 
+			public static void Bad1(int s)
+			{
+				throw new ArgumentException("s");
+			}
+
+			public static void Bad2(int s, int t)
+			{
+				throw new ArgumentException("t");
+			}
+		}
+		#endregion
+		
 		// test code
-		public Const2Test() : base(
-			new string[]{"Good1", "Good2"},
-			new string[]{"Bad1"})	
+		public ArgumentException1Test() : base(
+			new string[]{"Cases.Good1", "Cases.Good2"},
+			new string[]{"Cases.Bad1", "Cases.Bad2"})	
 		{
 		}
 						
 		protected override Rule OnCreate(AssemblyCache cache, IReportViolations reporter)
 		{
-			return new Const2Rule(cache, reporter);
+			return new ArgumentException1Rule(cache, reporter);
 		}
 	} 
 }

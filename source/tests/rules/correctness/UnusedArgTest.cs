@@ -22,44 +22,73 @@
 using Mono.Cecil;
 using NUnit.Framework;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using Smokey.Framework.Support;
+using Smokey.Internal;
 using Smokey.Internal.Rules;
 
 namespace Smokey.Tests
 {
 	[TestFixture]
-	public class Const2Test : TypeTest
+	public class UnusedArgTest : MethodTest
 	{	
-		// test classes		
-		public sealed class Good1
+		#region Test classes
+		public class Cases
 		{
-			public static readonly int Value = 12;
-			private const int LinesPerPage = 40;
-		}			
-										
-		internal sealed class Good2
-		{
-			public const int LinesPerPage = 40;
-		}			
-										
-		public class Bad1
-		{
-			public const int LinesPerPage = 40;
-		}			
+			public static void Good1(int s)
+			{
+				Console.WriteLine(s);
+			}
+			
+			public static int Good2(int s, int t)
+			{
+				return s + t;
+			}
 
+			public static void Good3(int s, int t)
+			{
+			}
+
+			public static int Good4(int s, int t)
+			{
+				Unused.Arg(t);
+				
+				return s + s;
+			}
+
+			public int Good5(int s, int t)
+			{				
+				return s + t;
+			}
+
+			public static void Bad1(int s)
+			{
+				Console.WriteLine(10);
+			}
+			
+			public static int Bad2(int s, int t)
+			{
+				return s + s;
+			}
+			
+			public int Bad3(int s, int t)
+			{
+				return s + s;
+			}
+		}
+		#endregion
+		
 		// test code
-		public Const2Test() : base(
-			new string[]{"Good1", "Good2"},
-			new string[]{"Bad1"})	
+		public UnusedArgTest() : base(
+			new string[]{"Cases.Good1", "Cases.Good2", "Cases.Good3", "Cases.Good4", "Cases.Good5"},
+			new string[]{"Cases.Bad1", "Cases.Bad2", "Cases.Bad3"})	
 		{
 		}
 						
 		protected override Rule OnCreate(AssemblyCache cache, IReportViolations reporter)
 		{
-			return new Const2Rule(cache, reporter);
+			return new UnusedArgRule(cache, reporter);
 		}
 	} 
 }

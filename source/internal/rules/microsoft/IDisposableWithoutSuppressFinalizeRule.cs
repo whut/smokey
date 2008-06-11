@@ -92,7 +92,7 @@ namespace Smokey.Internal.Rules
 			{
 				FieldDefinition field = type.Fields[i];
 				
-				if (!field.IsStatic && (field.FieldType.FullName == "System.IntPtr" || field.FieldType.FullName == "System.UIntPtr"))
+				if (!field.IsStatic && field.FieldType.IsNative())
 					has = true;
 			}
 			

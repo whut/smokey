@@ -22,65 +22,68 @@
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
-using System.Security;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
-using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
-{		
-	internal sealed class ReadOnlyArrayRule : Rule
+{	
+	internal sealed class ArgumentException1Rule : Rule
 	{				
-		public ReadOnlyArrayRule(AssemblyCache cache, IReportViolations reporter) 
-			: base(cache, reporter, "S1002")
+		public ArgumentException1Rule(AssemblyCache cache, IReportViolations reporter) 
+			: base(cache, reporter, "C1031")
 		{
 		}
 				
 		public override void Register(RuleDispatcher dispatcher) 
 		{
 			dispatcher.Register(this, "VisitBegin");
-			dispatcher.Register(this, "VisitField");
+			dispatcher.Register(this, "VisitNew");
 			dispatcher.Register(this, "VisitEnd");
 		}
 		
-		public void VisitBegin(BeginType begin)
+		public void VisitBegin(BeginMethod begin)
 		{
 			Log.DebugLine(this, "-----------------------------------"); 
-			Log.DebugLine(this, "checking {0}", begin.Type);
+			Log.DebugLine(this, "{0:F}", begin.Info.Instructions);				
 
-			m_names = string.Empty;
-			m_needsCheck = begin.Type.IsPublic || begin.Type.IsNestedPublic;
+			m_offset = -1;
+			m_info = begin.Info;
 		}
 		
-		public void VisitField(FieldDefinition field)
+		public void VisitNew(NewObj obj)
 		{
-			if (m_needsCheck && field.IsInitOnly)
+			if (m_offset < 0)
 			{
-				FieldAttributes attrs = field.Attributes & FieldAttributes.FieldAccessMask;
-				if (attrs == FieldAttributes.Public || attrs == FieldAttributes.Family)
+				if (obj.Ctor.ToString() == "System.Void System.ArgumentException::.ctor(System.String)")
 				{
-					ArrayType array = field.FieldType as ArrayType;
-					if (array != null)
-						m_names += field.Name + " ";
+					LoadString load = m_info.Instructions[obj.Index - 1] as LoadString;
+					if (load != null)
+					{
+						for (int i = 0; i < m_info.Method.Parameters.Count; ++i)
+						{
+							if (m_info.Method.Parameters[i].Name == load.Value)
+							{
+								m_offset = obj.Untyped.Offset;						
+								Log.DebugLine(this, "bad new at {0:X2}", m_offset);				
+							}
+						}
+					}
 				}
 			}
 		}
-		
-		public void VisitEnd(EndType end)
+
+		public void VisitEnd(EndMethod end)
 		{
-			if (m_names.Length > 0)
+			if (m_offset >= 0)
 			{
-				string details = "Fields: " + m_names;
-				Log.DebugLine(this, details);
-			
-				Reporter.TypeFailed(end.Type, CheckID, details);
+				Reporter.MethodFailed(end.Info.Method, CheckID, m_offset, string.Empty);
 			}
 		}
-				
-		private string m_names;
-		private bool m_needsCheck;
+
+		private int m_offset;
+		private MethodInfo m_info;
 	}
 }
-

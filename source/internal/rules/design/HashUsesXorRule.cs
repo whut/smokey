@@ -22,65 +22,59 @@
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
-using System.Security;
 using System.Collections.Generic;
 using Smokey.Framework;
-using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
-using Smokey.Framework.Support.Advanced;
+using Smokey.Framework.Instructions;
 
 namespace Smokey.Internal.Rules
-{		
-	internal sealed class ReadOnlyArrayRule : Rule
+{	
+	internal sealed class HashUsesXorRule : Rule
 	{				
-		public ReadOnlyArrayRule(AssemblyCache cache, IReportViolations reporter) 
-			: base(cache, reporter, "S1002")
+		public HashUsesXorRule(AssemblyCache cache, IReportViolations reporter) 
+			: base(cache, reporter, "D1058")
 		{
 		}
 				
 		public override void Register(RuleDispatcher dispatcher) 
 		{
 			dispatcher.Register(this, "VisitBegin");
-			dispatcher.Register(this, "VisitField");
+			dispatcher.Register(this, "VisitBinary");
 			dispatcher.Register(this, "VisitEnd");
 		}
-		
-		public void VisitBegin(BeginType begin)
+				
+		public void VisitBegin(BeginMethod method)
 		{
-			Log.DebugLine(this, "-----------------------------------"); 
-			Log.DebugLine(this, "checking {0}", begin.Type);
-
-			m_names = string.Empty;
-			m_needsCheck = begin.Type.IsPublic || begin.Type.IsNestedPublic;
-		}
-		
-		public void VisitField(FieldDefinition field)
-		{
-			if (m_needsCheck && field.IsInitOnly)
-			{
-				FieldAttributes attrs = field.Attributes & FieldAttributes.FieldAccessMask;
-				if (attrs == FieldAttributes.Public || attrs == FieldAttributes.Family)
-				{
-					ArrayType array = field.FieldType as ArrayType;
-					if (array != null)
-						m_names += field.Name + " ";
-				}
-			}
-		}
-		
-		public void VisitEnd(EndType end)
-		{
-			if (m_names.Length > 0)
-			{
-				string details = "Fields: " + m_names;
-				Log.DebugLine(this, details);
+			m_offset = -1;
+			m_needsCheck = method.Info.Method.Name == "GetHashCode";
 			
-				Reporter.TypeFailed(end.Type, CheckID, details);
+			if (m_needsCheck)
+			{
+				Log.DebugLine(this, "-----------------------------------"); 
+				Log.DebugLine(this, "{0:F}", method.Info.Instructions);				
 			}
 		}
 				
-		private string m_names;
+		public void VisitBinary(BinaryOp op)
+		{
+			if (m_needsCheck && m_offset < 0)
+			{
+				if (op.Untyped.OpCode.Code == Code.Xor)
+				{
+					m_offset = op.Untyped.Offset;
+					Log.DebugLine(this, "found xor at {0:X2}", m_offset);
+				}
+			}
+		}
+
+		public void VisitEnd(EndMethod method)
+		{
+			if (m_offset >= 0)
+				Reporter.MethodFailed(method.Info.Method, CheckID, m_offset, string.Empty);
+		}
+				
 		private bool m_needsCheck;
+		private int m_offset;
 	}
 }
 

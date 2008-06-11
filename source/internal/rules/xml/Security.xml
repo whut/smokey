@@ -234,7 +234,7 @@
 	<Violation checkID = "S1002" severity = "Warning" breaking = "true">
 		<Translation lang = "en" typeName = "ReadOnlyArray" category = "Security">			
 			<Cause>
-			A public or protected array field is declared readonly.
+			A public type has a public or protected array field which is declared readonly.
 			</Cause>
 	
 			<Description>
@@ -248,7 +248,7 @@
 			</Fix>
 	
 			<CSharp>
-			class Cost
+			public class Cost
 			{
 				// This is OK because external code can't change the value.
 				// Note that it's not const because we may want to change the value

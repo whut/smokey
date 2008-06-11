@@ -36,64 +36,17 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 102 gendarme
 199 fxcop
 
-* Add an optional severity level:
-	- disabled by default
-	- will need a way to enable these (or override profiles/cmd line) from config file
-	- can enable em via style or personal profile
-	- be sure to list the optional rules in some place like config
-* Optional rules:
-	- old StaticMethod
-	- internal method declared public
-	- private members are not after public members
-	- private method name doesn't start with Do
-	- public method name starts with Do
-	- some of the crappier FxCop rules (like no out parameters)
-* Make sure text and html reports both handle optional rules correctly.
-* CircularReference seems kind of annoying.
-* Fix Dipose language in XML: can touch non-IDisposable fields.
-* FinalizerTouchesDisposableRule
-	- would need to do some code flow based on the disposing flag
-* Const2
-	internal static class Duration
-	{
-		public const double kEventDurationSecond            = 1.0;
-		public const double kEventDurationMillisecond       = kEventDurationSecond/1000;
-	}
-* ReadOnlyArrayRule should only apply to exterally visible fields.
-* Might want to emphasize that Dispose should alays be used. If not unmanaged resources held
-  by managed resources (e.g. IntPtr[]) may not be freed.
-* Do we catch IntPtr[] and List<IntPtr> when we look for unmanaged fields?
-* Tweak static remove rule: finalizers are called on app domain exit apparently.
-* UnusedMethodRule:
-	- sort methods by type
-	- don't complain about event add and remove methods
-* XorHashRule
-	- ex-or throws away half the bits
-	- shan has three instances of this
-* SealPublicRule
-	- no new protected members
-	- no new virtual methods
-	- class is public but not sealed
-	- optional severity? or base class must be Object?
-* Selected exceptions are default constructed (default ctor is for serialization).
-* Probably want the fxcop override changes argument name rule
-	- important for languages like VB (and ruby?) that support named arguments
-* GetObjectData examples in the xml need to validate args.
-* Reference nunit using "-pkg:mono-nunit"?
-* AvoidUnusedParametersRule
-	- need a way to easily disable this, maybe args prefixed with "dummy" or "unused"
-* DeserializeOptionalFieldRule
+* ArgumentException(string) but string is an argument name.
+* ArgumentNullException or ArgumentOutOfRangeException(string) but string is not an argument.
+* Gendarme reports file and line numbers for .net
+* Really need to fix ftest in release.
+* RandomUsedOnce
+	/Users/jessejones/New_Files/mono-1.9/mcs/class/System.Web/System.Web/HttpRequest.cs:669
 * Add a few more fxcop rules.
 * Add a few more gendarme rules.
 * IdenticalMethods isn't determinstic.
 * Might want a rule to verify that gui resources are localized.
 * PInvoke entry points should exist
-* Gendarme reports file and line numbers for .net
-* Really need to fix ftest in release.
-* Would be nice if nant spit out a better error message if Smokey.keys is missing.
-* RandomUsedOnce
-	/Users/jessejones/New_Files/mono-1.9/mcs/class/System.Web/System.Web/HttpRequest.cs:669
-* Verify that the name passed to ArgumentNullException matches an argument.
 * http://groups.google.com/group/gendarme/web/rules
 * Implement more FxCop rules:
 	- Globalization Warnings
@@ -104,10 +57,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Try YourKit Profiler
 	http://www.theserverside.net/news/thread.tss?thread_id=48141
 * Foreign key but no update rule.
-* Should we have a pendantic severity which is disabled by default?
 * Re-add MethodCanBeMadeStaticRule but disable it by default.
-* Make sure .net generated assemblies smoke OK. Reflector seems a little bit whacked: lot's of names
-  are ?.
 * Watchdog timeout should be configurable.
 * RedundantPredicate
 	- A && A			A
@@ -123,10 +73,28 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * AssemblyResolver.Resolver.Resolve can be used to get a definition from a reference.
   a list of violations without messing with System.Process or external files.
 * Unit tests take too long to run. Maybe we can cleanup better?
+* FinalizerUsesFinalizeableRule
+	- would need to do some code flow based on the disposing flag
 * Try heapbuddy.
 * Remove OLD_CHANGE_LOG from tarballs?
+* Probably want the fxcop override changes argument name rule
+	- important for languages like VB (and ruby?) that support named arguments
 * Need install.bat and uninstall.bat
 * Might want to support getting custom assembly paths from an environment variable.
+* Add an optional severity level:
+	- disabled by default
+	- will need a way to enable these (or override profiles/cmd line) from config file
+	- can enable em via style or personal profile
+	- be sure to list the optional rules in some place like config
+	- make sure text and html reports both handle optional rules correctly.
+* Optional rules:
+	- old StaticMethod
+	- some of the crappier FxCop rules (like no out parameters)
+* SealPublicRule
+	- no new protected members
+	- no new virtual methods
+	- class is public but not sealed
+	- optional severity? or base class must be Object?
 * Look at C# 3.0:
 	- extension methods
 			public static class Extensions 
