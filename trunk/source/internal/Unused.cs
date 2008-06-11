@@ -19,47 +19,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using Mono.Cecil;
-using NUnit.Framework;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using Smokey.Framework.Support;
-using Smokey.Internal.Rules;
+using Smokey.Framework;
 
-namespace Smokey.Tests
+namespace Smokey.Internal
 {
-	[TestFixture]
-	public class Const2Test : TypeTest
-	{	
-		// test classes		
-		public sealed class Good1
-		{
-			public static readonly int Value = 12;
-			private const int LinesPerPage = 40;
-		}			
-										
-		internal sealed class Good2
-		{
-			public const int LinesPerPage = 40;
-		}			
-										
-		public class Bad1
-		{
-			public const int LinesPerPage = 40;
-		}			
-
-		// test code
-		public Const2Test() : base(
-			new string[]{"Good1", "Good2"},
-			new string[]{"Bad1"})	
+	internal static class Unused
+	{
+		public static void Arg(params object[] args)
 		{
 		}
-						
-		protected override Rule OnCreate(AssemblyCache cache, IReportViolations reporter)
-		{
-			return new Const2Rule(cache, reporter);
-		}
-	} 
+	}
 }

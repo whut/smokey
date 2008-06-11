@@ -213,12 +213,13 @@ normally be Error. -->
 						// If we've been called via Dispose we can,
 						if (disposing)
 						{
-							// dispose of managed fields.
+							// dispose of managed fields, including any fields which
+               				// are themselves finalizeable.
 						}
 			
-						// If we've been called via the finalizer any references we have to
-						// managed objects may have been finalized so we have to be
-						// very careful and only dispose of unmanaged resources here.
+						// This code will execute if we were called by our finalizer
+           				// We can use any of our fields except those which are 
+			            // finalizeable (because they may have already been finalized).
 						NativeMethods.CloseHandle(m_handle);
 						m_handle = IntPtr.Zero;
 			
@@ -251,10 +252,10 @@ normally be Error. -->
 					{
 						if (disposing)
 						{
-							// Dispose of derived managed fields.
+							// Dispose of derived fields.
 						}
 			
-						// Dispose of derived unmanaged fields.
+						// Dispose of derived fields.
 	
 						base.Dispose(disposing);
 					}					
@@ -910,6 +911,77 @@ normally be Error. -->
 				private static object ms_lock = new object();
 			}			
 			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "C1030" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "UnusedArg" category = "Correctness">			
+			<Cause>
+			A non-empty method doesn't use all of its arguments.
+			</Cause>
+		
+			<Description>
+			In general arguments should be used.
+			</Description>
+	
+			<Fix>
+			Decorate the method with DisableRuleAttribute or use the argument somehow.
+			</Fix>
+	
+			<CSharp>
+			internal static class Unused
+			{
+				public static void Arg(params object[] args)
+				{
+				}
+			}
+			
+			internal static class Worker 
+			{
+				public int Work(int x, int hint)
+				{
+					Unused.Arg(hint);
+					
+					return x;
+				}
+			}			
+			</CSharp>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "C1031" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "ArgumentException1" category = "Correctness">			
+			<Cause>
+			A System.ArgumentException(string) constructor is called with a string literal, 
+			but the string is an argument name.
+			</Cause>
+		
+			<Description>
+			Use a better exception string.
+			</Description>
+	
+			<Fix>
+			Provide some sort of indication of the problem, for example "x is negative"
+			instead of just "x".
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "C1032" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "ArgumentException2" category = "Correctness">			
+			<Cause>
+			A System.ArgumentNullException(string) or System.ArgumentOutOfRangeException(string) 
+			constructor is called with a string literal, but the string is not an argument name.
+			</Cause>
+		
+			<Description>
+			ArgumentNullException and ArgumentOutOfRangeException should be called with the
+			name of an argument which will then be used to create a message.
+			</Description>
+	
+			<Fix>
+			Use an argument name.
+			</Fix>
 		</Translation>
 	</Violation>	
 </Violations>		

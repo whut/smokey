@@ -201,6 +201,19 @@ namespace Smokey.Framework.Support
 			return false;
 		}
 		
+		/// <summary>Returns true if type is IntPtr, IntPtr[], List&lt;IntPtr&gt;, etc.</summary>
+		public static bool IsNative(this TypeReference type)
+		{
+			DBC.Pre(type != null, "type is null");
+								
+			if (type.FullName.Contains("System.IntPtr") || 
+				type.FullName.Contains("System.UIntPtr") ||
+				type.FullName.Contains("System.Runtime.InteropServices.HandleRef"))
+				return true;
+			
+			return false;
+		}
+		
 		/// <summary>Returns true if the two instructions are equal.</summary>
 		public static bool Matches(this Instruction lhs, Instruction rhs)
 		{

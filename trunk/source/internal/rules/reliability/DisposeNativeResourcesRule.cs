@@ -73,8 +73,10 @@ namespace Smokey.Internal.Rules
 						FieldDefinition field = m_type.Fields.GetField(fieldRef.Name);
 						if (field != null && field.MetadataToken == fieldRef.MetadataToken)
 						{
-							if (!field.IsStatic && (field.FieldType.FullName == "System.IntPtr" || field.FieldType.FullName == "System.Runtime.InteropServices.HandleRef"))
+							Log.DebugLine(this, "{0} has type {1}", field.Name, field.FieldType.FullName);
+							if (!field.IsStatic && field.FieldType.IsNative())
 							{
+								Log.DebugLine(this, "the field is native");
 								if (instructions[i - 1].OpCode.Code == Code.Call || instructions[i - 1].OpCode.Code == Code.Callvirt)
 								{
 									MethodReference target = (MethodReference) instructions[i - 1].Operand;
@@ -84,6 +86,12 @@ namespace Smokey.Internal.Rules
 										Log.DebugLine(this, "found {0}", m_details);
 										m_newsNative = true; 
 									}
+								}
+								else if (instructions[i - 1].OpCode.Code == Code.Newarr || instructions[i - 1].OpCode.Code == Code.Newobj)
+								{
+									m_details = string.Format("Field: {0}", field.Name);
+									Log.DebugLine(this, "found {0}", m_details);
+									m_newsNative = true; 
 								}
 							}
 						}
@@ -99,7 +107,7 @@ namespace Smokey.Internal.Rules
 							FieldDefinition field = m_type.Fields.GetField(fieldRef.Name);
 							if (field != null && field.MetadataToken == fieldRef.MetadataToken)
 							{
-								if (!field.IsStatic && (field.FieldType.FullName == "System.IntPtr" || field.FieldType.FullName == "System.Runtime.InteropServices.HandleRef"))
+								if (!field.IsStatic && field.FieldType.IsNative())
 								{
 									m_details = string.Format("Field: {0}", field.Name);
 									Log.DebugLine(this, "found {0}", m_details);

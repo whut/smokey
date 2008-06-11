@@ -66,11 +66,8 @@ namespace Smokey.Internal.Rules
 			{
 				FieldDefinition field = type.Fields[i];
 				
-				if (!field.IsStatic)
-					if (field.FieldType.FullName == "System.IntPtr" || 
-						field.FieldType.FullName == "System.UIntPtr" ||
-						field.FieldType.FullName == "System.Runtime.InteropServices.HandleRef")
-						has = true;
+				if (!field.IsStatic && field.FieldType.IsNative())
+					has = true;
 			}
 			
 			return has;

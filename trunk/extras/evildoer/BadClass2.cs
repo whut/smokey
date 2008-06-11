@@ -131,6 +131,38 @@ namespace EvilDoer
 		}
 	}
 	
+	// R1001/DisposeNativeResources
+	public class NativeArray
+	{
+		public NativeArray()
+		{
+			native = new IntPtr[0];
+		}
+		
+		public object Native
+		{
+			get {return native;}
+		}
+		
+		private IntPtr[] native;
+	}
+	
+	// R1001/DisposeNativeResources
+	public class NativeList
+	{
+		public NativeList()
+		{
+			native = new List<IntPtr>();
+		}
+		
+		public object Native
+		{
+			get {return native;}
+		}
+		
+		private List<IntPtr> native;
+	}
+	
 	internal static class Ignore
 	{
 		public static object Value 

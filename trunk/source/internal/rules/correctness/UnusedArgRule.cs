@@ -22,65 +22,79 @@
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
-using System.Security;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
-using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
-{		
-	internal sealed class ReadOnlyArrayRule : Rule
+{	
+	internal sealed class UnusedArgRule : Rule
 	{				
-		public ReadOnlyArrayRule(AssemblyCache cache, IReportViolations reporter) 
-			: base(cache, reporter, "S1002")
+		public UnusedArgRule(AssemblyCache cache, IReportViolations reporter) 
+			: base(cache, reporter, "C1030")
 		{
 		}
 				
 		public override void Register(RuleDispatcher dispatcher) 
 		{
 			dispatcher.Register(this, "VisitBegin");
-			dispatcher.Register(this, "VisitField");
+			dispatcher.Register(this, "VisitLoad");
+			dispatcher.Register(this, "VisitLoadAddr");
 			dispatcher.Register(this, "VisitEnd");
 		}
 		
-		public void VisitBegin(BeginType begin)
+		public void VisitBegin(BeginMethod begin)
 		{
 			Log.DebugLine(this, "-----------------------------------"); 
-			Log.DebugLine(this, "checking {0}", begin.Type);
+			Log.DebugLine(this, "{0:F}", begin.Info.Instructions);				
 
-			m_names = string.Empty;
-			m_needsCheck = begin.Type.IsPublic || begin.Type.IsNestedPublic;
-		}
-		
-		public void VisitField(FieldDefinition field)
-		{
-			if (m_needsCheck && field.IsInitOnly)
+			m_needsCheck = begin.Info.Method.Body != null && begin.Info.Method.Body.Instructions.Count > 1;
+			m_args.Clear();
+
+			if (m_needsCheck)
 			{
-				FieldAttributes attrs = field.Attributes & FieldAttributes.FieldAccessMask;
-				if (attrs == FieldAttributes.Public || attrs == FieldAttributes.Family)
+				for (int i = 0; i < begin.Info.Method.Parameters.Count; ++i)
 				{
-					ArrayType array = field.FieldType as ArrayType;
-					if (array != null)
-						m_names += field.Name + " ";
+					ParameterReference p = begin.Info.Method.Parameters[i];
+					Log.DebugLine(this, "adding '{0}'", p.Name);				
+				
+					m_args.Add(p.Name);
 				}
 			}
 		}
 		
-		public void VisitEnd(EndType end)
+		public void VisitLoad(LoadArg load)
 		{
-			if (m_names.Length > 0)
+			if (m_needsCheck)
 			{
-				string details = "Fields: " + m_names;
-				Log.DebugLine(this, details);
-			
-				Reporter.TypeFailed(end.Type, CheckID, details);
+				Log.DebugLine(this, "removing '{0}'", load.Name);				
+				m_args.Remove(load.Name);
 			}
 		}
-				
-		private string m_names;
+
+		public void VisitLoadAddr(LoadArgAddress load)
+		{
+			if (m_needsCheck)
+			{
+				Log.DebugLine(this, "removing '{0}'", load.Name);				
+				m_args.Remove(load.Name);
+			}
+		}
+
+		public void VisitEnd(EndMethod end)
+		{
+			if (m_args.Count > 0)
+			{
+				string details = "Args: " + string.Join(" ", m_args.ToArray());
+				Log.DebugLine(this, "{0}", details);				
+
+				Reporter.MethodFailed(end.Info.Method, CheckID, 0, details);
+			}
+		}
+						
+		private List<string> m_args = new List<string>();
 		private bool m_needsCheck;
 	}
 }
-

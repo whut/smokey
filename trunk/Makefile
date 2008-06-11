@@ -35,7 +35,7 @@ internal_files := $(strip $(shell find source/internal -name "*.cs" -print))
 
 rules_files := $(strip $(shell find source/internal/rules -name "*.cs" -print))
 test_files := $(strip $(shell find source/tests -name "*.cs" -print))
-extra_test_files := source/internal/AssertTraceListener.cs source/internal/Break.cs source/internal/GetOptions.cs source/internal/Ignore.cs source/internal/Reformat.cs
+extra_test_files := source/internal/AssertTraceListener.cs source/internal/Break.cs source/internal/GetOptions.cs source/internal/Ignore.cs source/internal/Unused.cs source/internal/Reformat.cs
 
 xml_files := $(strip $(shell find source/internal/rules/xml -name "*.xml" -print))
 xml_resources := $(shell echo $(xml_files) | sed "s/source/-resource:source/g")
@@ -54,7 +54,7 @@ check: $(tests_path) $(tests_path).config
 	$(NUNIT) -nologo -config=$(tests_path).config $(tests_path)
 
 check1: $(tests_path) $(tests_path).config
-	$(NUNIT) -nologo -config=$(tests_path).config -fixture=Smokey.Tests.AvoidReRegisterForFinalizeTest $(tests_path)
+	$(NUNIT) -nologo -config=$(tests_path).config -fixture=Smokey.Tests.ArgumentException2Test $(tests_path)
 
 ftest_asms := $(bin_path)/evildoer.dll,$(bin_path)/NoSecurity.exe,$(bin_path)/APTCA.dll,$(bin_path)/APTCA2.dll,$(bin_path)/APTCA3.dll
 fcheck: $(app_path) $(subst $(comma), ,$(ftest_asms)) $(bin_path)/FullTrust.dll $(ftest_path)

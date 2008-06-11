@@ -35,7 +35,7 @@ namespace Smokey.Tests
 	public class ReadOnlyArrayTest : TypeTest
 	{	
 		#region Test classes
-		class Good1
+		public class Good1
 		{
 			public readonly float BaseCost = 100.0f;
 			
@@ -58,7 +58,24 @@ namespace Smokey.Tests
 			private readonly float[] m_scaling = {1.0f, 1.0f, 4.0f};
 		}
 
-		class Bad1
+		internal class Good2
+		{
+			public readonly float BaseCost = 100.0f;
+			public readonly float[] Scaling = {1.0f, 1.0f, 4.0f};
+			
+			public float Compute(float bandwidth, float bytes, float latency)
+			{
+				float cost = BaseCost;
+				
+				cost += bandwidth * Scaling[0];
+				cost += bytes * Scaling[1];
+				cost += latency * Scaling[2];
+				
+				return cost;
+			}
+		}
+
+		public class Bad1
 		{
 			public readonly float BaseCost = 100.0f;
 			public readonly float[] Scaling = {1.0f, 1.0f, 4.0f};
@@ -78,7 +95,7 @@ namespace Smokey.Tests
 		
 		// test code
 		public ReadOnlyArrayTest() : base(
-			new string[]{"Good1"},
+			new string[]{"Good1", "Good2"},
 			new string[]{"Bad1"})	
 		{
 		}

@@ -185,4 +185,6 @@
 	<Expected checkID = "R1038" typeName = "RecursiveLock2" fullName = "EvilDoer.BadHook1"/>
 	<Expected checkID = "R1038" typeName = "RecursiveLock2" fullName = "EvilDoer.BadHook2"/>
 	<Expected checkID = "R1038" typeName = "RecursiveLock2" fullName = "EvilDoer.BadHook3"/>
+	<Expected checkID = "R1001" typeName = "DisposeNativeResources" fullName = "EvilDoer.NativeArray"/>
+	<Expected checkID = "R1001" typeName = "DisposeNativeResources" fullName = "EvilDoer.NativeList"/>
 </Expectations>
