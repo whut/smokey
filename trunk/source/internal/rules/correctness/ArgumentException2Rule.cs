@@ -69,6 +69,13 @@ namespace Smokey.Internal.Rules
 				}
 			}
 			
+			if (begin.Info.Method.Name.StartsWith("set_"))
+			{
+				m_args.Add(begin.Info.Method.Name.Substring(4));
+				m_args.Add("value");
+				Log.DebugLine(this, "added value and {0}", begin.Info.Method.Name.Substring(4));				
+			}
+			
 			if (badNames)
 				m_args.Clear();
 		}

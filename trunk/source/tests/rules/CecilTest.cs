@@ -26,11 +26,15 @@ namespace Smokey.Tests
 {
 	public abstract class CecilTest : BaseTest
 	{	
-		public CecilTest()
+		public CecilTest() : this(System.Reflection.Assembly.GetExecutingAssembly().Location)
 		{
-			if (ms_assembly == null)
+		}
+								
+		public CecilTest(string loc)
+		{
+			if (ms_assembly == null || loc != ms_assemblyLoc)
 			{
-				string loc = System.Reflection.Assembly.GetExecutingAssembly().Location;
+				ms_assemblyLoc = loc;
 				ms_assembly = AssemblyFactory.GetAssembly(loc);
 			}
 		}
@@ -41,6 +45,7 @@ namespace Smokey.Tests
 		}
 
 		#region Fields --------------------------------------------------------
+		private static string ms_assemblyLoc;
 		private static AssemblyDefinition ms_assembly;
 		#endregion
 	} 

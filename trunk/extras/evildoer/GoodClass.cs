@@ -73,7 +73,8 @@ namespace EvilDoer
 		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			System.Diagnostics.Debug.Assert(info != null, "info is null");
+			if (info == null)
+				throw new ArgumentNullException("info");
 			
 			info.AddValue("key", key, typeof(string));
 			base.GetObjectData(info, context);
@@ -88,7 +89,7 @@ namespace EvilDoer
 	{				
 		~GoodClass()
 		{
-			System.Diagnostics.Debug.WriteLine("bad");
+			Run();
 		}
 		
 		public static string ArrayToStr(int[] array)

@@ -47,6 +47,7 @@ namespace Smokey.Internal.Rules
 			m_needsCheck = false;
 			m_type = begin.Type;
 			m_failed = false;
+			m_details = string.Empty;
 			
 			TypeAttributes vis = m_type.Attributes & TypeAttributes.VisibilityMask;
 			if (vis == TypeAttributes.Public || vis == TypeAttributes.NestedPublic || vis == TypeAttributes.NestedFamily || vis == TypeAttributes.NestedFamORAssem)
@@ -70,6 +71,7 @@ namespace Smokey.Internal.Rules
 						string name = method.ReturnType.ReturnType.Name;
 						if (!DoHas("To" + name + "Type"))
 						{
+							m_details = method.ToString();
 							m_failed = true;
 						}
 					}
@@ -83,7 +85,7 @@ namespace Smokey.Internal.Rules
 			
 			if (m_needsCheck && m_failed)
 			{
-				Reporter.TypeFailed(m_type, CheckID, string.Empty);
+				Reporter.TypeFailed(m_type, CheckID, "Operator: " + m_details);
 			}
 		}
 		
@@ -96,6 +98,7 @@ namespace Smokey.Internal.Rules
 		private bool m_needsCheck;
 		private TypeDefinition m_type;
 		private bool m_failed;
+		private string m_details;
 	}
 }
 

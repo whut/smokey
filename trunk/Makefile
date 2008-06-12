@@ -7,7 +7,6 @@ MONO ?= $(shell which mono)
 LOG_PATH ?= /tmp/smokey.log
 INSTALL_DIR ?= /usr/local/bin
 	
-# TODO: should probably default to building release
 ifdef RELEASE
 	CSC_FLAGS ?= -checked+ -nowarn:1591 -optimize+
 else
@@ -22,8 +21,11 @@ endif
 # -----------------------------------------------------------------------------
 # Internal variables
 comma := ,
-
 cur_dir := $(shell pwd)
+
+dummy1 := $(shell mkdir bin 2> /dev/null)			
+dummy2 := $(shell if [[ "$(CSC_FLAGS)" != `cat bin/csc_flags 2> /dev/null` ]]; then echo "$(CSC_FLAGS)" > bin/csc_flags; fi)
+dummy3 := $(shell if [[ "$(APP_CSC_FLAGS)" != `cat bin/app_flags 2> /dev/null` ]]; then echo "$(APP_CSC_FLAGS)" > bin/app_flags; fi)
 
 app_files := $(strip $(shell find source/app -name "*.cs" -print))
 framework_files := $(strip $(shell find source/framework -name "*.cs" -print))
@@ -41,7 +43,7 @@ version := $(strip $(version))
 
 # -----------------------------------------------------------------------------
 # Primary targets
-all: bin bin/smokey.exe bin/tests.dll bin/smokey.exe.config bin/tests.dll.config
+all: bin/smokey.exe bin/tests.dll bin/smokey.exe.config bin/tests.dll.config
 
 app: bin/smokey.exe bin/smokey.exe.config
 
@@ -49,7 +51,7 @@ check: bin/tests.dll bin/tests.dll.config
 	$(NUNIT) -nologo -config=bin/tests.dll.config bin/tests.dll
 
 check1: bin/tests.dll bin/tests.dll.config
-	$(NUNIT) -nologo -config=bin/tests.dll.config -fixture=Smokey.Tests.PropertyMatchesAccessorTest bin/tests.dll
+	$(NUNIT) -nologo -config=bin/tests.dll.config -fixture=Smokey.Tests.ArgumentException2Test bin/tests.dll
 
 ftest_asms := bin/evildoer.dll,bin/NoSecurity.exe,bin/APTCA.dll,bin/APTCA2.dll,bin/APTCA3.dll
 fcheck: bin/smokey.exe $(subst $(comma), ,$(ftest_asms)) bin/FullTrust.dll bin/functest.exe
@@ -74,7 +76,7 @@ bin/exe_resources: $(xml_files) IgnoreList.txt SysIgnore.txt
 bin/exe_references:
 	@echo "-reference:Mono.CompilerServices.SymbolWriter.dll,Mono.Cecil.dll,System.Configuration.dll" > bin/exe_references
 
-bin/smokey.exe: keys bin/exe_references bin/exe_resources bin/exe_files
+bin/smokey.exe: keys bin/app_flags bin/exe_references bin/exe_resources bin/exe_files
 	@./gen_version.sh $(version) source/internal/AssemblyVersion.cs
 	$(CSC) -out:bin/smokey.exe $(APP_CSC_FLAGS) -keyfile:keys -target:exe -doc:docs.xml @bin/exe_references @bin/exe_resources @bin/exe_files
 
@@ -86,7 +88,7 @@ bin/tests_files: $(tests_files)
 bin/tests_references: 
 	@echo "-reference:Mono.CompilerServices.SymbolWriter.dll,Mono.Cecil.dll,System.Configuration.dll,System.Data.dll,System.Windows.Forms.dll" > bin/tests_references
 
-bin/tests.dll: bin/tests_references bin/tests_files 
+bin/tests.dll: bin/csc_flags bin/tests_references bin/tests_files 
 	$(CSC) -out:bin/tests.dll $(CSC_FLAGS) -define:TEST -pkg:mono-nunit -target:library @bin/tests_references @bin/tests_files 
 		
 # functest.exe
@@ -98,28 +100,28 @@ functest_resources := extras/functest/*.xml
 bin/functest_resources: $(functest_resources)
 	@echo $(functest_resources) | sed "s/extras/-resource:extras/g" > bin/functest_resources
 
-bin/functest.exe: bin/functest_resources bin/functest_files
+bin/functest.exe: bin/csc_flags bin/functest_resources bin/functest_files
 	@./gen_version.sh $(version) extras/functest/AssemblyVersion.cs
 	$(CSC) -out:bin/functest.exe $(CSC_FLAGS) -target:exe -reference:System.Windows.Forms.dll @bin/functest_resources @bin/functest_files
 
 # functest assemblies
-bin/evildoer.dll: extras/evildoer/Expected.xml extras/evildoer/*.cs
+bin/evildoer.dll: bin/csc_flags extras/evildoer/Expected.xml extras/evildoer/*.cs
 	@./gen_version.sh $(version) extras/evildoer/AssemblyVersion.cs
 	$(CSC) -out:bin/evildoer.dll $(CSC_FLAGS) -target:library -reference:System.Windows.Forms.dll -resource:extras/evildoer/Expected.xml extras/evildoer/*.cs 
 
-bin/NoSecurity.exe: extras/miscevil/NoSecurity.xml extras/miscevil/NoSecurity.cs 
+bin/NoSecurity.exe: bin/csc_flags extras/miscevil/NoSecurity.xml extras/miscevil/NoSecurity.cs 
 	@./gen_version.sh $(version) extras/miscevil/AssemblyVersion.cs
 	$(CSC) -out:bin/NoSecurity.exe $(CSC_FLAGS) -target:exe -reference:System.Windows.Forms.dll -resource:extras/miscevil/NoSecurity.xml extras/miscevil/AssemblyVersion.cs extras/miscevil/NoSecurity.cs 
 
-bin/FullTrust.dll: keys extras/miscevil/FullTrust.cs 
+bin/FullTrust.dll: keys bin/csc_flags extras/miscevil/FullTrust.cs 
 	@./gen_version.sh $(version) extras/miscevil/AssemblyVersion.cs
 	$(CSC) -out:bin/FullTrust.dll $(CSC_FLAGS) -keyfile:keys -target:library -reference:System.Windows.Forms.dll extras/miscevil/AssemblyVersion.cs extras/miscevil/FullTrust.cs 
 
-bin/APTCA.dll: bin/FullTrust.dll extras/miscevil/APTCA.xml extras/miscevil/APTCA.cs 
+bin/APTCA.dll: bin/csc_flags bin/FullTrust.dll extras/miscevil/APTCA.xml extras/miscevil/APTCA.cs 
 	@./gen_version.sh $(version) extras/miscevil/AssemblyVersion.cs
 	$(CSC) -out:bin/APTCA.dll $(CSC_FLAGS) -target:library -reference:System.Windows.Forms.dll,bin/FullTrust.dll -resource:extras/miscevil/APTCA.xml extras/miscevil/AssemblyVersion.cs extras/miscevil/APTCA.cs 
 
-bin/APTCA2.dll: bin/FullTrust.dll extras/miscevil/APTCA2.xml extras/miscevil/APTCA2.cs 
+bin/APTCA2.dll: bin/csc_flags bin/FullTrust.dll extras/miscevil/APTCA2.xml extras/miscevil/APTCA2.cs 
 	@./gen_version.sh $(version) extras/miscevil/AssemblyVersion.cs
 	$(CSC) -out:bin/APTCA2.dll $(CSC_FLAGS) -target:library -reference:System.Windows.Forms.dll,bin/FullTrust.dll -resource:extras/miscevil/APTCA2.xml extras/miscevil/AssemblyVersion.cs extras/miscevil/APTCA2.cs 
 
@@ -157,10 +159,7 @@ bin/tests.dll.config:
 # Other targets
 keys: 
 	sn -k keys
-	
-bin:
-	-mkdir bin
-	
+		
 smokey_flags := --not-localized -set:naming:jurassic -set:ignoreList:IgnoreList.txt
 smokey_flags += -exclude-check:D1015	# ExceptionConstructors
 smokey_flags += -exclude-check:D1024	# SerializeException
@@ -188,17 +187,17 @@ help:
 	@echo "Here's an example:"	
 	@echo "sudo make LOG_PATH=~/smokey.log install"	
 
-install: bin bin/smokey.exe bin/smokey.exe.config
+install: bin/smokey.exe bin/smokey.exe.config
 	cp bin/smokey.exe $(INSTALL_DIR)
 	chmod -x $(INSTALL_DIR)/smokey.exe
-	cp bin/smokey.exe.config $(INSTALL_DIR)
+	if [[ ! -e $(INSTALL_DIR)/smokey.exe.config ]]; then cp bin/smokey.exe.config $(INSTALL_DIR); fi
 	echo "#!/bin/sh" > $(INSTALL_DIR)/smoke
-	echo "exec -a smokey.exe $MONO $(INSTALL_DIR)/smokey.exe \$@" >> $(INSTALL_DIR)/smoke
+	echo "exec -a smokey.exe $(MONO) $(INSTALL_DIR)/smokey.exe \x24@" >> $(INSTALL_DIR)/smoke
 	chmod +x $(INSTALL_DIR)/smoke
 	
 uninstall:
 	-rm $(INSTALL_DIR)/smokey.exe
-	-rm $(INSTALL_DIR)/smokey.exe.config
+#	-rm $(INSTALL_DIR)/smokey.exe.config
 	-rm $(INSTALL_DIR)/smoke
 	-rm $(LOG_PATH)
 
@@ -208,7 +207,7 @@ clean:
 	-rm bin/*.dll
 	-rm bin/*.mdb
 	-rm bin/exe_files bin/exe_references bin/exe_resources 
-	-rm bin/tests_files bin/tests_references bin/functest_files
+	-rm bin/tests_files bin/tests_references bin/functest_files bin/functest_resources
 	
 tar_binary: bin/smokey.exe
 	tar --create --compress --file=smokey_bin-$(version).tar.gz bin/smokey.exe CHANGES CHANGE_LOG README
