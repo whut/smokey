@@ -114,7 +114,7 @@ namespace Smokey.App
 			var assembly = System.Reflection.Assembly.GetExecutingAssembly();					
 			m_checker.LoadRules(assembly, cache, severity, ignoreBreaks);
 											
-			Error[] errors = DoCheckAssembly(assemblyDef, cache, onlyType, severity);
+			Error[] errors = DoCheckAssembly(assemblyDef, cache, onlyType);
 
 			return errors;
 		}
@@ -127,7 +127,7 @@ namespace Smokey.App
 		}
 		
 		#region Private Methods
-		private Error[] DoCheckAssembly(AssemblyDefinition assembly, AssemblyCache cache, string[] onlyType, Severity severity)
+		private Error[] DoCheckAssembly(AssemblyDefinition assembly, AssemblyCache cache, string[] onlyType)
 		{
 			List<Error> errors = new List<Error>();
 			Log.DebugLine(this, "checking assembly {0}", assembly.Name.Name);
@@ -136,10 +136,10 @@ namespace Smokey.App
 						
 			m_checker.Dispatcher.Dispatch(new BeginTesting());
 			if (onlyType == null || onlyType.Length == 0)
-				DoCheckAssembly(assembly, severity);	// note that we don't want to interleave these because our locality would suck
+				DoCheckAssembly(assembly);				// note that we don't want to interleave these because our locality would suck
 			
-			DoCheckTypes(cache, onlyType, severity);
-			DoCheckMethods(cache, onlyType, severity);
+			DoCheckTypes(cache, onlyType);
+			DoCheckMethods(cache, onlyType);
 	
 			if (onlyType == null || onlyType.Length == 0)
 				m_checker.CheckCallGraph();
@@ -148,19 +148,15 @@ namespace Smokey.App
 			return errors.ToArray();
 		}
 
-		private void DoCheckAssembly(AssemblyDefinition assembly, Severity severity)
-		{
-			Unused.Arg(severity);
-			
+		private void DoCheckAssembly(AssemblyDefinition assembly)
+		{			
 			Profile.Start("CheckAssembly");
 			m_checker.Check(assembly);
 			Profile.Stop("CheckAssembly");
 		}
 
-		private void DoCheckMethods(AssemblyCache cache, string[] onlyType, Severity severity)
-		{
-			Unused.Arg(severity);
-			
+		private void DoCheckMethods(AssemblyCache cache, string[] onlyType)
+		{			
 			Profile.Start("CheckMethods");
 			
 			foreach (KeyValuePair<TypeDefinition, List<MethodInfo>> entry in cache.TypeMethods)
@@ -183,10 +179,8 @@ namespace Smokey.App
 			Profile.Stop("CheckMethods");
 		}
 		
-		private void DoCheckTypes(AssemblyCache cache, string[] onlyType, Severity severity)
-		{
-			Unused.Arg(severity);
-			
+		private void DoCheckTypes(AssemblyCache cache, string[] onlyType)
+		{			
 			Profile.Start("CheckTypes");
 			BeginTypes begin = new BeginTypes();
 			m_checker.Dispatcher.Dispatch(begin);

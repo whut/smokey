@@ -46,7 +46,12 @@ namespace Smokey.Tests
 																				
 		/// <summary>Good and bad names should be of the form "TestClass.EventName". 
 		/// Used should be type names.</summary>
-		public EventTest(string[] good, string[] bad, string[] used)
+		public EventTest(string[] good, string[] bad, string[] used) : this(good, bad, used, System.Reflection.Assembly.GetExecutingAssembly().Location)
+		{
+		}
+				
+		/// <summary>This is used for custom test dlls.</summary>
+		public EventTest(string[] good, string[] bad, string[] used, string loc) : base(loc)
 		{
 			try
 			{			

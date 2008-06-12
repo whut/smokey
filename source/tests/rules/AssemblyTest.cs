@@ -53,7 +53,12 @@ namespace Smokey.Tests
 																
 		/// <summary>Good, badm and used names should be of the form "TestClass". Used is a list
 		/// of type names that aren't checked, but are used during testing.</summary>
-		public AssemblyTest(string[] good, string[] bad, string[] used)
+		public AssemblyTest(string[] good, string[] bad, string[] used) : this(good, bad, used, System.Reflection.Assembly.GetExecutingAssembly().Location)
+		{
+		}
+				
+		/// <summary>This is used for custom test dlls.</summary>
+		public AssemblyTest(string[] good, string[] bad, string[] used, string loc) : base(loc)
 		{
 			try
 			{			

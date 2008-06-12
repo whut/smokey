@@ -702,7 +702,7 @@
 		</Translation>
 	</Violation>	
 
-	<Violation checkID = "P1021" severity = "Warning" breaking = "false">
+	<Violation checkID = "P1021" severity = "Nitpick" breaking = "false">
 		<Translation lang = "en" typeName = "TooManyLocals" category = "Performance">			
 			<Cause>
 			A method has more than 64 local variables.

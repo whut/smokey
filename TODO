@@ -8,7 +8,8 @@ https://home.comcast.net/~jesse98/public/Mono.Cecil.dll
 https://home.comcast.net/~jesse98/public/smokey-0.4.0.0.tar.gz
 https://home.comcast.net/~jesse98/public/System.Xml.dll.txt
 
-mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.1/mscorlib.dll > tmp.txt
+mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll > tmp.txt
+mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/net_2_1/mscorlib.dll > tmp.txt
 mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.1/System.Core.dll > tmp.txt
 mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.1/System.Xml.Core.dll > tmp.txt
 mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.0/System.Windows.Forms.dll > tmp.txt
@@ -36,33 +37,12 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 102 gendarme
 199 fxcop
 
-69.847788
-
-* DoCheckAssembly and DoCheckMethods and DoCheckTypes don't use severity?
 * Release checklist:
-	- make smoke>tmp.txt
-	- make check
-	- make fcheck
-	- make RELEASE=1 smoke>tmp.txt
-	- make RELEASE=1 check
-	- make RELEASE=1 fcheck (doesnt work)
-	- profile
-		rm bin/smokey.exe				# nant doesn't rebuild if just a define changed
-		nant -D:profile=true app
-		look at stdout
-	- review severity abd breaking of new rules
-	- make sure custom lib builds
-	- make sure custom test smokes
-	- make sure custom test runs
-	- try on .net (smoke fxcop)
-	- smoke /Users/jessejones/New_Files/Reflector\ Folder/Reflector.exe
-	- smoke a mono assembly, eg mscorlib.dll
-	- smoke a mono assembly with -profile=system and see if any additional rules should be disabled
 	- make sure everything is checked in
 	- use svn log -r 1:HEAD > CHANGE_LOG
 	- update CHANGES file
-	- make sure AssemblyVersion number is ok (for all the assemblies)
-	- update version number in nant file (for tar files)
+	- update version number in the make file and zap build_num
+	- update custom version number
 	- update SmokeyVersion on old web site
 	- install
 	- make sure the install and uninstall work
@@ -74,6 +54,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- localize config?
 	- mono --debug bin/smokey.exe.exe -generate-html-violations:violations
 	- smoke -profile=system -html -out:report.html /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll
+		don't use custom.dll
 	- upload
 		report.html
 		violations
@@ -86,6 +67,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- make sure everything is checked in
 	- do the following (be sure to fix the versions):
 		svn copy file:///Users/jessejones/projects/Smokey file:///Users/jessejones/projects/releases/smokey-1.X.0.0 -m "Tagging 1.X.0.0"
+* Try to get release functest working, probably need to have a debug only section of expected.xml
 * Add a few more fxcop rules.
 * Add a few more gendarme rules.
 * IdenticalMethods isn't determinstic.
@@ -289,6 +271,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	  maybe we can have a rule for custom singleton class?
 	
 * Release checklist:
+	- remove ignoreList setting
 	- search for TODO
 	- use mono --debug bin/smokey.exe.exe -check-xml>tmp.txt
 	- make smoke>tmp.txt
@@ -301,7 +284,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 		rm bin/smokey.exe				# nant doesn't rebuild if just a define changed
 		nant -D:profile=true app
 		look at stdout
-	- review severity abd breaking of new rules
+	- review severity and breaking of new rules
 	- make sure custom lib builds
 	- make sure custom test smokes
 	- make sure custom test runs
@@ -312,19 +295,17 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- make sure everything is checked in
 	- use svn log -r 1:HEAD > CHANGE_LOG
 	- update CHANGES file
-	- make sure AssemblyVersion number is ok (for all the assemblies)
-	- update version number in nant file (for tar files)
+	- update version number in the make file and zap build_num
+	- update custom version number
 	- update SmokeyVersion on old web site
 	- install
-	- make sure the install and uninstall work
 	- update README and wiki
-	- we require linq so need mono 1.9.
-	- deprecate ignoreList setting
 	- add dictionary setting
 	- add profile setting
 	- localize config?
 	- mono --debug bin/smokey.exe.exe -generate-html-violations:violations
 	- smoke -profile=system -html -out:report.html /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll
+		don't use custom.dll
 	- upload
 		report.html
 		violations

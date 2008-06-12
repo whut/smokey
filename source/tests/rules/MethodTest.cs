@@ -55,7 +55,12 @@ namespace Smokey.Tests
 		/// <summary>Good and bad names should be of the form "TestClass.TestMethod". Used may
 		/// have no method in which case all of the methods that haven't already been
 		/// added are added.</summary>
-		public MethodTest(string[] good, string[] bad, string[] used)
+		public MethodTest(string[] good, string[] bad, string[] used) : this(good, bad, used, System.Reflection.Assembly.GetExecutingAssembly().Location)
+		{
+		}
+				
+		/// <summary>This is used for custom test dlls.</summary>
+		public MethodTest(string[] good, string[] bad, string[] used, string loc) : base(loc)
 		{
 			try
 			{			

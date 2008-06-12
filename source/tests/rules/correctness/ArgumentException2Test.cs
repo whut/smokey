@@ -45,6 +45,16 @@ namespace Smokey.Tests
 				throw new ArgumentOutOfRangeException("t");
 			}
 
+			public int GoodProp
+			{
+				set {throw new ArgumentOutOfRangeException("GoodProp");}
+			}
+
+			public int GoodProp2
+			{
+				set {throw new ArgumentOutOfRangeException("value");}
+			}
+
 			public static void Good3(int A_1)
 			{
 				throw new ArgumentOutOfRangeException("t");
@@ -59,13 +69,18 @@ namespace Smokey.Tests
 			{
 				throw new ArgumentNullException("x");
 			}
+
+			public int BadProp
+			{
+				set {throw new ArgumentOutOfRangeException("Prop");}
+			}
 		}
 		#endregion
 		
 		// test code
 		public ArgumentException2Test() : base(
-			new string[]{"Cases.Good1", "Cases.Good2", "Cases.Good3"},
-			new string[]{"Cases.Bad1", "Cases.Bad2"})	
+			new string[]{"Cases.Good1", "Cases.Good2", "Cases.Good3", "Cases.set_GoodProp", "Cases.set_GoodProp2"},
+			new string[]{"Cases.Bad1", "Cases.Bad2", "Cases.set_BadProp"})	
 		{
 		}
 						

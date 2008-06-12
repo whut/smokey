@@ -48,16 +48,19 @@ namespace Smokey.Internal.Rules
 			{
 				string name = prop.Name;
 				
-				if (type.Methods.GetMethod("Get" + name).Length > 0)
+				MethodDefinition[] methods1 = type.Methods.GetMethod("Get" + name);
+				MethodDefinition[] methods2 = type.Methods.GetMethod("Set" + name);
+				
+				if (methods1.Length > 0 && methods1[0].IsPublic)
 					names += name + " ";
-				else if (type.Methods.GetMethod("Set" + name).Length > 0)
+				else if (methods2.Length > 0 && methods2[0].IsPublic)
 					names += name + " ";
 			}
 			
 			if (names.Length > 0)
 			{
 				Log.DebugLine(this, "names: {0}", names);
-				Reporter.TypeFailed(type, CheckID, names);
+				Reporter.TypeFailed(type, CheckID, "Properties: " + names);
 			}
 		}
 	}

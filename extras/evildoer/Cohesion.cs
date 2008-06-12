@@ -28,7 +28,7 @@ namespace EvilDoer
 	{
 		~Cohesive()
 		{
-			System.Diagnostics.Debug.WriteLine("hello");
+			Reset();
 		}
 		
 		Cohesive()

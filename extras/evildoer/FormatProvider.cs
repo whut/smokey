@@ -43,32 +43,40 @@ namespace EvilDoer
 	{
 		public static object Good1(object x, IFormatProvider p)
 		{
-			Debug.Assert(x != null);
-			Debug.Assert(p != null);
+			if (x == null)
+				throw new ArgumentNullException("x");
+			if (p == null)
+				throw new ArgumentNullException("p");
 			
 			return Convert.ChangeType(x, p.GetType(), p);
 		}
 
 		public static int Good2(string x, IFormatProvider p)
 		{
-			Debug.Assert(x != null);
-			Debug.Assert(p != null);
+			if (x == null)
+				throw new ArgumentNullException("x");
+			if (p == null)
+				throw new ArgumentNullException("p");
 
 			return Convert.ToInt32(x, p);
 		}
 
 		public static string Good3(object x, IFormatProvider p)
 		{
-			Debug.Assert(x != null);
-			Debug.Assert(p != null);
+			if (x == null)
+				throw new ArgumentNullException("x");
+			if (p == null)
+				throw new ArgumentNullException("p");
 
 			return string.Format(p, "{0}", x);
 		}
 
 		public static int Good4(string s, IFormatProvider p)
 		{
-			Debug.Assert(s != null);
-			Debug.Assert(p != null);
+			if (s == null)
+				throw new ArgumentNullException("s");
+			if (p == null)
+				throw new ArgumentNullException("p");
 
 			return int.Parse(s, p);
 		}
@@ -76,8 +84,10 @@ namespace EvilDoer
 		[DisableRule("D1007", "UseBaseTypes")]
 		public static string Good5(DerivedStringer x, IFormatProvider p)
 		{
-			Debug.Assert(x != null);
-			Debug.Assert(p != null);
+			if (x == null)
+				throw new ArgumentNullException("x");
+			if (p == null)
+				throw new ArgumentNullException("p");
 
 			return x.ToString("{0}", p);
 		}
@@ -85,7 +95,8 @@ namespace EvilDoer
 		[DisableRule("D1007", "UseBaseTypes")]
 		public static string Good6(Exception x)
 		{
-			Debug.Assert(x != null);
+			if (x == null)
+				throw new ArgumentNullException("x");
 
 			return x.ToString();
 		}
@@ -93,7 +104,8 @@ namespace EvilDoer
 		// G1003/FormatProvider
 		public static object Bad1(object x)
 		{
-			Debug.Assert(x != null);
+			if (x == null)
+				throw new ArgumentNullException("x");
 
 			return Convert.ChangeType(x, x.GetType());
 		}
@@ -101,7 +113,8 @@ namespace EvilDoer
 		// G1003/FormatProvider
 		public static int Bad2(string x)
 		{
-			Debug.Assert(x != null);
+			if (x == null)
+				throw new ArgumentNullException("x");
 
 			return Convert.ToInt32(x);
 		}
@@ -109,7 +122,8 @@ namespace EvilDoer
 		// G1003/FormatProvider
 		public static string Bad3(object x)
 		{
-			Debug.Assert(x != null);
+			if (x == null)
+				throw new ArgumentNullException("x");
 
 			return string.Format("{0}", x);
 		}
@@ -117,7 +131,8 @@ namespace EvilDoer
 		// G1003/FormatProvider
 		public static int Bad4(string s)
 		{
-			Debug.Assert(s != null);
+			if (s == null)
+				throw new ArgumentNullException("s");
 
 			return int.Parse(s);
 		}
@@ -126,7 +141,8 @@ namespace EvilDoer
 		// G1003/FormatProvider
 		public static string Bad5(DerivedStringer x)
 		{
-			Debug.Assert(x != null);
+			if (x == null)
+				throw new ArgumentNullException("x");
 
 			return x.ToString();
 		}

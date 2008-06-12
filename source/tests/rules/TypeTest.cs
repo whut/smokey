@@ -50,7 +50,12 @@ namespace Smokey.Tests
 								
 		/// <summary>Good and bad names should be a list of type names. Used is a list
 		/// of type names that aren't checked, but are used during testing.</summary>
-		public TypeTest(string[] good, string[] bad, string[] used)
+		public TypeTest(string[] good, string[] bad, string[] used) : this(good, bad, used, System.Reflection.Assembly.GetExecutingAssembly().Location)
+		{
+		}
+				
+		/// <summary>This is used for custom test dlls.</summary>
+		public TypeTest(string[] good, string[] bad, string[] used, string loc) : base(loc)
 		{
 			try
 			{					
