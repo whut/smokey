@@ -456,3 +456,244 @@ Index: custom/source/rules/Rules.xml
 
 
 ------------------------------------------------------------------------
+r64 | jesjones@mindspring.com | 2008-05-19 23:51:10 -0700 (Mon, 19 May 2008) | 10 lines
+
+Index: CHANGES
+Index: nant.build
+Index: CHANGE_LOG
+Index: Upload Comment.txt
+* Updated.
+
+Index: source/internal/rules/xml/Design.xml
+Index: source/internal/rules/xml/Reliability.xml
+* Minor language tweaks.
+
+------------------------------------------------------------------------
+r67 | jesjones@mindspring.com | 2008-06-09 16:40:22 -0700 (Mon, 09 Jun 2008) | 15 lines
+
+Index: Makefile
+* Moving from nant to make.
+
+Index: get_version.sh
+Index: gen_version.sh
+* New, bit simpler, way to bump build numbers.
+
+Index: extras/evildoer/Expected.xml
+Index: extras/miscevil/NoSecurity.xml
+Index: extras/miscevil/APTCA.xml
+Index: extras/miscevil/APTCA2.xml
+Index: extras/miscevil/APTCA3.xml
+* Debug assemblies names are no longer appended with _d.
+
+
+------------------------------------------------------------------------
+r68 | jesjones@mindspring.com | 2008-06-09 22:02:52 -0700 (Mon, 09 Jun 2008) | 11 lines
+
+Index: Makefile
+* Added PROFILE support.
+* Added smoke, help, install, uninstall, and tar targets.
+ 	
+Index: BumpBuildNumber.sh
+Index: nant.build
+Index: uninstall.sh
+Index: install.sh
+* Removed.
+
+
+------------------------------------------------------------------------
+r69 | jesjones@mindspring.com | 2008-06-10 02:43:58 -0700 (Tue, 10 Jun 2008) | 40 lines
+
+Index: source/internal/rules/design/AvoidReRegisterForFinalizeRule.cs
+Index: source/tests/rules/design/AvoidReRegisterForFinalizeTest.cs
+Index: source/internal/rules/xml/Design.xml
+* Added.
+
+Index: source/internal/rules/correctness/DisposeDoesStaticRemoveRule.cs
+Index: source/internal/rules/xml/Correctness.xml
+Index: extras/evildoer/DisposeRemoves.cs
+Index: extras/evildoer/Expected.xml
+* Removed DisposeDoesStaticRemoveRule.
+
+Index: source/internal/rules/microsoft/AttributesNeedUsageRule.cs
+Index: source/internal/rules/xml/Microsoft.xml
+Index: source/tests/rules/microsoft/AttributesNeedUsageTest.cs
+* Don't complain if the type is abstract.
+
+Index: source/internal/rules/reliability/NonSerializableFieldRule.cs
+Index: source/tests/rules/reliability/NonSerializableFieldTest.cs
+Index: source/internal/rules/xml/Reliability.xml
+* Don't complain if the type implements ISerializable.
+
+Index: source/tests/rules/design/CastOpAlternativeTest.cs
+Index: source/internal/rules/design/CastOpAlternativeRule.cs
+* Don't complain if the type is only missing FromFooType.
+
+Index: source/internal/rules/design/UnusedMethodRule.cs
+* Don't complain if the method is decorated with an attribute which disables the rule.
+* Don't complain about the () and (SerializationInfo, StreamingContext) constructors if
+  the type is serializeable.
+* Don't complain about inner exception constructors.
+* Don't complain about (IntPtr) constructors for types descending from Objc3.NSObject.
+
+Index: source/internal/CheckItem.cs
+Index: source/internal/Program.cs
+* Don't terminate if a custom rule can't be loaded.
+
+Index: Makefile
+* Added fcheck1 target.
+
+
+------------------------------------------------------------------------
+r71 | jesjones@mindspring.com | 2008-06-10 19:41:27 -0700 (Tue, 10 Jun 2008) | 47 lines
+
+Index: source/internal/rules/design/HashUsesXorRule.cs
+Index: source/internal/rules/xml/Design.xml
+Index: source/tests/rules/design/HashUsesXorTest.cs
+* Added.
+
+Index: source/internal/rules/correctness/ArgumentException1Rule.cs
+Index: source/tests/rules/correctness/ArgumentException1Test.cs
+* Added.
+
+Index: source/internal/rules/correctness/ArgumentException2Rule.cs
+Index: source/tests/rules/correctness/ArgumentException2Test.cs
+* Added.
+
+Index: source/internal/rules/correctness/UnusedArgRule.cs
+Index: source/tests/rules/correctness/UnusedArgTest.cs
+Index: source/internal/rules/xml/Correctness.xml
+Index: source/internal/Unused.cs
+* Added.
+
+Index: source/internal/rules/reliability/Const2Rule.cs
+Index: source/internal/rules/security/ReadOnlyArrayRule.cs
+Index: source/tests/rules/reliability/Const2Test.cs
+Index: source/internal/rules/xml/Security.xml
+Index: source/tests/rules/security/ReadOnlyArrayTest.cs
+* Only complain if the type is public.
+
+Index: source/internal/rules/xml/Microsoft.xml
+Index: source/internal/rules/xml/Reliability.xml
+* Fixed Dispose language to make it clear that managed fields can always be used
+  but finalizeable fields cannot.
+   
+Index: source/internal/rules/microsoft/DisposableButNoFinalizerRule.cs
+Index: source/internal/rules/microsoft/IDisposableWithoutSuppressFinalizeRule.cs
+Index: source/internal/rules/reliability/DisposeNativeResourcesRule.cs
+Index: source/framework/support/CecilExtensions.cs
+Index: extras/evildoer/BadClass2.cs
+* Fields that are collections of IntPtr are now considered to be native types.
+
+Index: source/internal/rules/design/UnusedMethodRule.cs
+Index: extras/evildoer/GoodClass2.cs
+Index: extras/evildoer/Expected.xml
+* Don't complain for custom event add/remove methods.
+* Can now disable the rule for derived ctors by decorating a base class ctor.
+* Removed the ObjC3.NSObject check.
+* Sort results by declaring type and method name, not by return type.
+
+
+------------------------------------------------------------------------
+r72 | jesjones@mindspring.com | 2008-06-10 21:28:58 -0700 (Tue, 10 Jun 2008) | 18 lines
+
+Index: source/tests/rules/EventTest.cs
+Index: source/tests/rules/TypeTest.cs
+Index: source/tests/rules/MethodTest.cs
+Index: source/tests/rules/CecilTest.cs
+Index: source/tests/rules/AssemblyTest.cs
+* Tests clear their type lists when the fixture finishes.
+* AssemblyFactory is only called once.
+* These two changes make the tests run much much faster.
+
+Index: extras/evildoer/GoodClass.cs
+Index: extras/evildoer/BadStruct.cs
+Index: extras/evildoer/GoodClass2.cs
+Index: extras/evildoer/Expected.xml
+Index: extras/evildoer/GoodStruct.cs
+Index: Makefile
+* Updated.
+
+
+------------------------------------------------------------------------
+r73 | jesjones@mindspring.com | 2008-06-11 01:30:31 -0700 (Wed, 11 Jun 2008) | 13 lines
+
+Index: extras/evildoer/BadClass2.cs
+Index: extras/evildoer/BigNamespace.cs
+Index: extras/evildoer/BadNaming.cs
+Index: extras/evildoer/Expected.xml
+Index: source/internal/rules/design/IdentifierCasingRule.cs
+Index: source/internal/rules/xml/Design.xml
+* Added.
+
+Index: Makefile
+* Use gmcs response files so we can print the gmcs command lines as we build without
+  writing out tons of .cs files.
+  
+
+------------------------------------------------------------------------
+r74 | jesjones@mindspring.com | 2008-06-11 05:21:06 -0700 (Wed, 11 Jun 2008) | 24 lines
+
+Index: source/internal/rules/design/PropertyMatchesAccessorRule.cs
+Index: extras/evildoer/BadClass.cs
+Index: extras/evildoer/Expected.xml
+Index: source/internal/rules/xml/Design.xml
+Index: source/tests/rules/design/PropertyMatchesAccessorTest.cs
+* Added.
+
+Index: source/internal/rules/xml/Performance.xml
+* Added.
+
+Index: source/internal/rules/performance/PropertyReturnsCollectionRule.cs
+Index: extras/evildoer/BadClass2.cs
+* Added.
+
+Index: source/internal/rules/performance/TooManyLocalsRule.cs
+* Added.
+
+Index: source/internal/rules/design/IdentifierCasingRule.cs
+* Only consider externally visible types.
+
+Index: source/internal/rules/design/IdenticalMethodsRule.cs
+* Made the results deterministic (I think).
+ 						 
+
+------------------------------------------------------------------------
+r75 | jesjones@mindspring.com | 2008-06-11 06:05:59 -0700 (Wed, 11 Jun 2008) | 3 lines
+
+Minor smoke fixes.
+
+
+------------------------------------------------------------------------
+r76 | jesjones@mindspring.com | 2008-06-11 20:59:08 -0700 (Wed, 11 Jun 2008) | 30 lines
+
+Index: source/tests/rules/correctness/ArgumentException2Test.cs
+Index: source/internal/rules/correctness/ArgumentException2Rule.cs
+* Special case properties.
+ 						
+Index: source/internal/rules/design/CastOpAlternativeRule.cs
+* Add details.
+
+Index: source/internal/rules/design/PropertyMatchesAccessorRule.cs
+* Only complain if a public Get or Set method is found.
+
+Index: source/tests/rules/CecilTest.cs
+Index: source/tests/rules/AssemblyTest.cs
+Index: source/tests/rules/MethodTest.cs
+Index: source/tests/rules/EventTest.cs
+Index: source/tests/rules/TypeTest.cs
+* Tweaked so custom dll's can again specify the assembly location.
+
+Index: source/app/AnalyzeAssembly.cs
+* Removed some unused args.
+
+Index: Makefile
+* Targets are rebuilt if CSC_FLAGS changes.
+* bin is created as a side effect of variable expansion instead of via a target.
+* install target only copies config file is one isn't there already.
+
+Index: custom/Makefile
+Index: custom/nant.build
+* Replaced the old nant file with a make file.
+
+
+------------------------------------------------------------------------

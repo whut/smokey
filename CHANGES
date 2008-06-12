@@ -1,3 +1,41 @@
+-- Version 1.3.0.0 (r76) ----
+
+* Added nine new rules:
+	- ArgumentException1
+	- ArgumentException2
+	- AvoidReRegisterForFinalize
+	- HashUsesXor
+	- IdentifierCasing
+	- PropertyMatchesAccessor
+	- PropertyReturnsCollection
+	- TooManyLocals
+	- UnusedArg
+* Removed DisposeDoesStaticRemoveRule.
+* AttributesNeedUsageRule doesn't complain if the type is abstract.
+* NonSerializableFieldRule doesn't complain if the type implements ISerializable.
+* CastOpAlternativeTestRule doesn't complain if the type is only missing 
+  FromFooType.
+* Const2Rule only complains if the type is public.
+* UnusedMethodRule:
+	- Don't complain if the method is decorated with an attribute which disables 
+	  the rule.
+	- Don't complain about the () and (SerializationInfo, StreamingContext) 
+	  constructors if the type is serializeable.
+	- Don't complain about inner exception constructors.
+	- Don't complain for custom event add/remove methods.
+	- Can now disable the rule for derived ctors by decorating a base class ctor.
+	- Sort results by declaring type and method name, not by return type.
+* Fields that are collections of IntPtr are now considered to be native types. 
+  This affects DisposableButNoFinalizerRule, IDisposableWithoutSuppressFinalizeRule,
+  and DisposeNativeResourcesRule.
+* Don't terminate if a custom rule can't be loaded.
+* Fixed Dispose language in the rules to make it clear that managed fields can 
+  be used but finalizeable fields cannot.
+* Sped up unit tests a huge amount (mainly by instantiating one AssemblyDefinitions 
+  instead of over 200).
+* Switched to make files instead of nant.
+
+
 -- Version 1.2.0.0 (r60) ----
 
 * Added 34 new rules:
