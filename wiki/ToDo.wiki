@@ -10,7 +10,7 @@ As far as I can tell Smokey is pretty much feature complete so most of the chang
 
  * A few rules want to know if an instruction is executing within a loop. The current code to detect loops fails for do/while loops. One place this is seen is with !RandomUsedOnceRule which will return false positives if random numbers are generated in a do/while.
 
- * The functional test reports a lot of spurious failures in release because the assembly names aren't what it expects.
+ * The functional test still doesn't work quite right with release builds.
 
  * !IdenticalMethodsRule is not deterministic and sometimes reports one or the other identical method. This causes the functional test to sometimes fail.
 
@@ -26,7 +26,6 @@ Better support on Windows: support for file/line numbers and some sort of instal
 
 These are things I'd like to implement, but probably won't get around to any time soon:
 
- * The unit tests take way too long to run. I'm not sure why. Maybe Cecil is constantly reloading the assembly or we're not resetting references to null and therefore thrashing memory.
  * I haven't looked at Smokey memory usage at all. I suspect there's not a lot of room for improvement, but it would be nice to look more closely at it.
  * It'd be nice to be able to provide more hints to direct Smokey. For example, we might be able to do extended type checking by annotating variables with type attributes.
  * We automagically ensure that the code samples in the XML compile, but it would be nice to smoke them as well.
