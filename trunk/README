@@ -1,21 +1,17 @@
 QUICK START
-
 If you're on Unix use the install script. Something like:
-    sudo ./install.sh
+   cd bin
+   sudo make install
     
 Once Smokey is installed you can smoke assemblies using:
-    smoke Cool.dll
+   smoke Cool.dll
     
 To uninstall:
-    sudo ./uninstall.sh
-
+   cd bin
+   sudo make uninstall
 
 MORE INFO
-
 See the wiki for additional information on installing, configuring, running, and
 customizing Smokey. The address is <http://code.google.com/p/smokey/w/list>.
 
-
 jesjones@mindspring.com
-
-

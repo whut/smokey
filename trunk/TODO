@@ -38,20 +38,9 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 199 fxcop
 
 * Release checklist:
-	- make sure everything is checked in
-	- use svn log -r 1:HEAD > CHANGE_LOG
-	- update CHANGES file
-	- update version number in the make file and zap build_num
-	- update custom version number
-	- update SmokeyVersion on old web site
-	- install
-	- make sure the install and uninstall work
-	- update README and wiki
+	- do a checkin
+	- update wiki
 	- we require linq so need mono 1.9.
-	- deprecate ignoreList setting
-	- add dictionary setting
-	- add profile setting
-	- localize config?
 	- mono --debug bin/smokey.exe.exe -generate-html-violations:violations
 	- smoke -profile=system -html -out:report.html /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll
 		don't use custom.dll
@@ -68,6 +57,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- do the following (be sure to fix the versions):
 		svn copy file:///Users/jessejones/projects/Smokey file:///Users/jessejones/projects/releases/smokey-1.X.0.0 -m "Tagging 1.X.0.0"
 * Try to get release functest working, probably need to have a debug only section of expected.xml
+* Get rid of ignoreList setting.
 * Add a few more fxcop rules.
 * Add a few more gendarme rules.
 * IdenticalMethods isn't determinstic.
@@ -296,16 +286,12 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- use svn log -r 1:HEAD > CHANGE_LOG
 	- update CHANGES file
 	- update version number in the make file and zap build_num
-	- update custom version number
-	- update SmokeyVersion on old web site
 	- install
 	- update README and wiki
-	- add dictionary setting
-	- add profile setting
-	- localize config?
 	- mono --debug bin/smokey.exe.exe -generate-html-violations:violations
 	- smoke -profile=system -html -out:report.html /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll
 		don't use custom.dll
+	- update SmokeyVersion on old web site
 	- upload
 		report.html
 		violations

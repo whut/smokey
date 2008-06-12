@@ -2,10 +2,10 @@
 # Public variables
 CSC ?= gmcs
 NUNIT ?= nunit-console2
-MONO ?= $(shell which mono)
+export MONO ?= $(shell which mono)
 
-LOG_PATH ?= /tmp/smokey.log
-INSTALL_DIR ?= /usr/local/bin
+export LOG_PATH ?= /tmp/smokey.log
+export INSTALL_DIR ?= /usr/local/bin
 	
 ifdef RELEASE
 	CSC_FLAGS ?= -checked+ -nowarn:1591 -optimize+
@@ -37,7 +37,7 @@ extra_test_files := source/internal/AssertTraceListener.cs source/internal/Break
 
 xml_files := $(strip $(shell find source/internal/rules/xml -name "*.xml" -print))
 
-base_version := 1.2.xxx.0										# major.minor.build.revision
+base_version := 1.3.xxx.0										# major.minor.build.revision
 version := $(shell ./get_version.sh $(base_version) build_num)	# this will increment the build number stored in build_num
 version := $(strip $(version))
 
@@ -132,16 +132,9 @@ bin/APTCA3.dll: bin/FullTrust.dll extras/miscevil/APTCA3.xml extras/miscevil/APT
 
 # config files
 bin/smokey.exe.config:
-	@echo "generating bin/smokey.exe.config"
-	@echo "<?xml version = \"1.0\" encoding = \"utf-8\" ?>" > bin/smokey.exe.config
-	@echo "<configuration>" >> bin/smokey.exe.config
-	@echo "	<appSettings>" >> bin/smokey.exe.config
-	@echo "		<add key = \"logfile\" value = \"$(LOG_PATH)\"/>" >> bin/smokey.exe.config
-	@echo "		<add key = \"topic:System.Object\" value = \"Info\"/>	<!-- may be off, Error, Warning, Info, Trace, or Debug -->" >> bin/smokey.exe.config
-	@echo "		<add key = \"topic:Smokey.Internal.Rules.AttributePropertiesRule\" value = \"Debug\"/>" >> bin/smokey.exe.config
-	@echo "		<add key = \"consoleWidth\" value = \"80\"/>			<!-- TextReport breaks lines so that that they aren't longer than this -->" >> bin/smokey.exe.config
-	@echo "	</appSettings>" >> bin/smokey.exe.config
-	@echo "</configuration>" >> bin/smokey.exe.config
+	cp extras/Makefile bin
+	cd bin && make smokey.exe.config
+	rm bin/Makefile
 
 bin/tests.dll.config:
 	@echo "generating bin/tests.dll.config"
@@ -187,19 +180,15 @@ help:
 	@echo "Here's an example:"	
 	@echo "sudo make LOG_PATH=~/smokey.log install"	
 
-install: bin/smokey.exe bin/smokey.exe.config
-	cp bin/smokey.exe $(INSTALL_DIR)
-	chmod -x $(INSTALL_DIR)/smokey.exe
-	if [[ ! -e $(INSTALL_DIR)/smokey.exe.config ]]; then cp bin/smokey.exe.config $(INSTALL_DIR); fi
-	echo "#!/bin/sh" > $(INSTALL_DIR)/smoke
-	echo "exec -a smokey.exe $(MONO) $(INSTALL_DIR)/smokey.exe \x24@" >> $(INSTALL_DIR)/smoke
-	chmod +x $(INSTALL_DIR)/smoke
+install: bin/smokey.exe
+	cp extras/Makefile bin
+	cd bin && make install
+	rm bin/Makefile
 	
 uninstall:
-	-rm $(INSTALL_DIR)/smokey.exe
-#	-rm $(INSTALL_DIR)/smokey.exe.config
-	-rm $(INSTALL_DIR)/smoke
-	-rm $(LOG_PATH)
+	cp extras/Makefile bin
+	cd bin && make uninstall
+	rm bin/Makefile
 
 clean:
 	-rm bin/TestResult.xml
@@ -208,11 +197,13 @@ clean:
 	-rm bin/*.mdb
 	-rm bin/exe_files bin/exe_references bin/exe_resources 
 	-rm bin/tests_files bin/tests_references bin/functest_files bin/functest_resources
-	
-tar_binary: bin/smokey.exe
-	tar --create --compress --file=smokey_bin-$(version).tar.gz bin/smokey.exe CHANGES CHANGE_LOG README
+
+tar_binary: bin/smokey.exe bin/smokey.exe.config
+	cp extras/Makefile bin
+	tar --create --compress --file=smokey_bin-$(version).tar.gz bin/smokey.exe CHANGES CHANGE_LOG README bin/Makefile
+	rm bin/Makefile
 	
 tar_source: 
-	tar --create --compress --file=smokey_src-$(version).tar.gz AUTHORS CHANGES CHANGE_LOG IgnoreList.txt MIT.X11 Makefile README SysIgnore.txt gen_docs.sh gen_match.py gen_version.sh get_version.sh custom extras source
+	tar --create --compress --file=smokey_src-$(version).tar.gz AUTHORS CHANGES CHANGE_LOG IgnoreList.txt MIT.X11 Makefile extras/Makefile README SysIgnore.txt gen_docs.sh gen_match.py gen_version.sh get_version.sh custom extras source
 
 tar: tar_binary tar_source
