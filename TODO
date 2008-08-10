@@ -33,31 +33,78 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 
 /Library/Frameworks/Mono.framework/Versions/1.9/lib/mono/gac/gtk-sharp/2.10.0.0__35e10195dab3c99f/gtk-sharp.dll			  
 
-212 rules
+220 rules
 102 gendarme
 199 fxcop
 
-* Release checklist:
-	- do a checkin
-	- update wiki
-	- we require linq so need mono 1.9.
-	- mono --debug bin/smokey.exe.exe -generate-html-violations:violations
-	- smoke -profile=system -html -out:report.html /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll
-		don't use custom.dll
-	- upload
-		report.html
-		violations
-		smokey_bin
-		smokey_src
-		latest cecil
-	- update googlecode description
-	- update wiki todo
-	- send an announcement
-	- make sure everything is checked in
-	- do the following (be sure to fix the versions):
-		svn copy file:///Users/jessejones/projects/Smokey file:///Users/jessejones/projects/releases/smokey-1.X.0.0 -m "Tagging 1.X.0.0"
+* FlagsAttribute was used but values are all sequential.
+* GetHashCode overriden but not Equals.
+* DisposableFields should ignore static fields.
+* ExceptionConstructors should ignore private and interal classes?
+* SynchronizedAttribute is firing for generated methods.
+* (SerializationInfo, StreamingContext) ctor and GetObjectData, but not ISerializable.
 * Try to get release functest working, probably need to have a debug only section of expected.xml
 * Get rid of ignoreList setting.
+* Mono naming xml is kinda weak. For example, leading underscore on fields.
+* Provide a better error for no aspell? This should probably also not cause smokey to return 1.
+    39 InternalError
+
+	Severity: Warning
+	
+	Breaking: No
+	
+	CheckId: C1004
+	
+	File:     <unknown>
+	Name:     
+	Details:     AssemblyAttributeSpellingRule failed visiting PDFLib,
+	Version=1.0.3085.25713, Culture=neutral,
+	PublicKeyToken=bda01913c42ab92f. Exception has been thrown by the
+	target of an invocation. at System.Reflection.MonoMethod.Invoke
+	(System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder
+	binder, System.Object[] parameters, System.Globalization.CultureInfo
+	culture) [0x00000] at System.Reflection.MethodBase.Invoke
+	(System.Object obj, System.Object[] parameters) [0x00000] at
+	Smokey.Framework.Support.RuleDispatcher.DoVisit (System.Object obj)
+	[0x00000] Inner: aspell at (wrapper managed-to-native)
+	Smokey.Internal.Rules.NativeMethods:new_aspell_config () at
+	Smokey.Internal.Rules.Aspell..ctor () [0x00000] at
+	Smokey.Internal.Rules.Aspell.get_Instance () [0x00000] at
+	Smokey.Internal.Rules.AssemblyAttributeSpellingRule.VisitAssembly
+	(Mono.Cecil.AssemblyDefinition assembly) [0x00000] at (wrapper
+	managed-to-native) System.Reflection.MonoMethod:InternalInvoke
+	(object,object[]) at System.Reflection.MonoMethod.Invoke
+	(System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder
+	binder, System.Object[] parameters, System.Globalization.CultureInfo
+	culture) [0x00000]
+	
+	Cause: A rule has failed to run.
+	
+	Description: The rule has a bug and has failed via an exception.
+	
+	Fix: Contact the author of the rule.
+* Looks like we can use pkg-config to get at cecil.
+* Thread was created and started without setting name.
+* GetHashCode snippets on wiki should be a lil better.
+* ExceptionConstructors should not complain about inner exceptions.
+* UseJurassicNaming is complaining about generated methods.
+* Would be nice if InternalException listed the public types.
+* UseJurassicNaming should blow off public fields.
+* PrivateNeedsDo is firing for generated methods.
+* Dont define methods in a system namespace. 
+As a matter of style (and pollution), please do *not* place your
+extension methods into the same namespaces as the types you're extending
+(e.g. don't place StringExtensions into the System namespace).
+
+The reason for this is that your users will want a way to disable your
+extension methods on a case-by-case basis (e.g. your extension methods
+are conflicting with someone elses extension methods), and if you use
+the same namespace as the type you're extending this becomes quite
+difficult to do.  (They would need to remove the `using System;` line,
+for example, and use e.g. System.Array if they wanted to avoid your
+extension methods in one file but use them elsewhere.)
+* CastOpAlternative complains about NSObject.
+* InlineStaticInit kind of sucks.
 * Add a few more fxcop rules.
 * Add a few more gendarme rules.
 * IdenticalMethods isn't determinstic.
@@ -288,7 +335,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- update version number in the make file and zap build_num
 	- install
 	- update README and wiki
-	- mono --debug bin/smokey.exe.exe -generate-html-violations:violations
+	- mono --debug bin/smokey.exe -generate-html-violations:violations
 	- smoke -profile=system -html -out:report.html /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll
 		don't use custom.dll
 	- update SmokeyVersion on old web site
@@ -298,8 +345,6 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 		smokey_bin
 		smokey_src
 		latest cecil
-	- update googlecode description
-	- update wiki todo
 	- send an announcement
 	- make sure everything is checked in
 	- do the following (be sure to fix the versions):

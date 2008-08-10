@@ -984,4 +984,23 @@ normally be Error. -->
 			</Fix>
 		</Translation>
 	</Violation>	
+	
+	<Violation checkID = "C1033" severity = "Error" breaking = "true">
+		<Translation lang = "en" typeName = "InvalidEnumFlags" category = "Correctness">			
+			<Cause>
+			An enum is decorated with FlagsAttribute, but the enum values are all sequential.
+			</Cause>
+		
+			<Description>
+			FlagsAttribute is intended for enums where the values can be combined with bit
+			field ORing. Sequential values cannot be ORed together like this in any useful
+			way.
+			</Description>
+	
+			<Fix>
+			Either remove the attribute or change the values (e.g. instead of 1, 2, 3, 4 use
+			1, 2, 4, 8).
+			</Fix>
+		</Translation>
+	</Violation>	
 </Violations>		

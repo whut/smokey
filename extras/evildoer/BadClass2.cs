@@ -55,6 +55,10 @@ namespace EvilDoer
 	[Flags]
 	enum BadFlag {None = 0x0000, Alpha = 0x0001, Beta = 0x0002};
 
+	// C1033/InvalidEnumFlags
+	[Flags]
+	enum Bads {None = 0, Alpha = 1, Beta = 2, Delta = 3, Gamma = 4};
+
 	// MS1022/FlagsUseNone
 	// MS1025/SuffixName3
 	[Flags]
