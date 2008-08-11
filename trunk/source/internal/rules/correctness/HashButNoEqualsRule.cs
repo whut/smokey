@@ -21,69 +21,57 @@
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+
 using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
+using Smokey.Framework.Support.Advanced.Values;
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Smokey.Internal.Rules
 {	
-	internal sealed class InvalidEnumFlagsRule : Rule
+	internal sealed class HashButNoEqualsRule : Rule
 	{				
-		public InvalidEnumFlagsRule(AssemblyCache cache, IReportViolations reporter) 
-			: base(cache, reporter, "C1034")
+		public HashButNoEqualsRule(AssemblyCache cache, IReportViolations reporter) 
+			: base(cache, reporter, "C1035")
 		{
 		}
 				
 		public override void Register(RuleDispatcher dispatcher) 
 		{
-			dispatcher.Register(this, "VisitBegin");
-			dispatcher.Register(this, "VisitField");
-			dispatcher.Register(this, "VisitEnd");
+			dispatcher.Register(this, "VisitType");
 		}
 				
-		public void VisitBegin(BeginType type)
+		public void VisitType(TypeDefinition type)
 		{
 			Log.DebugLine(this, "-----------------------------------"); 
-			Log.DebugLine(this, "{0}", type.Type);				
+			Log.DebugLine(this, "checking {0}", type);				
 
-			m_needsCheck = type.Type.IsEnum && type.Type.CustomAttributes.Has("FlagsAttribute");
-			m_values.Clear();
-		}
-		
-		public void VisitField(FieldDefinition field)
-		{			
-			if (m_needsCheck && field.IsStatic)
+			// Try to find Equals and GetHashCode.
+			var methods = new List<MethodInfo>();
+			methods.AddRange(Cache.FindMethods(type, "Equals"));
+			methods.AddRange(Cache.FindMethods(type, "GetHashCode"));
+			
+			// Make sure we found the correct ones.
+			bool foundEquals = false;
+			for (int i = 0; i < methods.Count && !foundEquals; ++i)
+				if (methods[i].Method.Name == "Equals" && methods[i].Method.Parameters.Count == 1 && methods[i].Method.IsVirtual)
+					foundEquals = true;
+
+			bool foundHash = false;
+			for (int i = 0; i < methods.Count && !foundHash; ++i)
+				if (methods[i].Method.Name == "GetHashCode" && methods[i].Method.Parameters.Count == 0 && methods[i].Method.IsVirtual)
+					foundHash = true;
+
+			// Check for hash but no equals.
+			if (foundHash && !foundEquals)
 			{
-				if (field.HasConstant && field.Constant != null)
-				{
-					IConvertible convertible = (IConvertible) field.Constant;
-					m_values.Add(convertible.ToInt64(null));
-					Log.DebugLine(this, "found {0}", m_values[m_values.Count - 1]);				
-				}
+				Reporter.TypeFailed(type, CheckID, string.Empty);
 			}
 		}
-
-		public void VisitEnd(EndType type)
-		{
-			if (m_needsCheck && m_values.Count > 3)
-			{
-				m_values.Sort();
-				
-				for (int i = 1; i < m_values.Count; ++i)
-				{
-					if (m_values[i] != m_values[i - 1] + 1)
-						return;
-				}
-
-				Reporter.TypeFailed(type.Type, CheckID, string.Empty);
-			}
-		}
-		
-		private bool m_needsCheck;
-		private List<long> m_values = new List<long>();
 	}
 }
-

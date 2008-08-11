@@ -1003,4 +1003,41 @@ normally be Error. -->
 			</Fix>
 		</Translation>
 	</Violation>	
+	
+	<Violation checkID = "C1034" severity = "Error" breaking = "true">
+		<Translation lang = "en" typeName = "InvalidEnumFlags" category = "Correctness">			
+			<Cause>
+			An enum is decorated with FlagsAttribute, but the enum values are all sequential.
+			</Cause>
+		
+			<Description>
+			FlagsAttribute is intended for enums where the values can be combined with bit
+			field ORing. Sequential values cannot be ORed together like this in any useful
+			way.
+			</Description>
+	
+			<Fix>
+			Either remove the attribute or change the values (e.g. instead of 1, 2, 3, 4 use
+			1, 2, 4, 8).
+			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "C1035" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "HashButNoEquals" category = "Correctness">			
+			<Cause>
+			A type overrides GetHashCode, but not Equals.
+			</Cause>
+		
+			<Description>
+			It's expected that if two instances have the same hash code they will compare
+			equal. If this is not true types like Dictionary and Hashtable may break in
+			subtle ways.
+			</Description>
+	
+			<Fix>
+			Override Equals and ensure that Equals and GetHashCode are consistent.
+			</Fix>
+		</Translation>
+	</Violation>	
 </Violations>		
