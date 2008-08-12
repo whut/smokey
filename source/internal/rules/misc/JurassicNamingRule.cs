@@ -56,6 +56,9 @@ namespace Smokey.Internal.Rules
 			if (!NeedsCheck)
 				return;
 				
+			if (field.IsPublic)
+				return;
+				
 			if ((Type.Attributes & TypeAttributes.Serializable) != TypeAttributes.Serializable)
 			{
 				// Public are pascal cased.

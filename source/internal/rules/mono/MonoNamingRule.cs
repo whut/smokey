@@ -91,6 +91,9 @@ namespace Smokey.Internal.Rules
 			if (!m_needsCheck || method.Name.StartsWith("yy"))
 //			if (!m_needsCheck || method.Name.StartsWith("yy") || method.IsCompilerGenerated() || method.ToString().Contains("AnonymousMethod"))
 				return;
+				
+			if (method.Name.StartsWith("<"))
+				return;
 			
 			// Method name must be PascalCase.
 			if (!method.IsSpecialName && !NamingUtils.IsPascalCase(method.Name))

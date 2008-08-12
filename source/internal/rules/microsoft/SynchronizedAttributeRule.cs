@@ -47,12 +47,15 @@ namespace Smokey.Internal.Rules
 
 			if (!method.Info.Method.ToString().Contains("System.EventHandler"))	// don't worry about the methods added by events
 			{
-				if ((method.Info.Method.Attributes & MethodAttributes.MemberAccessMask) != MethodAttributes.Private)
+				if (!method.Info.Method.ToString().Contains("::add_") && !method.Info.Method.ToString().Contains("::remove_"))	// ditto
 				{
-					if ((method.Info.Method.ImplAttributes & MethodImplAttributes.Synchronized) == MethodImplAttributes.Synchronized)
+					if ((method.Info.Method.Attributes & MethodAttributes.MemberAccessMask) != MethodAttributes.Private)
 					{
-						Log.DebugLine(this, "{0} is synchronized", method.Info.Method);
-						Reporter.MethodFailed(method.Info.Method, CheckID, 0, string.Empty);
+						if ((method.Info.Method.ImplAttributes & MethodImplAttributes.Synchronized) == MethodImplAttributes.Synchronized)
+						{
+							Log.DebugLine(this, "{0} is synchronized", method.Info.Method);
+							Reporter.MethodFailed(method.Info.Method, CheckID, 0, string.Empty);
+						}
 					}
 				}
 			}

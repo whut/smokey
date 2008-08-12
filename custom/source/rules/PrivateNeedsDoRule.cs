@@ -47,6 +47,9 @@ namespace Custom
 		// by with just visiting MethodDefinition. 
 		public void VisitMethod(MethodDefinition method)
 		{
+			if (method.Name.StartsWith("<"))
+				return;
+			
 			// If the method is private and not p/invoke,
 			MethodAttributes attrs = method.Attributes;
 			if ((attrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Private && 
