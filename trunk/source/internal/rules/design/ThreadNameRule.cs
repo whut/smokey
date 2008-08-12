@@ -20,70 +20,68 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Mono.Cecil;
-using Mono.Cecil.Cil;
 using System;
 using System.Collections.Generic;
 using Smokey.Framework;
+using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
+using Smokey.Framework.Support.Advanced;
 
 namespace Smokey.Internal.Rules
 {	
-	internal sealed class DisposableFieldsRule : Rule
+	internal sealed class ThreadNameRule : Rule
 	{				
-		public DisposableFieldsRule(AssemblyCache cache, IReportViolations reporter) 
-			: base(cache, reporter, "R1000")
+		public ThreadNameRule(AssemblyCache cache, IReportViolations reporter) 
+			: base(cache, reporter, "D1061")
 		{
 		}
 				
 		public override void Register(RuleDispatcher dispatcher) 
 		{
 			dispatcher.Register(this, "VisitBegin");
-			dispatcher.Register(this, "VisitField");
+			dispatcher.Register(this, "VisitNewObj");
+			dispatcher.Register(this, "VisitCall");
 			dispatcher.Register(this, "VisitEnd");
 		}
-				
-		public void VisitBegin(BeginType begin)
+						
+		public void VisitBegin(BeginMethod begin)
 		{
 			Log.DebugLine(this, "-----------------------------------"); 
-			Log.DebugLine(this, "{0}", begin.Type);				
+			Log.DebugLine(this, "{0:F}", begin.Info.Instructions);				
 
-			m_type = begin.Type;
-			m_ownsField = false;
-			m_disposable = IsDisposable.Type(Cache, begin.Type);
-			m_details = string.Empty;
+			m_newOffsets.Clear();
+			m_SetCount = 0;
 		}
 		
-		public void VisitField(FieldDefinition field)
-		{			
-			if (!m_disposable && !field.IsStatic)
+		public void VisitNewObj(NewObj newobj)
+		{								
+			if (newobj.Ctor.ToString().StartsWith("System.Void System.Threading.ThreadStart::.ctor("))
 			{
-				if (IsDisposable.Type(Cache, field.FieldType))
-				{
-					Log.DebugLine(this, "found a disposable field: {0}", field.Name);				
-					if (!m_ownsField)
-					{
-						if (OwnsFields.One(m_type, field))
-						{
-							m_ownsField = true;
-							Log.DebugLine(this, "{0} is disposable and owns {1}", m_type, field.Name);
+				m_newOffsets.Add(newobj.Untyped.Offset);
+				Log.DebugLine(this, "   found new at: {0:X2}", newobj.Untyped.Offset);
+			}
+		}
 				
-							m_details = string.Format("{0}{1} ", m_details, field.Name);
-						}
-					}
-				}
+		public void VisitCall(Call call)
+		{			
+			if (call.Target.ToString().StartsWith("System.Void System.Threading.Thread::set_Name("))
+			{
+				Log.DebugLine(this, "   found set at: {0:X2}", call.Untyped.Offset);
+				++m_SetCount;
+			}
+		}
+				
+		public void VisitEnd(EndMethod end)
+		{
+			if (m_newOffsets.Count > m_SetCount)
+			{
+				int offset = m_newOffsets.Count == 1 ? m_newOffsets[0] : 0;
+				Reporter.MethodFailed(end.Info.Method, CheckID, offset, string.Empty);
 			}
 		}
 
-		public void VisitEnd(EndType end)
-		{
-			if (!m_disposable && m_ownsField && m_details.Length > 0)
-				Reporter.TypeFailed(end.Type, CheckID, "Field: " + m_details);
-		}
-		
-		private TypeDefinition m_type;
-		private bool m_disposable;
-		private bool m_ownsField;
-		private string m_details;
+		private List<int> m_newOffsets = new List<int>();
+		private int m_SetCount;
 	}
 }
 

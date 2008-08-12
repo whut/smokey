@@ -698,7 +698,7 @@
 	<Violation checkID = "D1015" severity = "Warning" breaking = "false">
 		<Translation lang = "en" typeName = "ExceptionConstructors" category = "Design">			
 			<Cause>
-			An exception class does not implement the required constructors. 
+			An externally visible exception class does not implement the required constructors. 
 			</Cause>
 	
 			<Description>
@@ -2528,6 +2528,24 @@
 			If the method and the property do different things then give them different names.
 			if they do the same thing then pick one: if the property can be implemented without
 			using much CPU then use that. Otherwise use a method.
+			</Fix>
+		</Translation>
+	</Violation>
+	
+	<Violation checkID = "D1061" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ThreadName" category = "Design">			
+			<Cause>
+			A System.Threading.Thread object was instantiated inside a method, but the method
+			does not set the Name property.
+			</Cause>
+		
+			<Description>
+			Setting the Name property makes it much easier to figure out which thread is which
+			when using a debugger.
+			</Description>
+	
+			<Fix>
+			Set the Name property.
 			</Fix>
 		</Translation>
 	</Violation>

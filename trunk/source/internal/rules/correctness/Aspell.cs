@@ -53,7 +53,16 @@ namespace Smokey.Internal.Rules
 				if (ms_instance == null && !ms_tried)
 				{
 					ms_tried = true;
-					ms_instance = new Aspell();
+					
+					try
+					{
+						ms_instance = new Aspell();
+					}
+					catch (Exception e)
+					{
+						Console.Error.WriteLine("Couldn't load the aspell library.");
+						Log.ErrorLine(true, "Couldn't load aspell: {0}", e.Message);
+					}
 				}
 				
 				return ms_instance;

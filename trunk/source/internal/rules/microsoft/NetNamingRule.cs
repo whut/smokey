@@ -100,6 +100,9 @@ namespace Smokey.Internal.Rules
 			if ((method.Attributes & MethodAttributes.PInvokeImpl) == MethodAttributes.PInvokeImpl)
 				return;
 			
+			if (method.Name.StartsWith("<"))
+				return;
+			
 			// Method name must be PascalCase.
 			if (!method.IsSpecialName && !NamingUtils.IsPascalCase(method.Name))
 			{

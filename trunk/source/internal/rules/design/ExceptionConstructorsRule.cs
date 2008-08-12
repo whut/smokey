@@ -44,7 +44,8 @@ namespace Smokey.Internal.Rules
 			
 		public void VisitBegin(BeginType begin)
 		{
-			m_needsCheck = begin.Type.IsSubclassOf("System.Exception", Cache);
+			m_needsCheck = begin.Type.IsSubclassOf("System.Exception", Cache) &&
+				(begin.Type.IsPublic || begin.Type.IsNestedPublic);
 						
 			if (m_needsCheck)
 			{
