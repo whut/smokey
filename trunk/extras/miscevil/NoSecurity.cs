@@ -67,13 +67,13 @@ namespace Unsecure
 	internal static class Program
 	{
 		[Conditional("DEBUG")]
-		private static void DumpState1()
+		private static void DoDumpState1()
 		{  
 			Console.WriteLine("California");
 		}
 		
 		// D1048/GuiUsesConsole
-		private static void DumpState2()
+		private static void DoDumpState2()
 		{ 
 			Console.WriteLine("Montana");
 		}
@@ -87,8 +87,8 @@ namespace Unsecure
 			
 			try
 			{
-				DumpState1();
-				DumpState2();
+				DoDumpState1();
+				DoDumpState2();
 			
 				// G1001/MessageBoxOptions
 				Ignore.Value = MessageBox.Show("ho", "hum");

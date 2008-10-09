@@ -36,7 +36,7 @@ namespace Smokey.Internal.Rules
 		{
 		}
 				
-		public override void Register(RuleDispatcher dispatcher) 
+		public override void Register(RuleDispatcher dispatcher) 	
 		{
 			dispatcher.Register(this, "VisitType");
 			dispatcher.Register(this, "VisitMethod");
@@ -44,9 +44,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitType(TypeDefinition type)
 		{				
-			TypeAttributes attrs = type.Attributes & TypeAttributes.VisibilityMask;
-			if ((attrs & TypeAttributes.Public) == TypeAttributes.Public ||
-				(attrs & TypeAttributes.Public) == TypeAttributes.NestedPublic)
+			if (type.ExternallyVisible(Cache))
 			{
 				Log.DebugLine(this, "-----------------------------------"); 
 				Log.DebugLine(this, "checking {0}", type.Name);				
@@ -60,7 +58,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitMethod(MethodDefinition method)
 		{				
-			if (method.PubliclyVisible(Cache))
+			if (method.ExternallyVisible(Cache))
 			{
 				Log.DebugLine(this, "-----------------------------------"); 
 				Log.DebugLine(this, "checking {0}", method.Name);				

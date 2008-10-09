@@ -49,8 +49,7 @@ namespace Smokey.Internal.Rules
 			m_failed = false;
 			m_details = string.Empty;
 			
-			TypeAttributes vis = m_type.Attributes & TypeAttributes.VisibilityMask;
-			if (vis == TypeAttributes.Public || vis == TypeAttributes.NestedPublic || vis == TypeAttributes.NestedFamily || vis == TypeAttributes.NestedFamORAssem)
+			if (m_type.ExternallyVisible(Cache))
 			{
 				Log.DebugLine(this, "-----------------------------------"); 
 				Log.DebugLine(this, "{0}", m_type);				

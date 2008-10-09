@@ -55,10 +55,9 @@ namespace Smokey.Internal.Rules
 				{
 					Log.DebugLine(this, "   implements {0}", type);
 					
-					TypeAttributes attrs = begin.Info.Type.Attributes & TypeAttributes.VisibilityMask;
-					if (attrs == TypeAttributes.Public || attrs == TypeAttributes.NestedPublic)
+					if (begin.Info.Type.ExternallyVisible(Cache))
 					{
-						Log.DebugLine(this, "   declaring type is public");
+						Log.DebugLine(this, "   declaring type is externally visible");
 						
 						if (begin.Info.Method.IsVirtual && !begin.Info.Method.IsFinal)
 						{

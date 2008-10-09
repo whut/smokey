@@ -40,7 +40,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitType(TypeDefinition type)
 		{		
-			if (!type.IsSealed && (type.IsPublic || type.IsNestedPublic))
+			if (!type.IsSealed && type.ExternallyVisible(Cache))
 			{
 				Log.DebugLine(this, "-----------------------------------"); 
 				Log.DebugLine(this, "{0}", type);

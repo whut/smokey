@@ -51,7 +51,7 @@ namespace Smokey.Internal.Rules
 			Log.DebugLine(this, "checking {0}", begin.Type);
 
 			m_names = string.Empty;
-			m_needsCheck = begin.Type.IsPublic || begin.Type.IsNestedPublic;
+			m_needsCheck = begin.Type.ExternallyVisible(Cache);
 		}
 		
 		public void VisitField(FieldDefinition field)

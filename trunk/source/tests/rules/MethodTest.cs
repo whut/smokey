@@ -85,7 +85,8 @@ namespace Smokey.Tests
 			methods.AddRange(m_bad);
 			methods.AddRange(m_used);
 			
-			AssemblyCache cache = new AssemblyCache(Assembly, methods);
+			TypeDefinition baseType = Assembly.MainModule.Types[GetType().FullName];		// some of the tests require an externally visible type
+			AssemblyCache cache = new AssemblyCache(Assembly, baseType, methods);
 			RuleDispatcher dispatcher = new RuleDispatcher();
 
 			// Create the rule.

@@ -58,8 +58,9 @@ namespace Smokey.Internal.Rules
 						string name = type.BaseType.ToString();
 						if (name == "System.Exception" || name == "System.SystemException" || name == "System.ApplicationException")
 						{
+							string details = string.Format("Public Types: {0}", string.Join(", ", Cache.PublicTypes));
 							Log.DebugLine(this, "exception base: {0}", name);	
-							Reporter.TypeFailed(type, CheckID, string.Empty);
+							Reporter.TypeFailed(type, CheckID, details);
 						}
 					}
 				}

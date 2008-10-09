@@ -78,7 +78,8 @@ namespace Smokey.Tests
 			types.AddRange(m_good);	
 			types.AddRange(m_bad);
 			types.AddRange(m_used);
-			
+			types.Add(Assembly.MainModule.Types[GetType().FullName]);		// some of the tests require an externally visible type
+
 			AssemblyCache cache = new AssemblyCache(Assembly, types);
 			RuleDispatcher dispatcher = new RuleDispatcher();
 

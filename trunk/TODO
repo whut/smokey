@@ -34,10 +34,48 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 /Library/Frameworks/Mono.framework/Versions/1.9/lib/mono/gac/gtk-sharp/2.10.0.0__35e10195dab3c99f/gtk-sharp.dll			  
 
 220 rules
-102 gendarme
 199 fxcop
+102 gendarme
 
-* Do a checkin.
+* Don't count <>c__CompilerGenerated25 as a public type. Maybe public types can be logged
+  so rules like InternalException don't suck (or the first few anyway).
+* Godclass needs to special case generic types.
+* Don't throw from Dispose (hides original exception when using statement is used). I think
+  they will also be silently ignored if Dispose was called from a finalizer.
+* Class has trivial get/set and an Equals which does not use that field.
+* Use tar --exclude \*/.svn --exclude \*/.svn/\*
+* Instead of Ignore and Unused just have Unused.Value
+* RedundantPredicate
+	- A && A			A
+	- A || A			A
+	- A && !A			false
+	- A || !A			true
+	- !!A
+	- require A to be a function call for now
+	- probably need some support for building expressions
+* Equals/op == always returns true or false.
+* CompareTo/op </op >/etc always returns 1 or -1: not symetric
+* CompareTo/op </op >/etc always returns 0: borderline useless.
+* CompareTo returns number outside [-1, 1]?
+* Make sure CompareTo is included in the equals/hash cross check.
+* | or & is used with an enum which is not decorated with [Flags].
+* Thread.Abort is evil (unless you're OK with shutting down the app):
+	http://www.interact-sw.co.uk/iangblog/2004/11/12/cancellation
+* Should be able to specify text files to spell check.
+* Can we add a grammar checker? Only if the text includes periods?
+* Type is only used by private methods of one type (so the first type can be made private).
+* Overrides Equals, but isnt IEquatable.
+* InternalException really needs to list the public types (or first 5 or so).
+* UseJurassicNaming complains about static public fields. Also type P1`1
+* GetObjectData doesn't add all non-static fields and the field it doesn't add is not 
+  marked with: NonSerializedAttribute, OptionalFieldAttribute, XmlIgnoreAttribute, or 
+  DefaultValueAttribute
+* Are there any libraries which will help us get file and line numbers with .net?
+* Look at ndepend, probably should add a link to it too:
+	http://www.NDepend.com
+	http://www.ndepend.com/Features.aspx#CQL
+	WARN IF Count != 1 IN SELECT TYPES WHERE !IsImmutable AND FullNameIs "MyClassThatShouldbeImmutable"
+* Large property?
 * Add more fxcop rules.
 * Try to get release functest working, probably need to have a debug only section of expected.xml
 * Get rid of ignoreList setting.
@@ -65,13 +103,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Foreign key but no update rule.
 * Re-add MethodCanBeMadeStaticRule but disable it by default.
 * Watchdog timeout should be configurable.
-* RedundantPredicate
-	- A && A			A
-	- A || A			A
-	- A && !A			false
-	- A || !A			true
-	- probably need some support for building expressions
-* Rename the PubliclyVisible method ExternallyVisible.
+* Rename the ExternallyVisible method ExternallyVisible.
 * Try profiling on linux.
 * (SerializationInfo, StreamingContext) ctor and GetObjectData, but not ISerializable.
 * Remove support for ignoreList config setting.
@@ -79,7 +111,6 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
   do: we want to do stuff like visting the body of anonymous methods to see what they call for example.
 * AssemblyResolver.Resolver.Resolve can be used to get a definition from a reference.
   a list of violations without messing with System.Process or external files.
-* Unit tests take too long to run. Maybe we can cleanup better?
 * FinalizerUsesFinalizeableRule
 	- would need to do some code flow based on the disposing flag
 * Try heapbuddy.

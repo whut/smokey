@@ -51,7 +51,7 @@ check: bin/tests.dll bin/tests.dll.config
 	$(NUNIT) -nologo -config=bin/tests.dll.config bin/tests.dll
 
 check1: bin/tests.dll bin/tests.dll.config
-	$(NUNIT) -nologo -config=bin/tests.dll.config -fixture=Smokey.Tests.ThreadNameTest bin/tests.dll
+	$(NUNIT) -nologo -config=bin/tests.dll.config -fixture=Smokey.Tests.UseBaseTypesTest2 bin/tests.dll
 
 ftest_asms := bin/evildoer.dll,bin/NoSecurity.exe,bin/APTCA.dll,bin/APTCA2.dll,bin/APTCA3.dll
 fcheck: bin/smokey.exe $(subst $(comma), ,$(ftest_asms)) bin/FullTrust.dll bin/functest.exe
@@ -70,7 +70,7 @@ bin/exe_files: $(exe_files)
 	@echo "$(exe_files)" > bin/exe_files
 	
 bin/exe_resources: $(xml_files) IgnoreList.txt SysIgnore.txt
-	@echo -n "-resource:IgnoreList.txt -resource:SysIgnore.txt " > bin/exe_resources
+	@echo "-resource:IgnoreList.txt -resource:SysIgnore.txt " > bin/exe_resources
 	@echo $(xml_files) | sed "s/source/-resource:source/g" >> bin/exe_resources
 
 bin/exe_references:

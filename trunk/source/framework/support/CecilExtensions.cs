@@ -268,51 +268,69 @@ namespace Smokey.Framework.Support
 			return true;
 		}
 		
+		/// <summary>Returns true if the type is public and its declaring type(s) are
+		/// public.</summary>
+		public static bool ExternallyVisible(this TypeDefinition type, AssemblyCache cache)	
+		{
+			DBC.Pre(type != null, "type is null");				
+			DBC.Pre(cache != null, "cache is null");
+			
+			bool visible = false;
+				
+			TypeAttributes attrs = type.Attributes & TypeAttributes.VisibilityMask;
+			if (attrs == TypeAttributes.Public)
+			{
+				visible = true;
+			}
+			else if (attrs == TypeAttributes.NestedPublic)	// this just means that the class is public and nested
+			{
+				type = cache.FindType(type.DeclaringType);
+				if (type != null)
+					visible = type.ExternallyVisible(cache);
+			}
+			
+			return visible;
+		}
+		
 		/// <summary>Returns true if the method is public and its declaring type(s) are
 		/// public.</summary>
-		public static bool PubliclyVisible(this MethodDefinition method, AssemblyCache cache)	// TODO: shouldn't this be externally visible?
+		public static bool ExternallyVisible(this MethodDefinition method, AssemblyCache cache)	
 		{
 			DBC.Pre(method != null, "method is null");				
 			DBC.Pre(cache != null, "cache is null");
 				
-			bool pblc = (method.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Public;
+			bool visible = false;
 			
-			TypeReference tr = method.DeclaringType;
-			while (tr != null && pblc)
+			if ((method.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Public)
 			{
-				TypeDefinition type = cache.FindType(tr);
+				TypeDefinition type = cache.FindType(method.DeclaringType);
 				if (type != null)
-				{
-					TypeAttributes attrs = type.Attributes & TypeAttributes.VisibilityMask;
-					pblc = (attrs == TypeAttributes.Public) || (attrs == TypeAttributes.NestedPublic);
-				}
-				
-				tr = tr.DeclaringType;
+					visible = type.ExternallyVisible(cache);
 			}
-			
-			return pblc;
+							
+			return visible;
 		}
 		
-		/// <summary>Returns true if the method is private or its declaring type(s) are
-		/// private.</summary>
+		/// <summary>Returns true if the method is private or its declaring type is private.</summary>
 		public static bool PrivatelyVisible(this MethodDefinition method, AssemblyCache cache)
 		{
 			DBC.Pre(method != null, "method is null");				
 			DBC.Pre(cache != null, "cache is null");
-				
-			bool prvt = (method.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Private;
 			
-			TypeReference tr = method.DeclaringType;
-			while (tr != null && !prvt)
+			bool invisible = false;
+			
+			if ((method.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Private)
 			{
-				TypeDefinition type = cache.FindType(tr);
+				invisible = true;
+			}
+			else
+			{
+				TypeDefinition type = cache.FindType(method.DeclaringType);
 				if (type != null)
-					prvt = (type.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate;
-				
-				tr = tr.DeclaringType;
+					invisible = (type.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate;
 			}
 			
-			return prvt;
+			return invisible;
 		}
 		
 		/// <summary>Returns the interface or type the method was first declared in.</summary>

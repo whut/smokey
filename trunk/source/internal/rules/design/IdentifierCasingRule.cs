@@ -52,7 +52,7 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitMethod(MethodDefinition method)
 		{						
-			if (method.PubliclyVisible(Cache))
+			if (method.ExternallyVisible(Cache))
 			{
 				m_methods.Add(method.Name);
 				
@@ -85,7 +85,7 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitType(TypeDefinition type)
 		{						
-			if (type.IsPublic || type.IsNestedPublic)
+			if (type.ExternallyVisible(Cache))
 			{
 				m_types.Add(type.FullName);
 			

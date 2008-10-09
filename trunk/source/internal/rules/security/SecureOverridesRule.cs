@@ -55,8 +55,7 @@ namespace Smokey.Internal.Rules
 			
 			if (!begin.Type.IsSealed)
 			{
-				TypeAttributes vis = begin.Type.Attributes & TypeAttributes.VisibilityMask;
-				if (vis == TypeAttributes.Public || vis == TypeAttributes.NestedPublic)
+				if (begin.Type.ExternallyVisible(Cache))
 				{
 					if (DoHasLinkDemand(begin.Type.SecurityDeclarations))
 					{

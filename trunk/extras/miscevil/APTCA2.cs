@@ -64,7 +64,7 @@ namespace Aptca2
 	{
 		public static void Good1()
 		{
-			OnTransparent();
+			DoTransparent();
 		}
 		
 		[SecurityCritical]
@@ -91,7 +91,7 @@ namespace Aptca2
 		public static void Bad2()
 		{
 			Console.Error.WriteLine("1");
-			OnCallCritical();
+			DoCallCritical();
 			Console.Error.WriteLine("2");
 		}
 		
@@ -100,12 +100,12 @@ namespace Aptca2
 			DoCritical2();
 		}
 		
-		private static void OnTransparent()
+		private static void DoTransparent()
 		{
 			Console.Error.WriteLine("5");
 		}
 		
-		private static void OnCallCritical()
+		private static void DoCallCritical()
 		{
 			DoCritical1();
 		}

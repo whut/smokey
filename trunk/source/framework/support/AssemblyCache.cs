@@ -45,8 +45,7 @@ namespace Smokey.Framework.Support
 			{
 				foreach (TypeDefinition type in module.Types)
 				{	
-					if (!m_hasPublics)
-						DoCheckForPublics(type);
+					DoCheckForPublics(type);
 					
 					m_types.Add(type.MetadataToken, type);
 					if (callback != null)
@@ -65,15 +64,16 @@ namespace Smokey.Framework.Support
 		}	
 		
 #if TEST
-		public AssemblyCache(AssemblyDefinition assembly, List<MethodInfo> methods)
+		public AssemblyCache(AssemblyDefinition assembly, TypeDefinition baseType, List<MethodInfo> methods)
 		{			
+			DoCheckForPublics(baseType);	
+			m_types.Add(baseType.MetadataToken, baseType);
+				
 			foreach (MethodInfo method in methods)
 			{
 				if (!m_types.ContainsKey(method.Type.MetadataToken))
 				{
-					if (!m_hasPublics)
-						DoCheckForPublics(method.Type);
-					
+					DoCheckForPublics(method.Type);	
 					m_types.Add(method.Type.MetadataToken, method.Type);
 				}
 				
@@ -96,9 +96,7 @@ namespace Smokey.Framework.Support
 		{			
 			foreach (TypeDefinition type in types)
 			{
-				if (!m_hasPublics)
-					DoCheckForPublics(type);
-					
+				DoCheckForPublics(type);					
 				m_types.Add(type.MetadataToken, type);
 
 				List<MethodInfo> ml = new List<MethodInfo>();			
@@ -270,7 +268,12 @@ namespace Smokey.Framework.Support
 		/// <summary>Returns true if the assembly has externally visible types.</summary>
 		public bool HasPublicTypes
 		{
-			get {return m_hasPublics;}
+			get {return m_publics.Count > 0;}
+		}
+		
+		public string[] PublicTypes
+		{
+			get {return m_publics.ToArray();}
 		}
 		
 		#region Private Methods -----------------------------------------------
@@ -350,9 +353,15 @@ namespace Smokey.Framework.Support
 		
 		private void DoCheckForPublics(TypeDefinition type)
 		{
-			TypeAttributes visibility = type.Attributes & TypeAttributes.VisibilityMask;
-			if (visibility == TypeAttributes.Public || visibility == TypeAttributes.NestedPublic)	// need nested for the unit test
-				m_hasPublics = true;
+			if (m_publics.Count < 4)
+			{
+				if (type.ExternallyVisible(this))
+					if (m_publics.IndexOf(type.FullName) < 0)
+						m_publics.Add(type.FullName);
+				
+				if (m_publics.Count == 4)
+					m_publics.Add("...");
+			}
 		}
 		#endregion
 		
@@ -366,7 +375,7 @@ namespace Smokey.Framework.Support
 		private List<AssemblyDefinition> m_depedent = new List<AssemblyDefinition>();
 
 		private SymbolTable m_symbols;
-		private bool m_hasPublics;
+		private List<string> m_publics = new List<string>();
 
 #if TEST
 		private static Dictionary<string, TypeDefinition> ms_externalTypes;

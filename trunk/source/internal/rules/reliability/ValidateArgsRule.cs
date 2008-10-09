@@ -185,7 +185,7 @@ namespace Smokey.Internal.Rules
 		
 		protected override bool OnNeedsCheck(TypeDefinition type) 
 		{
-			return type.IsPublic || type.IsNestedPublic;
+			return type.ExternallyVisible(Cache);
 		}
 				
 		protected override bool OnNeedsCheck(TypeDefinition type, MethodDefinition method) 
@@ -210,7 +210,7 @@ namespace Smokey.Internal.Rules
 				
 		protected override bool OnNeedsCheck(TypeDefinition type, MethodDefinition method) 
 		{
-			if (type.IsPublic || type.IsNestedPublic)
+			if (type.ExternallyVisible(Cache))
 				return method.IsAssembly;
 			else
 				return method.IsPublic || method.IsAssembly;
