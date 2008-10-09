@@ -53,8 +53,7 @@ namespace Smokey.Internal.Rules
 			
 			if (m_method.IsConstructor)
 			{		
-				TypeAttributes vis = m_type.Attributes & TypeAttributes.VisibilityMask;
-				if (vis == TypeAttributes.Public || vis == TypeAttributes.NestedPublic || vis == TypeAttributes.NestedFamily || vis == TypeAttributes.NestedFamORAssem)
+				if (m_type.ExternallyVisible(Cache))
 				{
 					if (m_type.BaseImplements("System.Runtime.Serialization.ISerializable", Cache))
 					{

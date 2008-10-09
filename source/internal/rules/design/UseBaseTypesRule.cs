@@ -54,7 +54,7 @@ namespace Smokey.Internal.Rules
 			m_info = begin.Info;
 			m_needsCheck = false;
 			
-			if (begin.Info.Method.PubliclyVisible(Cache))
+			if (begin.Info.Method.ExternallyVisible(Cache))
 			{
 				if (begin.Info.Method.SemanticsAttributes == 0)
 				{
@@ -104,7 +104,7 @@ namespace Smokey.Internal.Rules
 						{
 							TypeReference tr = call.Target.GetDeclaredIn(Cache);
 							TypeDefinition type = Cache.FindType(tr);
-							if (type != null && (type.IsPublic || type.IsNestedPublic))
+							if (type != null && type.ExternallyVisible(Cache))
 							{
 								Log.DebugLine(this, "found type {0}", type.FullName);
 							

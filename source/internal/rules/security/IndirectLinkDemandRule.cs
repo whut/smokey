@@ -53,7 +53,7 @@ namespace Smokey.Internal.Rules
 			{
 				// if it does not have a security demand then,
 				MethodInfo info = Cache.FindMethod(entry.Key);
-				if (info != null && info.Method.PubliclyVisible(Cache) && !DoHasSecurityDemand(info.Method))
+				if (info != null && info.Method.ExternallyVisible(Cache) && !DoHasSecurityDemand(info.Method))
 				{
 					foreach (MethodReference callee in entry.Value)
 					{

@@ -40,7 +40,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitEvent(EventDefinition evt)
 		{							
-			if (evt.AddMethod.PubliclyVisible(Cache))
+			if (evt.AddMethod.ExternallyVisible(Cache))
 			{
 				Log.DebugLine(this, "-----------------------------------"); 
 				Log.DebugLine(this, "event: {0}", evt.Name);	

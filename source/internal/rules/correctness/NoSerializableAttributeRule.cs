@@ -44,8 +44,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitType(TypeDefinition type)
 		{
-			TypeAttributes vis = type.Attributes & TypeAttributes.VisibilityMask;
-			if (vis == TypeAttributes.Public || vis == TypeAttributes.NestedPublic || vis == TypeAttributes.NestedFamily || vis == TypeAttributes.NestedFamORAssem)
+			if (type.ExternallyVisible(Cache))
 			{
 				if (type.Implements("System.Runtime.Serialization.ISerializable"))
 				{

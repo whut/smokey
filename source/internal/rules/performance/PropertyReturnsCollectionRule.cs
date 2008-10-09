@@ -46,7 +46,7 @@ namespace Smokey.Internal.Rules
 			Log.DebugLine(this, "-----------------------------------"); 
 			Log.DebugLine(this, "{0}", begin.Type);				
 
-			m_needsCheck = begin.Type.IsPublic || begin.Type.IsNestedPublic;
+			m_needsCheck = begin.Type.ExternallyVisible(Cache);
 		}
 		
 		public void VisitProp(PropertyDefinition prop)

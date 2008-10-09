@@ -481,7 +481,7 @@
 	<Violation checkID = "P1013" severity = "Warning" breaking = "true">
 		<Translation lang = "en" typeName = "UnsealedAttribute" category = "Performance">			
 			<Cause>
-			A public type inherits from System.Attribute, is not abstract, and is not sealed.
+			An externally visible type inherits from System.Attribute, is not abstract, and is not sealed.
 			</Cause>
 		
 			<Description>

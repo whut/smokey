@@ -89,13 +89,8 @@ namespace Smokey.Internal.Rules
 					break;
 					
 				// Method cannot be externally visible.
-				TypeAttributes vis = m_type.Attributes & TypeAttributes.VisibilityMask;
-				MethodAttributes access = method.Attributes & MethodAttributes.MemberAccessMask;
-				if (vis == TypeAttributes.Public || vis == TypeAttributes.NestedPublic || vis == TypeAttributes.NestedFamily || vis == TypeAttributes.NestedFamORAssem)
-				{
-					if (access == MethodAttributes.Family || access == MethodAttributes.FamORAssem || access == MethodAttributes.Public)
-						break;
-				}
+				if (method.ExternallyVisible(Cache))
+					break;
 				
 				// Type and method cannot be generic (because a simple MetadataToken
 				// comparison doesn't work with them).

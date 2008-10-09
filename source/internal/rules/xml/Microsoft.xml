@@ -800,7 +800,7 @@
 	<Violation checkID = "MS1018" severity = "Warning" breaking = "true">	
 		<Translation lang = "en" typeName = "VisibleFields" category = "Microsoft Design Guidelines">			
 			<Cause>
-			A public type has non-constant public or protected fields.
+			An externally visible type has non-constant public or protected fields.
 			</Cause>
 	
 			<Description>

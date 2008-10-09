@@ -32,7 +32,7 @@ namespace Smokey.Internal.Rules
 {	
 	internal sealed class UnsealedAttributeRule : Rule
 	{				
-		public UnsealedAttributeRule(AssemblyCache cache, IReportViolations reporter) 
+		public UnsealedAttributeRule(AssemblyCache cache, IReportViolations reporter) 	
 			: base(cache, reporter, "P1013")
 		{
 		}
@@ -51,8 +51,7 @@ namespace Smokey.Internal.Rules
 				
 				if (!type.IsSealed && !type.IsAbstract)
 				{
-					TypeAttributes vis = type.Attributes & TypeAttributes.VisibilityMask;
-					if (vis == TypeAttributes.Public || vis == TypeAttributes.NestedPublic)
+					if (type.ExternallyVisible(Cache))
 					{
 						Log.DebugLine(this, "{0} has no usage attribute", type.Name); 
 						Reporter.TypeFailed(type, CheckID, string.Empty);

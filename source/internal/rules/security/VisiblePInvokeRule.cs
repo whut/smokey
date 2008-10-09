@@ -51,7 +51,7 @@ namespace Smokey.Internal.Rules
 			
 			if (method.IsPInvokeImpl)
 			{
-				if (method.PubliclyVisible(Cache))
+				if (method.ExternallyVisible(Cache))
 				{
 					Reporter.MethodFailed(method, CheckID, 0, string.Empty);
 				}

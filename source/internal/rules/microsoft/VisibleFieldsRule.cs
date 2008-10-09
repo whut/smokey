@@ -80,17 +80,7 @@ namespace Smokey.Internal.Rules
 		#region Private methods
 		private bool DoIsVisible(TypeDefinition type)
 		{
-			bool visible = false;
-			
-			switch (type.Attributes & TypeAttributes.VisibilityMask)
-			{
-				case TypeAttributes.Public:
-				case TypeAttributes.NestedPublic:
-				case TypeAttributes.NestedFamily:
-				case TypeAttributes.NestedFamORAssem:
-					visible = true;
-					break;
-			}
+			bool visible = type.ExternallyVisible(Cache);
 			Log.DebugLine(this, "{0}.visible = {1}", type.Name, visible);
 			
 			return visible;

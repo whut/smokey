@@ -47,7 +47,7 @@ namespace Smokey.Internal.Rules
 			Log.DebugLine(this, "-----------------------------------"); 
 			Log.DebugLine(this, "checking {0}", begin.Type);				
 
-			m_needsCheck = !begin.Type.IsEnum && (begin.Type.IsPublic || begin.Type.IsNestedPublic);
+			m_needsCheck = !begin.Type.IsEnum && begin.Type.ExternallyVisible(Cache);
 			m_details = string.Empty;
 		}
 		
