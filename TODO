@@ -33,15 +33,66 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 
 /Library/Frameworks/Mono.framework/Versions/1.9/lib/mono/gac/gtk-sharp/2.10.0.0__35e10195dab3c99f/gtk-sharp.dll			  
 
-220 rules
+224 rules
 199 fxcop
 102 gendarme
 
-* Don't count <>c__CompilerGenerated25 as a public type. Maybe public types can be logged
-  so rules like InternalException don't suck (or the first few anyway).
-* Godclass needs to special case generic types.
-* Don't throw from Dispose (hides original exception when using statement is used). I think
-  they will also be silently ignored if Dispose was called from a finalizer.
+* Do a checkin
+* Clean up disposable rules:
+	Disposable
+		methods don't call ObjectDisposedException						NoObjectDisposedException
+		native resource isn't disposed									DisposeNativeResources
+		disposable fields are not disposed								DisposableFields DisposeFields
+		叨nly Dispose overload should be void Dispose(bool)
+		主ispose() should not be virtual
+		主ispose(bool) should be virtual if the class is not sealed
+		主ispose should not throw
+		叫tucts should not be IDisposable and have unmanaged types
+		主ispose(false) needs to check for null fields before using them
+	
+	BaseDisposable
+		has finalizer but doesn't call suppress							IDisposable
+		叩eed virtual Dispose(bool) if the class is not sealed
+		主ispose() should just call Dispose(false) (and supresss if it has a finalizer)
+	
+	DerivedDisposable
+		Dispose(bool) does not call base Dispose						BaseDisposable
+		finalizer is overriden											OverridenFinalizer
+		卡on't implement IDisposable
+		卡on't have Dispose()
+		
+	Finalizable
+		finalizer is empty												EmptyFinalizer
+		卯inalizer should not throw
+	
+	DisposeNaming
+		卡on't use Dispose if not IDisposable
+		叩o DoDispose or OnDispose
+* Don't throw from Dispose (hides original exception when using statement is used, makes
+  catch handlers harder to write). 
+	Note that with the .NET Framework 2.0 and later, throwing an exception from a finalizer 
+	thread will, by default, tear down the application. This is different than in previous 
+	versions, where exceptions from the finalizer thread would be silently eaten by the 
+	runtime.
+* Don't throw from finalizer.
+* If class is not sealed and disposble need virtual Dispose(bool)
+* Really dicy for Dispose(false) to refer to managed fields (every field used by that object
+  and its fields cannot be disposable).
+* Don't have Dipose signatures other than void Dispose() and void Dispose(bool disposing)
+  Don't have DoDispose or OnDispose
+* Don't override or make virtual void Dispose()
+* Don't reimplement Dipose or IDisposable.
+* Dispose should call Dispose (or Close) on fields that are disposable.
+* Don't create disposable structs which have unmanaged types.
+  Issues with copying the struct.
+* Dispose(false) needs to check fields for null before using them (object could have failed
+  during construction).
+* System.Console is safe to use from finalizers.
+* Prefer SafeHandle
+* Don't override finalizers.
+* If both Dispose methods are present Dispose() should just call Dispose(false) (and if a 
+  finalizer is present SuppressFinalize)
+* Point people to http://www.bluebytesoftware.com/blog/2005/04/08/DGUpdateDisposeFinalizationAndResourceManagement.aspx
 * Class has trivial get/set and an Equals which does not use that field.
 * Use tar --exclude \*/.svn --exclude \*/.svn/\*
 * Instead of Ignore and Unused just have Unused.Value
@@ -71,6 +122,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
   marked with: NonSerializedAttribute, OptionalFieldAttribute, XmlIgnoreAttribute, or 
   DefaultValueAttribute
 * Are there any libraries which will help us get file and line numbers with .net?
+	http://blogs.msdn.com/jmstall/archive/2005/10/08/symbol-apis.aspx
 * Look at ndepend, probably should add a link to it too:
 	http://www.NDepend.com
 	http://www.ndepend.com/Features.aspx#CQL

@@ -96,10 +96,12 @@ namespace Smokey.Internal
 			DBC.Assert(cache != null, "cache is null");
 
 			Profile.Start("LoadRules");
-			DoLoadRules(assembly, cache, severity, ignoreBreaks);
+			int count = DoLoadRules(assembly, cache, severity, ignoreBreaks);
 			DoCheckXml();
-			DoLoadCustomRules(cache, severity, ignoreBreaks);
+			count += DoLoadCustomRules(cache, severity, ignoreBreaks);
 			Profile.Stop("LoadRules");
+
+			Log.InfoLine(this, "loaded {0} rules (although not all may be used)", count); 
 		}
 		
 		public void Init(AssemblyCache cache, List<Error> errors)
@@ -214,8 +216,10 @@ namespace Smokey.Internal
 		}
 
 		[DisableRule("MS1011", "DontSwallowException")]
-		private void DoLoadCustomRules(AssemblyCache cache, Severity severity, bool ignoreBreaks)
+		private int DoLoadCustomRules(AssemblyCache cache, Severity severity, bool ignoreBreaks)
 		{
+			int count = 0;
+			
 			string paths = Settings.Get("custom", string.Empty);
 			foreach (string path in paths.Split(':'))
 			{
@@ -225,7 +229,7 @@ namespace Smokey.Internal
 					{
 						System.Reflection.Assembly assembly = System.Reflection.Assembly.LoadFrom(path);
 						ViolationDatabase.LoadCustom(assembly);
-						DoLoadRules(assembly, cache, severity, ignoreBreaks);
+						count += DoLoadRules(assembly, cache, severity, ignoreBreaks);
 					}
 				}
 				catch (Exception)
@@ -233,10 +237,13 @@ namespace Smokey.Internal
 					// DoPostOptionsInit will handle alerting the user
 				}
 			}
+			
+			return count;
 		}
 	
-		private void DoLoadRules(System.Reflection.Assembly assembly, AssemblyCache cache, Severity severity, bool ignoreBreaks)
+		private int DoLoadRules(System.Reflection.Assembly assembly, AssemblyCache cache, Severity severity, bool ignoreBreaks)
 		{			
+			int count = 0;
 			TargetRuntime runtime = cache.Assembly.Runtime;
 			
 #if DEBUG
@@ -261,6 +268,7 @@ namespace Smokey.Internal
 								m_rules.Add(rule);
 							}
 						}
+						++count;
 #if DEBUG
 						m_checkIDs.Add(rule.CheckID);
 #endif
@@ -273,6 +281,8 @@ namespace Smokey.Internal
 					}
 				}
 			}
+			
+			return count;
 		}
 		
 		[Conditional("DEBUG")]

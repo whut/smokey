@@ -52,9 +52,6 @@ namespace Smokey.Internal.Rules
 		{
 			m_details = string.Empty;
 			m_needsCheck = assembly.CustomAttributes.Has("SecurityTransparentAttribute");
-			
-//			if (m_needsCheck)
-//				Console.WriteLine("transparent");
 		}
 
 		public void VisitType(TypeDefinition type)
@@ -101,7 +98,6 @@ namespace Smokey.Internal.Rules
 			if (m_details.Length > 0)
 			{
 				m_details = "Asserting: " + m_details;
-//				Console.WriteLine(m_details);
 				Reporter.AssemblyFailed(Cache.Assembly, CheckID, m_details);
 			}
 		}
@@ -120,7 +116,7 @@ namespace Smokey.Internal.Rules
 			return false;
 		}
 
-		private string m_details;
+		private string m_details = string.Empty;
 		private bool m_failed;
 		private bool m_needsCheck;
 	}
