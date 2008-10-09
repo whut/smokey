@@ -59,7 +59,6 @@ namespace Smokey.Internal.Rules
 				{
 					if (attr.ConstructorParameters.Count == 0)
 					{
-//						Console.WriteLine("mixed");
 						m_needsCheck = true;
 						break;
 					}
@@ -127,7 +126,6 @@ namespace Smokey.Internal.Rules
 			if (m_details.Length > 0)
 			{
 				m_details = "Asserting: " + m_details;
-//				Console.WriteLine(m_details);
 				Reporter.AssemblyFailed(Cache.Assembly, CheckID, m_details);
 			}
 		}
@@ -147,7 +145,7 @@ namespace Smokey.Internal.Rules
 		}
 
 		private bool m_needsCheck;
-		private string m_details;
+		private string m_details = string.Empty;
 		
 		private TypeDefinition m_type;
 		private MethodDefinition m_method;

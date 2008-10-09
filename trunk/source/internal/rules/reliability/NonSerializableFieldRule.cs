@@ -66,7 +66,7 @@ namespace Smokey.Internal.Rules
 			if (m_needsCheck && !m_hasBadField)
 			{
 				TypeDefinition type = Cache.FindType(field.FieldType);
-				if (type != null && type.BaseType.FullName != "System.Enum")		// enums are serializable tho they are not marked as such
+				if (type != null && type.BaseType != null && type.BaseType.FullName != "System.Enum")		// enums are serializable tho they are not marked as such
 				{
 					if ((type.Attributes & TypeAttributes.Serializable) == 0)
 					{

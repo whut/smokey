@@ -56,29 +56,13 @@ namespace Smokey.Internal.Rules
 		public void VisitCall(Call call)
 		{	
 			if (call.Target.DeclaringType != m_type)
-			{
-				string name = call.Target.DeclaringType.FullName;
-			
-				if (m_types.IndexOf(name) < 0)
-				{
-					Log.DebugLine(this, "   {0}", name);
-					m_types.Add(name);
-				}
-			}
+				DoAdd(call.Target.DeclaringType);
 		}
 		
 		public void VisitNew(NewObj obj)
 		{	
 			if (obj.Ctor.DeclaringType != m_type)
-			{
-				string name = obj.Ctor.DeclaringType.FullName;
-			
-				if (m_types.IndexOf(name) < 0)
-				{
-					Log.DebugLine(this, "   {0}", name);
-					m_types.Add(name);
-				}
-			}
+				DoAdd(obj.Ctor.DeclaringType);
 		}
 		
 		public void VisitEnd(EndMethods end)
@@ -86,8 +70,33 @@ namespace Smokey.Internal.Rules
 			Log.DebugLine(this, "   {0} types", m_types.Count);
 			if (m_types.Count >= 40)
 			{
+				Log.TraceLine(this, "{0} references {1} types:", m_type.FullName, m_types.Count);
+				foreach (string type in m_types)
+					Log.TraceLine(this, "   {0}", type);
+				
 				string details = string.Format("references {0} types", m_types.Count);
 				Reporter.TypeFailed(end.Type, CheckID, details);
+			}
+		}
+		
+		private void DoAdd(TypeReference type)
+		{
+			GenericInstanceType generic = type as GenericInstanceType;
+			if (generic != null)
+			{
+				DoAdd(generic.GetOriginalType());
+				for (int i = 0; i < generic.GenericArguments.Count; ++i)
+					DoAdd(generic.GenericArguments[i]);
+			}
+			else
+			{
+				string name = type.FullName;
+			
+				if (name.IndexOf("CompilerGenerated") < 0 && m_types.IndexOf(name) < 0)
+				{
+					Log.DebugLine(this, "   {0}", name);
+					m_types.Add(name);
+				}
 			}
 		}
 		
