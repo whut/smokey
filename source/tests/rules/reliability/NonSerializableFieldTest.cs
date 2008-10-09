@@ -21,6 +21,7 @@
 
 using Mono.Cecil;
 using NUnit.Framework;
+using Smokey.Framework;
 using Smokey.Framework.Support;
 using Smokey.Internal.Rules;
 using System;
@@ -89,6 +90,18 @@ namespace Smokey.Tests
 		}
 
 		[SerializableAttribute]
+		public class Good4
+		{
+			public Good4(Log.Level level)
+			{
+				m_level = level;
+				Console.WriteLine(m_level);
+			}
+						
+			private Log.Level m_level;
+		}
+
+		[SerializableAttribute]
 		public class Bad1
 		{
 			public Bad1(string name)
@@ -104,7 +117,7 @@ namespace Smokey.Tests
 		
 		// test code
 		public NonSerializableFieldTest() : base(
-			new string[]{"Good1", "Good2", "Good3"},
+			new string[]{"Good1", "Good2", "Good3", "Good4"},
 			new string[]{"Bad1"},
 			new string[]{"Non"})	
 		{
