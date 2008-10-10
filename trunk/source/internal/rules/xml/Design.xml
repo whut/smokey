@@ -2443,6 +2443,22 @@
 			  if Dispose has been called. 
 			* Not all the disposable fields in the object are disposed.
 			* The type has a finalizer but Dispose() does not call GC.SuppressFinalize.
+			* The type has a method named Dispose with an unusual signature.
+			* The type has non-private methods named OnDispose or DoDispose.
+			* Dispose() should not be virtual (although Dispose(bool) may be).
+			* If the type is sealed and has Dispose(bool) then it should be private.
+			* If the type is not sealed and has Dispose(bool) then it should be protected and virtual.
+			* A Dispose method throws an exception it does not catch. With .NET 2.0 and later, this
+			  will default to tearing down the application if you allow the exception to escape from
+			  a finalizer. It also makes cleanup code difficult to write and causes problems with 
+			  debugging because if Dispose was called because a statement in a using block threw then 
+			  the original exception is dropped.
+			* A struct has unmanaged fields. This is a problem because an IDisposable struct presumbably
+			  owns these fields, but if the struct is copied two structs will assume ownership of the
+			  same resource. To fix this make the struct a class, or use SafeHandles instead of IntPtrs,
+			  or make the struct not IDisposable.
+			* Dispose(bool) needs to check to see if a field is null before using it because the
+			  type's constructors may not have finished running.
 			</Description>
 	
 			<Fix>
@@ -2478,7 +2494,7 @@
 				}
 				
 				// resource fields go here
-				private bool m_disposed = false; 
+				private bool m_disposed; 
 			}
 			
 			internal sealed class SealedWithFinalizer : IDisposable
@@ -2527,7 +2543,7 @@
 				}
 				
 				// resource fields go here
-				private bool m_disposed = false; 
+				private bool m_disposed; 
 			}
 			</CSharp>
 		</Translation>
@@ -2606,7 +2622,7 @@
 				}
 				
 				// resource fields go here
-				private bool m_disposed = false; 
+				private bool m_disposed; 
 			}
 			
 			internal class DerivedClass : BaseClass

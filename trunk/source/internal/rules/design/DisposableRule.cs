@@ -41,8 +41,10 @@ namespace Smokey.Internal.Rules
 		{
 			dispatcher.Register(this, "VisitBegin");
 			dispatcher.Register(this, "VisitMethodBegin");
+			dispatcher.Register(this, "VisitConditional");	
 			dispatcher.Register(this, "VisitCall");	
 			dispatcher.Register(this, "VisitNewObj");	
+			dispatcher.Register(this, "VisitThrow");	
 			dispatcher.Register(this, "VisitMethodEnd");
 			dispatcher.Register(this, "VisitEnd");
 		}
@@ -55,11 +57,22 @@ namespace Smokey.Internal.Rules
 		
 			m_hasFinalizer = false;
 			m_supressWasCalled = false;
-			m_checkForSupress = false;
+			m_hasVirtualDispose = false;
+			m_hasNonPrivateDispose = false;
+			m_hasNonProtectedDispose = false;
+			m_hasNonVirtualDispose = false;
+			m_disposeThrows = false;
+			m_hasNativeFields = false;
+			
+			m_badDisposeNames.Clear();
+			m_illegalDisposeNames.Clear();
 
 			m_disposableFields.Clear();
 
 			m_noThrowMethods = string.Empty;
+			
+			m_hasNullCall = false;
+			m_ownedFields.Clear();
 			
 			if (m_disposable)
 			{
@@ -78,10 +91,20 @@ namespace Smokey.Internal.Rules
 		{			
 			if (m_disposable && !field.IsStatic)
 			{
-				if (IsDisposable.Type(Cache, field.FieldType) && OwnsFields.One(m_type, field))
+				if (OwnsFields.One(m_type, field))
 				{
-					Log.DebugLine(this, "{0} is disposable", field.Name);
-					m_disposableFields.Add(field.ToString());
+					m_ownedFields.Add(field);
+					
+					if (IsDisposable.Type(Cache, field.FieldType))
+					{
+						Log.DebugLine(this, "{0} is disposable", field.Name);
+						m_disposableFields.Add(field.ToString());
+					}
+				}
+				
+				if (!m_hasNativeFields && field.FieldType.IsNative())
+				{
+					m_hasNativeFields = true;
 				}
 			}
 		}
@@ -92,54 +115,138 @@ namespace Smokey.Internal.Rules
 			{
 				m_minfo = begin.Info;
 
-				if (begin.Info.Method.Name == "Finalize")
+				MethodDefinition method = begin.Info.Method;
+				if (method.Name == "Finalize")
 				{
-					Log.DebugLine(this, "has finalizer");
+					Log.DebugLine(this, "has finalizer");	
 					m_hasFinalizer = true;
 				}
 				
-				// The IDisposable pattern says that SuppressFinalize should only be called from Dispose().
-				m_checkForSupress = begin.Info.Method.Name == "Dispose" && begin.Info.Method.Parameters.Count == 0;
+				if (method.Name == "Dispose")	
+				{
+					if (method.ReturnType.ReturnType.FullName != "System.Void")
+						m_badDisposeNames.Add(method.ToString());
+						
+					else if (method.Parameters.Count > 1)
+						m_badDisposeNames.Add(method.ToString());
+						
+					else if (method.Parameters.Count == 1 && method.Parameters[0].ParameterType.FullName != "System.Boolean")
+						m_badDisposeNames.Add(method.ToString());
+				}
 				
+				if (method.Name == "OnDispose" || method.Name == "DoDispose")
+					if (!method.IsPrivate)
+						m_illegalDisposeNames.Add(method.ToString());
+
+				// The IDisposable pattern says that SuppressFinalize should only be called from Dispose().
+				m_isNullaryDispose = method.Matches("System.Void", "Dispose");
+		
+				if (m_isNullaryDispose && method.IsVirtual && !method.IsFinal)
+					m_hasVirtualDispose = true;
+				
+				m_isUnaryDispose = method.Matches("System.Void", "Dispose", "System.Boolean");
+				if (m_isUnaryDispose && m_type.IsSealed && !method.IsPrivate)
+					m_hasNonPrivateDispose = true;
+					
+				if (m_isUnaryDispose && !m_type.IsSealed && !method.IsFamily && !method.IsFamilyOrAssembly && !method.IsFamilyAndAssembly)
+					m_hasNonProtectedDispose = true;
+					
+				if (m_isUnaryDispose && !m_type.IsSealed && (!method.IsVirtual || method.IsFinal))
+					m_hasNonVirtualDispose = true;
+					
+				m_checkForThrows = (m_isNullaryDispose || m_isUnaryDispose) && begin.Info.Instructions.TryCatchCollection.Length == 0;
+
 				m_needsThrowCheck = false;
 				m_doesThrow = false;
-				if (!begin.Info.Method.IsStatic && !begin.Info.Method.IsConstructor && begin.Info.Method.HasBody)
+				if (!method.IsStatic && !method.IsConstructor && method.HasBody)
 				{
-					MethodAttributes attrs = begin.Info.Method.Attributes;
+					MethodAttributes attrs = method.Attributes;
 					if ((attrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public)
 					{
-						if (begin.Info.Method.Name != "Dispose" && begin.Info.Method.Name != "Close")
+						if (method.Name != "Dispose" && method.Name != "Close")
 						{
 							m_needsThrowCheck = true;
 						}
 					}
 				}
+				
+				m_hasNoBranches = true;
+				m_callsNullableField = false;
 			}		
+		}
+		
+        // ldfld bool Smokey.Tests.DisposeableTest/NoNullCheck2::m_disposed
+        // brtrue IL_001d
+		public void VisitConditional(ConditionalBranch branch)
+		{
+			if (m_disposable)
+			{
+				if (m_isNullaryDispose || m_isUnaryDispose)
+				{
+					if (branch.Index > 0)
+					{
+						LoadField load = m_minfo.Instructions[branch.Index - 1] as LoadField;
+						if (load == null || load.Field.Name != "m_disposed")		// testing m_disposed does not count as a branch for null checking
+							m_hasNoBranches = false;
+					}
+				}
+			}
 		}
 
 		public void VisitCall(Call call)
 		{
-			if (m_checkForSupress)
+			if (m_disposable)
 			{
-				if (call.Target.ToString().Contains("System.GC::SuppressFinalize(System.Object)"))
+				if (m_isNullaryDispose)
 				{
-					Log.DebugLine(this, "has suppress call");
-					m_supressWasCalled = true;
+					if (call.Target.ToString().Contains("System.GC::SuppressFinalize(System.Object)"))
+					{
+						Log.DebugLine(this, "has suppress call");
+						m_supressWasCalled = true;
+					}
+				}
+	
+				if (m_disposableFields.Count > 0)
+				{
+					// ldfld    class System.IO.TextWriter Smokey.DisposableFieldsTest/GoodCase::m_writer
+					// callvirt instance void class [mscorlib]System.IO.TextWriter::Dispose()
+					if (call.Target.Name == "Dispose" || call.Target.Name == "Close")
+					{
+						if (m_minfo.Instructions[call.Index - 1].Untyped.OpCode.Code == Code.Ldfld)
+						{
+							FieldReference field = (FieldReference) m_minfo.Instructions[call.Index - 1].Untyped.Operand;
+							Log.DebugLine(this, "found Dispose call for {0}", field.Name);
+							Ignore.Value = m_disposableFields.Remove(field.ToString());
+						}
+					}
+				}
+	
+				// ldarg.0 
+				// ldfld class [mscorlib]System.IO.StringWriter Smokey.Tests.DisposeableTest/NoNullCheck1::m_writer
+				// callvirt instance void class [mscorlib]System.IO.TextWriter::Dispose()
+				if ((m_isNullaryDispose || m_isUnaryDispose) && call.Index >= 2 && !m_callsNullableField && !m_hasNullCall)
+				{
+					LoadArg load1 = m_minfo.Instructions[call.Index - 2] as LoadArg;
+					LoadField load2 = m_minfo.Instructions[call.Index - 1] as LoadField;
+					if (load1 != null && load2 != null)
+					{
+						if (load1.Arg == 0 && !load2.Field.FieldType.IsValueType)		
+						{
+							if (m_ownedFields.IndexOf(load2.Field) >= 0)
+								m_callsNullableField = true;
+						}
+					}
 				}
 			}
+		}
 
-			if (m_disposableFields.Count > 0)
+		public void VisitThrow(Throw t)
+		{
+			if (m_disposable)
 			{
-				// ldfld    class System.IO.TextWriter Smokey.DisposableFieldsTest/GoodCase::m_writer
-				// callvirt instance void class [mscorlib]System.IO.TextWriter::Dispose()
-				if (call.Target.Name == "Dispose" || call.Target.Name == "Close")
+				if (m_checkForThrows)
 				{
-					if (m_minfo.Instructions[call.Index - 1].Untyped.OpCode.Code == Code.Ldfld)
-					{
-						FieldReference field = (FieldReference) m_minfo.Instructions[call.Index - 1].Untyped.Operand;
-						Log.DebugLine(this, "found Dispose call for {0}", field.Name);
-						Ignore.Value = m_disposableFields.Remove(field.ToString());
-					}
+					m_disposeThrows = true;
 				}
 			}
 		}
@@ -147,51 +254,104 @@ namespace Smokey.Internal.Rules
 		// newobj   System.Void System.ObjectDisposedException::.ctor(System.String)
 		public void VisitNewObj(NewObj call)
 		{
-			if (call.Ctor.ToString().Contains("ObjectDisposedException"))
-				m_doesThrow = true;
+			if (m_disposable)
+			{
+				if (call.Ctor.ToString().Contains("ObjectDisposedException"))
+					m_doesThrow = true;
+			}
 		}
 
 		public void VisitMethodEnd(EndMethod end)
 		{			
-			if (m_needsThrowCheck && !m_doesThrow)
+			if (m_disposable)
 			{
-				m_noThrowMethods += end.Info.Method + Environment.NewLine;
-			}		
+				if (m_needsThrowCheck && !m_doesThrow)
+				{
+					m_noThrowMethods += end.Info.Method + Environment.NewLine;
+				}	
+			
+				// This is a tricky case because people may use arbitrary state to figure
+				// out if a field is null or not. So, we'll be conservative and say there
+				// is a problem if a nullable field is called and either there are no
+				// branches or the only branch uses m_disposed.
+				if (m_hasNoBranches && m_callsNullableField)
+				{
+					m_hasNullCall = true;
+				}
+			}
 		}
 
 		public void VisitEnd(EndMethods end)
 		{
-			if (m_noThrowMethods.Length > 0)
+			if (m_disposable)
 			{
-				m_details += "Methods which don't throw ObjectDisposedException: " + Environment.NewLine;
-				m_details += m_noThrowMethods;
-			}
-
-			if (m_disposableFields.Count > 0)
-			{
-				StringBuilder builder = new StringBuilder();
-				builder.Append("Fields which are not disposed: ");
-				foreach (string field in m_disposableFields)
+				if (m_noThrowMethods.Length > 0)
 				{
-					int i = field.LastIndexOf(':');
-					if (i >= 0)
-						builder.Append(field.Substring(i + 1));
-					else
-						builder.Append(field);
-					builder.Append(' ');
+					m_details += "Methods which don't throw ObjectDisposedException: " + Environment.NewLine;
+					m_details += m_noThrowMethods;
+				}
+	
+				if (m_badDisposeNames.Count > 0)
+				{
+					m_details += "Unusual Dispose methods: ";
+					m_details += string.Join(" ", m_badDisposeNames.ToArray());
+					m_details += Environment.NewLine;
 				}
 				
-				m_details += builder.ToString() + Environment.NewLine;
-			}
-			
-			if (m_hasFinalizer && !m_supressWasCalled)
-				m_details += "GC.SuppressFinalize was not called" + Environment.NewLine;
-
-			m_details = m_details.Trim();
-			if (m_details.Length > 0)
-			{
-				Log.DebugLine(this, "Details: {0}", m_details);
-				Reporter.TypeFailed(end.Type, CheckID, m_details);
+				if (m_illegalDisposeNames.Count > 0)
+				{
+					m_details += "Bad method names: ";
+					m_details += string.Join(" ", m_illegalDisposeNames.ToArray());
+					m_details += Environment.NewLine;	
+				}
+				
+				if (m_hasVirtualDispose)
+					m_details += "Dispose() is virtual" + Environment.NewLine;
+				
+				if (m_hasNonPrivateDispose)
+					m_details += "The type is sealed, but Dispose(bool) is not private." + Environment.NewLine;
+					
+				if (m_hasNonProtectedDispose)	
+					m_details += "The type is unsealed, but Dispose(bool) is not protected." + Environment.NewLine;
+					
+				if (m_hasNonVirtualDispose)
+					m_details += "The type is unsealed, but Dispose(bool) is not virtual." + Environment.NewLine;
+				
+				if (m_disposeThrows)
+					m_details += "A Dispose methods throws, but does not catch." + Environment.NewLine;
+				
+				if (m_disposableFields.Count > 0)
+				{
+					StringBuilder builder = new StringBuilder();
+					builder.Append("Fields which are not disposed: ");
+					foreach (string field in m_disposableFields)
+					{
+						int i = field.LastIndexOf(':');
+						if (i >= 0)
+							builder.Append(field.Substring(i + 1));
+						else
+							builder.Append(field);
+						builder.Append(' ');
+					}
+					
+					m_details += builder.ToString() + Environment.NewLine;
+				}
+				
+				if (m_hasFinalizer && !m_supressWasCalled)
+					m_details += "GC.SuppressFinalize was not called" + Environment.NewLine;
+					
+				if (m_hasNativeFields && m_type.IsValueType)
+					m_details += "The type is a value type, but has native fields." + Environment.NewLine;
+					
+				if (m_hasNullCall)
+					m_details += "Dispose calls a method on a field which may be null (because the constructor may have thrown)." + Environment.NewLine;
+	
+				m_details = m_details.Trim();
+				if (m_details.Length > 0)
+				{
+					Log.DebugLine(this, "Details: {0}", m_details);
+					Reporter.TypeFailed(end.Type, CheckID, m_details);
+				}
 			}
 		}
 						
@@ -202,12 +362,29 @@ namespace Smokey.Internal.Rules
 
 		private bool m_hasFinalizer;
 		private bool m_supressWasCalled;
-		private bool m_checkForSupress;
+		private bool m_isNullaryDispose;
+		private bool m_isUnaryDispose;
+		private bool m_hasNativeFields;
+		
+		private List<string> m_badDisposeNames = new List<string>();
+		private List<string> m_illegalDisposeNames = new List<string>();
+		
+		private bool m_hasVirtualDispose;
+		private bool m_hasNonPrivateDispose;
+		private bool m_hasNonProtectedDispose;
+		private bool m_hasNonVirtualDispose;
+		private bool m_disposeThrows;
+		private bool m_checkForThrows;
 
 		private List<string> m_disposableFields = new List<string>();
 
 		private bool m_needsThrowCheck;
 		private bool m_doesThrow;
 		private string m_noThrowMethods;
+		
+		private bool m_hasNullCall;
+		private bool m_hasNoBranches;
+		private bool m_callsNullableField;
+		private List<FieldReference> m_ownedFields = new List<FieldReference>();
 	}
 }

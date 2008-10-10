@@ -29,18 +29,18 @@ namespace EvilDoer
 	{
 		~BaseGoodDisposable2()		
 		{					
-			DoDispose(false);
+			Dispose(false);
 		}
 			
 		public void Dispose()
 		{
 			if (!disposed)
-				DoDispose(true);
+				Dispose(true);
 	
 			GC.SuppressFinalize(this);
 		}
 	
-		protected virtual void DoDispose(bool disposing)
+		protected virtual void Dispose(bool disposing)
 		{
 			disposed = true;
 		}
@@ -70,12 +70,12 @@ namespace EvilDoer
 			return new GoodDisposable2();
 		}
 			
-		protected override void DoDispose(bool disposing)
+		protected override void Dispose(bool disposing)
 		{
 			Ignore.Value = NativeMethods.CloseHandle(handle);
 			handle = IntPtr.Zero;
 			
-			base.DoDispose(disposing);
+			base.Dispose(disposing);
 		}
 	
 		private static class NativeMethods
