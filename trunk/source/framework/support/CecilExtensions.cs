@@ -474,6 +474,60 @@ namespace Smokey.Framework.Support
 			
 			return false;
 		}
+
+		/// <summary>Returns true if the method has the specified result type, name, and argument types.</summary>
+		public static bool Matches(this MethodReference method, string rtype, string mname, params string[] atypes)
+		{			
+			DBC.Pre(method != null, "method is null");
+			DBC.Pre(!string.IsNullOrEmpty(rtype), "rtype is null or empty");
+			DBC.Pre(!string.IsNullOrEmpty(mname), "mname is null or empty");
+			DBC.Pre(atypes != null, "atypes is null");
+			
+			bool match = false;
+			if (method.ReturnType.ReturnType.FullName == rtype)
+			{
+				if (method.Name == mname)
+				{
+					if (method.Parameters.Count == atypes.Length)
+					{
+						match = true;
+						
+						for (int i = 0; i < atypes.Length && match; ++i)
+							match = atypes[i] == method.Parameters[i].ParameterType.FullName;
+					}
+				}
+			}
+			
+			return match;
+		}
+		
+		/// <summary>Returns the first base class method which declares the specified method. 
+		/// Note that this may return an abstract method or the original method.</summary>
+		public static MethodDefinition GetPreviousMethod(this MethodDefinition method, AssemblyCache cache)
+		{			
+			DBC.Pre(method != null, "method is null");
+			
+			MethodDefinition result = method;
+			
+			if (method.IsVirtual)
+			{
+				TypeDefinition type = cache.FindType(method.DeclaringType);
+				if (type != null)
+					type = cache.FindType(type.BaseType);
+				
+				if (type != null)
+				{
+					MethodMatcher matcher = new MethodMatcher(method);
+
+					MethodDefinition[] candidates = type.Methods.GetMethod(method.Name);
+					foreach (MethodDefinition candidate in candidates)
+						if (candidate.IsVirtual && matcher == candidate)
+							result = candidate;
+				}
+			}
+			
+			return result;
+		}
 		
 		#region Private Methods -----------------------------------------------
 		private static TypeReference DoGetDeclaringInterface(TypeReference declared, MethodMatcher matcher, AssemblyCache cache)

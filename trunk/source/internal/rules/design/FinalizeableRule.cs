@@ -23,42 +23,38 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
-	internal sealed class OverridenFinalizerRule : Rule
+	internal sealed class FinalizeableRule : Rule
 	{				
-		public OverridenFinalizerRule(AssemblyCache cache, IReportViolations reporter) 
-			: base(cache, reporter, "D1014")
+		public FinalizeableRule(AssemblyCache cache, IReportViolations reporter) 
+			: base(cache, reporter, "D1066")
 		{
 		}
 				
 		public override void Register(RuleDispatcher dispatcher) 
 		{
-			dispatcher.Register(this, "VisitType");
+			dispatcher.Register(this, "VisitMethod");
 		}
-		
-		public void VisitType(TypeDefinition type)
-		{
-			if (!type.Implements("System.IDisposable"))
+				
+		public void VisitMethod(BeginMethod begin)
+		{			
+			if (begin.Info.Method.Matches("System.Void", "Finalize"))
 			{
-				if (IsDisposable.Type(Cache, type))
-				{
-					Log.DebugLine(this, "-----------------------------------"); 
-					Log.DebugLine(this, "{0}", type);
+				Log.DebugLine(this, "-----------------------------------"); 
+				Log.DebugLine(this, "checking {0:F}", begin.Info.Instructions);				
 
-					MethodDefinition finalizer = type.Methods.GetMethod("Finalize", Type.EmptyTypes);
-					if (finalizer != null)
-					{
-						Reporter.TypeFailed(type, CheckID, string.Empty);
-					}
+				if (begin.Info.Instructions.Length == 0 || begin.Info.Instructions[0].Untyped.OpCode.Code == Code.Leave)
+				{
+					Log.DebugLine(this, "found empty finalizer"); 
+					Reporter.MethodFailed(begin.Info.Method, CheckID, 0, string.Empty);
 				}
 			}
 		}
 	}
 }
-#endif

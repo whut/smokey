@@ -68,7 +68,7 @@ namespace EvilDoer
 		internal int unusedfield1;
 		internal string unusedfield2 = "hello";
 		
-		// P1000/EmptyFinalizer
+		// D1066/Finalizable
 		~BadClass()
 		{
 		}

@@ -576,125 +576,6 @@
 		</Translation>
 	</Violation>
 		
-	<Violation checkID = "D1014" severity = "Error" breaking = "false">
-		<Translation lang = "en" typeName = "OverridenFinalizer" category = "Design">			
-			<Cause>
-			The type has a finalizer, but a base class implements IDisposable.
-			</Cause>
-	
-			<Description>
-			If the derived finalizer disposes of resources those resources will leak
-			if Dispose is called on the base class because it will normally call 
-			SuppressFinalize which means that no finalizers will be called for that
-			object.
-
-			If the derived finalizer merely calls Dispose(false) it is not doing
-			anything useful and should rely on the base class finalizer calling
-			Dispose.
-			</Description>
-	
-			<Fix>
-			Instead of using a finalizer the derived class should override Dispose(bool).
-			</Fix>
-	
-			<CSharp>
-			internal class MyResource : IDisposable
-			{
-				~MyResource()		
-				{					
-					// Note that this is called even if the ctor throws.
-					Dispose(false);
-				}
-			
-				public MyResource(IntPtr handle)
-				{
-					m_handle = handle;
-				}
-			
-				public void DoWork()
-				{
-					// All public methods (except Dispose) should throw 
-					// ObjectDisposedException if Dispose has been called.
-					if (m_disposed)		
-						throw new ObjectDisposedException(GetType().Name);
-						
-					NativeMethods.WorkIt(m_handle);
-					GC.KeepAlive(this);
-				}
-			
-				public void Dispose()
-				{
-					Dispose(true);
-			
-					// If we've been disposed our object can be garbage collected without
-					// finalization.
-					GC.SuppressFinalize(this);
-				}
-				
-				protected bool Disposed
-				{
-					get {return m_disposed;}
-				}
-			
-				protected virtual void Dispose(bool disposing)
-				{
-					if (!m_disposed)
-					{
-						// If we've been called via Dispose we can,
-						if (disposing)
-						{
-							// dispose of managed fields, including any fields which
-               				// are themselves finalizeable.
-						}
-			
-						// This code will execute if we were called by our finalizer
-           				// We can use any of our fields except those which are 
-			            // finalizeable (because they may have already been finalized).
-						NativeMethods.CloseHandle(m_handle);
-						m_handle = IntPtr.Zero;
-			
-						m_disposed = true;
-					}
-				}
-			
-				private static class NativeMethods
-				{
-					[System.Runtime.InteropServices.DllImport("Kernel32")]
-					public extern static bool CloseHandle(IntPtr handle);
-				
-					[System.Runtime.InteropServices.DllImport("Kernel32")]
-					public extern static void WorkIt(IntPtr handle);
-				}
-				
-				private IntPtr m_handle;
-				private bool m_disposed;
-			}			
-
-			internal sealed class DerivedResource : MyResource
-			{
-				public DerivedResource(IntPtr handle) : base(handle)
-				{
-				}
-				
-				protected override void Dispose(bool disposing)
-				{
-					if (!Disposed)
-					{
-						if (disposing)
-						{
-							// Dispose of derived fields.
-						}
-			
-						// Dispose of derived fields.
-	
-						base.Dispose(disposing);
-					}					
-				}
-			}			
-			</CSharp>
-		</Translation>
-	</Violation>
-		
 	<Violation checkID = "D1015" severity = "Warning" breaking = "false">
 		<Translation lang = "en" typeName = "ExceptionConstructors" category = "Design">			
 			<Cause>
@@ -2549,5 +2430,241 @@
 			</Fix>
 		</Translation>
 	</Violation>
-</Violations>
+	
+	<Violation checkID = "D1062" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "Disposable" category = "Design">			
+			<Cause>
+			The type (or a base class) implements IDisposable, but does so incorrectly.
+			</Cause>
+	
+			<Description>
+			This rule checks for several problems:
+			* All public methods (except Dispose) should throw ObjectDisposedException 
+			  if Dispose has been called. 
+			* Not all the disposable fields in the object are disposed.
+			* The type has a finalizer but Dispose() does not call GC.SuppressFinalize.
+			</Description>
+	
+			<Fix>
+			Implementing the disposable pattern can be tricky so it's important to
+			stick to the pattern as closely as possible. See the code below (as well
+			as the code in the BaseDisposable and DerivedDispose rules) for an
+			example of how to do this. For more information see &lt;http://www.bluebytesoftware.com/blog/2005/04/08/DGUpdateDisposeFinalizationAndResourceManagement.aspx&gt;
+			which has a great deal of valuable advice.			
+			</Fix>
+	
+			<CSharp>
+			internal sealed class SealedNoFinalizer : IDisposable
+			{ 
+				public SealedNoFinalizer()
+				{
+					// allocate resources
+				}
+				
+				public void Work()
+				{
+					if (m_disposed)		
+						throw new ObjectDisposedException(GetType().Name);
+				}
+			
+				public void Dispose()
+				{
+					if (!m_disposed)
+					{
+						// We have no finalizer so we can safely call methods
+						// on any of our fields when cleaning up.
+						m_disposed = true;
+					}
+				}
+				
+				// resource fields go here
+				private bool m_disposed = false; 
+			}
+			
+			internal sealed class SealedWithFinalizer : IDisposable
+			{ 
+				~SealedWithFinalizer()
+				{
+					// Note that this is called even if the ctor throws. Also
+					// note that this will execute within a worker thread.
+					Dispose(false);
+				}
+				
+				public SealedWithFinalizer()
+				{
+					// allocate resources
+				}
+				
+				public void Work()
+				{
+					if (m_disposed)		
+						throw new ObjectDisposedException(GetType().Name);
+				}
+			
+				public void Dispose()
+				{
+					Dispose(true);
+					GC.SuppressFinalize(this);
+				}
+				
+				private void Dispose(bool disposing)
+				{
+					if (!m_disposed)
+					{
+						if (disposing)
+						{
+							// This code will execute if we were called from Dispose()
+							// so we can call methods on our managed fields.
+						}
+										
+						// There are only very weak guarantees on the order in which
+						// finalizers are called so we should not use any managed
+						// objects here unless we are sure that they (and all objects 
+						// they may use) are not finalizeable. Note that System.Console
+						// may be used.
+						m_disposed = true;
+					}
+				}
+				
+				// resource fields go here
+				private bool m_disposed = false; 
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
 
+	<Violation checkID = "D1064" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "DerivedDisposable" category = "Design">			
+			<Cause>
+			The type inherits from a class which implements IDisposable, but does so incorrectly.
+			</Cause>
+	
+			<Description>
+			This rule checks for several problems:
+			* The Dispose(bool) override does not call the base method.
+			* The type has a finalizer (it should rely on the base class finalizer instead).
+			</Description>
+	
+			<Fix>
+			Implementing the disposable pattern can be tricky so it's important to
+			stick to the pattern as closely as possible. See the code below for an
+			example of how to do this. For more information see &lt;http://www.bluebytesoftware.com/blog/2005/04/08/DGUpdateDisposeFinalizationAndResourceManagement.aspx&gt;
+			which has a great deal of valuable advice.			
+			</Fix>
+	
+			<CSharp>
+			internal class BaseClass : IDisposable
+			{ 
+				~BaseClass()		
+				{
+					// Note that this is called even if the ctor throws. Also
+					// note that this will execute within a worker thread.
+					Dispose(false);
+				}
+				
+				public BaseClass()
+				{
+					// allocate resources
+				}
+				
+				public void Work()
+				{
+					// All public methods (except Dispose) should throw 
+					// ObjectDisposedException if Dispose has been called.
+					if (m_disposed)		
+						throw new ObjectDisposedException(GetType().Name);
+				}
+			
+				protected bool Disposed
+				{
+					get {return m_disposed;}
+				}
+						
+				protected virtual void Dispose(bool disposing)
+				{
+					if (!m_disposed)
+					{
+						if (disposing)
+						{
+							// This code will execute if we were called from Dispose()
+							// so we can call methods on our managed fields.
+						}
+				
+						// There are only very weak guarantees on the order in which
+						// finalizers are called so we should not use any managed
+						// objects here unless we are sure that they (and all objects 
+						// they may use) are not finalizeable. Note that System.Console
+						// may be used.
+						m_disposed = true;
+					}
+				}
+				
+				public void Dispose()
+				{
+					Dispose(true);
+					GC.SuppressFinalize(this);
+				}
+				
+				// resource fields go here
+				private bool m_disposed = false; 
+			}
+			
+			internal class DerivedClass : BaseClass
+			{ 
+				public DerivedClass()
+				{
+					// allocate more resources (in addition to base's)
+				}
+				
+				public void Work()
+				{
+					// All public methods (except Dispose) should throw 
+					// ObjectDisposedException if Dispose has been called.
+					if (m_disposed)		
+						throw new ObjectDisposedException(GetType().Name);
+				}
+			
+				protected override void Dispose(bool disposing)
+				{
+					if (!Disposed)
+					{
+						if (disposing)
+						{
+							// This code will execute if we were called from Dispose()
+							// so we can call methods on our managed fields.
+						}
+				
+						// There are only very weak guarantees on the order in which
+						// finalizers are called so we should not use any managed
+						// objects here unless we are sure that they (and all objects 
+						// they may use) are not finalizeable. Note that System.Console
+						// may be used.
+						base.Dispose(disposing);
+					}
+				}
+				
+				// some new fields that require cleanup
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "D1066" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "Finalizable" category = "Design">			
+			<Cause>
+			A finalizer is written incorrectly.
+			</Cause>
+	
+			<Description>
+			This rule checks for two problems:
+			* The finalizer is empty (finalizers put a lot of extra pressure on the garbage
+			  collector so they should only be used if they do actual work).
+			</Description>
+	
+			<Fix>
+			For more information see &lt;http://www.bluebytesoftware.com/blog/2005/04/08/DGUpdateDisposeFinalizationAndResourceManagement.aspx&gt;
+			which has a great deal of valuable advice.			
+			</Fix>
+		</Translation>
+	</Violation>
+</Violations>

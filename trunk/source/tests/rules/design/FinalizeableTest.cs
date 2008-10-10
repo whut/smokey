@@ -28,82 +28,70 @@ using System.Reflection;
 using Smokey.Framework.Support;
 using Smokey.Internal.Rules;
 
-#if OLD
 namespace Smokey.Tests
 {
 	[TestFixture]
-	public class OverridenFinalizerTest : TypeTest
+	public class FinalizeableTest : MethodTest
 	{	
-		// test classes
-		internal class MyResource : IDisposable
-		{
-			~MyResource()		
-			{					
+		// test cases
+		internal class Good1 : IDisposable
+		{ 
+			~Good1()
+			{
 				Dispose(false);
 			}
-						
-			public void Dispose()
-			{
-				Dispose(true);
-		
-				GC.SuppressFinalize(this);
-			}
-			
-			protected bool Disposed
-			{
-				get {return m_disposed;}
-			}
-		
-			protected virtual void Dispose(bool disposing)
+										
+			private void Dispose(bool disposing)
 			{
 				if (!m_disposed)
 				{
-					CloseHandle(m_handle);
-					m_handle = IntPtr.Zero;
-		
 					m_disposed = true;
 				}
 			}
-		
-			[System.Runtime.InteropServices.DllImport("Kernel32")]
-			private extern static bool CloseHandle(IntPtr handle);
-				
-			private IntPtr m_handle;
-			private bool m_disposed;
-		}			
-
-		internal sealed class Good1 : MyResource
-		{
-			protected override void Dispose(bool disposing)
+			
+			public void Dispose()
 			{
-				base.Dispose(disposing);
+				Dispose(true);
+				GC.SuppressFinalize(this);
 			}
-		}			
-
-		internal sealed class Bad1 : MyResource
-		{
+			
+			private bool m_disposed; 
+		}
+		
+		internal class Bad1 : IDisposable
+		{ 
 			~Bad1()
 			{
 			}
-			
-			protected override void Dispose(bool disposing)
+										
+			private void Dispose(bool disposing)
 			{
-				base.Dispose(disposing);
+				if (!m_disposed)
+				{
+					m_disposed = true;
+				}
 			}
-		}			
-				
+			
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			
+			private bool m_disposed; 
+		}
+		
+
 		// test code
-		public OverridenFinalizerTest() : base(
-			new string[]{"Good1"},
-			new string[]{"Bad1"},
-			new string[]{"MyResource"})	
+		public FinalizeableTest() : base(
+			new string[]{"Good1.Finalize"},
+			new string[]{"Bad1.Finalize"})	
 		{
 		}
 						
 		protected override Rule OnCreate(AssemblyCache cache, IReportViolations reporter)
 		{
-			return new OverridenFinalizerRule(cache, reporter);
+			return new FinalizeableRule(cache, reporter);
 		}
 	} 
 }
-#endif

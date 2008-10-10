@@ -91,7 +91,7 @@ namespace Smokey.Tests
 			foreach (TypeDefinition type in m_good)
 			{
 				m_failed = false;
-				dispatcher.Dispatch(type);
+				DoVisit(dispatcher, type);
 			
 				if (m_failed)
 					Assert.Fail(string.Format("{0} should have passed", type));
@@ -101,11 +101,27 @@ namespace Smokey.Tests
 			foreach (TypeDefinition type in m_bad)
 			{
 				m_failed = false;
-				dispatcher.Dispatch(type);
+				DoVisit(dispatcher, type);
 			
 				if (!m_failed)
 					Assert.Fail(string.Format("{0} should have failed", type));
 			}
+		}
+		
+		private void DoVisit(RuleDispatcher dispatcher, TypeDefinition type)
+		{
+			dispatcher.Dispatch(type);
+			
+			// Some rules consider all the methods in a type. These rules cannot be tested
+			// with a MethodTest so we'll visit methods here in order to be able to unit
+			// test those rules.
+			dispatcher.Dispatch(new BeginMethods(type));
+			foreach (MethodDefinition method in type.Methods)
+			{
+				var minfo = new Smokey.Framework.Support.MethodInfo(type, method);
+				dispatcher.Dispatch(minfo);
+			}
+			dispatcher.Dispatch(new EndMethods(type));
 		}
 		
 		public void AssemblyFailed(AssemblyDefinition assembly, string checkID, string details)
