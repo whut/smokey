@@ -28,6 +28,7 @@ using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class DisposeFieldsRule : Rule
@@ -119,4 +120,4 @@ namespace Smokey.Internal.Rules
 		private List<string> m_disposableFields = new List<string>();
 	}
 }
-
+#endif

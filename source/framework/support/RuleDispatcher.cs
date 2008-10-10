@@ -47,7 +47,7 @@ namespace Smokey.Framework.Support
 	///    EndTypes
 	///    BeginMethods				
 	///       BeginMethod			visited for each method defined in the assembly
-	///          each insruction	used to visit a TypedInstruction subclass
+	///          each instruction	used to visit a TypedInstruction subclass
 	///       EndMethod
 	///    EndMethods
 	///    CallGraph

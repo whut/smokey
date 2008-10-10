@@ -5,6 +5,6 @@
 	<Expected checkID = "R1015" typeName = "STAThread" fullName = "NoSecurity"/>
 	<Expected checkID = "G1001" typeName = "MessageBoxOptions" fullName = "System.Int32 Unsecure.Program::Main(System.String[])"/>
 	<Expected checkID = "PO1007" typeName = "ExitCode" fullName = "System.Int32 Unsecure.Program::Main(System.String[])"/>
-	<Expected checkID = "D1048" typeName = "GuiUsesConsole" fullName = "System.Void Unsecure.Program::DumpState2()"/>
+	<Expected checkID = "D1048" typeName = "GuiUsesConsole" fullName = "System.Void Unsecure.Program::DoDumpState2()"/>
 	<Expected checkID = "PO1008" typeName = "WinExe" fullName = "NoSecurity"/>
 </Expectations>

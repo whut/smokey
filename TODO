@@ -37,37 +37,47 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 199 fxcop
 102 gendarme
 
-* Do a checkin
+
+* Write a xxx rule:	
+	- update the xml
+	- add a rule which always return success
+	- update the config file
+	- add a test
+	- implement the rule
+	- update functional test 
 * Clean up disposable rules:
+	- switch over to these new rules, for now just support the existing behavior
+	- make sure unit tests and ftest work
+	- checkin
+	- remove OLD code
+	- start adding the new checks
 	Disposable
-		methods don't call ObjectDisposedException						NoObjectDisposedException
-		native resource isn't disposed									DisposeNativeResources
-		disposable fields are not disposed								DisposableFields DisposeFields
 		叨nly Dispose overload should be void Dispose(bool)
 		主ispose() should not be virtual
-		主ispose(bool) should be virtual if the class is not sealed
+		叩o finalizer => no Dispose(bool)
+		叫ealed => Dispose(bool) should be private, protected and virtual otherwise
 		主ispose should not throw
 		叫tucts should not be IDisposable and have unmanaged types
 		主ispose(false) needs to check for null fields before using them
 	
 	BaseDisposable
-		has finalizer but doesn't call suppress							IDisposable
+			The type is unsealed and directly implements IDisposable, but does so incorrectly.
+		叫hould have finalizer (so we can better guarantee that resources are cleaned up)
 		叩eed virtual Dispose(bool) if the class is not sealed
 		主ispose() should just call Dispose(false) (and supresss if it has a finalizer)
 	
 	DerivedDisposable
-		Dispose(bool) does not call base Dispose						BaseDisposable
-		finalizer is overriden											OverridenFinalizer
 		卡on't implement IDisposable
 		卡on't have Dispose()
 		
-	Finalizable
-		finalizer is empty												EmptyFinalizer
-		卯inalizer should not throw
-	
-	DisposeNaming
+	DisposeableNaming
 		卡on't use Dispose if not IDisposable
 		叩o DoDispose or OnDispose
+		
+	Finalizable
+		卯inalizer should not throw
+	
+* Review the new rules: can we add any other checks?
 * Don't throw from Dispose (hides original exception when using statement is used, makes
   catch handlers harder to write). 
 	Note that with the .NET Framework 2.0 and later, throwing an exception from a finalizer 
@@ -88,6 +98,9 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Dispose(false) needs to check fields for null before using them (object could have failed
   during construction).
 * System.Console is safe to use from finalizers.
+* Cleanup reliability DisposeNativeResources. Class or base should implement IDisposable.
+* Make sure IDisposable examples in the xml are legit.
+* Update IDisposable examples on the wiki.
 * Prefer SafeHandle
 * Don't override finalizers.
 * If both Dispose methods are present Dispose() should just call Dispose(false) (and if a 
@@ -96,6 +109,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Class has trivial get/set and an Equals which does not use that field.
 * Use tar --exclude \*/.svn --exclude \*/.svn/\*
 * Instead of Ignore and Unused just have Unused.Value
+* Might want useful links wiki page.
 * RedundantPredicate
 	- A && A			A
 	- A || A			A

@@ -81,7 +81,6 @@ namespace EvilDoer
 			writer.WriteLine(handle);
 		}
 
-		// MS1007/IDisposable
 		public void Dispose()
 		{
 			DoDispose(true);

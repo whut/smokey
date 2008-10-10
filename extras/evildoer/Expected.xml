@@ -14,7 +14,7 @@
 
 	<Expected checkID = "D1002" typeName = "MethodTooComplex" fullName = "System.Void EvilDoer.BadClass::Complex(System.Int32,System.Int32)"/>
 
-	<Expected checkID = "P1000" typeName = "EmptyFinalizer" fullName = "EvilDoer.BadClass"/>
+	<Expected checkID = "D1066" typeName = "Finalizable" fullName = "System.Void EvilDoer.BadClass::Finalize()"/>
 	<Expected checkID = "P1002" typeName = "UseStringEmpty" fullName = "System.Void EvilDoer.BadClass::WriteBlankLine()"/>
 	<Expected checkID = "P1003" typeName = "AvoidBoxing" fullName = "System.Void EvilDoer.BadClass::Boxing(System.Int32)"/>
 	<Expected checkID = "P1004" typeName = "AvoidUnboxing" fullName = "System.Void EvilDoer.BadClass::Unboxing(System.Object)"/>
@@ -66,9 +66,7 @@
 	<Expected checkID = "C1022" typeName = "UseSetterValue" fullName = "System.Void EvilDoer.BadClass2::set_Item(System.Int32,System.Object)"/>
 
 	<!-- BadDisposable -->
-	<Expected checkID = "R1002" typeName = "DisposeFields" fullName = "EvilDoer.BadDisposable"/>
-	<Expected checkID = "MS1007" typeName = "IDisposable" fullName = "System.Void EvilDoer.BadDisposable::Dispose()"/>
-	<Expected checkID = "MS1009" typeName = "NoObjectDisposedException" fullName = "EvilDoer.BadDisposable"/>
+	<Expected checkID = "D1062" typeName = "Disposeable" fullName = "EvilDoer.BadDisposable"/>
 	<Expected checkID = "S1003" typeName = "S1003" fullName = "EvilDoer.BadDisposable"/>
 	<Expected checkID = "C1018" typeName = "IgnoredReturn" fullName = "System.Void EvilDoer.BadDisposable::DoDispose(System.Boolean)"/>
 	<Expected checkID = "C1021" typeName = "RecursiveEquality" fullName = "System.Boolean EvilDoer.BadDisposable::op_Equality(EvilDoer.BadDisposable,EvilDoer.BadDisposable)"/>

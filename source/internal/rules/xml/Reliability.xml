@@ -147,62 +147,7 @@
 			</CSharp>
 		</Translation>
 	</Violation>	
-	
-	<Violation checkID = "R1002" severity = "Error" breaking = "false">
-		<Translation lang = "en" typeName = "DisposeFields" category = "Reliability">			
-			<Cause>
-			A class implements IDisposable, but does not dispose of all the disposable fields
-			it news.
-			</Cause>
-	
-			<Description>
-			The CLR cannot cleanup unmanaged resources so you need to ensure that they are
-			cleaned up yourself.
-			</Description>
-	
-			<Fix>
-			Implement IDisposable and dispose of all of the disposable fields.
-			</Fix>
-	
-			<CSharp>
-			using System.IO;
-
-			internal sealed class Log : IDisposable
-			{
-				public Log()
-				{
-					m_writer = new StringWriter();
-				}
-			
-				public void WriteLine(string line)
-				{
-					// All public methods (except Dispose) should throw 
-					// ObjectDisposedException if Dispose has been called.
-					if (m_disposed)		
-						throw new ObjectDisposedException(GetType().Name);
-						
-					m_writer.WriteLine(line);
-				}
-			
-				// Note that this is a simplified version of the disposable pattern because
-				// we have no unmanaged resources.
-				public void Dispose()
-				{
-					if (!m_disposed)
-					{
-						m_writer.Dispose();
-						
-						m_disposed = true;
-					}
-				}
-									
-				private StringWriter m_writer;	// System.IO.StringWriter implements IDisposable
-				private bool m_disposed = false;
-			}			
-			</CSharp>
-		</Translation>
-	</Violation>	
-	
+		
 	<!-- gap -->
 	
 	<Violation checkID = "R1004" severity = "Warning" breaking = "false">

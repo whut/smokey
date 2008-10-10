@@ -69,7 +69,6 @@ namespace Unsecure
 		[Conditional("DEBUG")]
 		private static void DoDumpState1()
 		{  
-			Console.WriteLine("California");
 		}
 		
 		// D1048/GuiUsesConsole
