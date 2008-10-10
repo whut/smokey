@@ -330,10 +330,19 @@ namespace Smokey.Framework.Support
 				}
 				catch (Exception e)
 				{
-					string details = string.Format("{0} failed visiting {1}.{2}{3}{4}{5}",
-						rule.Name, obj, Environment.NewLine, e.Message, Environment.NewLine, e.StackTrace);
-					if (e.InnerException != null)
-						details = string.Format("{0}{1}Inner: {2}{3}{4}", details, Environment.NewLine, e.InnerException.Message, Environment.NewLine, e.InnerException.StackTrace);
+					string details = string.Format("{0} failed visiting {1}.{2}", rule.Name, obj, Environment.NewLine);
+
+					Exception ee = e;
+					while (ee != null)
+					{
+						if (e.InnerException != null)
+							details += string.Format("--------- {0} Exception{1}", ee == e ? "Outer" : "Inner", Environment.NewLine);
+						details += string.Format("{0}", ee.Message);
+						details += string.Format("{0}", ee.StackTrace);
+	
+						ee = ee.InnerException;
+					}
+
 					Log.InfoLine(this, details);
 					
 					DoRemoveFailedRules(rule.CheckID);

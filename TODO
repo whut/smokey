@@ -46,18 +46,9 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- implement the rule
 	- update functional test 
 * Clean up disposable rules:
-	- switch over to these new rules, for now just support the existing behavior
-	- make sure unit tests and ftest work
-	- checkin
-	- remove OLD code
-	- start adding the new checks
 	Disposable
-		叨nly Dispose overload should be void Dispose(bool)
-		主ispose() should not be virtual
-		叩o finalizer => no Dispose(bool)
-		叫ealed => Dispose(bool) should be private, protected and virtual otherwise
 		主ispose should not throw
-		叫tucts should not be IDisposable and have unmanaged types
+		叫tucts should not have unmanaged types
 		主ispose(false) needs to check for null fields before using them
 	
 	BaseDisposable
@@ -70,35 +61,22 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 		卡on't implement IDisposable
 		卡on't have Dispose()
 		
-	DisposeableNaming
-		卡on't use Dispose if not IDisposable
-		叩o DoDispose or OnDispose
+	NotDisposable
+		卡on't use Dispose 
+		卉alls suppress
 		
 	Finalizable
 		卯inalizer should not throw
 	
 * Review the new rules: can we add any other checks?
-* Don't throw from Dispose (hides original exception when using statement is used, makes
-  catch handlers harder to write). 
-	Note that with the .NET Framework 2.0 and later, throwing an exception from a finalizer 
-	thread will, by default, tear down the application. This is different than in previous 
-	versions, where exceptions from the finalizer thread would be silently eaten by the 
-	runtime.
-* Don't throw from finalizer.
-* If class is not sealed and disposble need virtual Dispose(bool)
 * Really dicy for Dispose(false) to refer to managed fields (every field used by that object
   and its fields cannot be disposable).
-* Don't have Dipose signatures other than void Dispose() and void Dispose(bool disposing)
-  Don't have DoDispose or OnDispose
-* Don't override or make virtual void Dispose()
 * Don't reimplement Dipose or IDisposable.
 * Dispose should call Dispose (or Close) on fields that are disposable.
-* Don't create disposable structs which have unmanaged types.
-  Issues with copying the struct.
 * Dispose(false) needs to check fields for null before using them (object could have failed
   during construction).
-* System.Console is safe to use from finalizers.
 * Cleanup reliability DisposeNativeResources. Class or base should implement IDisposable.
+* Review finalizier and disposable rules.
 * Make sure IDisposable examples in the xml are legit.
 * Update IDisposable examples on the wiki.
 * Prefer SafeHandle
@@ -106,6 +84,8 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * If both Dispose methods are present Dispose() should just call Dispose(false) (and if a 
   finalizer is present SuppressFinalize)
 * Point people to http://www.bluebytesoftware.com/blog/2005/04/08/DGUpdateDisposeFinalizationAndResourceManagement.aspx
+* Look at Virtual usage...need to check IsFinal as well to be able to override (interface
+  implementations do this if the implementation is not declared virtual))
 * Class has trivial get/set and an Equals which does not use that field.
 * Use tar --exclude \*/.svn --exclude \*/.svn/\*
 * Instead of Ignore and Unused just have Unused.Value

@@ -24,6 +24,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Reflection;
 using Smokey.Framework.Support;
 using Smokey.Internal.Rules;
@@ -34,7 +35,7 @@ namespace Smokey.Tests
 	public class DisposeableTest : TypeTest
 	{	
 		// test cases
-		public class Good1					// not IDisposable
+		public sealed class Good1					// not IDisposable
 		{
 			public void Work()
 			{
@@ -44,7 +45,7 @@ namespace Smokey.Tests
 			private StringWriter m_writer = new StringWriter();
 		}
 				
-		public class Good2 : IDisposable
+		public sealed class Good2 : IDisposable
 		{
 			public Good2()
 			{
@@ -60,7 +61,8 @@ namespace Smokey.Tests
 
 			public void Dispose()
 			{
-				m_writer.Dispose();
+				if (m_writer != null)
+					m_writer.Dispose();
 				m_disposed = true;
 			}
 			
@@ -87,13 +89,192 @@ namespace Smokey.Tests
 				GC.SuppressFinalize(this);
 			}
 			
-			private void Dispose(bool disposing)
+			protected virtual void Dispose(bool disposing)
 			{
 				if (!m_disposed)
 					m_disposed = true;
 			}
 			
-			private bool m_disposed = false; 
+			protected bool m_disposed; 
+		}			
+
+		public sealed class Good4 : Good3
+		{
+			public void Foo()
+			{
+				if (m_disposed)		
+					throw new ObjectDisposedException(GetType().Name);
+					
+				Console.WriteLine(DoDispose());
+			}
+			
+			private string DoDispose()		// private so OK
+			{
+				return "hmm";
+			}
+		}			
+
+		public class Good5 : IDisposable
+		{
+			~Good5()
+			{
+				Dispose(false);
+			}
+						
+			public void Work()
+			{
+				if (m_disposed)		
+					throw new ObjectDisposedException(GetType().Name);
+			}
+		
+			public void Dispose()
+			{
+				try
+				{
+					if (GetType().Name == "gah")
+						throw new Exception("ack");
+						
+					Dispose(true);
+					GC.SuppressFinalize(this);
+				}
+				catch
+				{
+				}
+			}
+			
+			protected virtual void Dispose(bool disposing)
+			{
+				if (!m_disposed)
+					m_disposed = true;
+			}
+			
+			protected bool m_disposed; 
+		}			
+
+		public sealed class Good6 : IDisposable		// classes can have native resources
+		{
+			~Good6()
+			{
+				Dispose(false);
+			}
+					
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			
+			private void Dispose(bool disposing)
+			{
+				if (!m_disposed)
+				{
+					CloseHandle(m_data);
+					m_disposed = true;
+				}
+			}
+			
+			[DllImport("Kernel32")]
+			public extern static void CloseHandle(IntPtr handle);
+
+			private bool m_disposed; 
+			private IntPtr m_data;
+		}			
+
+		public class Good7 : IDisposable
+		{
+			public Good7()
+			{
+			}
+			
+			public void Work()
+			{
+				if (m_disposed)		
+					throw new ObjectDisposedException(GetType().Name);
+					
+				m_writer.WriteLine("hey");
+			}
+
+			public void Dispose()
+			{
+				Dispose(true);
+			}
+			
+			protected virtual void Dispose(bool disposing)
+			{
+				if (!m_disposed)
+				{
+					if (m_writer != null)
+						m_writer.Dispose();
+						
+					m_disposed = true;
+				}
+			}
+			
+			private bool m_disposed;
+			private StringWriter m_writer = new StringWriter();
+		}			
+
+		public class Good8 : IDisposable
+		{
+			public Good8(StringWriter writer)
+			{
+				m_writer = writer;
+			}
+			
+			public void Work()
+			{
+				if (m_disposed)		
+					throw new ObjectDisposedException(GetType().Name);
+					
+				m_writer.WriteLine("hey");
+			}
+
+			public void Dispose()
+			{
+				Dispose(true);
+			}
+			
+			protected virtual void Dispose(bool disposing)
+			{
+				m_writer.Dispose();			// OK because we didn't new the field				
+				m_disposed = true;
+			}
+			
+			private bool m_disposed;
+			private StringWriter m_writer;
+		}			
+
+		public class Good9 : IDisposable
+		{
+			public Good9(int value)
+			{
+				m_value = value;
+			}
+			
+			public void Work()
+			{
+				if (m_disposed)		
+					throw new ObjectDisposedException(GetType().Name);
+					
+				Console.WriteLine(m_value.ToString());
+			}
+
+			public void Dispose()
+			{
+				Dispose(true);
+			}
+			
+			protected virtual void Dispose(bool disposing)
+			{
+				if (!m_disposed)
+				{
+					Console.WriteLine(m_value.ToString());	// not nullable so don't need an if check
+					m_disposed = true;
+				}
+			}
+			
+			private bool m_disposed;
+			private int m_value;
 		}			
 
 		public class NoThrow1 : IDisposable
@@ -108,7 +289,7 @@ namespace Smokey.Tests
 			}
 		}			
 
-		public class NoThrow2 : Good2
+		public class NoThrow2 : Good3
 		{
 			public void MoreWork()			// doesn't throw ObjectDisposedException
 			{
@@ -129,7 +310,8 @@ namespace Smokey.Tests
 
 			public void Dispose()
 			{
-				m_writer1.Dispose();		// only one writer is disposed
+				if (m_writer1 != null)
+					m_writer1.Dispose();		// only one writer is disposed
 				m_disposed = true;
 			}
 			
@@ -162,13 +344,301 @@ namespace Smokey.Tests
 					m_disposed = true;
 			}
 			
-			private bool m_disposed = false; 
+			private bool m_disposed; 
+		}			
+
+		public class BogusDisposeName1 : Good3
+		{
+			public new string Dispose()
+			{
+				return "hmm";
+			}
+		}			
+
+		public class BogusDisposeName2 : IDisposable
+		{
+			public void Work()
+			{
+				if (m_disposed)		
+					throw new ObjectDisposedException(GetType().Name);
+					
+				m_writer.WriteLine("hey");
+			}
+
+			public void Dispose()
+			{
+				if (m_writer != null)
+					m_writer.Dispose();
+				m_disposed = true;
+			}
+			
+			public void Dispose(int hmm)
+			{
+			}
+			
+			private bool m_disposed;
+			private StringWriter m_writer = new StringWriter();
+		}			
+
+		public class BogusDisposeName3 : IDisposable
+		{
+			public void Work()
+			{
+				if (m_disposed)		
+					throw new ObjectDisposedException(GetType().Name);
+					
+				m_writer.WriteLine("hey");
+			}
+
+			public void Dispose()
+			{
+				if (m_writer != null)
+					m_writer.Dispose();
+				m_disposed = true;
+			}
+			
+			public void Dispose(bool disposing, int hmm)
+			{
+			}
+			
+			private bool m_disposed;
+			private StringWriter m_writer = new StringWriter();
+		}			
+
+		public class BogusDisposeName4 : Good3
+		{
+			public string OnDispose()
+			{
+				if (m_disposed)		
+					throw new ObjectDisposedException(GetType().Name);
+					
+				return "hmm";
+			}
+		}			
+
+		public class BogusDisposeName5 : Good3
+		{
+			public string DoDispose()
+			{
+				if (m_disposed)		
+					throw new ObjectDisposedException(GetType().Name);
+					
+				return "hmm";
+			}
+		}			
+
+		public class VirtualDispose : IDisposable
+		{
+			~VirtualDispose()
+			{
+				Dispose(false);
+			}
+						
+			public void Work()
+			{
+				if (m_disposed)		
+					throw new ObjectDisposedException(GetType().Name);
+			}
+		
+			public virtual void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			
+			protected virtual void Dispose(bool disposing)
+			{
+				if (!m_disposed)
+					m_disposed = true;
+			}
+			
+			protected bool m_disposed; 
+		}			
+
+		public sealed class PublicDispose1 : IDisposable
+		{
+			~PublicDispose1()
+			{
+				Dispose(false);
+			}
+								
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			
+			public void Dispose(bool disposing)	// sealed so this should be private
+			{
+				if (!m_disposed)
+					m_disposed = true;
+			}
+			
+			private bool m_disposed; 
+		}			
+
+		public class PublicDispose2 : IDisposable
+		{
+			~PublicDispose2()
+			{
+				Dispose(false);
+			}
+								
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			
+			public virtual void Dispose(bool disposing)	// not sealed so this should be protected
+			{
+				if (!m_disposed)
+					m_disposed = true;
+			}
+			
+			private bool m_disposed; 
+		}			
+
+		public class PrivateDispose : IDisposable
+		{
+			~PrivateDispose()
+			{
+				Dispose(false);
+			}
+								
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			
+			private void Dispose(bool disposing)	// not sealed so this should be virtual
+			{
+				if (!m_disposed)
+					m_disposed = true;
+			}
+			
+			private bool m_disposed; 
+		}			
+
+		public class DisposeThrows1 : IDisposable
+		{
+			~DisposeThrows1()
+			{
+				Dispose(false);
+			}
+						
+			public void Work()
+			{
+				if (m_disposed)		
+					throw new ObjectDisposedException(GetType().Name);
+			}
+		
+			public void Dispose()
+			{
+				if (GetType().Name == "gah")
+					throw new Exception("ack");
+					
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			
+			protected virtual void Dispose(bool disposing)
+			{
+				if (!m_disposed)
+					m_disposed = true;
+			}
+			
+			protected bool m_disposed; 
+		}			
+
+		public struct StructHasNative : IDisposable		// structs cannot have native resources
+		{
+			public void Dispose()
+			{
+				if (!m_disposed)
+				{
+					CloseHandle(m_data);
+					m_disposed = true;
+				}
+			}
+			
+			[DllImport("Kernel32")]
+			public extern static void CloseHandle(IntPtr handle);
+
+			private bool m_disposed; 
+			private IntPtr m_data;
+		}			
+
+		public class NoNullCheck1 : IDisposable
+		{
+			public NoNullCheck1()
+			{
+			}
+			
+			public void Work()
+			{
+				if (m_disposed)		
+					throw new ObjectDisposedException(GetType().Name);
+					
+				m_writer.WriteLine("hey");
+			}
+
+			public void Dispose()
+			{
+				Dispose(true);
+			}
+			
+			protected virtual void Dispose(bool disposing)
+			{
+				m_writer.Dispose();						
+				m_disposed = true;
+			}
+			
+			private bool m_disposed;
+			private StringWriter m_writer = new StringWriter();
+		}			
+
+		public class NoNullCheck2 : IDisposable
+		{
+			public NoNullCheck2()
+			{
+			}
+			
+			public void Work()
+			{
+				if (m_disposed)		
+					throw new ObjectDisposedException(GetType().Name);
+					
+				m_writer.WriteLine("hey");
+			}
+
+			public void Dispose()
+			{
+				Dispose(true);
+			}
+			
+			protected virtual void Dispose(bool disposing)
+			{
+				if (!m_disposed)
+				{
+					m_writer.Dispose();						
+					m_disposed = true;
+				}
+			}
+			
+			private bool m_disposed;
+			private StringWriter m_writer = new StringWriter();
 		}			
 
 		// test code
 		public DisposeableTest() : base(
-			new string[]{"Good1", "Good2", "Good3"},
-			new string[]{"NoThrow1", "NoThrow2", "FieldNotDisposed", "NoSuppress"})	
+			new string[]{"Good1", "Good2", "Good3", "Good4", "Good5", "Good6", 
+				"Good7", "Good8", "Good9"},
+			new string[]{"NoThrow1", "NoThrow2", "FieldNotDisposed", "NoSuppress",
+				"BogusDisposeName1", "BogusDisposeName2", "BogusDisposeName3", "BogusDisposeName4", "BogusDisposeName5",
+				"VirtualDispose", "PublicDispose1", "PublicDispose2", "PrivateDispose",
+				"DisposeThrows1", "StructHasNative", "NoNullCheck1", "NoNullCheck2"})	
 		{
 		}
 						
