@@ -182,7 +182,7 @@ internal class DerivedClass : BaseClass
 }}}
 
 
-== System.IEquatable<T> (class version) ==
+== System.IEquatable< T > (class version) ==
 
 {{{
 internal class Customer : IEquatable<Customer>
@@ -238,7 +238,7 @@ internal class Customer : IEquatable<Customer>
 }}}
 
 
-== System.IEquatable<T> (struct version) ==
+== System.IEquatable< T > (struct version) ==
 
 {{{
 internal struct TwoDPoint : IEquatable<TwoDPoint>
@@ -322,6 +322,7 @@ internal class Customer : IFormattable
             case "L":
                 builder.Append("name = ");
                 builder.Append(m_name);
+
                 builder.Append(", orders = ");
                 foreach (string order in m_orders)
                 {
