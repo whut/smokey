@@ -195,4 +195,8 @@
 	<Expected checkID = "P1022" typeName = "PropertyReturnsCollection" fullName = "System.Collections.Generic.List`1&lt;System.Int32&gt; EvilDoer.BadClass::get_ListProp()"/>
 	<Expected checkID = "C1034" typeName = "InvalidEnumFlags" fullName = "EvilDoer.Bads"/>
 	<Expected checkID = "C1035" typeName = "HashButNoEquals" fullName = "EvilDoer.BadClass3"/>
+	<Expected checkID = "D1066" typeName = "Finalizable" fullName = "System.Void EvilDoer.Cohesive::Finalize()"/>
+	<Expected checkID = "D1066" typeName = "Finalizable" fullName = "System.Void EvilDoer.HandleLogIn::Finalize()"/>
+	<Expected checkID = "D1063" typeName = "BaseDisposable" fullName = "EvilDoer.BadDisposable2"/>
+	<Expected checkID = "D1063" typeName = "BaseDisposable" fullName = "EvilDoer.BadDisposable"/>
 </Expectations>

@@ -2549,6 +2549,121 @@
 		</Translation>
 	</Violation>
 
+	<Violation checkID = "D1063" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "BaseDisposable" category = "Design">			
+			<Cause>
+			The type is unsealed and directly implements IDisposable, but does so incorrectly.
+			</Cause>
+	
+			<Description>
+			This rule currently checks for one problem:
+			* The type should have a Dispose overload which returns void and takes a bool.
+			</Description>
+	
+			<Fix>
+			If the class is not intended to be subclassed then seal it, otherwise add the
+			Dispose overload.			
+			</Fix>
+	
+			<CSharp>
+			internal class BaseClass : IDisposable
+			{ 
+				~BaseClass()		
+				{
+					// Note that this is called even if the ctor throws. Also
+					// note that this will execute within a worker thread. If your
+					// base class does't have any unmanaged resources you can omit
+					// the finalizer.
+					Dispose(false);
+				}
+				
+				public BaseClass()
+				{
+					// allocate resources
+				}
+				
+				public void Work()
+				{
+					// All public methods (except Dispose) should throw 
+					// ObjectDisposedException if Dispose has been called.
+					if (m_disposed)		
+						throw new ObjectDisposedException(GetType().Name);
+				}
+			
+				protected bool Disposed
+				{
+					get {return m_disposed;}
+				}
+						
+				protected virtual void Dispose(bool disposing)
+				{
+					if (!m_disposed)
+					{
+						if (disposing)
+						{
+							// This code will execute if we were called from Dispose()
+							// so we can call methods on our managed fields.
+						}
+				
+						// There are only very weak guarantees on the order in which
+						// finalizers are called so we should not use any managed
+						// objects here unless we are sure that they (and all objects 
+						// they may use) are not finalizeable. Note that System.Console
+						// may be used.
+						m_disposed = true;
+					}
+				}
+				
+				public void Dispose()
+				{
+					Dispose(true);
+					GC.SuppressFinalize(this);
+				}
+				
+				// resource fields go here
+				private bool m_disposed; 
+			}
+			
+			internal class DerivedClass : BaseClass
+			{ 
+				public DerivedClass()
+				{
+					// allocate more resources (in addition to base's)
+				}
+				
+				public void Work()
+				{
+					// All public methods (except Dispose) should throw 
+					// ObjectDisposedException if Dispose has been called.
+					if (m_disposed)		
+						throw new ObjectDisposedException(GetType().Name);
+				}
+			
+				protected override void Dispose(bool disposing)
+				{
+					if (!Disposed)
+					{
+						if (disposing)
+						{
+							// This code will execute if we were called from Dispose()
+							// so we can call methods on our managed fields.
+						}
+				
+						// There are only very weak guarantees on the order in which
+						// finalizers are called so we should not use any managed
+						// objects here unless we are sure that they (and all objects 
+						// they may use) are not finalizeable. Note that System.Console
+						// may be used.
+						base.Dispose(disposing);
+					}
+				}
+				
+				// some new fields that require cleanup
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
 	<Violation checkID = "D1064" severity = "Error" breaking = "false">
 		<Translation lang = "en" typeName = "DerivedDisposable" category = "Design">			
 			<Cause>
@@ -2558,7 +2673,9 @@
 			<Description>
 			This rule checks for several problems:
 			* The Dispose(bool) override does not call the base method.
-			* The type has a finalizer (it should rely on the base class finalizer instead).
+			* The type overrides a finalizer (it should rely on the base class finalizer instead).
+			* Don't (re)implement IDisposable.
+			* Don't include a new or overriden Dispose() method.
 			</Description>
 	
 			<Fix>
@@ -2574,7 +2691,9 @@
 				~BaseClass()		
 				{
 					// Note that this is called even if the ctor throws. Also
-					// note that this will execute within a worker thread.
+					// note that this will execute within a worker thread. If your
+					// base class does't have any unmanaged resources you can omit
+					// the finalizer.
 					Dispose(false);
 				}
 				
@@ -2675,12 +2794,67 @@
 			This rule checks for two problems:
 			* The finalizer is empty (finalizers put a lot of extra pressure on the garbage
 			  collector so they should only be used if they do actual work).
+			* The finalizer throws but does not catch (.NET 2.0 will, by default, tear down 
+			  the application if a finalizer throws).
+			* The type does not implement IDisposable. 
 			</Description>
 	
 			<Fix>
 			For more information see &lt;http://www.bluebytesoftware.com/blog/2005/04/08/DGUpdateDisposeFinalizationAndResourceManagement.aspx&gt;
 			which has a great deal of valuable advice.			
 			</Fix>
+	
+			<CSharp>
+			// See the BaseDisposable rule for example code if your class is not sealed.
+			internal sealed class SealedWithFinalizer : IDisposable
+			{ 
+				~SealedWithFinalizer()
+				{
+					// Note that this is called even if the ctor throws. Also
+					// note that this will execute within a worker thread.
+					Dispose(false);
+				}
+				
+				public SealedWithFinalizer()
+				{
+					// allocate resources
+				}
+				
+				public void Work()
+				{
+					if (m_disposed)		
+						throw new ObjectDisposedException(GetType().Name);
+				}
+			
+				public void Dispose()
+				{
+					Dispose(true);
+					GC.SuppressFinalize(this);
+				}
+				
+				private void Dispose(bool disposing)
+				{
+					if (!m_disposed)
+					{
+						if (disposing)
+						{
+							// This code will execute if we were called from Dispose()
+							// so we can call methods on our managed fields.
+						}
+										
+						// There are only very weak guarantees on the order in which
+						// finalizers are called so we should not use any managed
+						// objects here unless we are sure that they (and all objects 
+						// they may use) are not finalizeable. Note that System.Console
+						// may be used.
+						m_disposed = true;
+					}
+				}
+				
+				// resource fields go here
+				private bool m_disposed; 
+			}
+			</CSharp>
 		</Translation>
 	</Violation>
 </Violations>

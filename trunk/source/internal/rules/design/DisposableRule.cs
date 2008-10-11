@@ -53,7 +53,6 @@ namespace Smokey.Internal.Rules
 		{
 			m_type = begin.Type;
 			m_disposable = IsDisposable.Type(Cache, begin.Type) && !m_type.IsCompilerGenerated();
-			m_details = string.Empty;
 		
 			m_hasFinalizer = false;
 			m_supressWasCalled = false;
@@ -186,7 +185,7 @@ namespace Smokey.Internal.Rules
 					if (branch.Index > 0)
 					{
 						LoadField load = m_minfo.Instructions[branch.Index - 1] as LoadField;
-						if (load == null || load.Field.Name != "m_disposed")		// testing m_disposed does not count as a branch for null checking
+						if (load == null || load.Field.Name.IndexOf("m_disposed") < 0)		// testing m_disposed does not count as a branch for null checking
 							m_hasNoBranches = false;
 					}
 				}
@@ -285,40 +284,42 @@ namespace Smokey.Internal.Rules
 		{
 			if (m_disposable)
 			{
+				string details = string.Empty;
+				
 				if (m_noThrowMethods.Length > 0)
 				{
-					m_details += "Methods which don't throw ObjectDisposedException: " + Environment.NewLine;
-					m_details += m_noThrowMethods;
+					details += "Methods which don't throw ObjectDisposedException: " + Environment.NewLine;
+					details += m_noThrowMethods;
 				}
 	
 				if (m_badDisposeNames.Count > 0)
 				{
-					m_details += "Unusual Dispose methods: ";
-					m_details += string.Join(" ", m_badDisposeNames.ToArray());
-					m_details += Environment.NewLine;
+					details += "Unusual Dispose methods: ";
+					details += string.Join(" ", m_badDisposeNames.ToArray());
+					details += Environment.NewLine;
 				}
 				
 				if (m_illegalDisposeNames.Count > 0)
 				{
-					m_details += "Bad method names: ";
-					m_details += string.Join(" ", m_illegalDisposeNames.ToArray());
-					m_details += Environment.NewLine;	
+					details += "Bad method names: ";
+					details += string.Join(" ", m_illegalDisposeNames.ToArray());
+					details += Environment.NewLine;	
 				}
 				
 				if (m_hasVirtualDispose)
-					m_details += "Dispose() is virtual" + Environment.NewLine;
+					details += "Dispose() is virtual" + Environment.NewLine;
 				
 				if (m_hasNonPrivateDispose)
-					m_details += "The type is sealed, but Dispose(bool) is not private." + Environment.NewLine;
+					details += "The type is sealed, but Dispose(bool) is not private." + Environment.NewLine;
 					
 				if (m_hasNonProtectedDispose)	
-					m_details += "The type is unsealed, but Dispose(bool) is not protected." + Environment.NewLine;
+					details += "The type is unsealed, but Dispose(bool) is not protected." + Environment.NewLine;
 					
 				if (m_hasNonVirtualDispose)
-					m_details += "The type is unsealed, but Dispose(bool) is not virtual." + Environment.NewLine;
+					details += "The type is unsealed, but Dispose(bool) is not virtual." + Environment.NewLine;
 				
 				if (m_disposeThrows)
-					m_details += "A Dispose methods throws, but does not catch." + Environment.NewLine;
+					details += "A Dispose methods throws, but does not catch." + Environment.NewLine;
 				
 				if (m_disposableFields.Count > 0)
 				{
@@ -334,30 +335,29 @@ namespace Smokey.Internal.Rules
 						builder.Append(' ');
 					}
 					
-					m_details += builder.ToString() + Environment.NewLine;
+					details += builder.ToString() + Environment.NewLine;
 				}
 				
 				if (m_hasFinalizer && !m_supressWasCalled)
-					m_details += "GC.SuppressFinalize was not called" + Environment.NewLine;
+					details += "GC.SuppressFinalize was not called" + Environment.NewLine;
 					
 				if (m_hasNativeFields && m_type.IsValueType)
-					m_details += "The type is a value type, but has native fields." + Environment.NewLine;
+					details += "The type is a value type, but has native fields." + Environment.NewLine;
 					
 				if (m_hasNullCall)
-					m_details += "Dispose calls a method on a field which may be null (because the constructor may have thrown)." + Environment.NewLine;
+					details += "Dispose calls a method on a field which may be null (because the constructor may have thrown)." + Environment.NewLine;
 	
-				m_details = m_details.Trim();
-				if (m_details.Length > 0)
+				details = details.Trim();
+				if (details.Length > 0)
 				{
-					Log.DebugLine(this, "Details: {0}", m_details);
-					Reporter.TypeFailed(end.Type, CheckID, m_details);
+					Log.DebugLine(this, "Details: {0}", details);
+					Reporter.TypeFailed(end.Type, CheckID, details);
 				}
 			}
 		}
 						
 		private TypeDefinition m_type;
 		private bool m_disposable;
-		private string m_details;
 		private MethodInfo m_minfo;
 
 		private bool m_hasFinalizer;

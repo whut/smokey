@@ -51,6 +51,7 @@ namespace Smokey.Internal.Rules
 			m_disposable = m_type.BaseImplements("System.IDisposable", Cache) && !m_type.IsCompilerGenerated();
 			
 			m_hasFinalizer = false;
+			m_hasDispose = false;
 
 			m_disposeMethod = null;
 			m_hasBaseCall = false;
@@ -62,7 +63,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 
-		public void VisitMethodBegin(BeginMethod begin)	// IsAbstract
+		public void VisitMethodBegin(BeginMethod begin)	
 		{
 			m_inDispose = false;
 			
@@ -70,16 +71,27 @@ namespace Smokey.Internal.Rules
 			{
 				Log.DebugLine(this, "{0:F}", begin.Info.Instructions);			
 
-				if (begin.Info.Method.Name == "Finalize")
-				{
-					Log.DebugLine(this, "has finalizer");
-					m_hasFinalizer = true;
+				MethodDefinition method = begin.Info.Method;
+				if (method.Name == "Finalize")
+				{	
+					MethodDefinition previous = method.GetPreviousMethod(Cache);
+					if (previous != method)
+					{
+						Log.DebugLine(this, "finalizer overrides {0}", previous);
+						m_hasFinalizer = true;
+					}
 				}
 				
-				if (begin.Info.Method.Matches("System.Void", "Dispose", "System.Boolean"))
+				if (method.Matches("System.Void", "Dispose"))
+				{
+					Log.DebugLine(this, "has Dispose()");				
+					m_hasDispose = true;
+				}
+
+				if (method.Matches("System.Void", "Dispose", "System.Boolean"))
 				{
 					Log.DebugLine(this, "has Dispose(bool)");				
-					m_disposeMethod = begin.Info.Method;
+					m_disposeMethod = method;
 					m_inDispose = true;
 				}
 			}
@@ -115,7 +127,13 @@ namespace Smokey.Internal.Rules
 			}
 			
 			if (m_hasFinalizer)
-				details += "type has a finalizer" + Environment.NewLine;
+				details += "Type has a finalizer" + Environment.NewLine;
+
+			if (m_disposable && end.Type.Implements("System.IDisposable"))
+				details += "Type reimplements IDisposable" + Environment.NewLine;
+
+			if (m_hasDispose)
+				details += "Type has a Dispose() method" + Environment.NewLine;
 
 			details = details.Trim();
 			if (details.Length > 0)
@@ -129,6 +147,7 @@ namespace Smokey.Internal.Rules
 		private TypeDefinition m_type;
 		
 		private bool m_hasFinalizer;
+		private bool m_hasDispose;
 
 		private MethodDefinition m_disposeMethod;
 		private bool m_inDispose;

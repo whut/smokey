@@ -31,17 +31,17 @@ using Smokey.Internal.Rules;
 namespace Smokey.Tests
 {
 	[TestFixture]
-	public class FinalizeableTest : MethodTest
+	public class BaseDisposeableTest : TypeTest
 	{	
 		// test cases
 		internal class Good1 : IDisposable
 		{ 
-			~Good1()
+			protected bool Disposed
 			{
-				Dispose(false);
+				get {return m_disposed;}
 			}
-										
-			protected void Dispose(bool disposing)
+					
+			protected virtual void Dispose(bool disposing)	// has
 			{
 				if (!m_disposed)
 				{
@@ -58,21 +58,60 @@ namespace Smokey.Tests
 			private bool m_disposed; 
 		}
 		
-		internal class Good2 : Good1		
+		internal sealed class Good2 : IDisposable		// sealed
 		{ 
-			~Good2()						// base is IDisposable
+			private void DoDispose(bool disposing)	
 			{
-				Dispose(false);
+				if (!m_disposed)
+				{
+					m_disposed = true;
+				}
+			}
+			
+			public void Dispose()
+			{
+				DoDispose(true);
+				GC.SuppressFinalize(this);
+			}
+			
+			private bool m_disposed; 
+		}
+		
+		internal class Good3						// not disposable
+		{ 
+			private void DoDispose(bool disposing)	
+			{
+				if (!m_disposed)
+				{
+					m_disposed = true;
+				}
+			}
+			
+			public void Dispose()
+			{
+				DoDispose(true);
+				GC.SuppressFinalize(this);
+			}
+			
+			private bool m_disposed; 
+		}
+		
+		internal class Good4 : Good1				// indirectly IDisposable
+		{ 
+			public void Work()
+			{
+				Console.WriteLine("hey");
 			}
 		}
 		
 		internal class Bad1 : IDisposable
 		{ 
-			~Bad1()					// empty
+			protected bool Disposed
 			{
+				get {return m_disposed;}
 			}
-										
-			private void Dispose(bool disposing)
+					
+			protected virtual void OnDispose(bool disposing)	// wrong name
 			{
 				if (!m_disposed)
 				{
@@ -82,56 +121,23 @@ namespace Smokey.Tests
 			
 			public void Dispose()
 			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
-			}
-			
-			private bool m_disposed; 
-		}
-		
-		internal class Bad2 : IDisposable
-		{ 
-			~Bad2()					// throws
-			{
-				if (m_disposed)
-					throw new Exception("ack");
-			}
-										
-			private void Dispose(bool disposing)
-			{
-				if (!m_disposed)
-				{
-					m_disposed = true;
-				}
-			}
-			
-			public void Dispose()
-			{
-				Dispose(true);
+				OnDispose(true);
 				GC.SuppressFinalize(this);
 			}
 			
 			private bool m_disposed; 
 		}
 
-		internal class Bad4 		
-		{ 
-			~Bad4()						// base is not IDisposable
-			{
-				Console.WriteLine("doh");
-			}
-		}
-		
 		// test code
-		public FinalizeableTest() : base(
-			new string[]{"Good1.Finalize", "Good2.Finalize"},
-			new string[]{"Bad1.Finalize", "Bad2.Finalize", "Bad4.Finalize"})	
+		public BaseDisposeableTest() : base(
+			new string[]{"Good1", "Good2", "Good3", "Good4"},
+			new string[]{"Bad1"})	
 		{
 		}
 						
 		protected override Rule OnCreate(AssemblyCache cache, IReportViolations reporter)
 		{
-			return new FinalizeableRule(cache, reporter);
+			return new BaseDisposeableRule(cache, reporter);
 		}
 	} 
 }

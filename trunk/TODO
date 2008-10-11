@@ -38,52 +38,29 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 102 gendarme
 
 
-* Write a xxx rule:	
-	- update the xml
-	- add a rule which always return success
-	- update the config file
-	- add a test
-	- implement the rule
-	- update functional test 
 * Clean up disposable rules:
-	Disposable
-		主ispose should not throw
-		叫tucts should not have unmanaged types
-		主ispose(false) needs to check for null fields before using them
-	
 	BaseDisposable
-			The type is unsealed and directly implements IDisposable, but does so incorrectly.
-		叫hould have finalizer (so we can better guarantee that resources are cleaned up)
-		叩eed virtual Dispose(bool) if the class is not sealed
-		主ispose() should just call Dispose(false) (and supresss if it has a finalizer)
+		叫hould have Dispose(bool)
 	
 	DerivedDisposable
 		卡on't implement IDisposable
 		卡on't have Dispose()
-		
-	NotDisposable
-		卡on't use Dispose 
-		卉alls suppress
-		
+				
 	Finalizable
 		卯inalizer should not throw
-	
+		*needs to be IDisposable (may be a rule for this already)
 * Review the new rules: can we add any other checks?
 * Really dicy for Dispose(false) to refer to managed fields (every field used by that object
   and its fields cannot be disposable).
 * Don't reimplement Dipose or IDisposable.
 * Dispose should call Dispose (or Close) on fields that are disposable.
-* Dispose(false) needs to check fields for null before using them (object could have failed
-  during construction).
 * Cleanup reliability DisposeNativeResources. Class or base should implement IDisposable.
 * Review finalizier and disposable rules.
 * Make sure IDisposable examples in the xml are legit.
 * Update IDisposable examples on the wiki.
+* Make sure critical path uses fast asserts. Might want to measure before and after.
 * Prefer SafeHandle
 * Don't override finalizers.
-* If both Dispose methods are present Dispose() should just call Dispose(false) (and if a 
-  finalizer is present SuppressFinalize)
-* Point people to http://www.bluebytesoftware.com/blog/2005/04/08/DGUpdateDisposeFinalizationAndResourceManagement.aspx
 * Look at Virtual usage...need to check IsFinal as well to be able to override (interface
   implementations do this if the implementation is not declared virtual))
 * Class has trivial get/set and an Equals which does not use that field.

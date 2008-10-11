@@ -54,7 +54,7 @@ namespace Smokey.Tests
 				}
 			}
 			
-			public void Dispose()
+			public virtual void Dispose()
 			{
 				Dispose(true);
 				GC.SuppressFinalize(this);
@@ -79,6 +79,30 @@ namespace Smokey.Tests
 			}			
 		}
 				
+		internal class GoodBase3 : IDisposable
+		{ 					
+			protected bool Disposed
+			{
+				get {return m_disposed;}
+			}
+					
+			protected virtual void Dispose(bool disposing)
+			{
+				if (!m_disposed)
+				{
+					m_disposed = true;
+				}
+			}
+			
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			
+			private bool m_disposed; 
+		}
+		
 		internal class GoodDerived1 : GoodBase1
 		{ 
 			protected override void Dispose(bool disposing)
@@ -95,6 +119,22 @@ namespace Smokey.Tests
 			protected override void Dispose(bool disposing)
 			{
 				// base is abstract
+			}	
+		}
+
+		internal class GoodFinalizer : GoodBase3
+		{ 
+			~GoodFinalizer()					// base doesn't have a finalizer
+			{
+				Dispose(false);
+			}
+			
+			protected override void Dispose(bool disposing)
+			{
+				if (!Disposed)		
+				{
+					base.Dispose(disposing);
+				}
 			}	
 		}
 
@@ -150,7 +190,7 @@ namespace Smokey.Tests
 
 		internal class HasFinalizer : GoodBase1
 		{ 
-			~HasFinalizer()
+			~HasFinalizer()					// overrides base finalizer
 			{
 				Dispose(false);
 			}
@@ -164,11 +204,62 @@ namespace Smokey.Tests
 			}	
 		}
 
+		internal class ReimplementsIDisposable : GoodBase1, IDisposable	// reimplements IDisposable
+		{ 
+			public new void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				if (!Disposed)
+				{
+					base.Dispose(disposing);
+				}
+			}	
+		}
+
+		internal class HasDispose1 : GoodBase1
+		{ 
+			public new void Dispose()				// has Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				if (!Disposed)
+				{
+					base.Dispose(disposing);
+				}
+			}	
+		}
+
+		internal class HasDispose2 : GoodBase1
+		{ 
+			public override void Dispose()				// has Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				if (!Disposed)
+				{
+					base.Dispose(disposing);
+				}
+			}	
+		}
+
 		// test code
 		public DerivedDisposeableTest() : base(
-			new string[]{"GoodBase1", "GoodBase2", "GoodDerived1", "GoodDerived2"},
+			new string[]{"GoodBase1", "GoodBase2", "GoodBase3", "GoodDerived1", "GoodDerived2", "GoodFinalizer"},
 			new string[]{"NoBaseCall", "BadBaseCall1", "BadBaseCall2", "BadBaseCall3",
-				"HasFinalizer"})	
+				"HasFinalizer", "ReimplementsIDisposable", "HasDispose1", "HasDispose2"})	
 		{
 		}
 						
