@@ -768,7 +768,7 @@
 			<CSharp>
 			using System.Runtime.InteropServices;
 			
-			internal static class NativeMethods
+			internal static partial class NativeMethods
 			{
 				[DllImport("Kernel32")]
 				public extern static bool CloseHandle(IntPtr handle);
@@ -2440,7 +2440,7 @@
 			<Description>
 			This rule checks for several problems:
 			* All public methods (except Dispose) should throw ObjectDisposedException 
-			  if Dispose has been called. 
+			  if Dispose has been called. Note that this will ignore getter properties.
 			* Not all the disposable fields in the object are disposed.
 			* The type has a finalizer but Dispose() does not call GC.SuppressFinalize.
 			* The type has a method named Dispose with an unusual signature.
@@ -2853,6 +2853,114 @@
 				
 				// resource fields go here
 				private bool m_disposed; 
+			}
+			</CSharp>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "D1067" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "PreferSafeHandle" category = "Design">			
+			<Cause>
+			A type has a finalizer and a (U)IntPtr field.
+			</Cause>
+	
+			<Description>
+			Instead of relying on IntPtr consider using SafeHandle which has the following advantages: 
+			* SafeHandles are type safe.
+			* SafeHandles are guaranteed to be disposed of during exceptional conditions like
+			  a thread aborting unexpectedly or a stack overflow.
+			* SafeHandles are not vulnerable to reycle attacks.
+			* You don't need to write a finalizer which can be tricky to do because they execute
+			  within their own thread, may execute on partially constructed objects, and normally
+			  tear down the application if you allow an exception to escape from them.
+			</Description>
+	
+			<Fix>
+			Rewrite the code to use System.Runtime.InteropServices.SafeHandle.			
+			</Fix>
+	
+			<CSharp>
+			using System.Runtime.ConstrainedExecution;
+			using System.Runtime.InteropServices;
+			using System.Security;
+			using System.Security.Permissions;
+			
+			namespace Spelling
+			{
+				using AspellConfigHandle = SafeHandle;		// production code would have a real AspellConfigHandle class
+				
+				// This is our wrapper around a native aspell pointer.
+				[SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode = true)]
+				[SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
+				internal sealed class AspellHandle : SafeHandle
+				{
+					public AspellHandle() : base(IntPtr.Zero, true)
+					{
+					}
+					
+					public AspellHandle(AspellConfigHandle config) : 	
+						base(NativeMethods.new_aspell_speller(config), true)
+					{
+					}
+					
+					public override bool IsInvalid 
+					{ 
+						get {return handle == IntPtr.Zero;}
+					}
+				
+					// This will not be called if the handle is invalid. Note that this
+					// method should not throw.
+					[ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
+					protected override bool ReleaseHandle()
+					{
+						NativeMethods.delete_aspell_speller(this);
+						
+						return true;
+					}
+				}
+				
+				// These are the apsell unmanaged methods we support. Note that we pass in our 
+				// typed handles instead of IntPtrs.
+				[SuppressUnmanagedCodeSecurity()]
+				internal static partial class NativeMethods
+				{
+					[DllImport("aspell")]
+					public static extern IntPtr new_aspell_speller(AspellConfigHandle config);
+				
+					[DllImport("aspell")]
+					public static extern int aspell_speller_check(AspellHandle handle, string word, int wordSize);
+				
+					[DllImport("aspell")]
+					public static extern void delete_aspell_speller(AspellHandle handle);
+				}
+				
+				// And here is our managed class which wraps all of the unmanaged glue code. Note
+				// that we don't need to provide a finalizer, but it's good practice to implement
+				// IDisposable.
+				internal sealed class SpellChecker : IDisposable
+				{	
+					public SpellChecker()
+					{
+						m_speller = new AspellHandle(null);
+					}
+						
+					public int Check(string word)
+					{
+						return NativeMethods.aspell_speller_check(m_speller, word, -1);
+					}
+								
+					public void Dispose()
+					{
+						if (!m_disposed)
+						{
+							m_speller.Dispose();	// don't need null checks because we never called from a finalizer					
+							m_disposed = true;
+						}
+					}
+				
+					private AspellHandle m_speller;
+					private bool m_disposed;
+				}
 			}
 			</CSharp>
 		</Translation>

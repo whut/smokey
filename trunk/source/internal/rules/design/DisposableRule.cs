@@ -163,7 +163,7 @@ namespace Smokey.Internal.Rules
 					MethodAttributes attrs = method.Attributes;
 					if ((attrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public)
 					{
-						if (method.Name != "Dispose" && method.Name != "Close")
+						if (method.Name != "Dispose" && method.Name != "Close" && !method.Name.StartsWith("get_"))
 						{
 							m_needsThrowCheck = true;
 						}

@@ -29,6 +29,7 @@ namespace EvilDoer
 	// R1002/DisposeFields
 	// S1003/KeepAlive
 	// D1063/BaseDisposable (no Dispose(bool))
+	// D1067/PreferSafeHandle
 	public class BadDisposable : IDisposable
 	{
 		~BadDisposable()		

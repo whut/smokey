@@ -37,13 +37,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 199 fxcop
 102 gendarme
 
-* Move IsDisposable code.
-* Review finalizier and disposable rules.
-* Make sure IDisposable examples in the xml are legit.
-* Update IDisposable examples on the wiki.
-* Make sure critical path uses fast asserts. Might want to measure before and after.
 * Prefer SafeHandle
-* Don't override finalizers.
 * Look at Virtual usage...need to check IsFinal as well to be able to override (interface
   implementations do this if the implementation is not declared virtual))
 * Class has trivial get/set and an Equals which does not use that field.
@@ -71,11 +65,19 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Can we add a grammar checker? Only if the text includes periods?
 * Type is only used by private methods of one type (so the first type can be made private).
 * Overrides Equals, but isnt IEquatable.
-* InternalException really needs to list the public types (or first 5 or so).
 * UseJurassicNaming complains about static public fields. Also type P1`1
 * GetObjectData doesn't add all non-static fields and the field it doesn't add is not 
   marked with: NonSerializedAttribute, OptionalFieldAttribute, XmlIgnoreAttribute, or 
   DefaultValueAttribute
+* Mono naming xml is kinda weak. For example, leading underscore on fields.
+* GetHashCode snippets on wiki should be a lil better.
+* Add more fxcop rules?
+* Get rid of ignoreList setting.
+* Smoke smokey.
+* Smoke a few system assemblies.
+* Upgrade to mono 2.0
+* Do a release.
+  
 * Are there any libraries which will help us get file and line numbers with .net?
 	http://blogs.msdn.com/jmstall/archive/2005/10/08/symbol-apis.aspx
 * Look at ndepend, probably should add a link to it too:
@@ -85,10 +87,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Large property?
 * Add more fxcop rules.
 * Try to get release functest working, probably need to have a debug only section of expected.xml
-* Get rid of ignoreList setting.
-* Mono naming xml is kinda weak. For example, leading underscore on fields.
 * Looks like we can use pkg-config to get at cecil.
-* GetHashCode snippets on wiki should be a lil better.
 * InlineStaticInit kind of sucks.
 * Add a few more fxcop rules.
 * Add a few more gendarme rules.
@@ -110,10 +109,8 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Foreign key but no update rule.
 * Re-add MethodCanBeMadeStaticRule but disable it by default.
 * Watchdog timeout should be configurable.
-* Rename the ExternallyVisible method ExternallyVisible.
 * Try profiling on linux.
 * (SerializationInfo, StreamingContext) ctor and GetObjectData, but not ISerializable.
-* Remove support for ignoreList config setting.
 * Handle the CompilerGenerated types and methods in the dispatcher not the rules. This is tricky to
   do: we want to do stuff like visting the body of anonymous methods to see what they call for example.
 * AssemblyResolver.Resolver.Resolve can be used to get a definition from a reference.
@@ -121,7 +118,6 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * FinalizerUsesFinalizeableRule
 	- would need to do some code flow based on the disposing flag
 * Try heapbuddy.
-* Remove OLD_CHANGE_LOG from tarballs?
 * Probably want the fxcop override changes argument name rule
 	- important for languages like VB (and ruby?) that support named arguments
 * Need install.bat and uninstall.bat

@@ -198,4 +198,5 @@
 	<Expected checkID = "D1066" typeName = "Finalizable" fullName = "System.Void EvilDoer.HandleLogIn::Finalize()"/>
 	<Expected checkID = "D1063" typeName = "BaseDisposable" fullName = "EvilDoer.BadDisposable2"/>
 	<Expected checkID = "D1063" typeName = "BaseDisposable" fullName = "EvilDoer.BadDisposable"/>
+	<Expected checkID = "D1067" typeName = "PreferSafeHandle" fullName = "EvilDoer.BadDisposable"/>
 </Expectations>

@@ -339,7 +339,7 @@
 					GC.KeepAlive(this);
 				}
 				
-				private static class NativeMethods
+				private static partial class NativeMethods
 				{
 					[System.Runtime.InteropServices.DllImport("Kernel32")]
 					public extern static bool CloseHandle(IntPtr handle);
