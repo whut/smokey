@@ -85,13 +85,24 @@ namespace EvilDoer
 		private string key;
 	}			
 
-	public class GoodClass : IFormattable
+	public sealed class GoodClass : IFormattable, IDisposable
 	{				
 		~GoodClass()
 		{
-			Run();
+			DoDispose(false);
 		}
 		
+		private void DoDispose(bool disposing)
+		{
+			disposed = true;
+		}
+		
+		public void Dispose()
+		{
+			DoDispose(true);
+			GC.SuppressFinalize(this);
+		}
+
 		public static string ArrayToStr(int[] array)
 		{
 			string[] strs = Array.ConvertAll<int, string>(array, delegate(int i) 
@@ -178,11 +189,17 @@ namespace EvilDoer
 		
 		public override int GetHashCode()
 		{
+			if (disposed)		
+				throw new ObjectDisposedException(GetType().Name);
+
 			return unchecked(name.GetHashCode() + address.GetHashCode());
 		}
 
 		public override bool Equals(object rhsObj)
 		{
+			if (disposed)		
+				throw new ObjectDisposedException(GetType().Name);
+
 			if (rhsObj == null)	
 				return false;
 			
@@ -195,6 +212,9 @@ namespace EvilDoer
 			
 		public bool Equals(GoodClass rhs)
 		{
+			if (disposed)		
+				throw new ObjectDisposedException(GetType().Name);
+
 			if ((object) rhs == null)
 				return false;
 			
@@ -209,6 +229,9 @@ namespace EvilDoer
 			if ((object) lhs == null || (object) rhs == null)
 				return false;
 			
+			if (lhs.disposed || rhs.disposed)		
+				throw new ObjectDisposedException(lhs.GetType().Name);
+
 			return lhs.name == rhs.name && lhs.address == rhs.address;
 		}
 		
@@ -219,6 +242,9 @@ namespace EvilDoer
 			
 		public override string ToString()
 		{
+			if (disposed)		
+				throw new ObjectDisposedException(GetType().Name);
+
 			return ToString("G", null);
 		}
 		
@@ -240,6 +266,9 @@ namespace EvilDoer
 
 		public string ToString(string format, IFormatProvider provider)
 		{
+			if (disposed)		
+				throw new ObjectDisposedException(GetType().Name);
+
 			if (format == null)
 				throw new ArgumentNullException("format");
 				
@@ -276,5 +305,6 @@ namespace EvilDoer
 
 		private string name = "hello", address = "goodbye";
 		const string NameAttribute     = "name";
+		private bool disposed; 
 	}
 }

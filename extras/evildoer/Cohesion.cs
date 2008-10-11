@@ -24,6 +24,7 @@ using System.Collections;
 
 namespace EvilDoer
 {
+	// D1066/Finalizable (not IDisposable)
 	public class Cohesive
 	{
 		~Cohesive()

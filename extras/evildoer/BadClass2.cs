@@ -127,6 +127,7 @@ namespace EvilDoer
 	}
 	
 	// MS1027/PreferredTerm
+	// D1066/Finalizable (not IDisposable)
 	public class HandleLogIn
 	{
 		~HandleLogIn()

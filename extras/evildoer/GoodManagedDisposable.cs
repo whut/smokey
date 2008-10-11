@@ -25,7 +25,7 @@ using System.Threading;
 namespace EvilDoer
 {
 	// D1052/PreferMonitor1
-	public class GoodManagedDisposable : IDisposable
+	public sealed class GoodManagedDisposable : IDisposable
 	{
 		public void Work(string mesg)
 		{

@@ -29,7 +29,7 @@ namespace EvilDoer
 	{
 		~GoodDisposable()		
 		{					
-			DoDispose(false);
+			Dispose(false);
 		}
 	
 		public GoodDisposable(IntPtr handle)
@@ -48,12 +48,12 @@ namespace EvilDoer
 		
 		public void Dispose()
 		{
-			DoDispose(true);
+			Dispose(true);
 	
 			GC.SuppressFinalize(this);
 		}
 	
-		private void DoDispose(bool disposing)
+		protected virtual void Dispose(bool disposing)
 		{
 			if (!disposed)
 			{

@@ -26,6 +26,7 @@ using System.IO;
 namespace EvilDoer
 {
 	// MS1013/DisposableButNoFinalizer
+	// D1063/BaseDisposable (no Dispose(bool))
 	public class BadDisposable2 : IDisposable
 	{	
 		public BadDisposable2(IntPtr handle)
