@@ -44,7 +44,7 @@ namespace Smokey.Internal.Rules
 			Log.DebugLine(this, "-----------------------------------"); 
 			Log.DebugLine(this, "checking {0}", type);				
 
-			if (type.Implements("System.ICloneable"))
+			if (type.TypeImplements("System.ICloneable"))
 			{
 				Log.DebugLine(this, "ICloneable"); 
 				Reporter.TypeFailed(type, CheckID, string.Empty);

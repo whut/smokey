@@ -62,7 +62,7 @@ namespace Smokey.Internal.Rules
 				failed = !type.IsSubclassOf("System.Collections.Queue", Cache);
 
 			else if (DoCheckSuffix(type, "Dictionary"))
-				failed = !type.ClassOrBaseImplements("System.Collections.IDictionary", Cache);
+				failed = !type.TypeOrBaseImplements("System.Collections.IDictionary", Cache);
 
 			else if (DoCheckSuffix(type, "Stack"))
 				failed = !type.IsSubclassOf("System.Collections.Stack", Cache);				
@@ -72,9 +72,9 @@ namespace Smokey.Internal.Rules
 					!type.IsSubclassOf("System.Collections.Stack", Cache) &&
 					!type.IsSubclassOf("System.Data.DataSet", Cache) &&
 					!type.IsSubclassOf("System.Data.DataTable", Cache) &&
-					!type.ClassOrBaseImplements("System.Collections.ICollection", Cache) &&
-					!type.ClassOrBaseImplements("System.Collections.IEnumerable", Cache) &&
-					!type.ClassOrBaseImplements("System.Collections.Generic.ICollection", Cache);
+					!type.TypeOrBaseImplements("System.Collections.ICollection", Cache) &&
+					!type.TypeOrBaseImplements("System.Collections.IEnumerable", Cache) &&
+					!type.TypeOrBaseImplements("System.Collections.Generic.ICollection", Cache);
 				
 			else if (DoCheckSuffix(type, "EventArgs"))
 				failed = !type.IsSubclassOf("System.EventArgs", Cache);
@@ -86,7 +86,7 @@ namespace Smokey.Internal.Rules
 				failed = !type.IsSubclassOf("System.IO.Stream", Cache);				
 													
 			else if (DoCheckSuffix(type, "Permission"))
-				failed = !type.ClassOrBaseImplements("System.Security.IPermission", Cache);
+				failed = !type.TypeOrBaseImplements("System.Security.IPermission", Cache);
 
 			return failed;
 		}

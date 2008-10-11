@@ -74,7 +74,7 @@ namespace Smokey.Internal.Rules
 					Log.DebugLine(this, "no finalizer");	
 					Reporter.TypeFailed(begin.Type, CheckID, string.Empty);
 				}
-				else if (!IsDisposable.Type(Cache, m_type))
+				else if (!m_type.TypeOrBaseImplements("System.IDisposable", Cache))
 				{
 					Log.DebugLine(this, "not IDisposable");	
 					Reporter.TypeFailed(begin.Type, CheckID, string.Empty);

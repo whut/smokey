@@ -42,7 +42,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitType(TypeDefinition type)
 		{						
-			if (type.Implements("System.Collections.IList"))
+			if (type.TypeImplements("System.Collections.IList"))
 			{
 				Log.DebugLine(this, "-----------------------------------"); 
 				Log.DebugLine(this, "{0} failed", type);		

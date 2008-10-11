@@ -92,25 +92,25 @@ namespace Smokey.Internal.Rules
 		{
 			bool failed = false;
 			
-			if (type.ClassOrBaseImplements("System.Collections.IDictionary", Cache))	
+			if (type.TypeOrBaseImplements("System.Collections.IDictionary", Cache))	
 				failed = DoCheckSuffix(type, "Dictionary");
 				
-			else if (type.ClassOrBaseImplements("System.Collections.Generic.IDictionary", Cache))	
+			else if (type.TypeOrBaseImplements("System.Collections.Generic.IDictionary", Cache))	
 				failed = DoCheckSuffix(type, "Dictionary");
 				
-			else if (type.ClassOrBaseImplements("System.Collections.ICollection", Cache))	
+			else if (type.TypeOrBaseImplements("System.Collections.ICollection", Cache))	
 				failed = DoCheckSuffix(type, "Collection");
 				
-			else if (type.ClassOrBaseImplements("System.Collections.Generic.ICollection", Cache))	
+			else if (type.TypeOrBaseImplements("System.Collections.Generic.ICollection", Cache))	
 				failed = DoCheckSuffix(type, "Collection");
 				
-			else if (type.ClassOrBaseImplements("System.Collections.IEnumerable", Cache))	
+			else if (type.TypeOrBaseImplements("System.Collections.IEnumerable", Cache))	
 				failed = DoCheckSuffix(type, "Collection");
 				
-			else if (type.ClassOrBaseImplements("System.Security.IPermission", Cache))	
+			else if (type.TypeOrBaseImplements("System.Security.IPermission", Cache))	
 				failed = DoCheckSuffix(type, "Permission");
 				
-			else if (type.ClassOrBaseImplements("System.Security.Policy.IMembershipCondition", Cache))	
+			else if (type.TypeOrBaseImplements("System.Security.Policy.IMembershipCondition", Cache))	
 				failed = DoCheckSuffix(type, "Condition");
 							
 			return failed;

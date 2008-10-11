@@ -49,7 +49,7 @@ namespace Smokey.Internal.Rules
 			m_correct = true;
 			m_type = begin.Type;
 			
-			if (begin.Type.ClassOrBaseImplements("System.Runtime.Serialization.ISerializable", Cache))
+			if (begin.Type.TypeOrBaseImplements("System.Runtime.Serialization.ISerializable", Cache))
 			{
 				if (!begin.Type.IsInterface)
 				{

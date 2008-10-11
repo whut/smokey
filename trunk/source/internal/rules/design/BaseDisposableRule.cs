@@ -49,7 +49,7 @@ namespace Smokey.Internal.Rules
 			m_disposable = false;
 			
 			if (!begin.Type.IsSealed && !begin.Type.IsCompilerGenerated())
-				if (begin.Type.Implements("System.IDisposable"))
+				if (begin.Type.TypeImplements("System.IDisposable"))
 					m_disposable = true;
 			m_hasUnaryDispose = false;
 			

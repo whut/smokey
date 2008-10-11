@@ -45,12 +45,12 @@ namespace Smokey.Internal.Rules
 		{
 			if (!type.IsInterface)
 			{
-				if (type.Implements("System.Collections.IEnumerable") && !type.Implements("System.Collections.IDictionary"))
+				if (type.TypeImplements("System.Collections.IEnumerable") && !type.TypeImplements("System.Collections.IDictionary"))
 				{
 					Log.DebugLine(this, "-----------------------------------"); 
 					Log.DebugLine(this, "{0}", type);
 								
-					if (!type.Implements("System.Collections.Generic.IEnumerable"))
+					if (!type.TypeImplements("System.Collections.Generic.IEnumerable"))
 					{
 						Log.DebugLine(this, "no Generic.IEnumerable");
 						Reporter.TypeFailed(type, CheckID, string.Empty);

@@ -71,9 +71,9 @@ namespace Smokey.Internal.Rules
 								TypeDefinition td1 = Cache.FindType(t1);
 								TypeDefinition td2 = Cache.FindType(t2);
 								
-								if (td1 == null || !td1.ClassOrBaseImplements(t2.FullName, Cache))
+								if (td1 == null || !td1.TypeOrBaseImplements(t2.FullName, Cache))
 								{
-									if (td2 == null || !td2.ClassOrBaseImplements(t1.FullName, Cache))
+									if (td2 == null || !td2.TypeOrBaseImplements(t1.FullName, Cache))
 									{					
 										m_offset = call.Untyped.Offset;						
 										Log.DebugLine(this, "Matched at {0:X2}", m_offset);				

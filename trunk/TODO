@@ -37,24 +37,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 199 fxcop
 102 gendarme
 
-
-* Clean up disposable rules:
-	BaseDisposable
-		¥should have Dispose(bool)
-	
-	DerivedDisposable
-		¥don't implement IDisposable
-		¥don't have Dispose()
-				
-	Finalizable
-		¥finalizer should not throw
-		*needs to be IDisposable (may be a rule for this already)
-* Review the new rules: can we add any other checks?
-* Really dicy for Dispose(false) to refer to managed fields (every field used by that object
-  and its fields cannot be disposable).
-* Don't reimplement Dipose or IDisposable.
-* Dispose should call Dispose (or Close) on fields that are disposable.
-* Cleanup reliability DisposeNativeResources. Class or base should implement IDisposable.
+* Move IsDisposable code.
 * Review finalizier and disposable rules.
 * Make sure IDisposable examples in the xml are legit.
 * Update IDisposable examples on the wiki.
@@ -81,6 +64,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * CompareTo returns number outside [-1, 1]?
 * Make sure CompareTo is included in the equals/hash cross check.
 * | or & is used with an enum which is not decorated with [Flags].
+* Field is only used within one method.
 * Thread.Abort is evil (unless you're OK with shutting down the app):
 	http://www.interact-sw.co.uk/iangblog/2004/11/12/cancellation
 * Should be able to specify text files to spell check.

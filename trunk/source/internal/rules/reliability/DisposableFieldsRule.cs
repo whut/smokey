@@ -49,7 +49,7 @@ namespace Smokey.Internal.Rules
 
 			m_type = begin.Type;
 			m_ownsField = false;
-			m_disposable = IsDisposable.Type(Cache, begin.Type);
+			m_disposable = begin.Type.TypeOrBaseImplements("System.IDisposable", Cache);
 			m_details = string.Empty;
 		}
 		
@@ -57,7 +57,8 @@ namespace Smokey.Internal.Rules
 		{			
 			if (!m_disposable && !field.IsStatic)
 			{
-				if (IsDisposable.Type(Cache, field.FieldType))
+				TypeDefinition type = Cache.FindType(field.FieldType);
+				if (type != null && type.TypeOrBaseImplements("System.IDisposable", Cache))
 				{
 					Log.DebugLine(this, "found a disposable field: {0}", field.Name);				
 					if (!m_ownsField)
