@@ -55,12 +55,12 @@ namespace Smokey.Internal.Rules
 				// Make sure we found the correct ones.
 				bool foundEquals = false;
 				for (int i = 0; i < methods.Count && !foundEquals; ++i)
-					if (methods[i].Method.Name == "Equals" && methods[i].Method.Parameters.Count == 1 && methods[i].Method.IsVirtual)
+					if (methods[i].Method.Reuses("System.Boolean", "Equals", "System.Object"))
 						foundEquals = true;
 
 				bool foundHash = false;
 				for (int i = 0; i < methods.Count && !foundHash; ++i)
-					if (methods[i].Method.Name == "GetHashCode" && methods[i].Method.Parameters.Count == 0 && methods[i].Method.IsVirtual)
+					if (methods[i].Method.Reuses("System.Int32", "GetHashCode"))
 						foundHash = true;
 
 				// If not we have a problem.

@@ -52,7 +52,7 @@ namespace Smokey.Internal.Rules
 			bool needs = false;
 			
 			if (begin.Info.Method.Body != null && begin.Info.Method.Body.ExceptionHandlers.Count == 0)
-				if (DoIsEquals(begin.Info.Method))
+				if (begin.Info.Method.Reuses("System.Boolean", "Equals", "System.Object"))
 					needs = true;
 			
 			return needs;
@@ -151,22 +151,6 @@ namespace Smokey.Internal.Rules
 				Reporter.MethodFailed(end.Info.Method, CheckID, m_offset, string.Empty);
 
 			m_tracker = null;
-		}
-
-		private static bool DoIsEquals(MethodDefinition method)
-		{
-			bool equals = false;
-			
-			if (method.Name == "Equals")
-			{		
-				if (method.Parameters.Count == 1)	
-				{
-					if (method.IsVirtual && !method.IsNewSlot)
-						equals = method.Parameters[0].ParameterType.FullName == "System.Object";
-				}
-			}
-			
-			return equals;
 		}
 		
 		private MethodInfo m_info;

@@ -57,13 +57,9 @@ namespace Smokey.Internal.Rules
 
 			if (!m_type.IsNestedPrivate && m_type.IsValueType && !m_needsCheck && method.IsVirtual)
 			{
-				MethodAttributes vtable = method.Attributes & MethodAttributes.VtableLayoutMask;
-				if (vtable == MethodAttributes.ReuseSlot)
+				if (method.Reuses("System.Boolean", "Equals", "System.Object"))
 				{
-					if (method.Name == "Equals")
-					{
-						m_needsCheck = true;
-					}
+					m_needsCheck = true;
 				}
 			}			
 		}

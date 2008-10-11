@@ -136,22 +136,13 @@ namespace Smokey.Internal.Rules
 		{
 			bool equals = false;
 			
-			if (method.Name == "Equals")
-			{
-				if (method.Parameters.Count == 1)
-				{
-					if (method.IsVirtual && !method.IsNewSlot)
-					{
-						equals = method.Parameters[0].ParameterType.FullName == "System.Object";
-					}
-					else if (!method.IsVirtual && !method.IsStatic)
-					{
-						if (method.Parameters[0].ParameterType.FullName == method.DeclaringType.FullName)
-							if (!method.Parameters[0].ParameterType.IsValueType)
-								equals = true;
-					}
-				}
-			}
+			if (method.Reuses("System.Boolean", "Equals", "System.Object"))
+				equals = true;
+			
+			else if (method.Matches("System.Boolean", "Equals", method.DeclaringType.FullName))
+				if (!method.IsVirtual && !method.IsStatic)
+					if (!method.Parameters[0].ParameterType.IsValueType)
+						equals = true;
 			
 			return equals;
 		}
@@ -162,19 +153,10 @@ namespace Smokey.Internal.Rules
 		{
 			bool equals = false;
 			
-			if (method.Name == "op_Equality")
-			{
-				if (method.Parameters.Count == 2)
-				{
-					if (method.IsStatic)
-					{
-						if (method.Parameters[0].ParameterType.FullName == method.Parameters[1].ParameterType.FullName)
-							if (method.Parameters[0].ParameterType.FullName == method.DeclaringType.FullName)
-								if (!method.Parameters[0].ParameterType.IsValueType)
-								equals = true;
-					}
-				}
-			}
+			if (method.IsStatic)
+				if (method.Matches("System.Boolean", "op_Equality", method.DeclaringType.FullName, method.DeclaringType.FullName))
+					if (!method.Parameters[0].ParameterType.IsValueType)
+						equals = true;
 			
 			return equals;
 		}
