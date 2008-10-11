@@ -55,7 +55,7 @@
 			<CSharp>
 			using System.Runtime.InteropServices;
 
-			internal static class NativeMethods
+			internal static partial class NativeMethods
 			{
 				// The runtime will append the appropiate extension (.dll, .so, .dylib),
 				// optionally prepend lib, and use the platform search paths to find the
@@ -85,7 +85,7 @@
 			<CSharp>
 			using System.Runtime.InteropServices;
 
-			internal static class NativeMethods
+			internal static partial class NativeMethods
 			{
 				// The runtime will append the appropiate extension (.dll, .so, .dylib),
 				// optionally prepend lib, and use the platform search paths to find the
@@ -164,7 +164,7 @@
 			<CSharp>
 			using System.Runtime.InteropServices;
 
-			internal static class NativeMethods
+			internal static partial class NativeMethods
 			{
 				[DllImport("widget")]
 				public static extern void Enable([MarshalAs(UnmanagedType.U1)] bool enable);

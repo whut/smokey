@@ -25,16 +25,49 @@ using System.Runtime.InteropServices;
 
 namespace EvilDoer
 {
-	public class GoodDisposable : IDisposable
+	public sealed class FooHandle : SafeHandle
 	{
-		~GoodDisposable()		
-		{					
-			Dispose(false);
+		public FooHandle() : base(IntPtr.Zero, true)
+		{
+		}
+		
+		public FooHandle(int flags) : base(NativeMethods.CreateFoo(flags), true)
+		{
+		}
+		
+		public override bool IsInvalid 
+		{ 
+			get 
+			{
+				return handle == IntPtr.Zero;
+			}
 		}
 	
-		public GoodDisposable(IntPtr handle)
+		protected override bool ReleaseHandle()
 		{
-			this.handle = handle;
+			NativeMethods.CloseFoo(this);
+			
+			return true;
+		}
+	}
+
+	internal static partial class NativeMethods
+	{
+		[System.Runtime.InteropServices.DllImport("someLib")]
+		public extern static IntPtr CreateFoo(int flags);
+
+		[System.Runtime.InteropServices.DllImport("someLib")]
+		public extern static void CloseFoo(FooHandle handle);
+
+		[System.Runtime.InteropServices.DllImport("someLib")]
+		public extern static void WorkFoo(FooHandle handle);
+	}
+		
+	public sealed class GoodDisposable : IDisposable
+	{
+		public GoodDisposable()
+		{
+			handle = new FooHandle(100);
 		}
 	
 		public void Work()
@@ -42,36 +75,20 @@ namespace EvilDoer
 			if (disposed)		
 				throw new ObjectDisposedException(GetType().Name);
 				
-			System.Diagnostics.Debug.WriteLine(handle);
+			NativeMethods.WorkFoo(handle);
 			GC.KeepAlive(this);
 		}
 		
 		public void Dispose()
 		{
-			Dispose(true);
-	
-			GC.SuppressFinalize(this);
-		}
-	
-		protected virtual void Dispose(bool disposing)
-		{
 			if (!disposed)
 			{
-				Ignore.Value = NativeMethods.CloseHandle(handle);
-				handle = IntPtr.Zero;
-	
+				handle.Dispose();	
 				disposed = true;
 			}
 		}
 	
-		private static class NativeMethods
-		{
-			[System.Runtime.InteropServices.DllImport("Kernel32")]
-			[return: MarshalAs(UnmanagedType.U1)] 
-			public extern static bool CloseHandle(IntPtr handle);
-		}
-		
-		private IntPtr handle;
+		private FooHandle handle;
 		private bool disposed = false;
 	}
 }
