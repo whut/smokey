@@ -74,7 +74,7 @@ namespace Smokey.Internal.Rules
 		{
 			if (m_needsCheck)
 			{
-				if (method.IsVirtual)
+				if (method.IsVirtual && !method.IsFinal)
 				{
 					Log.DebugLine(this, "{0} is virtual", method.Name);
 					if (!DoHasInheritanceDemand(method.SecurityDeclarations))
