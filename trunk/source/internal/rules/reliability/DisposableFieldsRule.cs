@@ -62,7 +62,7 @@ namespace Smokey.Internal.Rules
 					Log.DebugLine(this, "found a disposable field: {0}", field.Name);				
 					if (!m_ownsField)
 					{
-						if (OwnsFields.One(m_type, field))
+						if (field.IsOwnedBy(m_type))
 						{
 							m_ownsField = true;
 							Log.DebugLine(this, "{0} is disposable and owns {1}", m_type, field.Name);

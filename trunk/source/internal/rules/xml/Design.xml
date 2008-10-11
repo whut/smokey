@@ -2791,7 +2791,7 @@
 			</Cause>
 	
 			<Description>
-			This rule checks for two problems:
+			This rule checks for several problems:
 			* The finalizer is empty (finalizers put a lot of extra pressure on the garbage
 			  collector so they should only be used if they do actual work).
 			* The finalizer throws but does not catch (.NET 2.0 will, by default, tear down 

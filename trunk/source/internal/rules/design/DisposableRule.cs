@@ -90,7 +90,7 @@ namespace Smokey.Internal.Rules
 		{			
 			if (m_disposable && !field.IsStatic)
 			{
-				if (OwnsFields.One(m_type, field))
+				if (field.IsOwnedBy(m_type))
 				{
 					m_ownedFields.Add(field);
 					

@@ -38,121 +38,69 @@ namespace Smokey.Internal.Rules
 		public override void Register(RuleDispatcher dispatcher) 
 		{
 			dispatcher.Register(this, "VisitBegin");
-			dispatcher.Register(this, "VisitMethod");
+			dispatcher.Register(this, "VisitField");
 			dispatcher.Register(this, "VisitEnd");
 		}
 				
-		public void VisitBegin(BeginType type)
+		public void VisitBegin(BeginType begin)
 		{
 			Log.DebugLine(this, "-----------------------------------"); 
-			Log.DebugLine(this, "{0}", type.Type);				
-
-			m_type = type.Type;
-			m_hasFinalizer = DoHasFinalizer(type.Type);
-			m_newsNative = false;
-			m_details = string.Empty;
-			Log.DebugLine(this, "hasFinalizer: {0}", m_hasFinalizer);
+			Log.DebugLine(this, "{0}", begin.Type);				
+			
+			m_type = begin.Type;
+			m_field = null;
 		}
 		
-		public void VisitMethod(MethodDefinition method)
-		{			
-			if (method.Body != null && method.IsConstructor && !m_hasFinalizer)
+		public void VisitField(FieldDefinition field)
+		{
+			if (m_field == null)
 			{
-				InstructionCollection instructions = method.Body.Instructions;
-//				Log.DebugLine(this, "{0:F}", new TypedInstructionCollection(new SymbolTable(), method));				
-				
-				for (int i = 1; i < instructions.Count && !m_newsNative; ++i)
+				if (field.FieldType.IsNative() && field.IsOwnedBy(m_type))
 				{
-					Instruction instruction = instructions[i];
-					
-					// call  native int class Smokey.DisposeNativeResourcesTest/GoodCase2::CreateHandle()
-					// stfld native int Smokey.DisposeNativeResourcesTest/GoodCase2::m_resource
-					if (instruction.OpCode.Code == Code.Stfld)
-					{
-						FieldReference fieldRef = (FieldReference) instruction.Operand;
-						FieldDefinition field = m_type.Fields.GetField(fieldRef.Name);
-						if (field != null && field.MetadataToken == fieldRef.MetadataToken)
-						{
-							Log.DebugLine(this, "{0} has type {1}", field.Name, field.FieldType.FullName);
-							if (!field.IsStatic && field.FieldType.IsNative())
-							{
-								Log.DebugLine(this, "the field is native");
-								if (instructions[i - 1].OpCode.Code == Code.Call || instructions[i - 1].OpCode.Code == Code.Callvirt)
-								{
-									MethodReference target = (MethodReference) instructions[i - 1].Operand;
-									if (!target.Name.StartsWith("get_") && target.Name != "op_Explicit")	// ignore property and (IntPtr) 0
-									{
-										m_details = string.Format("Field: {0}", field.Name);
-										Log.DebugLine(this, "found {0}", m_details);
-										m_newsNative = true; 
-									}
-								}
-								else if (instructions[i - 1].OpCode.Code == Code.Newarr || instructions[i - 1].OpCode.Code == Code.Newobj)
-								{
-									m_details = string.Format("Field: {0}", field.Name);
-									Log.DebugLine(this, "found {0}", m_details);
-									m_newsNative = true; 
-								}
-							}
-						}
-					}
-					
-					// ldarg.0  this
-					// ldflda   System.Runtime.InteropServices.HandleRef Smokey.Tests.DisposeNativeResourcesTest/BadCase2::m_resource
-					else if (instruction.OpCode.Code == Code.Ldflda)
-					{
-						if (instructions[i - 1].OpCode.Code == Code.Ldarg_0)
-						{
-							FieldReference fieldRef = (FieldReference) instruction.Operand;
-							FieldDefinition field = m_type.Fields.GetField(fieldRef.Name);
-							if (field != null && field.MetadataToken == fieldRef.MetadataToken)
-							{
-								if (!field.IsStatic && field.FieldType.IsNative())
-								{
-									m_details = string.Format("Field: {0}", field.Name);
-									Log.DebugLine(this, "found {0}", m_details);
-									m_newsNative = true; 
-								}
-							}
-						}
-					}
+					Log.DebugLine(this, "{0} is owned by the type", field.Name);				
+					m_field = field;
 				}
 			}
 		}
-
-		public void VisitEnd(EndType type)
-		{
-			if (!m_hasFinalizer && m_newsNative)
-				Reporter.TypeFailed(type.Type, CheckID, m_details);
-		}
 		
-		private static bool DoHasFinalizer(TypeDefinition type)
+		public void VisitEnd(EndType begin)
 		{
-			bool has = type.Methods.GetMethod("Finalize", Type.EmptyTypes) != null;
-			
-			if (!has)
-				has = DoHasOverridenDispose(type, "Dispose") || DoHasOverridenDispose(type, "DoDispose") || DoHasOverridenDispose(type, "OnDispose");
-		
-			return has;
-		}
-		
-		private static bool DoHasOverridenDispose(TypeDefinition type, string name)
-		{
-			MethodDefinition method = type.Methods.GetMethod(name, new Type[]{typeof(bool)});
-			if (method != null)
+			if (m_field != null)
 			{
-				MethodAttributes vtable = method.Attributes & MethodAttributes.VtableLayoutMask;
-				if ((vtable & MethodAttributes.ReuseSlot) == MethodAttributes.ReuseSlot)
-					return true;
+				TypeDefinition type = DoFindFinalizer();
+				
+				if (type == null || type.FullName == "System.Object")
+				{
+					Log.DebugLine(this, "no finalizer");	
+					Reporter.TypeFailed(begin.Type, CheckID, string.Empty);
+				}
+				else if (!IsDisposable.Type(Cache, m_type))
+				{
+					Log.DebugLine(this, "not IDisposable");	
+					Reporter.TypeFailed(begin.Type, CheckID, string.Empty);
+				}
+
 			}
-		
-			return false;
 		}
-		
+				
+		private TypeDefinition DoFindFinalizer()
+		{
+			TypeDefinition result = null;
+			
+			TypeDefinition type = m_type;
+			while (type != null && result == null)
+			{
+				if (type.Methods.GetMethod("Finalize", Type.EmptyTypes) != null)
+					result = type;
+
+				type = Cache.FindType(type.BaseType);
+			}
+			
+			return result;
+		}
+
 		private TypeDefinition m_type;
-		private bool m_hasFinalizer;
-		private bool m_newsNative;
-		private string m_details;
+		private FieldDefinition m_field;
 	}
 }
 

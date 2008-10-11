@@ -58,8 +58,8 @@
 	<Violation checkID = "R1001" severity = "Error" breaking = "false">
 		<Translation lang = "en" typeName = "DisposeNativeResources" category = "Reliability">			
 			<Cause>
-			A class creates an IntPtr or HandleRef field does not have a finalizer, overridden
-			Dispose(bool), overridden OnDispose(bool), or overridden DoDispose(bool) method.
+			A class owns an IntPtr or HandleRef field but does not have a finalizer and
+			does not implement IDisposable.
 			</Cause>
 	
 			<Description>
@@ -68,82 +68,59 @@
 			</Description>
 	
 			<Fix>
-			If the unmanaged resource must be cleaned up in a timely or deterministic manner
-			then implement IDisposable. Otherwise simply provide a finalizer.
+			The preferred way to handle this is to use a SafeHandle instead of an unwrapped
+			unmanaged type. Failing that implement the IDisposable pattern.
 			</Fix>
 	
 			<CSharp>
-			using System.IO;
-
-			internal sealed class MyResource : IDisposable
-			{
-				~MyResource()		
-				{					
-					// Note that this is called even if the ctor throws.
-					DoDispose(false);
-				}
-			
-				public MyResource()
+			internal sealed class SealedWithFinalizer : IDisposable
+			{ 
+				~SealedWithFinalizer()
 				{
-					m_handle = NativeMethods.CreateHandle();
+					// Note that this is called even if the ctor throws. Also
+					// note that this will execute within a worker thread.
+					Dispose(false);
 				}
-			
-				public void DoWork()
+				
+				public SealedWithFinalizer()
 				{
-					// All public methods (except Dispose) should throw 
-					// ObjectDisposedException if Dispose has been called.
+					// allocate resources
+				}
+				
+				public void Work()
+				{
 					if (m_disposed)		
 						throw new ObjectDisposedException(GetType().Name);
-						
-					NativeMethods.WorkIt(m_handle);
-					GC.KeepAlive(this);
 				}
 			
 				public void Dispose()
 				{
-					DoDispose(true);
-			
-					// If we've been disposed our object can be garbage collected without
-					// finalization.
+					Dispose(true);
 					GC.SuppressFinalize(this);
 				}
-			
-				private void DoDispose(bool disposing)
+				
+				private void Dispose(bool disposing)
 				{
 					if (!m_disposed)
 					{
-						// If we've been called via Dispose we can,
 						if (disposing)
 						{
-							// dispose of managed fields, including any fields which
-               				 // are themselves finalizeable.
+							// This code will execute if we were called from Dispose()
+							// so we can call methods on our managed fields.
 						}
-									
-						// This code will execute if we were called by our finalizer
-           				// We can use any of our fields except those which are 
-			            // finalizeable (because they may have already been finalized).
-						NativeMethods.CloseHandle(m_handle);
-						m_handle = IntPtr.Zero;
-			
+										
+						// There are only very weak guarantees on the order in which
+						// finalizers are called so we should not use any managed
+						// objects here unless we are sure that they (and all objects 
+						// they may use) are not finalizeable. Note that System.Console
+						// may be used.
 						m_disposed = true;
 					}
 				}
-			
-				private static class NativeMethods
-				{
-					[System.Runtime.InteropServices.DllImport("Kernel32")]
-					public extern static bool CloseHandle(IntPtr handle);
 				
-					[System.Runtime.InteropServices.DllImport("Kernel32")]
-					public extern static IntPtr CreateHandle();
-				
-					[System.Runtime.InteropServices.DllImport("Kernel32")]
-					public extern static void WorkIt(IntPtr handle);
-				}
-				
-				private IntPtr m_handle;	// here's our unmanaged resource
-				private bool m_disposed = false;
-			}			
+				// resource fields go here
+				private bool m_disposed; 
+			}
 			</CSharp>
 		</Translation>
 	</Violation>	
