@@ -2887,7 +2887,7 @@
 			
 			namespace Spelling
 			{
-				using AspellConfigHandle = SafeHandle;		// production code would have a real AspellConfigHandle class
+				using AspellCanHaveErrorHandle = SafeHandle;		// production code would have a real AspellCanHaveErrorHandle class
 				
 				// This is our wrapper around a native aspell pointer.
 				[SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode = true)]
@@ -2898,9 +2898,9 @@
 					{
 					}
 					
-					public AspellHandle(AspellConfigHandle config) : 	
-						base(NativeMethods.new_aspell_speller(config), true)
+					public AspellHandle(AspellCanHaveErrorHandle config) : base(IntPtr.Zero, true)
 					{
+						handle = NativeMethods.to_aspell_speller(err);
 					}
 					
 					public override bool IsInvalid 
@@ -2925,7 +2925,7 @@
 				internal static partial class NativeMethods
 				{
 					[DllImport("aspell")]
-					public static extern IntPtr new_aspell_speller(AspellConfigHandle config);
+					public static extern IntPtr new_aspell_speller(AspellCanHaveErrorHandle config);
 				
 					[DllImport("aspell")]
 					public static extern int aspell_speller_check(AspellHandle handle, string word, int wordSize);

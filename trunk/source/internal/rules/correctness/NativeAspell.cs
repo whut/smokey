@@ -26,67 +26,51 @@ using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
 {
-	using AspellConfig = IntPtr;
-	using AspellCanHaveError = IntPtr;
-	using AspellSpeller = IntPtr;
-	using AspellWordList = IntPtr;
-	using AspellStringEnumeration = IntPtr;
-	
-	internal static class NativeMethods
+	internal static partial class NativeMethods
 	{
 		#region Config --------------------------------------------------------
 		[DllImport("aspell")]
-		public static extern AspellConfig new_aspell_config();
+		public static extern IntPtr new_aspell_config();
+
+		[DllImport("aspell")]
+		public static extern void delete_aspell_config(AspellConfigHandle handle);
 
 //		[DllImport("aspell")]
-//		public static extern void aspell_config_replace(AspellConfig config, string key, string value);
+//		public static extern void aspell_config_replace(AspellConfigHandle handle, string key, string value);
 		#endregion
 
-		#region Can have error
+		#region Can have error ------------------------------------------------
 		[DllImport("aspell")]
-		public static extern uint aspell_error_number(AspellCanHaveError ths);
+		public static extern void delete_aspell_can_have_error(AspellCanHaveErrorHandle handle);
 
 		[DllImport("aspell")]
-		public static extern IntPtr aspell_error_message(AspellCanHaveError ths);
+		public static extern uint aspell_error_number(AspellCanHaveErrorHandle ths);
+
+		[DllImport("aspell")]
+		public static extern IntPtr aspell_error_message(AspellCanHaveErrorHandle ths);
 		#endregion
 
 		#region Speller -------------------------------------------------------
 		[DllImport("aspell")]
-		public static extern AspellCanHaveError new_aspell_speller(AspellConfig config);
+		public static extern IntPtr new_aspell_speller(AspellConfigHandle handle);
 
 		[DllImport("aspell")]
-		public static extern IntPtr aspell_speller_error(AspellSpeller ths);
+		public static extern IntPtr aspell_speller_error(AspellSpellerHandle ths);
 
 		[DllImport("aspell")]
-		public static extern IntPtr aspell_speller_error_message(AspellSpeller ths);
+		public static extern IntPtr aspell_speller_error_message(AspellSpellerHandle ths);
 
 		[DllImport("aspell")]
-		public static extern AspellSpeller to_aspell_speller(AspellCanHaveError ths);
+		public static extern IntPtr to_aspell_speller(AspellCanHaveErrorHandle ths);
 
 		[DllImport("aspell")]
-		public static extern int aspell_speller_check(AspellSpeller ths, string word, int wordSize);
+		public static extern int aspell_speller_check(AspellSpellerHandle ths, string word, int wordSize);
 		
 		[DllImport("aspell")]
-		public static extern int aspell_speller_add_to_session(AspellSpeller ths, string word, int wordSize);
-
-//		[DllImport("aspell")]
-//		public static extern AspellWordList aspell_speller_suggest(AspellSpeller ths, string word, int wordSize);
+		public static extern int aspell_speller_add_to_session(AspellSpellerHandle ths, string word, int wordSize);
 
 		[DllImport("aspell")]
-		public static extern void delete_aspell_speller(AspellSpeller ths);
-		#endregion
-		
-		#region Word List -----------------------------------------------------
-//		[DllImport("aspell")]
-//		public static extern AspellStringEnumeration aspell_word_list_elements(AspellWordList words);
-		#endregion
-
-		#region String Enumeration --------------------------------------------
-//		[DllImport("aspell")]
-//		public static extern IntPtr aspell_string_enumeration_next(AspellStringEnumeration ase);
-
-//		[DllImport("aspell")]
-//		public static extern void delete_aspell_string_enumeration(AspellStringEnumeration ase);
+		public static extern void delete_aspell_speller(AspellSpellerHandle ths);
 		#endregion
 	} 
 }	
