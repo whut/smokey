@@ -229,6 +229,14 @@ namespace Smokey.Framework.Support
 			return result;
 		}
 
+		/// <summary>Returns true if the method Matches the name/types and is virtual but not new slot.</summary>
+		public static bool Reuses(this MethodDefinition method, string rtype, string mname, params string[] atypes)
+		{			
+			DBC.Pre(method != null, "method is null");
+						
+			return method.Matches(rtype, mname, atypes) && method.IsVirtual && !method.IsNewSlot;
+		}		
+
 		/// <summary>Returns true if the method is private or its declaring type is private.</summary>
 		public static bool PrivatelyVisible(this MethodDefinition method, AssemblyCache cache)
 		{
@@ -300,7 +308,8 @@ namespace Smokey.Framework.Support
 			return false;
 		}		
 
-		/// <summary>Returns true if the method has the specified result type, name, and argument types.</summary>
+		/// <summary>Returns true if the method has the specified result type, name, and argument types.
+		/// Also see Reuses.</summary>
 		public static bool Matches(this MethodReference method, string rtype, string mname, params string[] atypes)
 		{			
 			DBC.Pre(method != null, "method is null");

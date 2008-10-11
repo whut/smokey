@@ -85,10 +85,11 @@ namespace Smokey.Internal.Rules
 			
 			if (method.Parameters.Count == 2 && method.IsVirtual)
 			{
-				if (method.Name == "System.IFormattable.ToString" || method.Name == "ToString")
-					if (method.Parameters[0].ParameterType.FullName == "System.String")
-						if (method.Parameters[1].ParameterType.FullName == "System.IFormatProvider")
-							equals = true;
+				if (method.Matches("System.String", "ToString", "System.String", "System.IFormatProvider"))
+					equals = true;
+
+				else if (method.Matches("System.String", "System.IFormattable.ToString", "System.String", "System.IFormatProvider"))
+					equals = true;
 			}
 			
 			return equals;

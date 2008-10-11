@@ -50,7 +50,7 @@ namespace Smokey.Internal.Rules
 
 			m_needsCheck = false;
 			if (method.Info.Type.IsValueType)
-				if (method.Info.Method.IsVirtual && method.Info.Method.Name == "GetHashCode" && method.Info.Method.Parameters.Count == 0)
+				if (method.Info.Method.Reuses("System.Int32", "GetHashCode"))
 					m_needsCheck = true;
 					
 			if (m_needsCheck)

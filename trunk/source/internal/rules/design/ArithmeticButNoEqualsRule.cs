@@ -63,15 +63,9 @@ namespace Smokey.Internal.Rules
 				{
 					m_hasMinus = true;
 				}
-				else if (method.Name == "Equals")
+				else if (method.Reuses("System.Boolean", "Equals", "System.Object"))
 				{
-					if (method.IsVirtual && method.Parameters.Count == 1)
-					{	
-						if (method.Parameters[0].ParameterType.FullName == "System.Object")
-						{
-							m_hasEquals = true;
-						}
-					}
+					m_hasEquals = true;
 				}
 			}
 		}

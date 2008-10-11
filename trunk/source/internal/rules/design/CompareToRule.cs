@@ -60,18 +60,12 @@ namespace Smokey.Internal.Rules
 		{
 			if (m_needsCheck)
 			{
-				if (method.Name == "Equals" && method.Parameters.Count == 1)
+				if (method.Reuses("System.Boolean", "Equals", "System.Object"))
 				{
-					if (method.IsVirtual && !method.IsNewSlot)
-					{
-						if (method.Parameters[0].ParameterType.FullName == "System.Object")
-						{
-							Log.DebugLine(this, "{0}", method); 
-							m_foundEquals = true;
-						}
-					}
+					Log.DebugLine(this, "{0}", method); 
+					m_foundEquals = true;
 				}
-				else if (method.Name == "CompareTo" && method.Parameters.Count == 1)
+				else if (method.Matches("System.Int32", "CompareTo", method.DeclaringType.FullName))
 				{
 					Log.DebugLine(this, "{0}", method); 
 					m_foundCompare = true;
