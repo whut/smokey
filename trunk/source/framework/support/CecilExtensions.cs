@@ -30,141 +30,7 @@ namespace Smokey.Framework.Support
 	/// <summary>Some helpful Cecil related methods.</summary>
 	public static class CecilExtensions 
 	{ 
-		public static bool Has(this CustomAttributeCollection attrs, string name)
-		{
-			DBC.Pre(attrs != null, "attrs is null");
-			DBC.Pre(name != null, "name is null");
-				
-			foreach (CustomAttribute attr in attrs)
-			{
-//				Log.InfoLine(true, "   {0}", attr.Constructor.DeclaringType.Name);
-				if (attr.Constructor.DeclaringType.Name == name)
-					return true;
-			}
-			
-			return false;
-		}
-		
-		public static bool HasDisableRule(this CustomAttributeCollection attrs, string checkID)
-		{
-			DBC.Pre(attrs != null, "attrs is null");
-			DBC.Pre(checkID != null, "checkID is null");
-								
-			foreach (CustomAttribute attr in attrs)
-			{	
-				if (attr.Constructor.ToString().Contains("DisableRuleAttribute"))
-				{
-					if (attr.ConstructorParameters.Count > 0)
-					{
-						string id = attr.ConstructorParameters[0] as string;
-						if (id != null && id == checkID)
-							return true;
-					}
-				}
-			}
-			
-			return false;
-		}
-		
-		public static bool HasDisableRule(this TypeDefinition derived, string checkID, AssemblyCache cache)
-		{				
-			DBC.Pre(derived != null, "derived is null");
-			DBC.Pre(checkID != null, "checkID is null");
-			DBC.Pre(cache != null, "cache is null");
-
-			TypeDefinition type = derived;
-			
-			while (type != null)
-			{
-				if (HasDisableRule(type.CustomAttributes, checkID))
-					return true;
-					
-				foreach (TypeReference t in type.Interfaces)
-				{					
-					TypeDefinition td = cache.FindType(t);
-					if (td != null && HasDisableRule(td.CustomAttributes, checkID))
-						return true;
-				}
-				
-				type = cache.FindType(type.BaseType);
-			}
-			
-			return false;
-		}
-		
-		/// <summary>Returns true if type directly implements the interface (e.g. "System.ICloneable").</summary>
-		public static bool Implements(this TypeDefinition type, string name)
-		{
-			DBC.Pre(type != null, "type is null");
-			DBC.Pre(name != null, "name is null");
-				
-			bool implements = false;
-			
-			for (int i = 0; i < type.Interfaces.Count && !implements; ++i)
-			{
-				TypeReference t = type.Interfaces[i];
-				string fname = t.FullName;
-				int j = fname.IndexOf('`');		// System.Collections.Generic.ICollection`1<System.Int32>
-				if (j >= 0)
-					fname = fname.Substring(0, j);
-					
-				implements = fname == name;
-			}
-			
-			return implements;
-		}
-		
-		/// <summary>Returns true if a base class implements the interface (e.g. "System.IDisposable").</summary>
-		public static bool BaseImplements(this TypeDefinition derived, string name, AssemblyCache cache)
-		{				
-			DBC.Pre(derived != null, "derived is null");
-			DBC.Pre(name != null, "name is null");
-			DBC.Pre(cache != null, "cache is null");
-				
-			if (derived.BaseType != null)
-			{
-				TypeDefinition type = cache.FindType(derived.BaseType);
-				while (type != null)
-				{
-					if (Implements(type, name))
-						return true;
-						
-					type = cache.FindType(type.BaseType);
-				}
-			}
-			
-			return false;
-		}
-		
-		/// <summary>Returns true if a base class implements the interface (e.g. "System.IDisposable").</summary>
-		public static bool ClassOrBaseImplements(this TypeDefinition type, string name, AssemblyCache cache)
-		{				
-			if (Implements(type, name))
-				return true;
-				
-			else if (BaseImplements(type, name, cache))
-				return true;
-			
-			return false;
-		}
-		
-		/// <summary>Returns true if type is an enum with the Flags attribute.</summary>
-		public static bool IsFlagsEnum(this TypeDefinition type)
-		{
-			DBC.Pre(type != null, "type is null");
-				
-			if (type.IsEnum)
-			{
-				foreach (CustomAttribute attr in type.CustomAttributes)
-				{
-					if (attr.Constructor.ToString().Contains("System.FlagsAttribute::.ctor"))
-						return true;
-				}
-			}
-			
-			return false;
-		}
-		
+		#region AssemblyDefinition --------------------------------------------
 		/// <summary>Returns true if the assembly makes use of System.Windows.Forms or gtk.</summary>
 		public static bool IsGui(this AssemblyDefinition assembly)
 		{
@@ -200,20 +66,47 @@ namespace Smokey.Framework.Support
 			
 			return false;
 		}
-		
-		/// <summary>Returns true if type is IntPtr, IntPtr[], List&lt;IntPtr&gt;, etc.</summary>
-		public static bool IsNative(this TypeReference type)
+		#endregion 
+
+		#region CustomAttributeCollection -------------------------------------
+		public static bool Has(this CustomAttributeCollection attrs, string name)
 		{
-			DBC.Pre(type != null, "type is null");
-								
-			if (type.FullName.Contains("System.IntPtr") || 
-				type.FullName.Contains("System.UIntPtr") ||
-				type.FullName.Contains("System.Runtime.InteropServices.HandleRef"))
-				return true;
+			DBC.Pre(attrs != null, "attrs is null");
+			DBC.Pre(name != null, "name is null");
+				
+			foreach (CustomAttribute attr in attrs)
+			{
+//				Log.InfoLine(true, "   {0}", attr.Constructor.DeclaringType.Name);
+				if (attr.Constructor.DeclaringType.Name == name)
+					return true;
+			}
 			
 			return false;
 		}
 		
+		public static bool HasDisableRule(this CustomAttributeCollection attrs, string checkID)
+		{
+			DBC.Pre(attrs != null, "attrs is null");
+			DBC.Pre(checkID != null, "checkID is null");
+								
+			foreach (CustomAttribute attr in attrs)
+			{	
+				if (attr.Constructor.ToString().Contains("DisableRuleAttribute"))
+				{
+					if (attr.ConstructorParameters.Count > 0)
+					{
+						string id = attr.ConstructorParameters[0] as string;
+						if (id != null && id == checkID)
+							return true;
+					}
+				}
+			}
+			
+			return false;
+		}
+		#endregion
+		
+		#region Instruction ---------------------------------------------------
 		/// <summary>Returns true if the two instructions are equal.</summary>
 		public static bool Matches(this Instruction lhs, Instruction rhs)
 		{
@@ -267,31 +160,9 @@ namespace Smokey.Framework.Support
 		
 			return true;
 		}
+		#endregion
 		
-		/// <summary>Returns true if the type is public and its declaring type(s) are
-		/// public.</summary>
-		public static bool ExternallyVisible(this TypeDefinition type, AssemblyCache cache)	
-		{
-			DBC.Pre(type != null, "type is null");				
-			DBC.Pre(cache != null, "cache is null");
-			
-			bool visible = false;
-				
-			TypeAttributes attrs = type.Attributes & TypeAttributes.VisibilityMask;
-			if (attrs == TypeAttributes.Public)
-			{
-				visible = true;
-			}
-			else if (attrs == TypeAttributes.NestedPublic)	// this just means that the class is public and nested
-			{
-				type = cache.FindType(type.DeclaringType);
-				if (type != null)
-					visible = type.ExternallyVisible(cache);
-			}
-			
-			return visible;
-		}
-		
+		#region MethodDefinition ----------------------------------------------
 		/// <summary>Returns true if the method is public and its declaring type(s) are
 		/// public.</summary>
 		public static bool ExternallyVisible(this MethodDefinition method, AssemblyCache cache)	
@@ -311,6 +182,34 @@ namespace Smokey.Framework.Support
 			return visible;
 		}
 		
+		/// <summary>Returns the first base class method which declares the specified method. 
+		/// Note that this may return an abstract method or the original method.</summary>
+		public static MethodDefinition GetPreviousMethod(this MethodDefinition method, AssemblyCache cache)
+		{			
+			DBC.Pre(method != null, "method is null");
+			
+			MethodDefinition result = method;
+			
+			if (method.IsVirtual)
+			{
+				TypeDefinition type = cache.FindType(method.DeclaringType);
+				if (type != null)
+					type = cache.FindType(type.BaseType);
+				
+				if (type != null)
+				{
+					MethodMatcher matcher = new MethodMatcher(method);
+
+					MethodDefinition[] candidates = type.Methods.GetMethod(method.Name);
+					foreach (MethodDefinition candidate in candidates)
+						if (candidate.IsVirtual && matcher == candidate)
+							result = candidate;
+				}
+			}
+			
+			return result;
+		}
+
 		/// <summary>Returns true if the method is private or its declaring type is private.</summary>
 		public static bool PrivatelyVisible(this MethodDefinition method, AssemblyCache cache)
 		{
@@ -332,7 +231,9 @@ namespace Smokey.Framework.Support
 			
 			return invisible;
 		}
+		#endregion
 		
+		#region MethodReference -----------------------------------------------
 		/// <summary>Returns the interface or type the method was first declared in.</summary>
 		public static TypeReference GetDeclaredIn(this MethodReference method, AssemblyCache cache)
 		{
@@ -366,7 +267,174 @@ namespace Smokey.Framework.Support
 			
 			return declared;
 		}
+
+		public static bool IsCompilerGenerated(this MethodReference method)
+		{
+			DBC.Pre(method != null, "method is null");
+
+			if (IsCompilerGenerated(method.DeclaringType))
+				return true;
+				
+//			if (method.ToString().Contains("CompilerGenerated"))
+//				return true;
+				
+			return false;
+		}		
+
+		/// <summary>Returns true if the method has the specified result type, name, and argument types.</summary>
+		public static bool Matches(this MethodReference method, string rtype, string mname, params string[] atypes)
+		{			
+			DBC.Pre(method != null, "method is null");
+			DBC.Pre(!string.IsNullOrEmpty(rtype), "rtype is null or empty");
+			DBC.Pre(!string.IsNullOrEmpty(mname), "mname is null or empty");
+			DBC.Pre(atypes != null, "atypes is null");
+			
+			bool match = false;
+			if (method.ReturnType.ReturnType.FullName == rtype)
+			{
+				if (method.Name == mname)
+				{
+					if (method.Parameters.Count == atypes.Length)
+					{
+						match = true;
+						
+						for (int i = 0; i < atypes.Length && match; ++i)
+							match = atypes[i] == method.Parameters[i].ParameterType.FullName;
+					}
+				}
+			}
+			
+			return match;
+		}		
+		#endregion
 		
+		#region TypeDefinition ------------------------------------------------
+		/// <summary>Returns true if a base class implements the interface (e.g. "System.IDisposable").</summary>
+		public static bool BaseImplements(this TypeDefinition derived, string name, AssemblyCache cache)
+		{				
+			DBC.Pre(derived != null, "derived is null");
+			DBC.Pre(name != null, "name is null");
+			DBC.Pre(cache != null, "cache is null");
+				
+			if (derived.BaseType != null)
+			{
+				TypeDefinition type = cache.FindType(derived.BaseType);
+				while (type != null)
+				{
+					if (Implements(type, name))
+						return true;
+						
+					type = cache.FindType(type.BaseType);
+				}
+			}
+			
+			return false;
+		}
+		
+		/// <summary>Returns true if a base class implements the interface (e.g. "System.IDisposable").</summary>
+		public static bool ClassOrBaseImplements(this TypeDefinition type, string name, AssemblyCache cache)
+		{				
+			if (Implements(type, name))
+				return true;
+				
+			else if (BaseImplements(type, name, cache))
+				return true;
+			
+			return false;
+		}
+		
+		/// <summary>Returns true if the type is public and its declaring type(s) are
+		/// public.</summary>
+		public static bool ExternallyVisible(this TypeDefinition type, AssemblyCache cache)	
+		{
+			DBC.Pre(type != null, "type is null");				
+			DBC.Pre(cache != null, "cache is null");
+			
+			bool visible = false;
+				
+			TypeAttributes attrs = type.Attributes & TypeAttributes.VisibilityMask;
+			if (attrs == TypeAttributes.Public)
+			{
+				visible = true;
+			}
+			else if (attrs == TypeAttributes.NestedPublic)	// this just means that the class is public and nested
+			{
+				type = cache.FindType(type.DeclaringType);
+				if (type != null)
+					visible = type.ExternallyVisible(cache);
+			}
+			
+			return visible;
+		}
+		
+		public static bool HasDisableRule(this TypeDefinition derived, string checkID, AssemblyCache cache)
+		{				
+			DBC.Pre(derived != null, "derived is null");
+			DBC.Pre(checkID != null, "checkID is null");
+			DBC.Pre(cache != null, "cache is null");
+
+			TypeDefinition type = derived;
+			
+			while (type != null)
+			{
+				if (HasDisableRule(type.CustomAttributes, checkID))
+					return true;
+					
+				foreach (TypeReference t in type.Interfaces)
+				{					
+					TypeDefinition td = cache.FindType(t);
+					if (td != null && HasDisableRule(td.CustomAttributes, checkID))
+						return true;
+				}
+				
+				type = cache.FindType(type.BaseType);
+			}
+			
+			return false;
+		}
+		
+		/// <summary>Returns true if type directly implements the interface (e.g. "System.ICloneable").</summary>
+		public static bool Implements(this TypeDefinition type, string name)
+		{
+			DBC.Pre(type != null, "type is null");
+			DBC.Pre(name != null, "name is null");
+				
+			bool implements = false;
+			
+			for (int i = 0; i < type.Interfaces.Count && !implements; ++i)
+			{
+				TypeReference t = type.Interfaces[i];
+				string fname = t.FullName;
+				int j = fname.IndexOf('`');		// System.Collections.Generic.ICollection`1<System.Int32>
+				if (j >= 0)
+					fname = fname.Substring(0, j);
+					
+				implements = fname == name;
+			}
+			
+			return implements;
+		}
+		
+		/// <summary>Returns true if type is an enum with the Flags attribute.</summary>
+		public static bool IsFlagsEnum(this TypeDefinition type)
+		{
+			DBC.Pre(type != null, "type is null");
+				
+			if (type.IsEnum)
+			{
+				foreach (CustomAttribute attr in type.CustomAttributes)
+				{
+					if (attr.Constructor.ToString().Contains("System.FlagsAttribute::.ctor"))
+						return true;
+				}
+			}
+			
+			return false;
+		}
+		#endregion
+
+				
+		#region TypeReference -------------------------------------------------
 		/// <summary>Returns either null or the most derived class that is both a lhs and a rhs.</summary>
 		public static TypeReference CommonClass(this TypeReference lhs, TypeReference rhs, AssemblyCache cache)
 		{
@@ -397,19 +465,19 @@ namespace Smokey.Framework.Support
 			return false;
 		}
 		
-		public static bool IsCompilerGenerated(this MethodReference method)
+		/// <summary>Returns true if type is IntPtr, IntPtr[], List&lt;IntPtr&gt;, etc.</summary>
+		public static bool IsNative(this TypeReference type)
 		{
-			DBC.Pre(method != null, "method is null");
-
-			if (IsCompilerGenerated(method.DeclaringType))
+			DBC.Pre(type != null, "type is null");
+								
+			if (type.FullName.Contains("System.IntPtr") || 
+				type.FullName.Contains("System.UIntPtr") ||
+				type.FullName.Contains("System.Runtime.InteropServices.HandleRef"))
 				return true;
-				
-//			if (method.ToString().Contains("CompilerGenerated"))
-//				return true;
-				
+			
 			return false;
 		}
-		
+
 		/// <summary>Returns true if lhs is a subclass of rhs. Returns false if they are the same class.
 		/// Interfaces are ignored.</summary>
 		public static bool IsSubclassOf(this TypeReference lhs, TypeReference rhs, AssemblyCache cache)
@@ -474,61 +542,8 @@ namespace Smokey.Framework.Support
 			
 			return false;
 		}
-
-		/// <summary>Returns true if the method has the specified result type, name, and argument types.</summary>
-		public static bool Matches(this MethodReference method, string rtype, string mname, params string[] atypes)
-		{			
-			DBC.Pre(method != null, "method is null");
-			DBC.Pre(!string.IsNullOrEmpty(rtype), "rtype is null or empty");
-			DBC.Pre(!string.IsNullOrEmpty(mname), "mname is null or empty");
-			DBC.Pre(atypes != null, "atypes is null");
-			
-			bool match = false;
-			if (method.ReturnType.ReturnType.FullName == rtype)
-			{
-				if (method.Name == mname)
-				{
-					if (method.Parameters.Count == atypes.Length)
-					{
-						match = true;
-						
-						for (int i = 0; i < atypes.Length && match; ++i)
-							match = atypes[i] == method.Parameters[i].ParameterType.FullName;
-					}
-				}
-			}
-			
-			return match;
-		}
-		
-		/// <summary>Returns the first base class method which declares the specified method. 
-		/// Note that this may return an abstract method or the original method.</summary>
-		public static MethodDefinition GetPreviousMethod(this MethodDefinition method, AssemblyCache cache)
-		{			
-			DBC.Pre(method != null, "method is null");
-			
-			MethodDefinition result = method;
-			
-			if (method.IsVirtual)
-			{
-				TypeDefinition type = cache.FindType(method.DeclaringType);
-				if (type != null)
-					type = cache.FindType(type.BaseType);
+		#endregion
 				
-				if (type != null)
-				{
-					MethodMatcher matcher = new MethodMatcher(method);
-
-					MethodDefinition[] candidates = type.Methods.GetMethod(method.Name);
-					foreach (MethodDefinition candidate in candidates)
-						if (candidate.IsVirtual && matcher == candidate)
-							result = candidate;
-				}
-			}
-			
-			return result;
-		}
-		
 		#region Private Methods -----------------------------------------------
 		private static TypeReference DoGetDeclaringInterface(TypeReference declared, MethodMatcher matcher, AssemblyCache cache)
 		{			
