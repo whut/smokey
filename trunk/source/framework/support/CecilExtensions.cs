@@ -221,7 +221,7 @@ namespace Smokey.Framework.Support
 
 					MethodDefinition[] candidates = type.Methods.GetMethod(method.Name);
 					foreach (MethodDefinition candidate in candidates)
-						if (candidate.IsVirtual && matcher == candidate)
+						if (candidate.IsVirtual && !candidate.IsFinal && matcher == candidate)
 							result = candidate;
 				}
 			}

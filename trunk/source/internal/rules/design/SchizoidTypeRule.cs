@@ -57,7 +57,7 @@ namespace Smokey.Internal.Rules
 		{
 			foreach (MethodDefinition m in Methods)
 			{
-				if (m.IsVirtual)
+				if (m.IsVirtual && !m.IsFinal)
 					return true;
 			}
 			
