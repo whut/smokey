@@ -79,7 +79,6 @@ namespace Smokey.Internal.Rules
 					Log.DebugLine(this, "not IDisposable");	
 					Reporter.TypeFailed(begin.Type, CheckID, string.Empty);
 				}
-
 			}
 		}
 				

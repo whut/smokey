@@ -72,7 +72,6 @@
 	<Expected checkID = "C1021" typeName = "RecursiveEquality" fullName = "System.Boolean EvilDoer.BadDisposable::op_Equality(EvilDoer.BadDisposable,EvilDoer.BadDisposable)"/>
 
 	<!-- BadDisposable2 -->
-	<Expected checkID = "MS1013" typeName = "DisposableButNoFinalizer" fullName = "EvilDoer.BadDisposable2"/>
 	<Expected checkID = "PO1005" typeName = "BoolMarshalling" fullName = "System.Boolean EvilDoer.BadDisposable2/NativeMethods::CloseHandle(System.IntPtr)"/>
 
 	<!-- BadNaming -->
