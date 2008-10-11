@@ -42,7 +42,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitType(TypeDefinition type)
 		{						
-			if (type.Implements("System.Collections.IEnumerator") && !type.IsCompilerGenerated())
+			if (type.TypeImplements("System.Collections.IEnumerator") && !type.IsCompilerGenerated())
 			{
 				Log.DebugLine(this, "-----------------------------------"); 
 				Log.DebugLine(this, "checking {0}", type);		

@@ -48,7 +48,7 @@ namespace Smokey.Internal.Rules
 			Log.DebugLine(this, "-----------------------------------"); 
 			Log.DebugLine(this, "{0}", begin.Type);		
 							
-			m_needsCheck = !begin.Type.IsInterface && begin.Type.Implements("System.IComparable");
+			m_needsCheck = !begin.Type.IsInterface && begin.Type.TypeImplements("System.IComparable");
 			if (m_needsCheck)
 			{
 				m_foundCompare = false;

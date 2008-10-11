@@ -46,7 +46,7 @@ namespace Smokey.Internal.Rules
 		{
 			if (type.ExternallyVisible(Cache))
 			{
-				if (type.Implements("System.Runtime.Serialization.ISerializable"))
+				if (type.TypeImplements("System.Runtime.Serialization.ISerializable"))
 				{
 					Log.DebugLine(this, "-----------------------------------"); 
 					Log.DebugLine(this, "{0}", type);

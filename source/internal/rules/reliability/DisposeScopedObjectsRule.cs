@@ -88,7 +88,8 @@ namespace Smokey.Internal.Rules
 			NewObj obj = m_info.Instructions[store.Index - 1] as NewObj;
 			if (obj != null && obj.Ctor.Name.EndsWith(".ctor"))
 			{
-				if (IsDisposable.Type(Cache, obj.Ctor.DeclaringType))
+				TypeDefinition type = Cache.FindType(obj.Ctor.DeclaringType);
+				if (type != null && type.TypeOrBaseImplements("System.IDisposable", Cache))
 				{
 					m_details = "Type: " + obj.Ctor.DeclaringType.FullName;
 					Log.DebugLine(this, "{0} = new {1}", store.Name, obj.Ctor.DeclaringType.FullName);

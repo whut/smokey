@@ -50,7 +50,7 @@ namespace Smokey.Internal.Rules
 			
 			if (!begin.Type.IsSubclassOf("System.Exception", Cache))	// if it's an exception let ExceptionConstructorsRule take care of it
 			{
-				if (begin.Type.ClassOrBaseImplements("System.Runtime.Serialization.ISerializable", Cache))
+				if (begin.Type.TypeOrBaseImplements("System.Runtime.Serialization.ISerializable", Cache))
 				{
 					if (!begin.Type.IsInterface)
 					{

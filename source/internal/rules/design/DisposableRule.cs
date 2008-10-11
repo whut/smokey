@@ -52,7 +52,7 @@ namespace Smokey.Internal.Rules
 		public void VisitBegin(BeginMethods begin)
 		{
 			m_type = begin.Type;
-			m_disposable = IsDisposable.Type(Cache, begin.Type) && !m_type.IsCompilerGenerated();
+			m_disposable = begin.Type.TypeOrBaseImplements("System.IDisposable", Cache) && !m_type.IsCompilerGenerated();
 		
 			m_hasFinalizer = false;
 			m_supressWasCalled = false;
@@ -94,7 +94,8 @@ namespace Smokey.Internal.Rules
 				{
 					m_ownedFields.Add(field);
 					
-					if (IsDisposable.Type(Cache, field.FieldType))
+					TypeDefinition type = Cache.FindType(field.FieldType);
+					if (type != null && type.TypeOrBaseImplements("System.IDisposable", Cache))
 					{
 						Log.DebugLine(this, "{0} is disposable", field.Name);
 						m_disposableFields.Add(field.ToString());

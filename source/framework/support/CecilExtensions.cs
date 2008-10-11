@@ -328,7 +328,8 @@ namespace Smokey.Framework.Support
 		#endregion
 		
 		#region TypeDefinition ------------------------------------------------
-		/// <summary>Returns true if a base class implements the interface (e.g. "System.IDisposable").</summary>
+		/// <summary>Returns true if a base class implements the interface (e.g. "System.IDisposable").
+		/// Also see TypeImplements and TypeOrBaseImplements.</summary>
 		public static bool BaseImplements(this TypeDefinition derived, string name, AssemblyCache cache)
 		{				
 			DBC.Pre(derived != null, "derived is null");
@@ -340,24 +341,12 @@ namespace Smokey.Framework.Support
 				TypeDefinition type = cache.FindType(derived.BaseType);
 				while (type != null)
 				{
-					if (Implements(type, name))
+					if (TypeImplements(type, name))
 						return true;
 						
 					type = cache.FindType(type.BaseType);
 				}
 			}
-			
-			return false;
-		}
-		
-		/// <summary>Returns true if a base class implements the interface (e.g. "System.IDisposable").</summary>
-		public static bool ClassOrBaseImplements(this TypeDefinition type, string name, AssemblyCache cache)
-		{				
-			if (Implements(type, name))
-				return true;
-				
-			else if (BaseImplements(type, name, cache))
-				return true;
 			
 			return false;
 		}
@@ -412,8 +401,25 @@ namespace Smokey.Framework.Support
 			return false;
 		}
 		
+		/// <summary>Returns true if type is an enum with the Flags attribute.</summary>
+		public static bool IsFlagsEnum(this TypeDefinition type)
+		{
+			DBC.Pre(type != null, "type is null");
+				
+			if (type.IsEnum)
+			{
+				foreach (CustomAttribute attr in type.CustomAttributes)
+				{
+					if (attr.Constructor.ToString().Contains("System.FlagsAttribute::.ctor"))
+						return true;
+				}
+			}
+			
+			return false;
+		}
+		
 		/// <summary>Returns true if type directly implements the interface (e.g. "System.ICloneable").</summary>
-		public static bool Implements(this TypeDefinition type, string name)
+		public static bool TypeImplements(this TypeDefinition type, string name)
 		{
 			DBC.Pre(type != null, "type is null");
 			DBC.Pre(name != null, "name is null");
@@ -434,25 +440,19 @@ namespace Smokey.Framework.Support
 			return implements;
 		}
 		
-		/// <summary>Returns true if type is an enum with the Flags attribute.</summary>
-		public static bool IsFlagsEnum(this TypeDefinition type)
-		{
-			DBC.Pre(type != null, "type is null");
+		/// <summary>Returns true if a base class implements the interface (e.g. "System.IDisposable").</summary>
+		public static bool TypeOrBaseImplements(this TypeDefinition type, string name, AssemblyCache cache)
+		{				
+			if (TypeImplements(type, name))
+				return true;
 				
-			if (type.IsEnum)
-			{
-				foreach (CustomAttribute attr in type.CustomAttributes)
-				{
-					if (attr.Constructor.ToString().Contains("System.FlagsAttribute::.ctor"))
-						return true;
-				}
-			}
+			else if (BaseImplements(type, name, cache))
+				return true;
 			
 			return false;
 		}
 		#endregion
-
-				
+	
 		#region TypeReference -------------------------------------------------
 		/// <summary>Returns either null or the most derived class that is both a lhs and a rhs.</summary>
 		public static TypeReference CommonClass(this TypeReference lhs, TypeReference rhs, AssemblyCache cache)

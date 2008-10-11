@@ -51,7 +51,7 @@ namespace Smokey.Internal.Rules
 			
 			if ((begin.Type.Attributes & TypeAttributes.Serializable) == TypeAttributes.Serializable)
 			{
-				if (!begin.Type.ClassOrBaseImplements("System.Runtime.Serialization.ISerializable", Cache))
+				if (!begin.Type.TypeOrBaseImplements("System.Runtime.Serialization.ISerializable", Cache))
 				{
 					m_needsCheck = true;
 
