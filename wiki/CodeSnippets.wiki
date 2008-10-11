@@ -1,211 +1,184 @@
 #summary Common code idioms.
 
-== System.IDisposable (managed resources) ==
+== System.IDisposable (sealed class) ==
 
 {{{
-using System.IO;
-
-internal class Log : IDisposable
-{
-    public Log()
+internal sealed class SealedNoFinalizer : IDisposable
+{ 
+    public SealedNoFinalizer()
     {
-        m_writer = new StringWriter();
-    }
-
-    public void WriteLine(string line)
-    {
-        // All public methods (except Dispose) should throw 
-        // ObjectDisposedException if Dispose has been called.
-        if (m_disposed)        
-            throw new ObjectDisposedException(GetType().Name);
-            
-        m_writer.WriteLine(line);
-    }
-
-    public void Dispose()
-    {
-        if (!m_disposed)
-        {
-            m_writer.Dispose();
-            
-            m_disposed = true;
-        }
-    }
-                        
-    private StringWriter m_writer;    // System.IO.StringWriter implements IDisposable
-    private bool m_disposed = false;
-}            
-}}}
-
-
-== System.IDisposable (unmanaged resources) ==
-
-{{{
-internal class MyResource : IDisposable
-{
-    ~MyResource()        
-    {                    
-        // Note that this is called even if the ctor throws.
-        DoDispose(false);
-    }
-
-    public MyResource(IntPtr handle)
-    {
-        m_handle = handle;
-    }
-
-    public void DoWork()
-    {
-        // All public methods (except Dispose) should throw 
-        // ObjectDisposedException if Dispose has been called.
-        if (m_disposed)        
-            throw new ObjectDisposedException(GetType().Name);
-            
-        NativeMethods.WorkIt(m_handle);
-        GC.KeepAlive(this);
-    }
-
-    public void Dispose()
-    {
-        DoDispose(true);
-
-        // If we've been disposed our object can be garbage collected without
-        // finalization.
-        GC.SuppressFinalize(this);
-    }
-
-    private void DoDispose(bool disposing)
-    {
-        if (!m_disposed)
-        {
-            // If we've been called via Dispose we can,
-            if (disposing)
-            {
-                // dispose of managed fields, including any fields which
-                // are themselves finalizeable.
-            }
-
-            // This code will execute if we were called by our finalizer
-            // We can use any of our fields except those which are 
-            // finalizeable (because they may have already been finalized).
-            NativeMethods.CloseHandle(m_handle);
-            m_handle = IntPtr.Zero;
-
-            m_disposed = true;
-        }
-    }
-
-    private static class NativeMethods
-    {
-        [System.Runtime.InteropServices.DllImport("Kernel32")]
-        public extern static bool CloseHandle(IntPtr handle);
-
-        [System.Runtime.InteropServices.DllImport("Kernel32")]
-        public extern static void WorkIt(IntPtr handle);
+        // allocate resources
     }
     
-    private IntPtr m_handle;
-    private bool m_disposed = false;
-}            
-}}}
-
-
-== System.IDisposable (virtual Dispose) ==
-
-{{{
-internal class MyResource : IDisposable
-{
-    ~MyResource()        
-    {                    
-        // Note that this is called even if the ctor throws.
-        Dispose(false);
-    }
-
-    public MyResource(IntPtr handle)
+    public void Work()
     {
-        m_handle = handle;
-    }
-
-    public void DoWork()
-    {
-        // All public methods (except Dispose) should throw 
-        // ObjectDisposedException if Dispose has been called.
         if (m_disposed)        
             throw new ObjectDisposedException(GetType().Name);
-            
-        NativeMethods.WorkIt(m_handle);
-        GC.KeepAlive(this);
+    }
+
+    public void Dispose()
+    {
+        if (!m_disposed)
+        {
+            // We have no finalizer so we can safely call methods
+            // on any of our fields when cleaning up.
+            m_disposed = true;
+        }
+    }
+    
+    // resource fields go here
+    private bool m_disposed; 
+}
+
+internal sealed class SealedWithFinalizer : IDisposable
+{ 
+    ~SealedWithFinalizer()
+    {
+        // Note that this is called even if the ctor throws. Also
+        // note that this will execute within a worker thread.
+        Dispose(false);
+    }
+    
+    public SealedWithFinalizer()
+    {
+        // allocate resources
+    }
+    
+    public void Work()
+    {
+        if (m_disposed)        
+            throw new ObjectDisposedException(GetType().Name);
     }
 
     public void Dispose()
     {
         Dispose(true);
-
-        // If we've been disposed our object can be garbage collected without
-        // finalization.
         GC.SuppressFinalize(this);
     }
     
+    private void Dispose(bool disposing)
+    {
+        if (!m_disposed)
+        {
+            if (disposing)
+            {
+                // This code will execute if we were called from Dispose()
+                // so we can call methods on our managed fields.
+            }
+                            
+            // There are only very weak guarantees on the order in which
+            // finalizers are called so we should not use any managed
+            // objects here unless we are sure that they (and all objects 
+            // they may use) are not finalizeable. Note that System.Console
+            // may be used.
+            m_disposed = true;
+        }
+    }
+    
+    // resource fields go here
+    private bool m_disposed; 
+}      
+}}}
+
+
+== System.IDisposable (base/derived class) ==
+
+{{{
+internal class BaseClass : IDisposable
+{ 
+    ~BaseClass()        
+    {
+        // Note that this is called even if the ctor throws. Also
+        // note that this will execute within a worker thread. If your
+        // base class does't have any unmanaged resources you can omit
+        // the finalizer.
+        Dispose(false);
+    }
+    
+    public BaseClass()
+    {
+        // allocate resources
+    }
+    
+    public void Work()
+    {
+        // All public methods (except Dispose) should throw 
+        // ObjectDisposedException if Dispose has been called.
+        if (m_disposed)        
+            throw new ObjectDisposedException(GetType().Name);
+    }
+
     protected bool Disposed
     {
         get {return m_disposed;}
     }
-
+            
     protected virtual void Dispose(bool disposing)
     {
         if (!m_disposed)
         {
-            // If we've been called via Dispose we can,
             if (disposing)
             {
-                // dispose of finalizeable, including any fields which
-                // are themselves IDisposable.
+                // This code will execute if we were called from Dispose()
+                // so we can call methods on our managed fields.
             }
-
-            // This code will execute if we were called by our finalizer
-            // We can use any of our fields except those which are 
-            // finalizeable (because they may have already been finalized).
-            NativeMethods.CloseHandle(m_handle);
-            m_handle = IntPtr.Zero;
-
+    
+            // There are only very weak guarantees on the order in which
+            // finalizers are called so we should not use any managed
+            // objects here unless we are sure that they (and all objects 
+            // they may use) are not finalizeable. Note that System.Console
+            // may be used.
             m_disposed = true;
         }
     }
-
-    private static class NativeMethods
-    {
-        [System.Runtime.InteropServices.DllImport("Kernel32")]
-        public extern static bool CloseHandle(IntPtr handle);
     
-        [System.Runtime.InteropServices.DllImport("Kernel32")]
-        public extern static void WorkIt(IntPtr handle);
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
     
-    private IntPtr m_handle;
-    private bool m_disposed;
-}            
+    // resource fields go here
+    private bool m_disposed; 
+}
 
-internal class DerivedResource : MyResource
-{
-    public DerivedResource(IntPtr handle) : base(handle)
+internal class DerivedClass : BaseClass
+{ 
+    public DerivedClass()
     {
+        // allocate more resources (in addition to base's)
     }
     
+    public void Work()
+    {
+        // All public methods (except Dispose) should throw 
+        // ObjectDisposedException if Dispose has been called.
+        if (m_disposed)        
+            throw new ObjectDisposedException(GetType().Name);
+    }
+
     protected override void Dispose(bool disposing)
     {
         if (!Disposed)
         {
             if (disposing)
             {
-                // Dispose of derived managed fields.
+                // This code will execute if we were called from Dispose()
+                // so we can call methods on our managed fields.
             }
-
-            // Dispose of derived unmanaged fields.
-
+    
+            // There are only very weak guarantees on the order in which
+            // finalizers are called so we should not use any managed
+            // objects here unless we are sure that they (and all objects 
+            // they may use) are not finalizeable. Note that System.Console
+            // may be used.
             base.Dispose(disposing);
-        }                    
+        }
     }
-}            
+    
+    // some new fields that require cleanup
+}
+       
 }}}
 
 
