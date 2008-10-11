@@ -36,7 +36,7 @@ namespace Smokey.Tests
 		#region Test classes
 		private class GoodCase
 		{
-			public GoodCase(IntPtr resource)
+			public GoodCase(IntPtr resource)	// doesn't own the resource
 			{
 				m_resource = resource;
 			}
@@ -95,7 +95,7 @@ namespace Smokey.Tests
 				
 		private class GoodCase3
 		{
-			public GoodCase3(Wrapper resource)
+			public GoodCase3(Wrapper resource)	// doesn't own the resource
 			{
 				m_resource = resource.Ptr;
 			}
@@ -108,7 +108,7 @@ namespace Smokey.Tests
 			private IntPtr m_resource;
 		}
 
-		private class GoodCase4
+		private class GoodCase4					// doesn't own the resource
 		{
 			public GoodCase4(Wrapper resource)
 			{
@@ -123,7 +123,7 @@ namespace Smokey.Tests
 			private IntPtr m_resource;
 		}
 
-		public class GoodCase5
+		public class GoodCase5				// doesn't new
 		{
 			public void Work()
 			{				
@@ -133,13 +133,17 @@ namespace Smokey.Tests
 			private IntPtr handle = (IntPtr) 0;
 		}
 
-		private class BadCase
+		private class BadCase : IDisposable				// no finalizer
 		{
 			public BadCase()
 			{
 				m_resource = CreateHandle();
 			}
 					
+			public void Dispose()
+			{
+			}
+				
 			public void WriteLine()
 			{
 				Console.WriteLine("using {0}", m_resource);
@@ -151,8 +155,12 @@ namespace Smokey.Tests
 			private IntPtr m_resource;
 		}
 
-		private class BadCase2
+		private class BadCase2				// not IDisposable
 		{
+			~BadCase2()
+			{
+			}
+			
 			public BadCase2()
 			{
 				m_resource = new IntPtr(100);
@@ -166,7 +174,7 @@ namespace Smokey.Tests
 			private System.IntPtr m_resource;
 		}
 
-		private class BadCase3
+		private class BadCase3				// no finalizer and not IDisposable
 		{
 			public BadCase3()
 			{

@@ -21,6 +21,7 @@
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Smokey.Framework.Instructions;
 using System;
 using System.Collections.Generic;
 using SR = System.Reflection;
@@ -100,6 +101,24 @@ namespace Smokey.Framework.Support
 							return true;
 					}
 				}
+			}
+			
+			return false;
+		}
+		#endregion
+		
+		#region FieldDefinition -----------------------------------------------
+		/// <summary>Returns true if field is created by type's constructor(s).</summary>
+		public static bool IsOwnedBy(this FieldDefinition field, TypeDefinition type)
+		{
+			DBC.Pre(field != null, "field is null");
+			DBC.Pre(type != null, "type is null");
+				
+			List<string> tested = new List<string>();
+			for (int i = 0; i < type.Constructors.Count; ++i)
+			{
+				if (DoOwnsField(type, type.Constructors[i], field, tested))
+					return true;
 			}
 			
 			return false;
@@ -578,6 +597,204 @@ namespace Smokey.Framework.Support
 				{
 					return true;
 				}
+			}
+			
+			return false;
+		}
+
+		private static bool DoOwnsField(TypeDefinition type, MethodDefinition method, FieldDefinition field, List<string> tested)
+		{
+			bool owns = false;
+			tested.Add(method.Name);
+			
+			if (method.Body != null)
+			{
+				for (int i = 1; i < method.Body.Instructions.Count && !owns; ++i)
+				{
+					FieldReference fref = DoGetOwnedField(type, method.Body.Instructions, i);
+					if (fref != null)
+					{
+						owns = field.Name == fref.Name;
+					}
+					else
+					{
+						Instruction instruction = method.Body.Instructions[i];
+						if (instruction.OpCode.Code == Code.Call || instruction.OpCode.Code == Code.Callvirt)
+						{	
+							MethodReference target = (MethodReference) instruction.Operand;
+							MethodDefinition md = type.Methods.GetMethod(target.Name, target.Parameters);
+							if (md != null && md.MetadataToken == target.MetadataToken && tested.IndexOf(target.Name) < 0) 
+								owns = DoOwnsField(type, md, field, tested);
+						}
+					}
+				}
+			}
+			
+			return owns;
+		}
+		
+		private static FieldReference DoGetOwnedField(TypeDefinition type, InstructionCollection instructions, int index)
+		{
+			FieldReference owned = null;
+			
+			Instruction instruction = instructions[index];
+			if (instruction.OpCode.Code == Code.Stfld)	
+			{
+				FieldReference fr = (FieldReference) instruction.Operand;
+				FieldDefinition field = type.Fields.GetField(fr.Name);
+				if (field != null && field.MetadataToken == fr.MetadataToken)
+				{
+					if (!field.IsStatic)					// we should be checking the store field's target to see if it is 'this', but hopefully ctors won't be assigning to other class instances
+					{
+						do
+						{
+							// newobj instance void class [mscorlib]System.IO.StringWriter::.ctor()
+							// stfld  class [mscorlib]System.IO.StringWriter Smokey.DisposableFieldsTest/GoodCase::m_writer
+							if (instructions[index - 1].OpCode.Code == Code.Newobj || instructions[index - 1].OpCode.Code == Code.Newarr)
+							{
+								owned = field;
+								break;
+							}	
+
+							// call  native int class Smokey.DisposeNativeResourcesTest/GoodCase2::CreateHandle()
+							// stfld native int Smokey.DisposeNativeResourcesTest/GoodCase2::m_resource
+							if (instructions[index - 1].OpCode.Code == Code.Call || instructions[index - 1].OpCode.Code == Code.Callvirt)
+							{
+								MethodReference target = (MethodReference) instructions[index - 1].Operand;
+								if (!target.Name.StartsWith("get_") && target.Name != "op_Explicit")	// ignore property and (IntPtr) 0
+								{
+									if (target.ToString().IndexOf("Create") >= 0 || target.ToString().IndexOf("Make") >= 0)
+									{
+										owned = field;
+										break;
+									}
+								}		
+							}
+						}
+						while (false);
+					}
+				}
+			}
+			// ldarg.0  this
+			// ldflda   System.Runtime.InteropServices.HandleRef Smokey.Tests.DisposeNativeResourcesTest/BadCase2::m_resource
+			// ldc.i4.s 0x64
+			// call instance void native int::'.ctor'(int32)
+			//
+        	// ldarg.0 
+    	    // ldflda valuetype [mscorlib]System.Runtime.InteropServices.HandleRef Smokey.Tests.DisposeNativeResourcesTest/BadCase3::m_resource
+	        // initobj [mscorlib]System.Runtime.InteropServices.HandleRef
+			else if (instruction.OpCode.Code == Code.Ldflda)
+			{
+				if (instructions[index - 1].OpCode.Code == Code.Ldarg_0)
+				{
+					FieldReference fr = (FieldReference) instruction.Operand;
+					FieldDefinition field = type.Fields.GetField(fr.Name);
+					if (field != null && field.MetadataToken == fr.MetadataToken)
+					{
+						if (!field.IsStatic)
+						{
+							int i = index + 1;
+							while (i < instructions.Count)
+							{
+								if (DoIsLoad(instructions[i].OpCode.Code))
+									++i;
+								else
+									break;
+							}
+							
+							if (i < instructions.Count)
+							{
+								if (instructions[i].OpCode.Code == Code.Call || instructions[i].OpCode.Code == Code.Callvirt)
+								{
+									MethodReference target = (MethodReference) instructions[i].Operand;
+									if (target.ToString().IndexOf("ctor") >= 0 || target.ToString().IndexOf("Create") >= 0 || target.ToString().IndexOf("Make") >= 0)
+									{
+										owned = field;
+									}
+								}
+								else if (instructions[i].OpCode.Code == Code.Initobj)
+								{
+									owned = field;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			return owned;
+		}		
+		
+		private static bool DoIsLoad(Code code)
+		{
+			switch (code)
+			{
+				case Code.Ldelem_I1:
+				case Code.Ldelem_U1:
+				case Code.Ldelem_I2:
+				case Code.Ldelem_U2:
+				case Code.Ldelem_I4:
+				case Code.Ldelem_U4:
+				case Code.Ldelem_I8:
+				case Code.Ldelem_I:
+				case Code.Ldelem_R4:
+				case Code.Ldelem_R8:
+				case Code.Ldelem_Ref:
+				case Code.Ldelem_Any:
+				case Code.Ldind_I1:
+				case Code.Ldind_U1:
+				case Code.Ldind_I2:
+				case Code.Ldind_U2:
+				case Code.Ldind_I4:
+				case Code.Ldind_U4:
+				case Code.Ldind_I8:
+				case Code.Ldind_I:
+				case Code.Ldind_R4:
+				case Code.Ldind_R8:
+				case Code.Ldind_Ref:
+				case Code.Ldlen:
+				case Code.Ldloca_S:
+				case Code.Ldloca:
+				case Code.Ldstr:
+				case Code.Ldsflda:
+				case Code.Ldsfld:
+				case Code.Ldelema:
+				case Code.Ldtoken:
+				case Code.Ldnull:
+				case Code.Ldloc_0:
+				case Code.Ldloc_1:
+				case Code.Ldloc_2:
+				case Code.Ldloc_3:
+				case Code.Ldloc_S:
+				case Code.Ldloc:
+				case Code.Ldftn:
+				case Code.Ldvirtftn:
+				case Code.Ldflda:
+				case Code.Ldfld:
+				case Code.Ldc_I4_M1:
+				case Code.Ldc_I4_0:
+				case Code.Ldc_I4_1:
+				case Code.Ldc_I4_2:
+				case Code.Ldc_I4_3:
+				case Code.Ldc_I4_4:
+				case Code.Ldc_I4_5:
+				case Code.Ldc_I4_6:
+				case Code.Ldc_I4_7:
+				case Code.Ldc_I4_8:
+				case Code.Ldc_I4_S:
+				case Code.Ldc_I4:
+				case Code.Ldc_I8:
+				case Code.Ldc_R4:
+				case Code.Ldc_R8:
+				case Code.Ldarga:
+				case Code.Ldarga_S:
+				case Code.Ldarg_0:
+				case Code.Ldarg_1:
+				case Code.Ldarg_2:
+				case Code.Ldarg_3:
+				case Code.Ldarg:
+				case Code.Ldarg_S:
+					return true;
 			}
 			
 			return false;

@@ -51,7 +51,7 @@ namespace EvilDoer
 	}
 
 	public class GoodDisposable2 : BaseGoodDisposable2
-	{
+	{		
 		public GoodDisposable2()
 		{
 			this.handle = NativeMethods.CreateHandle();
@@ -63,6 +63,7 @@ namespace EvilDoer
 				throw new ObjectDisposedException(GetType().Name);
 				
 			System.Diagnostics.Debug.WriteLine(handle);
+			GC.KeepAlive(this);
 		}
 			
 		public static GoodDisposable2 Instantiate()
