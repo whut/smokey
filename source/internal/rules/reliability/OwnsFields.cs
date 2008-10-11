@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using Smokey.Framework;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal static class OwnsFields
@@ -104,7 +105,7 @@ namespace Smokey.Internal.Rules
 			
 			if (instructions[index].OpCode.Code == Code.Stfld)
 			{
-				if (instructions[index - 1].OpCode.Code == Code.Newobj)
+				if (instructions[index - 1].OpCode.Code == Code.Newobj || instructions[index - 1].OpCode.Code == Code.Newarr)
 					fref = (FieldReference) instructions[index].Operand;
 			}
 			
@@ -113,4 +114,4 @@ namespace Smokey.Internal.Rules
 		#endregion
 	}
 }
-
+#endif
