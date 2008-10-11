@@ -37,7 +37,8 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 199 fxcop
 102 gendarme
 
-* Prefer SafeHandle
+* Might want SafeHandle example on the wiki.
+* Do a checkin.
 * Look at Virtual usage...need to check IsFinal as well to be able to override (interface
   implementations do this if the implementation is not declared virtual))
 * Class has trivial get/set and an Equals which does not use that field.
@@ -45,12 +46,12 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Instead of Ignore and Unused just have Unused.Value
 * Might want useful links wiki page.
 * RedundantPredicate
-	- A && A			A
+	- A && A			A (if idempotent)
 	- A || A			A
 	- A && !A			false
 	- A || !A			true
 	- !!A
-	- require A to be a function call for now
+	- require A to be a function call (with same args) for now
 	- probably need some support for building expressions
 * Equals/op == always returns true or false.
 * CompareTo/op </op >/etc always returns 1 or -1: not symetric

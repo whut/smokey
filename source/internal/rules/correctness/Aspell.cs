@@ -31,10 +31,6 @@ using System.Runtime.Serialization;
 
 namespace Smokey.Internal.Rules
 {
-	using AspellConfig = IntPtr;
-	using AspellCanHaveError = IntPtr;
-	using AspellSpeller = IntPtr;
-
 	internal sealed class AspellException : InvalidOperationException
 	{
 		public AspellException(string mesg) : base(mesg)
@@ -121,24 +117,18 @@ namespace Smokey.Internal.Rules
 		}
 				
 		#region Private Methods -----------------------------------------------
-		~Aspell()
-		{
-			if (m_speller != IntPtr.Zero)
-				NativeMethods.delete_aspell_speller(m_speller);
-		}
-		
 		private Aspell()
 		{
-			AspellConfig config = NativeMethods.new_aspell_config();
+			AspellConfigHandle config = AspellConfigHandle.Default;
 			
-			AspellCanHaveError result = NativeMethods.new_aspell_speller(config);
+			AspellCanHaveErrorHandle result = new AspellCanHaveErrorHandle(config);
 			if (NativeMethods.aspell_error_number(result) != 0)
 			{
 				IntPtr ptr = NativeMethods.aspell_error_message(result);
 				throw new AspellException(Marshal.PtrToStringAnsi(ptr));
 			}
 			
-			m_speller = NativeMethods.to_aspell_speller(result);
+			m_speller = new AspellSpellerHandle(result);
 				
 			DoAdd("exe");		
 			DoAdd("mdb");
@@ -293,7 +283,7 @@ namespace Smokey.Internal.Rules
 		#endregion	
 		
 		#region Fields --------------------------------------------------------
-		private AspellSpeller m_speller;
+		private AspellSpellerHandle m_speller;
 		
 		private static Aspell ms_instance;
 		private static bool ms_tried;
