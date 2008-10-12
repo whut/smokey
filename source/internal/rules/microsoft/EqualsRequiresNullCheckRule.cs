@@ -140,7 +140,7 @@ namespace Smokey.Internal.Rules
 				equals = true;
 			
 			else if (method.Matches("System.Boolean", "Equals", method.DeclaringType.FullName))
-				if (!method.IsVirtual && !method.IsStatic)
+				if (!method.IsStatic)
 					if (!method.Parameters[0].ParameterType.IsValueType)
 						equals = true;
 			

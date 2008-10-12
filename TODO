@@ -37,26 +37,30 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 199 fxcop
 102 gendarme
 
-* UseIEquatable
-	- type defines Equals(T) but is not IEquatable
-	- speeds up generic collections
-* GetHashCode examples in xml should be a little better.
-* Use tar --exclude \*/.svn --exclude \*/.svn/\*
-* Instead of Ignore and Unused just have Unused.Value
-* Might want useful links wiki page.
-* RedundantPredicate
-	- A && A			A (if idempotent)
-	- A || A			A
-	- A && !A			false
-	- A || !A			true
-	- !!A
-	- require A to be a function call (with same args) for now
-	- probably need some support for building expressions
-* Equals/op == always returns true or false.
-* CompareTo/op </op >/etc always returns 1 or -1: not symetric
-* CompareTo/op </op >/etc always returns 0: borderline useless.
+unused
+threaded
+
+* RedundantOperand
+	- figure out which instructions generate each argument
+	- fire if the two instruction ranges compare equal
+	- bail if the range includes a branch
+* ConstantResult
+	- method returns a constant value
+	- Equals, GetHashCode, CompareTo, relational operators, arithmetic operators
+	- return something real or add assert/throw
 * CompareTo returns number outside [-1, 1]?
 * Make sure CompareTo is included in the equals/hash cross check.
+* Drop Ignore, use Unused.Value.
+* ThreadSafeAttr
+	- ThreadSingleRoot, Main defaults to "Main", externally visible to "External"
+	- ThreadMultiRoot, finalizers, async callbacks
+	- ThreadSafe
+	- warn if methd which looks like a thread root is not decorated
+	- if have explicit thread roots then 
+		warn if method is used by multiple threads but not labeled thread safe
+		warn if method is used by one thread but labeled thread safe
+		print a call chain for each thread
+	- have a trace log for externally visible methods which are not decorated
 * | or & is used with an enum which is not decorated with [Flags].
 * Field is only used within one method.
 * Thread.Abort is evil (unless you're OK with shutting down the app):
@@ -64,13 +68,11 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Should be able to specify text files to spell check.
 * Can we add a grammar checker? Only if the text includes periods?
 * Type is only used by private methods of one type (so the first type can be made private).
-* Overrides Equals, but isnt IEquatable.
 * UseJurassicNaming complains about static public fields. Also type P1`1
 * GetObjectData doesn't add all non-static fields and the field it doesn't add is not 
   marked with: NonSerializedAttribute, OptionalFieldAttribute, XmlIgnoreAttribute, or 
   DefaultValueAttribute
 * Mono naming xml is kinda weak. For example, leading underscore on fields.
-* GetHashCode snippets on wiki should be a lil better.
 * Add more fxcop rules?
 * Get rid of ignoreList setting.
 * Smoke smokey.
@@ -142,39 +144,10 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- SequencePoint is the key class (but it's always null with the 1.9 cecil)
 	- see if it works with a pdb file
 	- see if we can drop the Mono.CompilerServices.SymbolWriter.dll dependency
-* Look at C# 3.0:
-	- extension methods
-			public static class Extensions 
-			{ 
-				public static int ToInt32(this string s) 
-				{ 
-					return Int32.Parse(s); 
-				}
-			}
-			could add Push, Pop, Front, and Back to List<>
-	- automatically generated properties, no manual writing of getters and setters
-			public string Name {get; set;}
-	- implicitly typed arrays
-			var a = new[] { 1, 10, 100, 1000 };    // int[]
-	- implicitly typed local variables
-			var orders = new Dictionary<int,Order>();
-			foreach (var n in numbers) Console.WriteLine(n);
-	- lambda expressions, this will make DoubleDisatch::Register nicer (once type inference is in)?
-			x => x + 1       // Implicitly typed, expression body
-			x => { return x + 1; }   // Implicitly typed, statement body
-			(int x) => x + 1     // Explicitly typed, expression body
-	- null coalescing operator
-  		string fileName = tempFileName ?? "Untitled"
 * Add a rejected file. Mention possibility of a (disabled by default) nitpicky level.
 * Add a script to update doc comments with DBC info (including invariants).
 * Could use threading to improve performance on multi-processors.
 * Create table but no primary key.
-* Need to work with pdb files
-	- Mono.CompilerServices does not work with pdb files
-	- gendarme has a Symbols class which is supposed to work with .net
-	/Users/jessejones/New_Files/CustomFXCopRules_VS2003/bin/Debug/CustomFXCopRules_VS2003.pdb
-	/Users/jessejones/New_Files/log4net-1.2.10/bin/net/2.0/debug/log4net.pdb
-	/Users/jessejones/Source/Old Stuff/cocoV4/coco/protocol/modules/Configurator/ConfigUtils/XP/bin/Debug/ConfigUtils.pdb
 * If --html is specified colorize example code. Should also support wiki formatting...
   already using * for bulleted lists.
 * Would be nice if we smoked the xml.
@@ -191,7 +164,6 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- http://msdn2.microsoft.com/en-us/library/9kc0c6st(VS.80).aspx
 	- make this informational
 * Assembly description should include an overall version number.
-* Review all the rules. Look for stuff like a rule that can also be done on private types.
 * Equals is called with a null argument.
 * A method that throws an exception on a null argument is called with null:
 	- could do this with a --inter-procedural option
@@ -223,43 +195,6 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- the local is overwritten or not used after the method call
 	- probably need to check the method body for a store
 	- can do this lazily and cache result for reasonable efficiency
-* Not implemented
-		  Avoid excessive parameters on generic types
-		  Avoid namespaces with few types
-		  Avoid out parameters
-		  Default parameters should not be used
-		  Do not catch general exception types (we do warn if this is done with an empty catch block)
-		  Do not declare protected members in sealed types (compiler warns (at level 4))
-		  Do not declare static members on generic types
-		  Do not declare virtual members in sealed types (compiler catches)
-		  Do not expose generic lists
-		  Do not nest generic types in member signatures
-		  Do not overload operator equals on reference types
-		  Do not pass types by reference
-		  Enum Storage should be Int32
-		  Generic methods should provide type parameter
-		  Indexers should not be multidimensional
-		  Interface methods should be callable by child types
-		  Members should not expose certain concrete types
-		  Override operator equals on overloading add and subtract
-		  Properties should not be write only
-		  Replace repetitive arguments with params array
-		  String uri overloads call system uri overloads
-		  Uri parameters should not be strings
-		  Uri properties should not be strings
-		  Uri return values should not be strings
-		  Use events where appropriate
-		  Use generics where appropriate
-		  Use integral or string argument for indexers
-		  Use properties where appropriate
-		  Do not hardcode locale specific strings
-		  most of the Interoperability rules
-		  mobility warnings
-		  Identifiers should not match keywords
-		  Review unused parameters
-		  Use managed equivalents of win
-		  Secure Serialization Constructors
-		  Specify marshaling for pinvoke string arguments
 * TextReport isn't localizable.
 * Get the FXCop rules working.
 	<http://msdn2.microsoft.com/en-us/library/ee1hzekz(VS.80).aspx>
@@ -279,9 +214,6 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- prefer no null events? http://blogs.msdn.com/jaybaz_ms/archive/2004/09/16/230681.aspx
 	- all classes are public and there are more than five classes
 	- argument isn't used
-* Bogus Gendarme rules:
-	- DoubleCheckLockingRule, just use a singleton class
-	  maybe we can have a rule for custom singleton class?
 	
 * Release checklist:
 	- remove ignoreList setting

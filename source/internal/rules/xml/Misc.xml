@@ -21,7 +21,7 @@
 			It's OK for an identifier to be all upper case if it's two characters long
 			(e.g. IO). Underscores and hungarian notation should not be used. These are
 			the same conventions as the .NET conventions, see
-			&lt;http://msdn2.microsoft.com/en-us/library/x2dbyw72(VS.71).&gt; for more
+			&lt;http://msdn2.microsoft.com/en-us/library/x2dbyw72(VS.71)&gt; for more
 			details on those.
 			</Description>
 	
