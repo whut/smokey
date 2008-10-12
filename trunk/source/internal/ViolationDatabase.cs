@@ -45,7 +45,7 @@ namespace Smokey.Internal
 			XmlSchema schema = XmlSchema.Read(stream, DoValidationEvent);
 
 			ms_settings = new XmlReaderSettings();
-			Ignore.Value = ms_settings.Schemas.Add(schema);
+			Unused.Value = ms_settings.Schemas.Add(schema);
 			ms_settings.ValidationEventHandler += DoValidationEvent;
 			ms_settings.ValidationType = ValidationType.Schema;
 			ms_settings.IgnoreComments = true;
@@ -239,7 +239,7 @@ namespace Smokey.Internal
 		
 		private static void DoValidationEvent(object sender, ValidationEventArgs e)
 		{
-			Unused.Arg(sender);
+			Unused.Value = sender;
 			
 			if (e.Severity == XmlSeverityType.Warning)
 				Console.WriteLine("{0}", e.Message);

@@ -90,7 +90,7 @@ namespace Smokey.Internal.Rules
 
 		public void VisitFini(EndTesting end)
 		{			
-			Unused.Arg(end);
+			Unused.Value = end;
 			
 			foreach (KeyValuePair<MethodDefinition, Entry> entry in m_table)
 			{

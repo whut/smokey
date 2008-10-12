@@ -402,7 +402,7 @@ normally be Error. -->
 	
 			<Fix>
 			It's poor style to create an object simply for the side effects, but if that's
-			what you want to do assign the result to Ignore.Value.
+			what you want to do assign the result to Unused.Value.
 			</Fix>
 		</Translation>	
 	</Violation>
@@ -437,12 +437,12 @@ normally be Error. -->
 			<Fix>
 			Unlike C there is no built-in mechanism for explicitly ignoring return
 			values in C#. You can assign it to a temporary (although you will get a
-			warning because the temporary isn't used) or use an Ignore class as in
+			warning because the temporary isn't used) or use an Unused class as in
 			the code below.
 			</Fix>
 	
 			<CSharp>
-			internal static class Ignore
+			internal static class Unused
 			{
 				public static object Value 
 				{
@@ -455,7 +455,7 @@ normally be Error. -->
 			{		
 				public static void Print2(string s, string t)
 				{
-					Ignore.Value = Print(s + t);	// ignore return value because it's always true
+					Unused.Value = Print(s + t);	// ignore return value because it's always true
 				}
 
 				public static bool Print(string s)
@@ -583,11 +583,11 @@ normally be Error. -->
 	
 			<Fix>
 			Use the argument somehow. If for some reason you don't want to make use of it
-			you can use Ignore.Value as in the code below.
+			you can use Unused.Value as in the code below.
 			</Fix>
 	
 			<CSharp>
-			internal static class Ignore
+			internal static class Unused
 			{
 				public static object Value 
 				{
@@ -610,7 +610,7 @@ normally be Error. -->
 				public string Captain 
 				{
 					get {return string.Empty;}
-					set {Ignore.Value = value;}
+					set {Unused.Value = value;}
 				}
 				
 				private string m_name;
@@ -825,7 +825,7 @@ normally be Error. -->
 			{
 				public static int Work(int x, int hint)
 				{
-					Unused.Arg(hint);
+					Unused.Value = hint;
 					
 					return x;
 				}

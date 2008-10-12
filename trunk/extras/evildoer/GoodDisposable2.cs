@@ -73,7 +73,7 @@ namespace EvilDoer
 			
 		protected override void Dispose(bool disposing)
 		{
-			Ignore.Value = NativeMethods.CloseHandle(handle);
+			Unused.Value = NativeMethods.CloseHandle(handle);
 			handle = IntPtr.Zero;
 			
 			base.Dispose(disposing);

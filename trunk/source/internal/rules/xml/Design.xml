@@ -1966,7 +1966,7 @@
 								// Note that this lock management, and the standardized
 								// pattern, are why monitors tend to result in better
 								// code than the lower level synchronization primitives.
-								Ignore.Value = Monitor.Wait(m_lock);
+								Unused.Value = Monitor.Wait(m_lock);
 							}	
 							
 							// Once we're happy with our condition variable we can do
@@ -2223,7 +2223,7 @@
 								// Note that this lock management, and the standardized
 								// pattern, are why monitors tend to result in better
 								// code than the lower level synchronization primitives.
-								Ignore.Value = Monitor.Wait(m_lock);
+								Unused.Value = Monitor.Wait(m_lock);
 							}	
 							
 							// Once we're happy with our condition variable we can do

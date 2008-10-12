@@ -41,7 +41,7 @@ namespace Smokey.Internal
 		{
 			if (!ms_installed)
 			{
-				Ignore.Value = Debug.Listeners.Add(new AssertTraceListener());
+				Unused.Value = Debug.Listeners.Add(new AssertTraceListener());
 				ms_installed = true;
 			}
 		}

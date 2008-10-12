@@ -52,7 +52,7 @@ namespace Smokey.Internal.Rules
 						
 		public void VisitAssembly(AssemblyDefinition assembly)
 		{
-			Unused.Arg(assembly);
+			Unused.Value = assembly;
 			
 			Log.DebugLine(this, "++++++++++++++++++++++++++++++++++"); 
 			m_setters.Clear();		// need to do this here for unit tests

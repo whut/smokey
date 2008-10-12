@@ -45,7 +45,7 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitBegin(BeginType begin)
 		{						
-			Unused.Arg(begin);
+			Unused.Value = begin;
 			
 			m_methods.Clear();
 		}
@@ -96,7 +96,7 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitFini(EndTesting end)
 		{		
-			Unused.Arg(end);
+			Unused.Value = end;
 			
 			List<string> bad = new List<string>();
 			DoGetMatches(bad, m_namespaces, "Namespaces: ");

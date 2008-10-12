@@ -159,7 +159,7 @@ namespace Smokey.Framework.Support
 						if (i >= 0)
 						{
 							name = name.Substring(0, i);
-							Ignore.Value = m_externalTypes.TryGetValue(name, out type);
+							Unused.Value = m_externalTypes.TryGetValue(name, out type);
 						}
 					}
 				}

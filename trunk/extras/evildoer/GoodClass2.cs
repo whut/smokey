@@ -133,7 +133,7 @@ namespace EvilDoer
 		
 		public GoodClass2()
 		{
-			Ignore.Value = ThreadPool.QueueUserWorkItem(DoCallback2);
+			Unused.Value = ThreadPool.QueueUserWorkItem(DoCallback2);
 		}
 		
 		private static void DoCallback2(object state)

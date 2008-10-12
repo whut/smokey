@@ -400,7 +400,7 @@ namespace Smokey.Internal
 				{
 					try
 					{
-						Ignore.Value = System.Reflection.Assembly.LoadFrom(path);	// need to load these before we init the logger
+						Unused.Value = System.Reflection.Assembly.LoadFrom(path);	// need to load these before we init the logger
 					}
 					catch (Exception e)
 					{

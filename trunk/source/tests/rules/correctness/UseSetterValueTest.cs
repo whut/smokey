@@ -51,7 +51,7 @@ namespace Smokey.Tests
 			public string Captain 
 			{
 				get {return string.Empty;}
-				set {Ignore.Value = value;}
+				set {Unused.Value = value;}
 			}
 
 			private string m_name;

@@ -92,7 +92,7 @@ namespace Smokey.Internal.Rules
 
 		public void VisitEnd(EndMethod end)
 		{
-			Unused.Arg(end);
+			Unused.Value = end;
 			
 			if (m_needsCheck && m_missingBaseCall)
 			{		

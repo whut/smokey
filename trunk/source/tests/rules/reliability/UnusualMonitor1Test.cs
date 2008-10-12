@@ -47,7 +47,7 @@ namespace Smokey.Tests
 				{
 					while (m_queue.Count == 0)
 					{
-						Ignore.Value = Monitor.Wait(m_lock);
+						Unused.Value = Monitor.Wait(m_lock);
 					}
 					
 					result = m_queue.Dequeue();
@@ -68,7 +68,7 @@ namespace Smokey.Tests
 				
 				lock (m_lock)
 				{
-					Ignore.Value = Monitor.Wait(m_lock, 100);
+					Unused.Value = Monitor.Wait(m_lock, 100);
 					
 					result = m_queue.Dequeue();
 				}
@@ -90,7 +90,7 @@ namespace Smokey.Tests
 				{
 					while (m_queue.Count == 0 && m_count == 0)
 					{
-						Ignore.Value = Monitor.Wait(m_lock);
+						Unused.Value = Monitor.Wait(m_lock);
 					}
 					
 					result = m_queue.Dequeue();
@@ -138,7 +138,7 @@ namespace Smokey.Tests
 				{
 					while (m_queue.Count == 0)
 					{
-						Ignore.Value = Monitor.Wait(m_lock);
+						Unused.Value = Monitor.Wait(m_lock);
 					}
 					
 					result = m_queue.Dequeue();
@@ -184,7 +184,7 @@ namespace Smokey.Tests
 				{
 					if (m_queue.Count == 0)
 					{
-						Ignore.Value = Monitor.Wait(m_lock);
+						Unused.Value = Monitor.Wait(m_lock);
 					}
 					
 					result = m_queue.Dequeue();
@@ -205,7 +205,7 @@ namespace Smokey.Tests
 				
 				lock (m_lock)
 				{
-					Ignore.Value = Monitor.Wait(m_lock);
+					Unused.Value = Monitor.Wait(m_lock);
 					
 					result = m_queue.Dequeue();
 				}
@@ -227,7 +227,7 @@ namespace Smokey.Tests
 				{
 					while (m_queue.Count == 0)
 					{
-						Ignore.Value = Monitor.Wait(m_lock);
+						Unused.Value = Monitor.Wait(m_lock);
 						Console.WriteLine("waiting");
 					}
 					
@@ -251,7 +251,7 @@ namespace Smokey.Tests
 				{
 					if (m_queue.Count == 0)
 					{
-						Ignore.Value = Monitor.Wait(m_lock);
+						Unused.Value = Monitor.Wait(m_lock);
 					}
 					
 					result = m_queue.Dequeue();

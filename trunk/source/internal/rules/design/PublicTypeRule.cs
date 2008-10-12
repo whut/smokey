@@ -57,7 +57,7 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitFini(EndTesting end)
 		{
-			Unused.Arg(end);
+			Unused.Value = end;
 			
 			if (Cache.Assembly.EntryPoint != null)
 			{

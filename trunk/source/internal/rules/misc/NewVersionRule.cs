@@ -83,7 +83,7 @@ namespace Smokey.Internal.Rules
 		
 		private void DoCompleted(object sender, DownloadStringCompletedEventArgs e)
 		{
-			Unused.Arg(sender);
+			Unused.Value = sender;
 			
 			lock (m_lock)
 			{
@@ -113,7 +113,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitBegin(BeginTesting begin)
 		{		
-			Unused.Arg(begin);
+			Unused.Value = begin;
 			
 			Log.DebugLine(this, "starting download");	
 			
@@ -123,7 +123,7 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitEnd(EndTesting end)
 		{			
-			Unused.Arg(end);
+			Unused.Value = end;
 			
 			if (m_downloader.Complete)
 			{

@@ -93,7 +93,7 @@ namespace Smokey.Internal.Rules
 					Log.DebugLine(this, "{0} = this at {1:X2}", store.Name, store.Untyped.Offset);
 				}
 				else
-					Ignore.Value = m_thisLocals.Remove(store.Variable);
+					Unused.Value = m_thisLocals.Remove(store.Variable);
 			}
 		}
 

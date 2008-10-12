@@ -157,14 +157,15 @@ namespace Smokey.Internal.Rules
 				
 		protected virtual bool OnNeedsCheck(TypeDefinition type) 
 		{
-			Unused.Arg(type);
+			Unused.Value = type;
 			
 			return true;
 		}
 		
 		protected virtual bool OnNeedsCheck(TypeDefinition type, MethodDefinition method) 
 		{
-			Unused.Arg(type, method);
+			Unused.Value = type;
+			Unused.Value = method;
 
 			return true;
 		}
@@ -190,7 +191,7 @@ namespace Smokey.Internal.Rules
 				
 		protected override bool OnNeedsCheck(TypeDefinition type, MethodDefinition method) 
 		{
-			Unused.Arg(type);
+			Unused.Value = type;
 			
 			return method.IsPublic;
 		}

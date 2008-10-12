@@ -65,7 +65,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitFini(EndTesting end)
 		{
-			Unused.Arg(end);
+			Unused.Value = end;
 			
 			if (m_callsRun && m_callsExit)
 			{

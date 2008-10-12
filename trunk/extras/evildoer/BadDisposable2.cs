@@ -53,7 +53,7 @@ namespace EvilDoer
 			if (!disposed)
 			{
 				if (disposing)
-					Ignore.Value = NativeMethods.CloseHandle(handle);
+					Unused.Value = NativeMethods.CloseHandle(handle);
 				
 				disposed = true;
 			}

@@ -131,7 +131,7 @@ namespace Smokey.Framework.Support.Advanced
 		private Dictionary<BasicBlock, LATTICE> DoAnalyze(LatticeFunctions<LATTICE> functions, LATTICE initialState)
 		{
 			// Remove the first block from the work list since we know it's value.
-			Ignore.Value = m_workList.Remove(m_entry);
+			Unused.Value = m_workList.Remove(m_entry);
 					
 			// Initialize the input states for all of the blocks. For the first
 			// block we are given the state. For the other blocks we use the 

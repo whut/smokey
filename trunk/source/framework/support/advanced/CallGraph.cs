@@ -49,7 +49,7 @@ namespace Smokey.Framework.Support.Advanced
 		public List<MethodReference> GetCalls(MethodReference method)
 		{			
 			List<MethodReference> list;
-			Ignore.Value = m_graph.TryGetValue(method, out list);	// this will return false if the method is defined outside the assembly we're checking
+			Unused.Value = m_graph.TryGetValue(method, out list);	// this will return false if the method is defined outside the assembly we're checking
 			return list;		
 		}
 				

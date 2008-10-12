@@ -102,7 +102,7 @@ namespace Smokey.Internal.Rules
 
 		private bool DoNeedsDispose(List<int> original, int index)
 		{
-			Unused.Arg(index);			// hmm...
+			Unused.Value = index;			// hmm...
 			
 			List<int> loads = new List<int>(original);
 			
