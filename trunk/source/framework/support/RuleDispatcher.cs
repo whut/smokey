@@ -335,8 +335,7 @@ namespace Smokey.Framework.Support
 					Exception ee = e;
 					while (ee != null)
 					{
-						if (e.InnerException != null)
-							details += string.Format("--------- {0} Exception{1}", ee == e ? "Outer" : "Inner", Environment.NewLine);
+						details += string.Format("--------- {0} Exception{1}", ee == e ? "Outer" : "Inner", Environment.NewLine);
 						details += string.Format("{0}", ee.Message);
 						details += string.Format("{0}", ee.StackTrace);
 	

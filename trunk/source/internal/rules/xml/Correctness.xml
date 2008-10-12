@@ -906,4 +906,21 @@ normally be Error. -->
 			</Fix>
 		</Translation>
 	</Violation>	
+	
+	<Violation checkID = "C1036" severity = "Error" breaking = "false">
+		<Translation lang = "en" typeName = "EqualsMissesState" category = "Correctness">			
+			<Cause>
+			An Equals or operator== method checks fields, but does not check a field 
+			which is exposed via a trivial and public get/set property.
+			</Cause>
+		
+			<Description>
+			Two objects which have differing visible states should compare different.
+			</Description>
+	
+			<Fix>
+			Change either the equality method or the property.
+			</Fix>
+		</Translation>
+	</Violation>	
 </Violations>		
