@@ -149,6 +149,7 @@ namespace EvilDoer
 
 	// P1020/NotSealed
 	// C1036/EqualsMissesState
+	// P1023/UseIEquatable
 	internal class BadVisibleState
 	{
 		public override bool Equals(object rhsObj)

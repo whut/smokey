@@ -85,7 +85,7 @@ namespace EvilDoer
 		private string key;
 	}			
 
-	public sealed class GoodClass : IFormattable, IDisposable
+	public sealed class GoodClass : IFormattable, IDisposable, IEquatable<GoodClass>
 	{				
 		~GoodClass()
 		{

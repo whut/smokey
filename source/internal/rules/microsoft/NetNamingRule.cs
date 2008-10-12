@@ -123,6 +123,9 @@ namespace Smokey.Internal.Rules
 		{
 			if (!m_needsCheck)
 				return;
+				
+			if (field.Name.IndexOf("<") >= 0)	// auto-property
+				return;
 			
 			// Protected and private fields must be camelCase. Public and internal fields must 
 			// be PascalCase.

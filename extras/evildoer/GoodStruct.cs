@@ -19,14 +19,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 
 namespace EvilDoer
 {
-	public struct GoodStruct
+	public struct GoodStruct : IEquatable<GoodStruct>
 	{				
 		public GoodStruct(int x, int y)
-		{
+		{ 
 			this.x = x;
 			this.y = y;
 		}

@@ -209,22 +209,17 @@
 			{
 				public class FullTrust
 				{
-					public string Name
+					public FullTrust()
 					{
-						get {return m_name;}
-						set {m_name = value;}
+						Name = "Joe Bob";
+						Secret = "credit history: blah blah";
 					}
+					
+					public string Name {get; set;}
 					
 					// This is sensitive data and should not be exposed to
 					// partially trusted callers.
-					public string Secret
-					{
-						get {return m_secret;}
-						set {m_secret = value;}
-					}
-					
-					protected string m_name = "Bob";
-					protected string m_secret = "credit history: xxx";
+					public string Secret {get; set;}
 				}
 			}
 			</CSharp>

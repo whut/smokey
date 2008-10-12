@@ -66,15 +66,10 @@
 			{		
 				public ContactAttribute(string address) 
 				{
-					m_address = address;
+					Address = address;
 				}
 				
-				public string Address
-				{
-					get {return m_address;}
-				}
-			
-				private readonly string m_address;
+				public string Address {get;}
 			}
 			</CSharp>
 		</Translation>
@@ -228,7 +223,7 @@
 					
 					unchecked
 					{
-						hash = name.GetHashCode() + address.GetHashCode();
+						hash = 3*name.GetHashCode() + 7*address.GetHashCode();
 					}
 					
 					return hash;
@@ -293,7 +288,7 @@
 					
 					unchecked
 					{
-						hash = x.GetHashCode() + y.GetHashCode();
+						hash = 3*x.GetHashCode() + 7*y.GetHashCode();
 					}
 					
 					return hash;
@@ -657,7 +652,7 @@
 					
 					unchecked
 					{
-						hash = name.GetHashCode() + address.GetHashCode();
+						hash = 3*name.GetHashCode() + 7*address.GetHashCode();
 					}
 					
 					return hash;

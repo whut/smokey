@@ -52,7 +52,7 @@ namespace EvilDoer
 	// R1000/DisposableFields
 	// S1007/UnmanagedCodeSecurity
 	[SuppressUnmanagedCodeSecurity]
-	public class BadClass
+	public class BadClass : IEquatable<BadClass>
 	{			
 		// D1001/ClassCanBeMadeStatic
 		public class Nested

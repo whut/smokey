@@ -51,7 +51,7 @@ check: bin/tests.dll bin/tests.dll.config
 	$(NUNIT) -nologo -config=bin/tests.dll.config bin/tests.dll
 
 check1: bin/tests.dll bin/tests.dll.config
-	$(NUNIT) -nologo -config=bin/tests.dll.config -fixture=Smokey.Tests.EqualsMissesStateTest bin/tests.dll
+	$(NUNIT) -nologo -config=bin/tests.dll.config -fixture=Smokey.Tests.UseIEquatableTest bin/tests.dll
 
 ftest_asms := bin/evildoer.dll,bin/NoSecurity.exe,bin/APTCA.dll,bin/APTCA2.dll,bin/APTCA3.dll
 fcheck: bin/smokey.exe $(subst $(comma), ,$(ftest_asms)) bin/FullTrust.dll bin/functest.exe
@@ -204,6 +204,6 @@ tar_binary: bin/smokey.exe bin/smokey.exe.config
 	rm bin/Makefile
 	
 tar_source: 
-	tar --create --compress --file=smokey_src-$(version).tar.gz AUTHORS CHANGES CHANGE_LOG IgnoreList.txt MIT.X11 Makefile extras/Makefile README SysIgnore.txt gen_docs.sh gen_match.py gen_version.sh get_version.sh custom extras source
+	tar --create --compress --exclude \*/.svn --exclude \*/.svn/\* --file=smokey_src-$(version).tar.gz AUTHORS CHANGES CHANGE_LOG IgnoreList.txt MIT.X11 Makefile extras/Makefile README SysIgnore.txt gen_docs.sh gen_match.py gen_version.sh get_version.sh custom extras source
 
 tar: tar_binary tar_source
