@@ -70,7 +70,7 @@ namespace Smokey.Internal.Rules
 			if (m_needsCheck)
 			{
 				Log.DebugLine(this, "removing '{0}'", load.Name);				
-				Ignore.Value = m_args.Remove(load.Name);
+				Unused.Value = m_args.Remove(load.Name);
 			}
 		}
 
@@ -79,7 +79,7 @@ namespace Smokey.Internal.Rules
 			if (m_needsCheck)
 			{
 				Log.DebugLine(this, "removing '{0}'", load.Name);				
-				Ignore.Value = m_args.Remove(load.Name);
+				Unused.Value = m_args.Remove(load.Name);
 			}
 		}
 

@@ -400,7 +400,7 @@ namespace Smokey.Framework.Support.Advanced
 			{
 				for (int i = block.First.Index; i <= block.Last.Index; ++i)
 				{
-					Ignore.Value = offsets.Remove(instructions[i].Untyped.Offset);
+					Unused.Value = offsets.Remove(instructions[i].Untyped.Offset);
 				}
 			}
 		}

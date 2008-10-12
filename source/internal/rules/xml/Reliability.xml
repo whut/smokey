@@ -1013,7 +1013,7 @@
 							// The wait call will release our mutex and wait for a Pulse.
 							// When pulsed the mutex will be reacquired and wait will return
 							// true (always true because we don't use a timeout).
-							Ignore.Value = Monitor.Wait(m_lock);
+							Unused.Value = Monitor.Wait(m_lock);
 						}
 						
 						result = m_queue.Dequeue();

@@ -216,7 +216,7 @@ namespace Smokey.Internal.Rules
 						{
 							FieldReference field = (FieldReference) m_minfo.Instructions[call.Index - 1].Untyped.Operand;
 							Log.DebugLine(this, "found Dispose call for {0}", field.Name);
-							Ignore.Value = m_disposableFields.Remove(field.ToString());
+							Unused.Value = m_disposableFields.Remove(field.ToString());
 						}
 					}
 				}

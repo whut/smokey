@@ -88,7 +88,7 @@ namespace Smokey.Internal
 		[DisableRule("D1038", "DontExit2")]		// we can't really throw because we are in a thread
 		private void DoThread(object instance)
 		{
-			Unused.Arg(instance);
+			Unused.Value = instance;
 			
 			lock (m_lock)
 			{

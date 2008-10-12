@@ -40,7 +40,7 @@ namespace Smokey.Internal
 		private void DoWriteHtml(string root)
 		{
 			if (!Directory.Exists(root))
-				Ignore.Value = Directory.CreateDirectory(root);
+				Unused.Value = Directory.CreateDirectory(root);
 				
 			string path = Path.Combine(root, "Violations.css");
 			DoWriteCss(path);

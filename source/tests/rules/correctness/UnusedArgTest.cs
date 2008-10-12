@@ -52,7 +52,7 @@ namespace Smokey.Tests
 
 			public static int Good4(int s, int t)
 			{
-				Unused.Arg(t);
+				Unused.Value = t;
 				
 				return s + s;
 			}

@@ -334,7 +334,7 @@ namespace Smokey.Framework
 			topic = topic.BaseType;
 			while (topic != null && level == Level.Off)
 			{
-				Ignore.Value = ms_levels.TryGetValue(topic, out level);
+				Unused.Value = ms_levels.TryGetValue(topic, out level);
 				topic = topic.BaseType;
 			}
 			

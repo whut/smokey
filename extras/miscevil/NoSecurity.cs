@@ -55,7 +55,7 @@ namespace Unsecure
 		private string name;
 	}
 
-	internal static class Ignore
+	internal static class Unused
 	{			
 		public static object Value
 		{
@@ -90,7 +90,7 @@ namespace Unsecure
 				DoDumpState2();
 			
 				// G1001/MessageBoxOptions
-				Ignore.Value = MessageBox.Show("ho", "hum");
+				Unused.Value = MessageBox.Show("ho", "hum");
 			}
 			catch (Exception e)
 			{

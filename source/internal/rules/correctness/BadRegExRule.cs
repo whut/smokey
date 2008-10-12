@@ -109,7 +109,7 @@ namespace Smokey.Internal.Rules
 			
 			try
 			{
-				Ignore.Value = new Regex(s);
+				Unused.Value = new Regex(s);
 				valid = true;
 			}
 			catch (Exception ex)

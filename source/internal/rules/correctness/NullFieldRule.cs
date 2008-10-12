@@ -69,7 +69,7 @@ namespace Smokey.Internal.Rules
 		{
 			if (store.Untyped.Previous.OpCode.Code != Code.Ldnull)
 			{
-				Ignore.Value = m_fields.Remove(store.Field.Name);
+				Unused.Value = m_fields.Remove(store.Field.Name);
 			}
 		}
 
@@ -77,18 +77,18 @@ namespace Smokey.Internal.Rules
 		{
 			if (store.Untyped.Previous.OpCode.Code != Code.Ldnull)
 			{
-				Ignore.Value = m_fields.Remove(store.Field.Name);
+				Unused.Value = m_fields.Remove(store.Field.Name);
 			}
 		}
 
 		public void VisitLoad1(LoadFieldAddress load)
 		{
-			Ignore.Value = m_fields.Remove(load.Field.Name);
+			Unused.Value = m_fields.Remove(load.Field.Name);
 		}
 
 		public void VisitLoad2(LoadStaticFieldAddress load)
 		{
-			Ignore.Value = m_fields.Remove(load.Field.Name);
+			Unused.Value = m_fields.Remove(load.Field.Name);
 		}
 
 		public void VisitEnd(EndMethods end)

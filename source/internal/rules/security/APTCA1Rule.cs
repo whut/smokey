@@ -121,7 +121,7 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitEnd(EndMethod end)
 		{
-			Unused.Arg(end);
+			Unused.Value = end;
 			
 			if (m_checkMethod)
 			{
@@ -138,7 +138,7 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitFini(EndTesting end)
 		{
-			Unused.Arg(end);
+			Unused.Value = end;
 			
 			if (m_bad.Count > 0)
 			{

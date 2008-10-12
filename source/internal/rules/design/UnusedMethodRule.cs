@@ -198,7 +198,7 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitEnd(EndTypes end)
 		{
-			Unused.Arg(end);
+			Unused.Value = end;
 			
 			m_methods.Sort(m_comparer);
 		}
@@ -235,7 +235,7 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitFini(EndTesting end)
 		{
-			Unused.Arg(end);
+			Unused.Value = end;
 			
 			if (m_methods.Count > 0)
 			{

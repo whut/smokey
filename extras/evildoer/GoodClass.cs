@@ -283,17 +283,17 @@ namespace EvilDoer
 			switch (format)
 			{	
 				case "S":
-					Ignore.Value = builder.Append("name = ");
-					Ignore.Value = builder.Append(name);
+					Unused.Value = builder.Append("name = ");
+					Unused.Value = builder.Append(name);
 					break;
 											
 				case "":			// no good way for clients to fix this so we allow one empty string in ToString methods			
 				case "G":
 				case null:
-					Ignore.Value = builder.Append("name = ");
-					Ignore.Value = builder.Append(name);
-					Ignore.Value = builder.Append(", address = ");
-					Ignore.Value = builder.Append(address);
+					Unused.Value = builder.Append("name = ");
+					Unused.Value = builder.Append(name);
+					Unused.Value = builder.Append(", address = ");
+					Unused.Value = builder.Append(address);
 					break;
 
 				default:

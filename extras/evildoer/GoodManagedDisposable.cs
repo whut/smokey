@@ -33,7 +33,7 @@ namespace EvilDoer
 				throw new ObjectDisposedException(GetType().Name);
 				
 			System.Diagnostics.Debug.WriteLine(mesg);
-			Ignore.Value = work_event.Set();
+			Unused.Value = work_event.Set();
 		}
 		
 		public void Dispose()

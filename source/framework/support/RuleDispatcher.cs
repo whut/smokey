@@ -363,7 +363,7 @@ namespace Smokey.Framework.Support
 			
 			foreach (KeyValuePair<Type, List<RuleCallback>> entry in m_callbackTable)
 			{
-				Ignore.Value = entry.Value.Remove(prototype);
+				Unused.Value = entry.Value.Remove(prototype);
 			}
 		}
 		

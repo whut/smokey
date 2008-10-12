@@ -168,7 +168,7 @@ namespace EvilDoer
 		private List<IntPtr> native;
 	}
 	
-	internal static class Ignore
+	internal static class Unused
 	{
 		public static object Value 
 		{
@@ -188,8 +188,8 @@ namespace EvilDoer
 		{
 			resource = CreateHandle();
 			Console.Error.WriteLine("how bad: {0}", bad + Badness());
-			Ignore.Value = ThreadPool.QueueUserWorkItem(DoCallback1);
-			Ignore.Value = ThreadPool.QueueUserWorkItem(DoCallback2);
+			Unused.Value = ThreadPool.QueueUserWorkItem(DoCallback1);
+			Unused.Value = ThreadPool.QueueUserWorkItem(DoCallback2);
 		}
 				
 		private static void DoCallback1(object state)
@@ -217,7 +217,7 @@ namespace EvilDoer
 		public object this[int index] 
 		{ 
 			get {return null;}
-			set {Ignore.Value = index;}
+			set {Unused.Value = index;}
 		}
 
 		// PO1001/DllImportPath
@@ -350,7 +350,7 @@ namespace EvilDoer
 			o.Add(new BadStruct(0, 0));
 			o.Add(new BadStruct2(0, 0));
 			o.Add(new BrokenClass());
-			o.Add(new BrokenStruct());
+			o.Add(12);
 			o.Add(new Cyclic1(0));
 			o.Add(new Cyclic2(0));
 			o.Add(new Cyclic3(0));

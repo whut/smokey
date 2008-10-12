@@ -25,8 +25,10 @@ namespace Smokey.Internal
 {
 	internal static class Unused
 	{
-		public static void Arg(params object[] args)
+		public static object Value
 		{
+			[DisableRule("C1022", "UseSetterValue")]	
+			set {}
 		}
 	}
 }

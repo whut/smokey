@@ -91,7 +91,7 @@ namespace Smokey.Internal.Rules
 
 		public void VisitEnd(EndType end)
 		{
-			Unused.Arg(end);
+			Unused.Value = end;
 			
 			if (m_needsCheck && m_details.Length > 0)
 			{

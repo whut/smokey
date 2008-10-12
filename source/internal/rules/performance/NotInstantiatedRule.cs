@@ -62,7 +62,7 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitEndTypes(EndTypes end)
 		{
-			Unused.Arg(end);
+			Unused.Value = end;
 			
 			DBC.Assert(m_state == State.Types, "state is {0}", m_state);
 
@@ -108,7 +108,7 @@ namespace Smokey.Internal.Rules
 		// This is visited after methods.
 		public void VisitFini(EndTesting end)
 		{
-			Unused.Arg(end);
+			Unused.Value = end;
 			
 			DBC.Assert(m_state == State.Calls, "state is {0}", m_state);
 			m_state = State.End;

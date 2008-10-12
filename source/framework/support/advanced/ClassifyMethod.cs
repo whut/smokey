@@ -53,7 +53,7 @@ namespace Smokey.Framework.Support.Advanced
 		#region Visitors
 		public void VisitAssembly(AssemblyDefinition assembly)
 		{
-			Unused.Arg(assembly);
+			Unused.Value = assembly;
 			
 			Log.DebugLine(this, "++++++++++++++++++++++++++++++++++"); 
 			m_threadRoots.Clear();		// need to do this here for unit tests

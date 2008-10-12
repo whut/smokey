@@ -268,7 +268,7 @@ namespace Smokey.Internal.Rules
 		// a bad word (such as one that includes a dash).
 		private void DoAdd(string word)
 		{
-			Ignore.Value = NativeMethods.aspell_speller_add_to_session(m_speller, word, -1);
+			Unused.Value = NativeMethods.aspell_speller_add_to_session(m_speller, word, -1);
 
 			IntPtr result = NativeMethods.aspell_speller_error(m_speller);
 			if (result != IntPtr.Zero)

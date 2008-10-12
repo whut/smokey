@@ -68,7 +68,7 @@ namespace EvilDoer
 		public object this[int index] 
 		{ 
 			get {return null;}
-			set {Ignore.Value = index; Ignore.Value = value;}
+			set {Unused.Value = index; Unused.Value = value;}
 		}
 
 		public int Add(object value)
@@ -146,7 +146,7 @@ namespace EvilDoer
 		public object this[object key] 
 		{ 
 			get {return null;}
-			set {Ignore.Value = key; Ignore.Value = value;}
+			set {Unused.Value = key; Unused.Value = value;}
 		}
 
 		public ICollection Keys 

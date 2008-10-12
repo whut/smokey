@@ -87,7 +87,7 @@ namespace Smokey.Internal
 		#region Private Methods -----------------------------------------------
 		private void DoThread(object instance)
 		{
-			Unused.Arg(instance);
+			Unused.Value = instance;
 			
 			bool wrote = false;
 			
@@ -97,7 +97,7 @@ namespace Smokey.Internal
 				{
 					while (m_running && m_name == null)
 					{
-						Ignore.Value = Monitor.Wait(m_lock, m_interval);
+						Unused.Value = Monitor.Wait(m_lock, m_interval);
 					}
 	
 					if (m_running && m_name != null)	// only write if we got new info

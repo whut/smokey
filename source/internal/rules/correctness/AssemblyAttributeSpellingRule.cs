@@ -54,7 +54,7 @@ namespace Smokey.Internal.Rules
 					foreach (object o in attr.ConstructorParameters)
 					{
 						string text = o.ToString();
-						Ignore.Value = CheckSpelling.Text(text, ref details);
+						Unused.Value = CheckSpelling.Text(text, ref details);
 					}
 				}
 				

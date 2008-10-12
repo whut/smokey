@@ -99,7 +99,7 @@ namespace Smokey.Internal.Rules
 		// useful.
 		public void VisitBegin(BeginMethods begin)
 		{			
-			Unused.Arg(begin);
+			Unused.Value = begin;
 			
 			m_table.Clear();
 		}
@@ -142,7 +142,7 @@ namespace Smokey.Internal.Rules
 
 		public void VisitEnd(EndMethods end)
 		{
-			Unused.Arg(end);
+			Unused.Value = end;
 			
 			foreach (KeyValuePair<int, List<CodeBlock>> entry in m_table)
 			{
