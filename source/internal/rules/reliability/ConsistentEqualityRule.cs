@@ -43,6 +43,7 @@ namespace Smokey.Internal.Rules
 		}
 				
 		// Unfortunately we can't really handle inter-procedural rules efficiently...
+		// TODO: we can now...
 		public void VisitType(TypeDefinition type)
 		{
 			Log.DebugLine(this, "-----------------------------------"); 

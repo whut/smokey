@@ -199,4 +199,7 @@
 	<Expected checkID = "D1063" typeName = "BaseDisposable" fullName = "EvilDoer.BadDisposable2"/>
 	<Expected checkID = "D1063" typeName = "BaseDisposable" fullName = "EvilDoer.BadDisposable"/>
 	<Expected checkID = "D1067" typeName = "PreferSafeHandle" fullName = "EvilDoer.BadDisposable"/>
+	<Expected checkID = "P1020" typeName = "NotSealed" fullName = "EvilDoer.BadVisibleState"/>
+	<Expected checkID = "R1025" typeName = "HashOverflow" fullName = "System.Int32 EvilDoer.BadVisibleState::GetHashCode()"/>
+	<Expected checkID = "C1036" typeName = "EqualsMissesState" fullName = "EvilDoer.BadVisibleState"/>
 </Expectations>

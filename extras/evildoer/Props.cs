@@ -146,4 +146,55 @@ namespace EvilDoer
 		private int x;
 		private int y;
 	}
+
+	// P1020/NotSealed
+	// C1036/EqualsMissesState
+	internal class BadVisibleState
+	{
+		public override bool Equals(object rhsObj)
+		{
+			if (rhsObj == null)			
+				return false;
+			
+			BadVisibleState rhs = rhsObj as BadVisibleState;
+			return this == rhs;
+		}
+		
+		public string Phone
+		{
+			get {return phone;}
+			set {phone = value;}
+		}
+
+		// R1025/HashOverflow
+		public override int GetHashCode()
+		{
+			return name.GetHashCode() + address.GetHashCode();
+		}
+
+		public static bool operator==(BadVisibleState lhs, BadVisibleState rhs)
+		{
+			if (object.ReferenceEquals(lhs, rhs))
+				return true;
+			
+			if ((object) lhs == null || (object) rhs == null)
+				return false;
+			
+			return lhs.name == rhs.name && lhs.address == rhs.address;
+		}
+		
+		public static bool operator!=(BadVisibleState lhs, BadVisibleState rhs)
+		{
+			return !(lhs == rhs);
+		}
+			
+		public bool Equals(BadVisibleState rhs)	
+		{
+			return this == rhs;
+		}
+		
+		private string name = "ted";
+		private string address = "main street";
+		private string phone;
+	}
 }
