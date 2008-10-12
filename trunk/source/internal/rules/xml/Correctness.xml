@@ -558,7 +558,7 @@ normally be Error. -->
 					
 					unchecked
 					{
-						hash = name.GetHashCode() + address.GetHashCode();
+						hash = 7*name.GetHashCode() + 11*address.GetHashCode();
 					}
 					
 					return hash;

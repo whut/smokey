@@ -49,6 +49,8 @@ namespace Smokey.Tests
 				Console.WriteLine("len: {0}", paramName + intField + lineNum1);			
 			}
 			
+			public int AutoProp {get; set;}
+			
 			private int intField;
 			private int lineNum1;
 		}

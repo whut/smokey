@@ -112,7 +112,7 @@ namespace EvilDoer
 		private AutoResetEvent sync = new AutoResetEvent(false);
 	}			
 
-	public class GoodClass2
+	public class GoodClass2 : IEquatable<GoodClass2>
 	{				
 		public event EventHandler<NameChangedEventArgs> NameChanged;
 

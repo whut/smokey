@@ -202,4 +202,5 @@
 	<Expected checkID = "P1020" typeName = "NotSealed" fullName = "EvilDoer.BadVisibleState"/>
 	<Expected checkID = "R1025" typeName = "HashOverflow" fullName = "System.Int32 EvilDoer.BadVisibleState::GetHashCode()"/>
 	<Expected checkID = "C1036" typeName = "EqualsMissesState" fullName = "EvilDoer.BadVisibleState"/>
+	<Expected checkID = "P1023" typeName = "UseIEquatable" fullName = "EvilDoer.BadVisibleState"/>
 </Expectations>

@@ -37,12 +37,10 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 199 fxcop
 102 gendarme
 
-* Class has trivial get/set and an Equals which does not use that field.
-	- need to check for calls to type methods, have Equals call op== and a helper
-* Make sure naming rules handle auto properties.
-* Make sure field rules (like inconsistent equality) handle auto-properties.
-* Sample code should use auto properties.
-* Are there Iquatable and Icoparable mrules?
+* UseIEquatable
+	- type defines Equals(T) but is not IEquatable
+	- speeds up generic collections
+* GetHashCode examples in xml should be a little better.
 * Use tar --exclude \*/.svn --exclude \*/.svn/\*
 * Instead of Ignore and Unused just have Unused.Value
 * Might want useful links wiki page.

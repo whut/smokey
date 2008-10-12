@@ -257,7 +257,7 @@
 					
 					unchecked
 					{
-						hash = x.GetHashCode() + y.GetHashCode();
+						hash = 3*x.GetHashCode() + 7*y.GetHashCode();
 					}
 					
 					return hash;
@@ -322,7 +322,7 @@
 					
 					unchecked
 					{
-						hash = x.GetHashCode() + y.GetHashCode();
+						hash = 3*x.GetHashCode() + 7*y.GetHashCode();
 					}
 					
 					return hash;
@@ -441,15 +441,10 @@
 			{		
 				public ContactAttribute(string address) 
 				{
-					m_address = address;
+					Address = address;
 				}
 				
-				public string Address
-				{
-					get {return m_address;}
-				}
-			
-				private readonly string m_address;
+				public string Address {get;}
 			}
 			</CSharp>
 		</Translation>
@@ -676,6 +671,70 @@
 			<Fix>
 			Use a method instead of a property.
 			</Fix>
+		</Translation>
+	</Violation>	
+	
+	<Violation checkID = "P1023" severity = "Nitpick" breaking = "false">
+		<Translation lang = "en" typeName = "UseIEquatable" category = "Performance">			
+			<Cause>
+			A type T defines a public Equals method which has a single argument of type T, 
+			but the type is not an IEquatable&lt;T&gt;.
+			</Cause>
+		
+			<Description>
+			Using IEquatable&lt;T&gt; allows the System.Collections.Generic types to use
+			a faster code path when comparing elements for equality.
+			</Description>
+	
+			<Fix>
+			Implement IEquatable&lt;T&gt;.
+			</Fix>
+	
+			<CSharp>
+			internal struct TwoDPoint : IEquatable&lt;TwoDPoint&gt;
+			{		
+				public override bool Equals(object rhsObj)
+				{
+					if (rhsObj == null)						// objects may be null
+						return false;
+					
+					if (GetType() != rhsObj.GetType()) 
+						return false;
+				
+					TwoDPoint rhs = (TwoDPoint) rhsObj;					
+					return this == rhs;
+				}
+					
+				public bool Equals(TwoDPoint rhs)	// provide a typed overload for efficiency
+				{					
+					return this == rhs;
+				}
+
+				public static bool operator==(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return lhs.x == rhs.x &amp;&amp; lhs.y == rhs.y;
+				}
+				
+				public static bool operator!=(TwoDPoint lhs, TwoDPoint rhs)
+				{
+					return !(lhs == rhs);
+				}
+				
+				public override int GetHashCode()
+				{
+					int hash;
+					
+					unchecked
+					{
+						hash = 3*x.GetHashCode() + 7*y.GetHashCode();
+					}
+					
+					return hash;
+				}
+				
+				private int x, y;
+			}
+			</CSharp>
 		</Translation>
 	</Violation>	
 </Violations>

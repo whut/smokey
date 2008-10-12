@@ -36,6 +36,8 @@ namespace Smokey.Tests
 		#region Test classes
 		private class Good1
 		{
+			public string Address {get; set;}
+			
 			public override bool Equals(object rhsObj)
 			{
 				if (rhsObj == null)			
@@ -47,7 +49,7 @@ namespace Smokey.Tests
 
 			public override int GetHashCode()
 			{
-				return name.GetHashCode() + address.GetHashCode();
+				return name.GetHashCode() + Address.GetHashCode();
 			}
 
 			// == matches GetHashCode
@@ -59,7 +61,7 @@ namespace Smokey.Tests
 				if ((object) lhs == null || (object) rhs == null)
 					return false;
 				
-				return lhs.name == rhs.name && lhs.address == rhs.address;
+				return lhs.name == rhs.name && lhs.Address == rhs.Address;
 			}
 			
 			public static bool operator!=(Good1 lhs, Good1 rhs)
@@ -73,7 +75,6 @@ namespace Smokey.Tests
 			}
 			
 			private string name = "ted";
-			private string address = "main street";
 		}
 
 		private class Good2

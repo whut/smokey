@@ -385,7 +385,7 @@
 					
 					unchecked
 					{
-						hash = name.GetHashCode() + address.GetHashCode();
+						hash = 3*name.GetHashCode() + 7*address.GetHashCode();
 					}
 					
 					return hash;
@@ -475,17 +475,13 @@
 						// &lt;http://discuss.develop.com/archives/wa.exe?A2=ind0203B&amp;L=DOTNET&amp;P=R375&gt;
 						// and &lt;http://blogs.msdn.com/cbrumme/archive/2003/05/17/51445.aspx&gt; for 
 						// more details.
-						ms_text = text;
+						Text = text;
 					}
 				}
 				
-				public static string Text
-				{
-					get {return ms_text;}
-				}
+				public static string Text {get;}
 				
 				private static object ms_lock = new object();
-				private static string ms_text = string.Empty;
 			}			
 			</CSharp>
 		</Translation>
@@ -832,7 +828,7 @@
 					// is not thrown.
 					unchecked
 					{
-						hash = X.GetHashCode() + Y.GetHashCode() + Z.GetHashCode();
+						hash = 3*X.GetHashCode() + 7*Y.GetHashCode() + 11*Z.GetHashCode();
 					}
 					
 					return hash;
@@ -874,7 +870,7 @@
 					// is not thrown.
 					unchecked
 					{
-						hash = X.GetHashCode() + Y.GetHashCode() + Z.GetHashCode();
+						hash = 3*X.GetHashCode() + 7*Y.GetHashCode() + 11*Z.GetHashCode();
 					}
 					
 					return hash;
