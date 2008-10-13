@@ -20,7 +20,7 @@
 			    
 			It's OK for an identifier to be all upper case if it's two characters long
 			(e.g. IO). Hungarian notation should not be used. Underscores should only
-			be used with protected or private fields. See &lt;http://www.mono-project.com/Coding_Guidelines&gt; 
+			be used with protected or private fields as a separator. See &lt;http://www.mono-project.com/Coding_Guidelines&gt; 
 			for more details.
 			</Description>
 	
