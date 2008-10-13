@@ -29,3 +29,4 @@ using System.Security.Permissions;
 [assembly: AssemblyCopyright("Copyright (C) 2007 Jesse Jones")]
 
 [assembly: PermissionSet(SecurityAction.RequestMinimum, Unrestricted = true)]
+

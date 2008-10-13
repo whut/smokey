@@ -26,6 +26,7 @@ using System.IO;
 using System.Security.Permissions;
 using System.Security;
 using System.Runtime.Serialization;
+using System.Threading;
 
 // C1000/StringSpelling
 [assembly: EvilDoer.Bad("here is a missspelled word")]
@@ -64,12 +65,50 @@ namespace EvilDoer
 			}
 		}
 		
+		public void Run()
+		{
+			thread = new Thread(this.DoThread);
+			thread.Name = "foo";
+			thread.Start();
+		}
+		
+		[ThreadSingleRoot("Bad Worker")]
+		private void DoThread()
+		{
+			DoSomethingSafe();
+			DoSomething();
+		}
+
+		[ThreadSingleRoot("Bad Recv")]
+		public void RecvPacket(IAsyncResult result)
+		{
+			DoSomething();
+			DoSomethingSafe();
+		}
+
 		// D1050/UnusedField
 		internal int unusedfield1;
 		internal string unusedfield2 = "hello";
 		
 		// D1066/Finalizable
+		// R1039/ThreadSafeAttr (not marked as root)
 		~BadClass()
+		{
+		}
+		
+		// R1039/ThreadSafeAttr (not marked as thread safe)
+		private void DoSomething()
+		{
+			DoIndirectSomething();
+		}
+
+		// R1039/ThreadSafeAttr (not marked as thread safe)
+		private void DoIndirectSomething()
+		{
+		}
+
+		[ThreadSafe]
+		private void DoSomethingSafe()
 		{
 		}
 		
@@ -339,5 +378,6 @@ namespace EvilDoer
 		private string text3;
 		private string text4;		// this is bad too
 		private List<int> my_list = new List<int>();
+		private Thread thread;
 	}
 }

@@ -136,6 +136,7 @@ namespace EvilDoer
 			Unused.Value = ThreadPool.QueueUserWorkItem(DoCallback2);
 		}
 		
+		[ThreadSingleRoot("Good2")]
 		private static void DoCallback2(object state)
 		{
 			Inner.Set((int) state);
