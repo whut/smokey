@@ -33,7 +33,7 @@ internal_files := $(strip $(shell find source/internal -name "*.cs" -print))
 
 rules_files := $(strip $(shell find source/internal/rules -name "*.cs" -print))
 test_files := $(strip $(shell find source/tests -name "*.cs" -print))
-extra_test_files := source/internal/AssertTraceListener.cs source/internal/Break.cs source/internal/GetOptions.cs source/internal/Unused.cs source/internal/Reformat.cs
+extra_test_files := source/internal/AssertTraceListener.cs source/internal/Break.cs source/internal/GetOptions.cs source/internal/Unused.cs source/internal/ThreadAttributes.cs source/internal/Reformat.cs
 
 xml_files := $(strip $(shell find source/internal/rules/xml -name "*.xml" -print))
 
@@ -51,7 +51,7 @@ check: bin/tests.dll bin/tests.dll.config
 	$(NUNIT) -nologo -config=bin/tests.dll.config bin/tests.dll
 
 check1: bin/tests.dll bin/tests.dll.config
-	$(NUNIT) -nologo -config=bin/tests.dll.config -fixture=Smokey.Tests.ThreadSafeAttrTest bin/tests.dll
+	$(NUNIT) -nologo -config=bin/tests.dll.config -fixture=Smokey.Tests.ExceptionConstructorsTest bin/tests.dll
 
 ftest_asms := bin/evildoer.dll,bin/NoSecurity.exe,bin/APTCA.dll,bin/APTCA2.dll,bin/APTCA3.dll
 fcheck: bin/smokey.exe $(subst $(comma), ,$(ftest_asms)) bin/FullTrust.dll bin/functest.exe
@@ -154,7 +154,6 @@ keys:
 	sn -k keys
 		
 smokey_flags := --not-localized -set:naming:jurassic -set:ignoreList:IgnoreList.txt
-smokey_flags += -exclude-check:D1015	# ExceptionConstructors
 smokey_flags += -exclude-check:D1024	# SerializeException
 smokey_flags += -exclude-check:D1031	# PublicType
 smokey_flags += -exclude-check:P1005	# StringConcat

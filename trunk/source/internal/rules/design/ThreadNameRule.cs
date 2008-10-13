@@ -50,7 +50,7 @@ namespace Smokey.Internal.Rules
 			Log.DebugLine(this, "{0:F}", begin.Info.Instructions);				
 
 			m_newOffsets.Clear();
-			m_SetCount = 0;
+			m_setCount = 0;
 		}
 		
 		public void VisitNewObj(NewObj newobj)
@@ -67,13 +67,13 @@ namespace Smokey.Internal.Rules
 			if (call.Target.ToString().StartsWith("System.Void System.Threading.Thread::set_Name("))
 			{
 				Log.DebugLine(this, "   found set at: {0:X2}", call.Untyped.Offset);
-				++m_SetCount;
+				++m_setCount;
 			}
 		}
 				
 		public void VisitEnd(EndMethod end)
 		{
-			if (m_newOffsets.Count > m_SetCount)
+			if (m_newOffsets.Count > m_setCount)
 			{
 				int offset = m_newOffsets.Count == 1 ? m_newOffsets[0] : 0;
 				Reporter.MethodFailed(end.Info.Method, CheckID, offset, string.Empty);
@@ -81,7 +81,7 @@ namespace Smokey.Internal.Rules
 		}
 
 		private List<int> m_newOffsets = new List<int>();
-		private int m_SetCount;
+		private int m_setCount;
 	}
 }
 

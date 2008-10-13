@@ -38,7 +38,7 @@ namespace Smokey.Framework.Support
 			int index = 0;
 			while (index < str.Length)
 			{
-				int count = FindCapsRun(str, index);
+				int count = DoFindCapsRun(str, index);
 				DBC.Assert(count > 0, "count is {0}", count);
 				
 				parts.Add(str.Substring(index, count));
@@ -90,7 +90,7 @@ namespace Smokey.Framework.Support
 		}
 		
 		#region Private Methods -----------------------------------------------
-		private static int FindCapsRun(string str, int index)
+		private static int DoFindCapsRun(string str, int index)
 		{
 			int count = 0;
 			bool isLower = char.IsLower(str[index]);

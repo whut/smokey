@@ -94,39 +94,39 @@ namespace Smokey.Tests
 			}
 		}  			
 			
-		public class Bad1 : Exception
+		public class Good4 : Exception
 		{
-			public Bad1(string message) : base(message) 
+			public Good4(string message) : base(message) 
 			{
 			}
 			
-			public Bad1(string message, Exception innerException) : 
+			public Good4(string message, Exception innerException) : 
 				base (message, innerException)
 			{
 			}
 			
-			protected Bad1(SerializationInfo info, StreamingContext context) : 
+			protected Good4(SerializationInfo info, StreamingContext context) : 
 				base(info, context)
 			{
 			}
 		}  			
 			
-		public class Bad2 : Exception
+		public class Good5 : Exception
 		{
-			public Bad2(int x)
+			public Good5(int x)
 			{
 			}
 			
-			public Bad2(string message) : base(message) 
+			public Good5(string message) : base(message) 
 			{
 			}
 			
-			public Bad2(string message, Exception innerException) : 
+			public Good5(string message, Exception innerException) : 
 				base (message, innerException)
 			{
 			}
 			
-			protected Bad2(SerializationInfo info, StreamingContext context) : 
+			protected Good5(SerializationInfo info, StreamingContext context) : 
 				base(info, context)
 			{
 			}
@@ -173,8 +173,8 @@ namespace Smokey.Tests
 			
 		// test code
 		public ExceptionConstructorsTest() : base(
-			new string[]{"Good1", "Good2", "Good3"},
-			new string[]{"Bad1", "Bad2", "Bad3", "Bad4", "Bad5"})	
+			new string[]{"Good1", "Good2", "Good3", "Good4", "Good5"},
+			new string[]{"Bad3", "Bad4", "Bad5"})	
 		{
 		}
 						

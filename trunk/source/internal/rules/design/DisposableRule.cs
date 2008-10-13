@@ -242,6 +242,8 @@ namespace Smokey.Internal.Rules
 
 		public void VisitThrow(Throw t)
 		{
+			Unused.Value = t;
+
 			if (m_disposable)
 			{
 				if (m_checkForThrows)

@@ -83,7 +83,7 @@ namespace Smokey.Framework.Support.Advanced
 		
 		/// <summary>State of arguments, locals, and the stack at a particular point in 
 		/// the method.</summary>
-		public struct State	
+		public struct State	: IEquatable<State>
 		{			
 			internal State(long?[] args, long?[] locals, List<StackEntry> stack)
 			{

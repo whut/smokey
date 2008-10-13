@@ -149,7 +149,7 @@ namespace Smokey.Internal.Rules
 				if (method.CustomAttributes.Has("ConditionalAttribute"))
 					break;
 					
-				// If the type is serializeable then two of the constructors will be called by the runtime.
+				// If the type is serializable then two of the constructors will be called by the runtime.
 				if ((m_type.Attributes & TypeAttributes.Serializable) != 0 && method.IsConstructor)
 				{
 					if (method.Parameters.Count == 0)

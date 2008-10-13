@@ -128,7 +128,7 @@ namespace Smokey.Internal.Rules
 		// 0A: ldc.i4.0
 		// 0B: ble        1F
 		[DisableRule("D1049", "IdenticalCodeBlocks")]	// these are machine generated so we won't worry too much if some of the code is duplicated
-		public bool DoMatch1(int index)
+		private bool DoMatch1(int index)
 		{
 			bool match = false;
 
@@ -177,7 +177,7 @@ namespace Smokey.Internal.Rules
 		// 03: callvirt   System.Int32 System.String::IndexOf(System.Char)
 		// 0A: ldc.i4.0
 		// 0B: ble        1F
-		public bool DoMatch1b(int index)
+		private bool DoMatch1b(int index)
 		{
 			bool match = false;
 
@@ -215,7 +215,7 @@ namespace Smokey.Internal.Rules
 		// 0C: ldloc.N    V_0
 		// 0D: ldc.i4.0
 		// 0E: ble        22
-		public bool DoMatch2(int index)
+		private bool DoMatch2(int index)
 		{
 			bool match = false;
 
@@ -264,7 +264,7 @@ namespace Smokey.Internal.Rules
 		// 06: callvirt   System.Int32 System.String::IndexOf(System.String)
 		// 0D: ldc.i4.0
 		// 0E: ble        22
-		public bool DoMatch2b(int index)
+		private bool DoMatch2b(int index)
 		{
 			bool match = false;
 
@@ -302,7 +302,7 @@ namespace Smokey.Internal.Rules
 		// 12: ldloc.N    V_0
 		// 13: ldc.i4.0
 		// 14: ble        28
-		public bool DoMatch3(int index)
+		private bool DoMatch3(int index)
 		{
 			bool match = false;
 
@@ -351,7 +351,7 @@ namespace Smokey.Internal.Rules
 		// 0C: callvirt   System.Int32 System.String::IndexOfAny(System.Char[])
 		// 13: ldc.i4.0
 		// 14: ble        28
-		public bool DoMatch3b(int index)
+		private bool DoMatch3b(int index)
 		{
 			bool match = false;
 
@@ -389,7 +389,7 @@ namespace Smokey.Internal.Rules
 		// 09: ldloc.N    V_0
 		// 0A: ldc.i4.0
 		// 0B: cgt
-		public bool DoMatch4(int index)
+		private bool DoMatch4(int index)
 		{
 			bool match = false;
 
@@ -438,7 +438,7 @@ namespace Smokey.Internal.Rules
 		// 03: callvirt   System.Int32 System.String::IndexOf(System.Char)
 		// 0A: ldc.i4.0
 		// 0B: cgt
-		public bool DoMatch4b(int index)
+		private bool DoMatch4b(int index)
 		{
 			bool match = false;
 
@@ -476,7 +476,7 @@ namespace Smokey.Internal.Rules
 		// 09: ldc.i4.0
 		// 0A: ldloc.N    V_0
 		// 0B: bge        1F
-		public bool DoMatch5(int index)
+		private bool DoMatch5(int index)
 		{
 			bool match = false;
 

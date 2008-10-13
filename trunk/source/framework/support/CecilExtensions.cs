@@ -207,6 +207,7 @@ namespace Smokey.Framework.Support
 		public static MethodDefinition GetBasestMethod(this MethodDefinition method, AssemblyCache cache)
 		{			
 			DBC.Pre(method != null, "method is null");
+			DBC.Pre(cache != null, "cache is null");
 			
 			MethodDefinition result = method;
 			

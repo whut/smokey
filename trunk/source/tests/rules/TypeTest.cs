@@ -116,6 +116,11 @@ namespace Smokey.Tests
 			// with a MethodTest so we'll visit methods here in order to be able to unit
 			// test those rules.
 			dispatcher.Dispatch(new BeginMethods(type));
+			foreach (MethodDefinition method in type.Constructors)
+			{
+				var minfo = new Smokey.Framework.Support.MethodInfo(type, method);
+				dispatcher.Dispatch(minfo);
+			}
 			foreach (MethodDefinition method in type.Methods)
 			{
 				var minfo = new Smokey.Framework.Support.MethodInfo(type, method);

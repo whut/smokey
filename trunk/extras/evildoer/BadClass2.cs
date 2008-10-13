@@ -66,6 +66,7 @@ namespace EvilDoer
 
 	// MS1001/AttributesNeedUsage
 	// P1013/UnsealedAttribute
+	[Serializable]
 	public class BadAttribute : Attribute
 	{		
 		public BadAttribute(string address) 
@@ -83,6 +84,7 @@ namespace EvilDoer
 
 	// D1009/AttributeProperties
 	// MS1001/AttributesNeedUsage
+	[Serializable]
 	public sealed class Bad5Attribute : ContextStaticAttribute
 	{		
 		public Bad5Attribute(string name) 
@@ -131,7 +133,6 @@ namespace EvilDoer
 	// D1066/Finalizable (not IDisposable)
 	public class HandleLogIn
 	{
-		[ThreadMultiRoot("Finalizer")]
 		~HandleLogIn()
 		{
 			Static.BadUpdate("hey");
@@ -194,14 +195,12 @@ namespace EvilDoer
 			Unused.Value = ThreadPool.QueueUserWorkItem(DoCallback2);
 		}
 				
-		[ThreadSingleRoot("Bad2a")]
 		private static void DoCallback1(object state)
 		{
 			Static.BadUpdate("hey");
 			Console.Error.WriteLine(Static.Value());
 		}
 		
-		[ThreadSingleRoot("Bad2b")]
 		private static void DoCallback2(object state)
 		{
 			Inner.Set((int) state);

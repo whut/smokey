@@ -4,6 +4,7 @@ namespace Smokey.Framework
 {
 	/// <summary>Used to disable Smokey rules. Note that assemblies can define
 	/// this themselves: they don't need to reference the Smokey assembly.</summary>
+	[Serializable]
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | 
 		AttributeTargets.Constructor | AttributeTargets.Enum | AttributeTargets.Interface | 
 		AttributeTargets.Method | AttributeTargets.Struct, AllowMultiple = true)]

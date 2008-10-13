@@ -32,7 +32,6 @@ namespace EvilDoer
 	// D1067/PreferSafeHandle
 	public class BadDisposable : IDisposable
 	{
-		[ThreadMultiRoot("Finalizer")]
 		~BadDisposable()		
 		{					
 			DoDispose(false);

@@ -51,6 +51,7 @@ namespace Smokey.Framework.Support.Advanced
 		}
 																						
 		#region Visitors
+		[DisableRule("D1007", "UseBaseTypes")]
 		public void VisitAssembly(AssemblyDefinition assembly)
 		{
 			Unused.Value = assembly;

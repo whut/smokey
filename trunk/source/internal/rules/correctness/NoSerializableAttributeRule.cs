@@ -44,22 +44,18 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitType(TypeDefinition type)
 		{
-			if (type.ExternallyVisible(Cache))
+			if (type.TypeImplements("System.Runtime.Serialization.ISerializable"))
 			{
-				if (type.TypeImplements("System.Runtime.Serialization.ISerializable"))
+				Log.DebugLine(this, "-----------------------------------"); 
+				Log.DebugLine(this, "{0}", type);
+				
+				if ((type.Attributes & TypeAttributes.Serializable) == 0)
 				{
-					Log.DebugLine(this, "-----------------------------------"); 
-					Log.DebugLine(this, "{0}", type);
-					
-					if ((type.Attributes & TypeAttributes.Serializable) == 0)
-					{
-						Log.DebugLine(this, "no SerializeAttribute"); 
-						Reporter.TypeFailed(type, CheckID, string.Empty);
-					}
+					Log.DebugLine(this, "no SerializeAttribute"); 
+					Reporter.TypeFailed(type, CheckID, string.Empty);
 				}
 			}
 		}
-
 
 		public void VisitBegin(BeginMethod method)
 		{

@@ -27,7 +27,8 @@ namespace Smokey.Internal
 	{
 		public static object Value
 		{
-			[DisableRule("C1022", "UseSetterValue")]	
+			[DisableRule("C1022", "UseSetterValue")]
+			[ThreadSafe]
 			set {}
 		}
 	}

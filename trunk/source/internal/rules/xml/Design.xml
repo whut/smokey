@@ -148,6 +148,7 @@
 			using System.Reflection;
 			
 			[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+			[Serializable]
 			public sealed class PlatformAttribute : Attribute
 			{		
 				public PlatformAttribute(string name) 
@@ -298,6 +299,7 @@
 			</Fix>
 	
 			<CSharp>			
+			[Serializable]
 			public class NameChangedEventArgs : EventArgs
 			{
 				public readonly string OldName;
@@ -368,6 +370,7 @@
 			using System.Reflection;
 			
 			[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+			[Serializable]
 			internal sealed class PlatformAttribute : Attribute
 			{		
 				public PlatformAttribute(string name) 
@@ -565,10 +568,9 @@
 			</Cause>
 	
 			<Description>
-			In order to support remoting exceptions must have a default constructor and
-			another constructor which takes a SerializationInfo and a StreamingContext.
-			There should also be a constructor that takes an inner exception. See
-			&lt;http://msdn2.microsoft.com/en-us/library/ms954599.aspx&gt; for more
+			In order to support remoting exceptions must have a constructor which takes a 
+			SerializationInfo and a StreamingContext. There should also be a constructor that 
+			takes an inner exception. See &lt;http://msdn2.microsoft.com/en-us/library/ms954599.aspx&gt; for more
 			details.
 			</Description>
 	
@@ -581,14 +583,8 @@
 			using System.Security.Permissions;
 			
 			[Serializable]
-			public class MyException : Exception
+			public sealed class MyException : Exception
 			{
-				// This one is useful if you have a default exception string or if
-				// the exception is used in remoting contexts.
-				public MyException()
-				{
-				}
-				
 				public MyException(string message) : base(message) 
 				{
 				}
@@ -602,7 +598,7 @@
 				// By convention this constructor is protected (or private if the class
 				// is sealed).
   			    [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-				protected MyException(SerializationInfo info, StreamingContext context) : 
+				private MyException(SerializationInfo info, StreamingContext context) : 
 					base(info, context)
 				{
 				}
@@ -922,6 +918,7 @@
 			</Fix>
 	
 			<CSharp>
+			[Serializable]
 			internal sealed class AddressEventArgs : EventArgs
 			{
 				public readonly string Address;

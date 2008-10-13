@@ -260,7 +260,7 @@ namespace Smokey.Internal.Rules
 			q.Methods.Clear();
 		}
 						
-		public void DoAddField(FieldReference field)
+		private void DoAddField(FieldReference field)
 		{
 			if (m_needsCheck && m_method != null)
 			{

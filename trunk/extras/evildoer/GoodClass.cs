@@ -28,33 +28,6 @@ using System.Threading;
 
 namespace EvilDoer
 {
-	[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = false)]
-	internal sealed class ThreadSingleRootAttribute : Attribute
-	{		
-		public ThreadSingleRootAttribute(string name) 
-		{
-			Name = name;
-		}
-		
-		public string Name {get; private set;}
-	}
-
-	[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = false)]
-	internal sealed class ThreadMultiRootAttribute : Attribute
-	{		
-		public ThreadMultiRootAttribute(string name) 
-		{
-			Name = name;
-		}
-		
-		public string Name {get; private set;}
-	}
-
-	[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = false)]
-	internal sealed class ThreadSafeAttribute : Attribute
-	{		
-	}
-
 	internal interface InternalInterface
 	{
 		void Greet();
@@ -115,7 +88,6 @@ namespace EvilDoer
 
 	public sealed class GoodClass : IFormattable, IDisposable, IEquatable<GoodClass>
 	{				
-		[ThreadMultiRoot("Finalizer")]
 		~GoodClass()
 		{
 			DoDispose(false);
@@ -166,7 +138,6 @@ namespace EvilDoer
 			System.Windows.Forms.Application.Run();
 		}
 		
-		[ThreadSingleRoot("Good")]
 		private void DoThread()
 		{
 		}

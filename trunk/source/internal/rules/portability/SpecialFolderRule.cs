@@ -83,7 +83,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 				
-		public bool DoMatch(string path)
+		private bool DoMatch(string path)
 		{
 			string[] components = path.Split(Path.DirectorySeparatorChar);
 			foreach (KeyValuePair<Environment.SpecialFolder, string[]> pair in m_globs)
@@ -100,7 +100,7 @@ namespace Smokey.Internal.Rules
 			return false;
 		}
 				
-		public static bool DoMatch(string[] components, string[] glob)
+		private static bool DoMatch(string[] components, string[] glob)
 		{
 			bool matches = components.Length >= glob.Length;
 

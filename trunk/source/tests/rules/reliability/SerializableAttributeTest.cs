@@ -25,87 +25,98 @@ using Smokey.Framework.Support;
 using Smokey.Internal.Rules;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 
 namespace Smokey.Tests
 {
 	[TestFixture]
-	public class NoSerializableAttributeTest : TypeTest
+	public class SerializableAttributeTest : TypeTest
 	{	
 		#region Test classes
 		[Serializable]
-		public class Good1 : ISerializable
+		public class Good1
 		{
 			public Good1(string name)
 			{
 				m_name = name;
 			}
-			
-			protected Good1(SerializationInfo info, StreamingContext context)
+						
+			public void Work()
 			{
-				m_name = info.GetString("name");
+				Console.WriteLine(m_name);
 			}
-			
-			public void GetObjectData(SerializationInfo info, StreamingContext context)
-			{
-				info.AddValue("name", m_name);
-			}
-			
+						
 			private string m_name;
 		}
 
-		public class Bad1 : ISerializable
+		[Serializable]
+		public class Good2 : Good1
 		{
-			public Bad1(string name)
+			public Good2(string name) : base(name)
 			{
-				m_name = name;
 			}
-			
-			protected Bad1(SerializationInfo info, StreamingContext context)
-			{
-				m_name = info.GetString("name");
-			}
-			
-			public void GetObjectData(SerializationInfo info, StreamingContext context)
-			{
-				info.AddValue("name", m_name);
-			}
-			
-			private string m_name;
 		}
 
-		private class Bad2 : ISerializable
+		public class Good3
 		{
-			public Bad2(string name)
+			public Good3(string name)
 			{
-				m_name = name;
+			}
+		}
+
+		public class Good4
+		{
+			public delegate void Hook(int x);
+			
+			public Good4(Hook h)
+			{
+				hook = h;
 			}
 			
-			protected Bad2(SerializationInfo info, StreamingContext context)
+			public void Work()
 			{
-				m_name = info.GetString("name");
+				lock (lock1)
+				{
+					Console.WriteLine("hello");
+				}
+				
+				hook(2);
 			}
 			
-			public void GetObjectData(SerializationInfo info, StreamingContext context)
+			private Hook hook;
+			private object lock1 = new object();
+		}
+
+		public enum Good5 {One, Two, Three};
+
+		public struct Good6
+		{
+			public int data;
+		}
+
+		public delegate void Good7(int x);
+
+		public class Bad1 : Good1
+		{
+			public Bad1(string name) : base(name)
 			{
-				info.AddValue("name", m_name);
 			}
-			
-			private string m_name;
 		}
 		#endregion
 		
 		// test code
-		public NoSerializableAttributeTest() : base(
-			new string[]{"Good1"},
-			new string[]{"Bad1", "Bad2"})	
+		public SerializableAttributeTest() : base(
+			new string[]{"Good1", "Good2", "Good3", "Good4", "Good5", "Good6", "Good7"},
+			new string[]{"Bad1"})	
 		{
 		}
 						
 		protected override Rule OnCreate(AssemblyCache cache, IReportViolations reporter)
 		{
-			return new NoSerializableAttributeRule(cache, reporter);
+			return new SerializableAttributeRule(cache, reporter);
 		}
 	} 
 }

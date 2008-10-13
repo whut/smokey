@@ -28,9 +28,9 @@ namespace Smokey.Internal.Rules
 {
 	internal sealed class AspellConfigHandle : SafeHandle
 	{
-		public AspellConfigHandle() : base(IntPtr.Zero, true)
-		{
-		}
+//		public AspellConfigHandle() : base(IntPtr.Zero, true)
+//		{
+//		}
 		
 		public static AspellConfigHandle Default = new AspellConfigHandle(1);
 		
@@ -48,15 +48,17 @@ namespace Smokey.Internal.Rules
 		
 		private AspellConfigHandle(int dummy) : base(IntPtr.Zero, true)
 		{
+			Unused.Value = dummy;
+
 			handle = NativeMethods.new_aspell_config();
 		}
 	}
 
 	internal sealed class AspellCanHaveErrorHandle : SafeHandle
 	{
-		public AspellCanHaveErrorHandle() : base(IntPtr.Zero, true)
-		{
-		}
+//		public AspellCanHaveErrorHandle() : base(IntPtr.Zero, true)
+//		{
+//		}
 				
 		public AspellCanHaveErrorHandle(AspellConfigHandle config) : base(IntPtr.Zero, true)
 		{
@@ -78,9 +80,9 @@ namespace Smokey.Internal.Rules
 
 	internal sealed class AspellSpellerHandle : SafeHandle
 	{
-		public AspellSpellerHandle() : base(IntPtr.Zero, true)
-		{
-		}
+//		public AspellSpellerHandle() : base(IntPtr.Zero, true)
+//		{
+//		}
 				
 		public AspellSpellerHandle(AspellCanHaveErrorHandle err) : base(IntPtr.Zero, true)
 		{

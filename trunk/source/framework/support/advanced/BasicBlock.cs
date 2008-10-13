@@ -29,7 +29,7 @@ namespace Smokey.Framework.Support.Advanced
 	/// <summary>A sequence of instructions with no branches in (except for possibly 
 	/// the first instruction) and no branches out (except possibly for the
 	/// last instruction).</summary>
-	public class BasicBlock : IFormattable
+	public class BasicBlock : IFormattable, IEquatable<BasicBlock>
 	{	
 		/// <summary>The first instruction in the basic block. </summary>
 		public readonly TypedInstruction First;

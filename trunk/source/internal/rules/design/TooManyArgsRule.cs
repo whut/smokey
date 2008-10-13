@@ -46,7 +46,7 @@ namespace Smokey.Internal.Rules
 			Log.DebugLine(this, "-----------------------------------"); 
 			Log.DebugLine(this, "{0}", method);		
 
-			if (method.Parameters.Count >= 6 && !method.IsPInvokeImpl)
+			if (method.Parameters.Count >= 6 && !method.IsPInvokeImpl && !method.IsPrivate)
 			{
 				if (!method.IsVirtual || method.IsNewSlot)
 				{

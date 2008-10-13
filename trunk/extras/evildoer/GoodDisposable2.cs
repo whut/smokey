@@ -27,7 +27,6 @@ namespace EvilDoer
 {
 	public class BaseGoodDisposable2 : IDisposable
 	{
-		[ThreadMultiRoot("Finalizer")]
 		~BaseGoodDisposable2()		
 		{					
 			Dispose(false);

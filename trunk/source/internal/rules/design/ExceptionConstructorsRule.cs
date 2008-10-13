@@ -52,7 +52,6 @@ namespace Smokey.Internal.Rules
 				Log.DebugLine(this, "-----------------------------------"); 
 				Log.DebugLine(this, "{0}", begin.Type);				
 
-				m_foundDefault = false;
 				m_foundInner = false;
 				m_foundSerialized = false;
 			}
@@ -63,13 +62,7 @@ namespace Smokey.Internal.Rules
 			if (m_needsCheck && method.IsConstructor)
 			{
 				Log.DebugLine(this, "{0}", method);		
-				
-				if (method.Parameters.Count == 0)
-				{
-					Log.DebugLine(this, "   found default ctor");				
-					m_foundDefault = true;
-				}
-				
+								
 				for (int i = 0; i < method.Parameters.Count && !m_foundInner; ++i)
 				{		
 					if (method.Parameters[i].ParameterType.FullName == "System.Exception")
@@ -97,7 +90,7 @@ namespace Smokey.Internal.Rules
 		{
 			if (m_needsCheck)
 			{
-				if (!m_foundDefault || !m_foundInner || !m_foundSerialized)
+				if (!m_foundInner || !m_foundSerialized)
 				{
 					Reporter.TypeFailed(end.Type, CheckID, string.Empty);
 				}
@@ -105,7 +98,6 @@ namespace Smokey.Internal.Rules
 		}
 		
 		private bool m_needsCheck;
-		private bool m_foundDefault;
 		private bool m_foundInner;
 		private bool m_foundSerialized;
 	}
