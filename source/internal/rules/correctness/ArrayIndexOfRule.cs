@@ -107,7 +107,7 @@ namespace Smokey.Internal.Rules
 		// 09: ldc.i4.0
 		// 0A: ble        1E
 		[DisableRule("D1049", "IdenticalCodeBlocks")]	// these are machine generated so we won't worry too much if some of the code is duplicated
-		public bool DoMatch1(int index)
+		private bool DoMatch1(int index)
 		{
 			bool match = false;
 
@@ -157,7 +157,7 @@ namespace Smokey.Internal.Rules
 		// 09: ldc.i4.0
 		// 0A: ble        1E
 		[DisableRule("D1049", "IdenticalCodeBlocks")]	// these are machine generated so we won't worry too much if some of the code is duplicated
-		public bool DoMatch1b(int index)
+		private bool DoMatch1b(int index)
 		{
 			bool match = false;
 
@@ -195,7 +195,7 @@ namespace Smokey.Internal.Rules
 		// 08: ldloc.N    V_0
 		// 09: ldc.i4.0
 		// 0A: cgt
-		public bool DoMatch2(int index)
+		private bool DoMatch2(int index)
 		{
 			bool match = false;
 
@@ -244,7 +244,7 @@ namespace Smokey.Internal.Rules
 		// 02: call       System.Int32 System.Array::IndexOf<*>(!!0[],!!0)
 		// 09: ldc.i4.0
 		// 0A: cgt
-		public bool DoMatch2b(int index)
+		private bool DoMatch2b(int index)
 		{
 			bool match = false;
 
@@ -282,7 +282,7 @@ namespace Smokey.Internal.Rules
 		// 08: ldc.i4.0
 		// 09: ldloc.N    V_0
 		// 0A: bge        1E
-		public bool DoMatch3(int index)
+		private bool DoMatch3(int index)
 		{
 			bool match = false;
 

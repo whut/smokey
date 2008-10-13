@@ -25,13 +25,15 @@ using Smokey.Framework.Support;
 using Smokey.Internal.Rules;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 
 namespace Smokey.Tests
 {
 	[TestFixture]
-	public class NoSerializableAttributeTest : TypeTest
+	public class ISerializableMethodsTest : TypeTest
 	{	
 		#region Test classes
 		[Serializable]
@@ -47,7 +49,7 @@ namespace Smokey.Tests
 				m_name = info.GetString("name");
 			}
 			
-			public void GetObjectData(SerializationInfo info, StreamingContext context)
+			public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 			{
 				info.AddValue("name", m_name);
 			}
@@ -55,7 +57,25 @@ namespace Smokey.Tests
 			private string m_name;
 		}
 
-		public class Bad1 : ISerializable
+		[Serializable]
+		public class Good2 : Good1
+		{
+			public Good2(string name) : base(name)
+			{
+			}
+			
+			protected Good2(SerializationInfo info, StreamingContext context) : base(info, context)
+			{
+			}
+			
+			public override void GetObjectData(SerializationInfo info, StreamingContext context)
+			{
+				base.GetObjectData(info, context);
+			}
+		}
+
+		[Serializable]
+		public class Bad1
 		{
 			public Bad1(string name)
 			{
@@ -67,27 +87,23 @@ namespace Smokey.Tests
 				m_name = info.GetString("name");
 			}
 			
-			public void GetObjectData(SerializationInfo info, StreamingContext context)
+			public void Work()
 			{
-				info.AddValue("name", m_name);
+				Console.WriteLine(m_name);
 			}
-			
+						
 			private string m_name;
 		}
 
-		private class Bad2 : ISerializable
+		[Serializable]
+		public class Bad2
 		{
 			public Bad2(string name)
 			{
 				m_name = name;
 			}
-			
-			protected Bad2(SerializationInfo info, StreamingContext context)
-			{
-				m_name = info.GetString("name");
-			}
-			
-			public void GetObjectData(SerializationInfo info, StreamingContext context)
+						
+			public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 			{
 				info.AddValue("name", m_name);
 			}
@@ -97,15 +113,15 @@ namespace Smokey.Tests
 		#endregion
 		
 		// test code
-		public NoSerializableAttributeTest() : base(
-			new string[]{"Good1"},
+		public ISerializableMethodsTest() : base(
+			new string[]{"Good1", "Good2"},
 			new string[]{"Bad1", "Bad2"})	
 		{
 		}
 						
 		protected override Rule OnCreate(AssemblyCache cache, IReportViolations reporter)
 		{
-			return new NoSerializableAttributeRule(cache, reporter);
+			return new ISerializableMethodsRule(cache, reporter);
 		}
 	} 
 }

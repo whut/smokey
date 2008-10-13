@@ -205,4 +205,5 @@
 	<Expected checkID = "P1023" typeName = "UseIEquatable" fullName = "EvilDoer.BadVisibleState"/>
 	<Expected checkID = "R1039" typeName = "ThreadSafeAttr" fullName = "evildoer"/>
 	<Expected checkID = "R1040" typeName = "ThreadAbort" fullName = "System.Void EvilDoer.BadClass::Run()"/>
+	<Expected checkID = "R1042" typeName = "SerializableAttribute" fullName = "EvilDoer.BadException"/>
 </Expectations>

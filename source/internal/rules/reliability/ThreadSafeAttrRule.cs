@@ -60,6 +60,8 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitType(TypeDefinition type)
 		{
+			Unused.Value = type;
+
 			if (!m_disabled)
 				Log.DebugLine(this, "-----------------------------------"); 
 		}

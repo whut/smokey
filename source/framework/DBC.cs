@@ -26,9 +26,14 @@ using System.Runtime.Serialization;
 namespace Smokey.Framework
 {
 	/// <summary>Thrown by DBC.Assert and FastAssert.</summary>
+	[Serializable]
 	public class AssertException : Exception
 	{
 		public AssertException(string text) : base(text) 
+		{
+		}
+
+		public AssertException(string text, Exception innerException) : base(text, innerException) 
 		{
 		}
 
@@ -38,25 +43,35 @@ namespace Smokey.Framework
 	}
 	
 	/// <summary>Thrown by DBC.Pre and FastPre.</summary>
-	public class PreconditionException : AssertException
+	[Serializable]
+	public sealed class PreconditionException : AssertException
 	{
 		public PreconditionException(string text) : base(text) 
 		{
 		}
 
-		protected PreconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
+		public PreconditionException(string text, Exception innerException) : base(text, innerException) 
+		{
+		}
+
+		private PreconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
 	}
 	
 	/// <summary>Thrown by DBC.Post and FastPost.</summary>
-	public class PostconditionException : AssertException
+	[Serializable]
+	public sealed class PostconditionException : AssertException
 	{
 		public PostconditionException(string text) : base(text) 
 		{
 		}
 
-		protected PostconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
+		public PostconditionException(string text, Exception innerException) : base(text, innerException) 
+		{
+		}
+
+		private PostconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
 	}

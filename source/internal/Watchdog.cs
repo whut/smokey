@@ -86,6 +86,8 @@ namespace Smokey.Internal
 
 		#region Private Methods -----------------------------------------------
 		[DisableRule("D1038", "DontExit2")]		// we can't really throw because we are in a thread
+		[DisableRule("R1040", "ThreadAbort")]	// we exit after aborting
+		[ThreadRoot("Watchdog")]
 		private void DoThread(object instance)
 		{
 			Unused.Value = instance;

@@ -27,7 +27,6 @@ namespace EvilDoer
 	// D1066/Finalizable (not IDisposable)
 	public class Cohesive
 	{
-		[ThreadMultiRoot("Finalizer")]
 		~Cohesive()
 		{
 			Reset();

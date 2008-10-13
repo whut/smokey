@@ -31,6 +31,7 @@ using System.Runtime.Serialization;
 
 namespace Smokey.Internal.Rules
 {
+	[Serializable]
 	internal sealed class AspellException : InvalidOperationException
 	{
 		public AspellException(string mesg) : base(mesg)
@@ -38,7 +39,7 @@ namespace Smokey.Internal.Rules
 		}
 	}
 	
-	internal sealed class Aspell 
+	internal sealed class Aspell : IDisposable
 	{
 		// If Aspell can't load this will throw an exception the first
 		// time. Thereafter it will return null.
@@ -68,6 +69,9 @@ namespace Smokey.Internal.Rules
 		// Returns a list of misspelled words in the text.		
 		public List<string> Check(string text)
 		{
+	        if (m_disposed)        
+    	        throw new ObjectDisposedException(GetType().Name);
+            
 			List<string> words = new List<string>();
 			
 			int index = 0;
@@ -104,6 +108,9 @@ namespace Smokey.Internal.Rules
 		// Returns true if the word is spelled OK.		
 		public bool CheckWord(string word)
 		{
+	        if (m_disposed)        
+    	        throw new ObjectDisposedException(GetType().Name);
+            
 			// If the word is mixed case or has numbers call it good.
 			for (int i = 1; i < word.Length; ++i)
 			{
@@ -116,6 +123,20 @@ namespace Smokey.Internal.Rules
 			return result == 1;
 		}
 				
+		public void Dispose()
+		{
+			if (!m_disposed)
+			{
+				if (m_speller != null)
+				{
+					m_speller.Dispose();
+					m_speller = null;
+				}
+				
+				m_disposed = true;
+			}
+		}
+                        
 		#region Private Methods -----------------------------------------------
 		private Aspell()
 		{
@@ -284,6 +305,7 @@ namespace Smokey.Internal.Rules
 		
 		#region Fields --------------------------------------------------------
 		private AspellSpellerHandle m_speller;
+	    private bool m_disposed;
 		
 		private static Aspell ms_instance;
 		private static bool ms_tried;

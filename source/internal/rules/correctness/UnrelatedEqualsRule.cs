@@ -94,7 +94,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 						
-		public TypeReference DoGetType(int index, int nth)
+		private TypeReference DoGetType(int index, int nth)
 		{
 			TypeReference type = null;
 			

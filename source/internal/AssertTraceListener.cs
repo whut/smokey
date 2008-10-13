@@ -33,6 +33,7 @@ namespace Smokey.Internal
 	// to a Debug.Listener to raise an exception.
 	// See http://lists.ximian.com/pipermail/mono-list/2004-January/017482.html
 	// for more details.
+	[Serializable]
 	internal sealed class AssertTraceListener : TraceListener
 	{		
 		// Note that this may be called multiple times.
@@ -49,12 +50,20 @@ namespace Smokey.Internal
 		// Throws AssertException.
 		public override void Write(string mesg)
 		{
+			Unused.Value = mesg;
+			
+	        if (m_disposed)        
+    	        throw new ObjectDisposedException(GetType().Name);
+    	        
 //			throw new AssertException(mesg);		// doesn't seem to be called for asserts
 		}
 		
 		// Throws AssertException.
 		public override void WriteLine(string mesg)
 		{
+	        if (m_disposed)        
+    	        throw new ObjectDisposedException(GetType().Name);
+    	        
 			if (mesg.Contains("DEBUG ASSERTION FAILED") || ms_inAssert)
 			{
 				ms_inAssert = true;
@@ -69,9 +78,19 @@ namespace Smokey.Internal
 				}
 			}
 		}
+		
+		protected override void Dispose (bool disposing)
+		{
+			if (!m_disposed)
+			{
+				base.Dispose(disposing);
+				m_disposed = true;
+			}
+		}
 				
 		private static bool ms_installed;
 		private static bool ms_inAssert;
 		private string m_mesg = String.Empty;
+		private bool m_disposed;
 	}
 }

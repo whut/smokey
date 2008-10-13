@@ -37,6 +37,7 @@ namespace EvilDoer
 	// D1015/ExceptionConstructors
 	// D1024/SerializeException
 	// D1025/SerializeExceptionMembers
+	// R1042/SerializableAttribute
 	public class BadException : ApplicationException
 	{
 		public BadException(string mesg, string key) : base(mesg)
@@ -74,14 +75,12 @@ namespace EvilDoer
 			thread.Abort();
 		}
 		
-		[ThreadSingleRoot("Bad Worker")]
 		private void DoThread()
 		{
 			DoSomethingSafe();
 			DoSomething();
 		}
 
-		[ThreadSingleRoot("Bad Recv")]
 		public void RecvPacket(IAsyncResult result)
 		{
 			DoSomething();
@@ -109,7 +108,6 @@ namespace EvilDoer
 		{
 		}
 
-		[ThreadSafe]
 		private void DoSomethingSafe()
 		{
 		}

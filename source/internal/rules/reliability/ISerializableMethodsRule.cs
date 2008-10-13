@@ -28,71 +28,68 @@ using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
-{		
-	internal sealed class NanTestRule : Rule
+{	
+	internal sealed class ISerializableMethodsRule : Rule
 	{				
-		public NanTestRule(AssemblyCache cache, IReportViolations reporter) 
-			: base(cache, reporter, "C1008")
+		public ISerializableMethodsRule(AssemblyCache cache, IReportViolations reporter) 
+			: base(cache, reporter, "R1041")
 		{
 		}
-				
+		
 		public override void Register(RuleDispatcher dispatcher) 
 		{
 			dispatcher.Register(this, "VisitBegin");
-			dispatcher.Register(this, "VisitEqual");
+			dispatcher.Register(this, "VisitMethodBegin");
 			dispatcher.Register(this, "VisitEnd");
 		}
+
+		public void VisitBegin(BeginMethods begin)
+		{
+			m_notSerializable = !begin.Type.TypeOrBaseImplements("System.Runtime.Serialization.ISerializable", Cache);
+			m_hasMethod = false;
+			
+			if (m_notSerializable)
+			{
+				Log.DebugLine(this, "-----------------------------------"); 
+				Log.DebugLine(this, "{0}", begin.Type);				
+			}
+		}
+
+		public void VisitMethodBegin(BeginMethod begin)
+		{			
+			if (m_notSerializable)
+			{
+				MethodDefinition method = begin.Info.Method;
 				
-		public void VisitBegin(BeginMethod begin)
-		{
-			Log.DebugLine(this, "-----------------------------------"); 
-			Log.DebugLine(this, "{0:F}", begin.Info.Instructions);				
-
-			m_offset = -1;
-			m_info = begin.Info;
+				if (method.IsConstructor && method.Parameters.Count == 2)
+				{
+					if (method.Parameters[0].ParameterType.FullName == "System.Runtime.Serialization.SerializationInfo")
+					{
+						if (method.Parameters[1].ParameterType.FullName == "System.Runtime.Serialization.StreamingContext")
+						{
+							Log.DebugLine(this, "has ctor");	
+							m_hasMethod = true;
+						}
+					}
+				}
+				else if (method.Matches("System.Void", "GetObjectData", "System.Runtime.Serialization.SerializationInfo", "System.Runtime.Serialization.StreamingContext"))
+				{
+					Log.DebugLine(this, "has GetObjectData");	
+					m_hasMethod = true;
+				}
+			}		
 		}
 		
-		public void VisitEqual(Ceq eq)
+		public void VisitEnd(EndMethods end)
 		{
-			if (m_offset < 0)
+			if (m_notSerializable && m_hasMethod)
 			{
-				int index = m_info.Tracker.GetStackIndex(eq.Index, 0);
-				if (DoIsBad(index))
-					m_offset = eq.Untyped.Offset;
-
-				index = m_info.Tracker.GetStackIndex(eq.Index, 1);
-				if (DoIsBad(index))
-					m_offset = eq.Untyped.Offset;
-					
-				if (m_offset >= 0)
-					Log.DebugLine(this, "found bad compare at {0:X2}", m_offset);
-			}
-		}
-
-		public void VisitEnd(EndMethod end)
-		{
-			if (m_offset >= 0)
-			{
-				Reporter.MethodFailed(end.Info.Method, CheckID, m_offset, string.Empty);
+				Reporter.TypeFailed(end.Type, CheckID, string.Empty);
 			}
 		}
 		
-		private bool DoIsBad(int index)
-		{
-			bool bad = false;
-			
-			if (index >= 0)
-			{
-				LoadConstantFloat load = m_info.Instructions[index] as LoadConstantFloat;
-				if (load != null)
-					bad = Double.IsNaN(load.Value);
-			}
-			
-			return bad;
-		}
-							
-		private int m_offset;
-		private MethodInfo m_info;
+		private bool m_notSerializable;
+		private bool m_hasMethod;
 	}
 }
 

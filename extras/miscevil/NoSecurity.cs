@@ -33,6 +33,7 @@ namespace Unsecure
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | 
 		AttributeTargets.Constructor | AttributeTargets.Enum | AttributeTargets.Interface | 
 		AttributeTargets.Method | AttributeTargets.Struct, AllowMultiple = true)]
+	[Serializable]
 	internal sealed class DisableRuleAttribute : Attribute
 	{		
 		public DisableRuleAttribute(string id, string name) 

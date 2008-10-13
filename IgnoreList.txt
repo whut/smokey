@@ -5,6 +5,7 @@ args
 aspell
 attr
 attrs
+atypes
 
 bitwise
 bool
@@ -73,6 +74,7 @@ lt
 
 metadata
 Metafile
+mname
 mscorlib
 Mutex
 
@@ -103,6 +105,7 @@ Remoting
 ret 
 rhs
 Rijndael
+rtype
 runtime
 
 sbyte
@@ -138,6 +141,7 @@ url
 ushort
 
 Varpop 
+Varpush
 
 warnaserror
 writeable

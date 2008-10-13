@@ -85,6 +85,7 @@ namespace Smokey.Internal
 		}
 
 		#region Private Methods -----------------------------------------------
+		[ThreadRoot("Progress")]
 		private void DoThread(object instance)
 		{
 			Unused.Value = instance;

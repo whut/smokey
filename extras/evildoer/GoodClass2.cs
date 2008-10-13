@@ -45,6 +45,7 @@ namespace EvilDoer
 		}
 	}
 
+	[Serializable]
 	public class NameChangedEventArgs : EventArgs
 	{
 		public readonly string OldName;
@@ -60,6 +61,7 @@ namespace EvilDoer
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | 
 		AttributeTargets.Constructor | AttributeTargets.Enum | AttributeTargets.Interface | 
 		AttributeTargets.Method | AttributeTargets.Struct, AllowMultiple = true)]
+	[Serializable]
 	public sealed class DisableRuleAttribute : Attribute
 	{		
 		public DisableRuleAttribute(string id, string name) 
@@ -83,6 +85,7 @@ namespace EvilDoer
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
+	[Serializable]
 	internal struct XWindowAttributes 
 	{ 
 		internal IntPtr		all_event_masks;
@@ -136,7 +139,6 @@ namespace EvilDoer
 			Unused.Value = ThreadPool.QueueUserWorkItem(DoCallback2);
 		}
 		
-		[ThreadSingleRoot("Good2")]
 		private static void DoCallback2(object state)
 		{
 			Inner.Set((int) state);

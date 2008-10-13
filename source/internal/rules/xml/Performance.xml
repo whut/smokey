@@ -437,6 +437,7 @@
 	
 			<CSharp>			
 			[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
+			[Serializable]
 			public sealed class ContactAttribute : Attribute
 			{		
 				public ContactAttribute(string address) 

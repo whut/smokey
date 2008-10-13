@@ -112,6 +112,8 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitMethodEnd(EndMethod end)
 		{
+			Unused.Value = end;
+			
 			if (m_equality != null)
 				m_equalities.Add(m_equality);
 		}
@@ -141,7 +143,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 		
-		public void DoFieldRef(FieldReference field, int index)
+		private void DoFieldRef(FieldReference field, int index)
 		{
 			if (m_minfo.Instructions.LoadsThisArg(index - 1))
 			{

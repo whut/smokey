@@ -27,6 +27,7 @@ namespace Smokey.Internal
 {	
 	[DisableRule("R1019", "RequireSerializableCtor")]
 	[DisableRule("D1012", "InternalException")]			// this really is an internal exception
+	[Serializable]
 	internal sealed class MalformedCommandLineException : Exception
 	{
 		public MalformedCommandLineException(string message) : base(message) 

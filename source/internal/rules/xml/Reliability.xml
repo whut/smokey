@@ -49,7 +49,7 @@
 				}
 									
 				private StringWriter m_writer;	// System.IO.StringWriter implements IDisposable
-				private bool m_disposed = false;
+				private bool m_disposed;
 			}			
 			</CSharp>
 		</Translation>
@@ -1296,37 +1296,52 @@
 			// --------------------------------------------------------
 			
 			/// &lt;summary&gt;Thrown by Dbc.Assert and FastAssert.&lt;/summary&gt;
-			public class AssertException : Exception
+			[Serializable]
+			public sealed class AssertException : Exception
 			{
 				public AssertException(string text) : base(text) 
 				{
 				}
 			
+				public AssertException(string text, Exception innerException) : base(text, innerException) 
+				{
+				}
+
 				protected AssertException(SerializationInfo info, StreamingContext context) : base(info, context)
 				{
 				}
 			}
 			
 			/// &lt;summary&gt;Thrown by Dbc.Pre and FastPre.&lt;/summary&gt;
-			public class PreconditionException : AssertException
+			[Serializable]
+			public sealed class PreconditionException : AssertException
 			{
 				public PreconditionException(string text) : base(text) 
 				{
 				}
 			
-				protected PreconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
+				public PreconditionException(string text, Exception innerException) : base(text, innerException) 
+				{
+				}
+
+				private PreconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
 				{
 				}
 			}
 			
 			/// &lt;summary&gt;Thrown by Dbc.Post and FastPost.&lt;/summary&gt;
-			public class PostconditionException : AssertException
+			[Serializable]
+			public sealed class PostconditionException : AssertException
 			{
 				public PostconditionException(string text) : base(text) 
 				{
 				}
 			
-				protected PostconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
+				public PostconditionException(string text, Exception innerException) : base(text, innerException) 
+				{
+				}
+
+				private PostconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
 				{
 				}
 			}
@@ -1483,37 +1498,52 @@
 			// --------------------------------------------------------
 			
 			/// &lt;summary&gt;Thrown by Dbc.Assert and FastAssert.&lt;/summary&gt;
+			[Serializable]
 			public class AssertException : Exception
 			{
 				public AssertException(string text) : base(text) 
 				{
 				}
 			
+				public AssertException(string text, Exception innerException) : base(text, innerException) 
+				{
+				}
+
 				protected AssertException(SerializationInfo info, StreamingContext context) : base(info, context)
 				{
 				}
 			}
 			
 			/// &lt;summary&gt;Thrown by Dbc.Pre and FastPre.&lt;/summary&gt;
-			public class PreconditionException : AssertException
+			[Serializable]
+			public sealed class PreconditionException : AssertException
 			{
 				public PreconditionException(string text) : base(text) 
 				{
 				}
 			
-				protected PreconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
+				public PreconditionException(string text, Exception innerException) : base(text, innerException) 
+				{
+				}
+
+				private PreconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
 				{
 				}
 			}
 			
 			/// &lt;summary&gt;Thrown by Dbc.Post and FastPost.&lt;/summary&gt;
-			public class PostconditionException : AssertException
+			[Serializable]
+			public sealed class PostconditionException : AssertException
 			{
 				public PostconditionException(string text) : base(text) 
 				{
 				}
 			
-				protected PostconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
+				public PostconditionException(string text, Exception innerException) : base(text, innerException) 
+				{
+				}
+
+				private PostconditionException(SerializationInfo info, StreamingContext context) : base(info, context)
 				{
 				}
 			}
@@ -1737,6 +1767,7 @@
 			using System.Threading;
 
 			[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
+			[Serializable]
 			internal sealed class ThreadRootAttribute : Attribute
 			{		
 				public ThreadRootAttribute(string name) 
@@ -1748,6 +1779,7 @@
 			}
 
 			[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
+			[Serializable]
 			internal sealed class ThreadSafeAttribute : Attribute
 			{		
 			}
@@ -1823,6 +1855,42 @@
 			Otherwise exit the thread in a more controlled manner, for example by using a
 			volatile bool field that the thread checks periodically. See
 			&lt;http://www.interact-sw.co.uk/iangblog/2004/11/12/cancellation&gt; for more details.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "R1041" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ISerializableMethods" category = "Reliability">			
+			<Cause>
+			A type (or base) does not implement ISerializable but has a (SerializationInfo, StreamingContext)
+			constructor or declares a GetObjectData(SerializationInfo, StreamingContext) method.
+			</Cause>
+		
+			<Description>
+			Default serialization requires only that your type be decorated with SerializableAttribute.
+			Custom serialization via ISerializable requires that you implement GetObjectData and
+			provide a (SerializationInfo, StreamingContext) constructor.
+			</Description> 
+	
+			<Fix>
+			Either implement ISerializable or remove the constructor.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "R1042" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "SerializableAttribute" category = "Reliability">			
+			<Cause>
+			The type is not decorated with SerializableAttribute but a base class is.
+			</Cause>
+		
+			<Description>
+			SerializableAttribute is not inherited by derived classes so every type which
+			is serializable must have the attribute.
+			</Description> 
+	
+			<Fix>
+			Add [Serializable] to the type.
 			</Fix>
 		</Translation>
 	</Violation>

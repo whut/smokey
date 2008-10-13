@@ -61,7 +61,7 @@ namespace Smokey.Internal.Rules
 			}
 		}		
 		
-		public void DoCheck(MethodDefinitionCollection methods, MethodAttributes access)
+		private void DoCheck(MethodDefinitionCollection methods, MethodAttributes access)
 		{			
 			List<string> unsorted = new List<string>();
 			int numMethods = 0;

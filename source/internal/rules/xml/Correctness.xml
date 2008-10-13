@@ -153,7 +153,7 @@ normally be Error. -->
 	<Violation checkID = "C1006" severity = "Error" breaking = "false">
 		<Translation lang = "en" typeName = "NoSerializableAttribute" category = "Correctness">			
 			<Cause>
-			An externally visible type implements System.Runtime.Serialization.ISerializable,
+			A type implements System.Runtime.Serialization.ISerializable,
 			but is not marked with System.SerializableAttribute. 
 			</Cause>
 		

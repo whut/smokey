@@ -161,7 +161,7 @@ namespace Smokey.Internal.Rules
 		// 1A: call       System.Boolean System.Threading.Monitor::Wait(System.Object)
 		// 1F: box        System.Boolean
 		// 24: call       System.Void *(System.Object)
-		public bool DoMatch1a(int index)
+		private bool DoMatch1a(int index)
 		{
 			bool match = false;
 
@@ -216,7 +216,7 @@ namespace Smokey.Internal.Rules
 		// 15: ldfld      System.Object Smokey.Tests.UnusualMonitor1Test/Good1::m_lock
 		// 1A: call       System.Boolean System.Threading.Monitor::Wait(System.Object)
 		// 1F: pop
-		public bool DoMatch1b(int index)
+		private bool DoMatch1b(int index)
 		{
 			bool match = false;
 
@@ -264,7 +264,7 @@ namespace Smokey.Internal.Rules
 		// 18: call       System.Boolean System.Threading.Monitor::Wait(System.Object)
 		// 1D: box        System.Boolean
 		// 22: call       System.Void Smokey.Internal.Ignore::set_Value(System.Object)
-		public bool DoMatch2a(int index)
+		private bool DoMatch2a(int index)
 		{
 			bool match = false;
 
@@ -313,7 +313,7 @@ namespace Smokey.Internal.Rules
 		// 13: ldsfld     System.Object Smokey.Tests.UnusualMonitor1Test/Good6::m_lock
 		// 18: call       System.Boolean System.Threading.Monitor::Wait(System.Object)
 		// 1D: pop
-		public bool DoMatch2b(int index)
+		private bool DoMatch2b(int index)
 		{
 			bool match = false;
 

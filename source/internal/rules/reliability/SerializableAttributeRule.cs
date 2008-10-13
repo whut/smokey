@@ -28,71 +28,46 @@ using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
 namespace Smokey.Internal.Rules
-{		
-	internal sealed class NanTestRule : Rule
+{	
+	internal sealed class SerializableAttributeRule : Rule
 	{				
-		public NanTestRule(AssemblyCache cache, IReportViolations reporter) 
-			: base(cache, reporter, "C1008")
+		public SerializableAttributeRule(AssemblyCache cache, IReportViolations reporter) 
+			: base(cache, reporter, "R1042")
 		{
 		}
-				
+		
 		public override void Register(RuleDispatcher dispatcher) 
 		{
-			dispatcher.Register(this, "VisitBegin");
-			dispatcher.Register(this, "VisitEqual");
-			dispatcher.Register(this, "VisitEnd");
+			dispatcher.Register(this, "VisitType");
 		}
-				
-		public void VisitBegin(BeginMethod begin)
-		{
-			Log.DebugLine(this, "-----------------------------------"); 
-			Log.DebugLine(this, "{0:F}", begin.Info.Instructions);				
 
-			m_offset = -1;
-			m_info = begin.Info;
-		}
-		
-		public void VisitEqual(Ceq eq)
+		public void VisitType(TypeDefinition type)
 		{
-			if (m_offset < 0)
+			if (!type.IsSerializable && !type.IsEnum && !type.IsValueType)
 			{
-				int index = m_info.Tracker.GetStackIndex(eq.Index, 0);
-				if (DoIsBad(index))
-					m_offset = eq.Untyped.Offset;
-
-				index = m_info.Tracker.GetStackIndex(eq.Index, 1);
-				if (DoIsBad(index))
-					m_offset = eq.Untyped.Offset;
+				if (type.BaseType != null && type.BaseType.FullName.IndexOf("Delegate") < 0)
+				{
+					Log.DebugLine(this, "-----------------------------------"); 
+					Log.DebugLine(this, "{0}", type);				
+	
+					bool baseHas = false;
+					TypeDefinition baseType = Cache.FindType(type.BaseType);
+					while (baseType != null && !baseHas)
+					{
+						if (baseType.IsSerializable && baseType.FullName != "System.Object")
+						{
+							Log.DebugLine(this, "   {0} is serializable", baseType);				
+							baseHas = true;
+						}
+						
+						baseType = Cache.FindType(baseType.BaseType);
+					}
 					
-				if (m_offset >= 0)
-					Log.DebugLine(this, "found bad compare at {0:X2}", m_offset);
+					if (baseHas)
+						Reporter.TypeFailed(type, CheckID, string.Empty);
+				}
 			}
 		}
-
-		public void VisitEnd(EndMethod end)
-		{
-			if (m_offset >= 0)
-			{
-				Reporter.MethodFailed(end.Info.Method, CheckID, m_offset, string.Empty);
-			}
-		}
-		
-		private bool DoIsBad(int index)
-		{
-			bool bad = false;
-			
-			if (index >= 0)
-			{
-				LoadConstantFloat load = m_info.Instructions[index] as LoadConstantFloat;
-				if (load != null)
-					bad = Double.IsNaN(load.Value);
-			}
-			
-			return bad;
-		}
-							
-		private int m_offset;
-		private MethodInfo m_info;
 	}
 }
 
