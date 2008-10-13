@@ -28,10 +28,10 @@ using Smokey.Internal.Rules;
 
 namespace Smokey.Tests
 {
-	[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = false)]
-	public sealed class ThreadSingleRootAttribute : Attribute
+	[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
+	internal sealed class ThreadRootAttribute : Attribute
 	{		
-		public ThreadSingleRootAttribute(string name) 
+		public ThreadRootAttribute(string name) 
 		{
 			Name = name;
 		}
@@ -39,19 +39,8 @@ namespace Smokey.Tests
 		public string Name {get; private set;}
 	}
 
-	[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = false)]
-	public sealed class ThreadMultiRootAttribute : Attribute
-	{		
-		public ThreadMultiRootAttribute(string name) 
-		{
-			Name = name;
-		}
-		
-		public string Name {get; private set;}
-	}
-
-	[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = false)]
-	public sealed class ThreadSafeAttribute : Attribute
+	[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property, AllowMultiple = false)]
+	internal sealed class ThreadSafeAttribute : Attribute
 	{		
 	}
 
@@ -67,7 +56,7 @@ namespace Smokey.Tests
 				m_thread.Start();
 			}
 
-			[ThreadSingleRoot("Good1")]
+			[ThreadRoot("Good1")]
 			public void DoThread(object instance)
 			{
 				while (true)
@@ -87,10 +76,10 @@ namespace Smokey.Tests
 				m_stream.BeginRead(m_data, 0, m_data.Length, DoCallback, m_stream);
 			}
 
-			[ThreadMultiRoot("Good2")]
+			[ThreadSafe]
 			public static void DoCallback(IAsyncResult result)
 			{
-					Console.WriteLine("hey");
+				Console.WriteLine("hey");
 			}
 			
 			private FileStream m_stream;
@@ -108,7 +97,7 @@ namespace Smokey.Tests
 				m_thread2.Start();
 			}
 
-			[ThreadSingleRoot("1")]
+			[ThreadRoot("1")]
 			public void DoThread1()		
 			{
 				while (true)
@@ -117,7 +106,7 @@ namespace Smokey.Tests
 				}
 			}
 
-			[ThreadSingleRoot("2")]
+			[ThreadRoot("2")]
 			public void DoThread2()		
 			{
 				while (true)
@@ -150,7 +139,7 @@ namespace Smokey.Tests
 				m_thread.Start();
 			}
 
-			[ThreadMultiRoot("1")]
+			[ThreadSafe]
 			public void DoThread1()		
 			{
 				while (true)
@@ -160,6 +149,33 @@ namespace Smokey.Tests
 			}
 			
 			[ThreadSafe]
+			private void DoWork()	
+			{
+				Console.WriteLine("hey");
+			}
+
+			private Thread m_thread;
+		}		
+
+		[ThreadSafe]
+		public class Good5
+		{
+			public Good5()
+			{
+				m_thread = new Thread(this.DoThread1);
+				m_thread.Start();
+				DoWork();
+			}
+
+			[ThreadRoot("1")]
+			public void DoThread1()		
+			{
+				while (true)
+				{
+					DoWork();
+				}
+			}
+			
 			private void DoWork()	
 			{
 				Console.WriteLine("hey");
@@ -211,7 +227,7 @@ namespace Smokey.Tests
 				m_thread2.Start();
 			}
 
-			[ThreadSingleRoot("1")]
+			[ThreadRoot("1")]
 			public void DoThread1()		
 			{
 				while (true)
@@ -220,7 +236,7 @@ namespace Smokey.Tests
 				}
 			}
 
-			[ThreadSingleRoot("2")]
+			[ThreadRoot("2")]
 			public void DoThread2()		
 			{
 				while (true)
@@ -248,7 +264,7 @@ namespace Smokey.Tests
 				DoWork();
 			}
 
-			[ThreadSingleRoot("1")]
+			[ThreadRoot("1")]
 			public void DoThread1()		
 			{
 				while (true)
@@ -273,7 +289,7 @@ namespace Smokey.Tests
 				m_thread.Start();
 			}
 
-			[ThreadSingleRoot("1")]
+			[ThreadRoot("1")]
 			public void DoThread1()		
 			{
 				while (true)
@@ -283,7 +299,7 @@ namespace Smokey.Tests
 			}
 			
 			[ThreadSafe]
-			private void DoWork()			// is thread safe
+			private void DoWork()			// thread safe, but called from one thread
 			{
 				Console.WriteLine("hey");
 			}
@@ -300,6 +316,7 @@ namespace Smokey.Tests
 				DoWork();
 			}
 
+			[ThreadRoot("Main")]			// we're lieing here...
 			public void DoThread1()		
 			{
 				while (true)
@@ -309,52 +326,19 @@ namespace Smokey.Tests
 			}
 			
 			[ThreadSafe]
-			private void DoWork()			// is thread safe
+			private void DoWork()			// thread safe, but called from one thread
 			{
 				Console.WriteLine("hey");
 			}
 
 			private Thread m_thread;
 		}		
-
-		public class Bad7
-		{
-			public Bad7()
-			{
-				m_thread1 = new Thread(this.DoThread1);
-				m_thread1.Start();
-
-				m_thread2 = new Thread(this.DoThread2);
-				m_thread2.Start();
-			}
-
-			[ThreadSingleRoot("One")]
-			public void DoThread1()		
-			{
-				while (true)
-				{
-				Console.WriteLine("hey");
-				}
-			}
-
-			[ThreadMultiRoot("One")]	// both single and multi
-			public void DoThread2()		
-			{
-				while (true)
-				{
-				Console.WriteLine("hey");
-				}
-			}
-
-			private Thread m_thread1;
-			private Thread m_thread2;
-		}		
 		#endregion
 		
 		// test code
 		public ThreadSafeAttrTest() : base(
-			new string[]{"Good1", "Good2", "Good3", "Good4"},
-			new string[]{"Bad1", "Bad2", "Bad3", "Bad4", "Bad5", "Bad6", "Bad7"})	
+			new string[]{"Good1", "Good2", "Good3", "Good4", "Good5"},
+			new string[]{"Bad1", "Bad2", "Bad3", "Bad4", "Bad5", "Bad6"})	
 		{
 		}
 						

@@ -2417,7 +2417,7 @@
 			* The type has a method named Dispose with an unusual signature.
 			* The type has non-private methods named OnDispose or DoDispose.
 			* Dispose() should not be virtual (although Dispose(bool) may be).
-			* If the type is sealed and has Dispose(bool) then it should be private.
+			* Dispose(bool) should not be public.
 			* If the type is not sealed and has Dispose(bool) then it should be protected and virtual.
 			* A Dispose method throws an exception it does not catch. With .NET 2.0 and later, this
 			  will default to tearing down the application if you allow the exception to escape from

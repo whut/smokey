@@ -37,11 +37,8 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 199 fxcop
 102 gendarme
 
-* Do a checkin.
-* Remove ThreadMultiRoot. Replace ThreadSingleRoot with ThreadRoot. Allow ThreadSafe on roots.
-* Smoke sa again.
-* Get rid of ignoreList setting.
 * Smoke smokey.
+* Get rid of ignoreList setting.
 * Do a profile, if any inter-procedural rules stick out then rewrite them.
 * Smoke a few system assemblies.
 * Upgrade to mono 2.0
