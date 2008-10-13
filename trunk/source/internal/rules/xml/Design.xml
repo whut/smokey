@@ -2561,6 +2561,12 @@
 						throw new ObjectDisposedException(GetType().Name);
 				}
 			
+				public void Dispose()
+				{
+					Dispose(true);
+					GC.SuppressFinalize(this);
+				}
+				
 				protected bool Disposed {get; private set;}
 						
 				protected virtual void Dispose(bool disposing)
@@ -2580,12 +2586,6 @@
 						// may be used.
 						Disposed = true;
 					}
-				}
-				
-				public void Dispose()
-				{
-					Dispose(true);
-					GC.SuppressFinalize(this);
 				}
 				
 				// resource fields go here
@@ -2677,6 +2677,12 @@
 						throw new ObjectDisposedException(GetType().Name);
 				}
 			
+				public void Dispose()
+				{
+					Dispose(true);
+					GC.SuppressFinalize(this);
+				}
+				
 				protected bool Disposed {get; private set;}
 						
 				protected virtual void Dispose(bool disposing)
@@ -2696,12 +2702,6 @@
 						// may be used.
 						Disposed = true;
 					}
-				}
-				
-				public void Dispose()
-				{
-					Dispose(true);
-					GC.SuppressFinalize(this);
 				}
 				
 				// resource fields go here

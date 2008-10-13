@@ -62,6 +62,24 @@ namespace Smokey.Tests
 			}
 		}
 				
+		public abstract class Good4		// not sealed
+		{
+			public int PublicMethod()
+			{
+				AbstractMethod();
+				return 10;
+			}
+			
+			protected abstract void AbstractMethod();
+		}
+				
+		public sealed class Good5 : Good4		
+		{
+			protected override void AbstractMethod()	// override, so OK
+			{
+			}
+		}
+				
 		public sealed class Bad1
 		{
 			public void PublicMethod()
@@ -85,7 +103,7 @@ namespace Smokey.Tests
 
 		// test code
 		public SealedProtectedTest() : base(
-			new string[]{"Good1", "Good2", "Good3"},
+			new string[]{"Good1", "Good2", "Good3", "Good4", "Good5"},
 			new string[]{"Bad1", "Bad3"})	
 		{
 		}

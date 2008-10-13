@@ -65,12 +65,15 @@ namespace Smokey.Internal.Rules
 
 		public void VisitMethod(MethodDefinition method)
 		{				
-			if (m_needsCheck && m_name == null)
+			if (m_needsCheck && m_name == null && method.Name != "Finalize")
 			{
 				if (method.IsFamilyAndAssembly || method.IsFamily || method.IsFamilyOrAssembly)
 				{
-					TypeReference tr = method.GetDeclaredIn(Cache);
-					if (tr != null && tr == m_type)
+					MethodDefinition previous = method.GetBasestMethod(Cache);
+					if (previous != null && previous == method) 
+				
+//					TypeReference tr = method.GetDeclaredIn(Cache);
+//					if (tr != null && tr == m_type && !method.IsReuseSlot)
 					{
 						m_name = method.Name;
 					}

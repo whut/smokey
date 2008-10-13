@@ -74,8 +74,8 @@ namespace Smokey.Internal.Rules
 				MethodDefinition method = begin.Info.Method;
 				if (method.Name == "Finalize")
 				{	
-					MethodDefinition previous = method.GetPreviousMethod(Cache);
-					if (previous != method)
+					MethodDefinition previous = method.GetBasestMethod(Cache);
+					if (previous != null && previous != method)
 					{
 						Log.DebugLine(this, "finalizer overrides {0}", previous);
 						m_hasFinalizer = true;
@@ -121,8 +121,8 @@ namespace Smokey.Internal.Rules
 			
 			if (m_disposeMethod != null && !m_hasBaseCall)
 			{
-				MethodDefinition pmethod = m_disposeMethod.GetPreviousMethod(Cache);
-				if (pmethod != m_disposeMethod && !pmethod.IsAbstract)
+				MethodDefinition pmethod = m_disposeMethod.GetBasestMethod(Cache);
+				if (pmethod != null && pmethod != m_disposeMethod && !pmethod.IsAbstract)
 					details += "Dispose(bool) does not call base.Dispose(bool)" + Environment.NewLine;
 			}
 			
