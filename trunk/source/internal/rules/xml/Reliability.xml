@@ -1696,9 +1696,10 @@
 	<Violation checkID = "R1039" severity = "Warning" breaking = "false">
 		<Translation lang = "en" typeName = "ThreadSafeAttr" category = "Reliability">			
 			<Cause>
-			A method which looks like a thread entry point is not marked with ThreadSingleRootAttribute/ThreadMultiRootAttribute,
-			or a method called from multiple thread roots is not marked with ThreadSafeAttribute, 
-			or a method called from a single thread root is marked with ThreadSafeAttribute.
+			A method which looks like a thread entry point is not marked with ThreadRootAttribute/ThreadSafeAttribute,
+			or a method called from a thread safe entry point is not marked with ThreadSafeAttribute,
+			or a method called from a multiple thread roots is not marked with ThreadSafeAttribute,
+			or a method marked as thread safe does not need to be. 
 			</Cause>
 		
 			<Description>
@@ -1709,24 +1710,21 @@
 			
 			In order for this to happen Smokey needs to know the methods that are directly called from
 			threads. This includes methods passed to the System.Threading.Thread ctor, finalize
-			methods, async methods, etc. All of these methods should be marked with ThreadSingleRootAttribute
-			or ThreadMultiRootAttribute. Use ThreadSingleRootAttribute if the method executes
-			from one thread (e.g. a method passed to the System.Threading.Thread ctor) and
-			ThreadMultiRootAttribute if the method may execute from multiple threads (finalizers
-			and some async methods). The main method, if present, is considered to be a single
-			root named "Main". Externally visible methods are also considered to be single roots
-			named "Main".
-			
+			methods, async methods, etc. All of these methods should be marked with ThreadRootAttribute
+			or ThreadSafeAttribute. Use ThreadRootAttribute if the method is executed using one
+			thread at a time (methods passed to System.Threading.Thread ctor, finalizers, most
+			async methods). Use ThreadSafeAttribute if the method may be executed concurrently
+			by multiple threads (externally visible methods, some async methods). The main method is 
+			considered to be a thread root named "Main". Externally visible methods default to thread 
+			roots also named "Main".
+						
 			Usually this rule will tell you all the methods that should be decorated with a thread
-			root attribute. However if you have a library which can be called from multiple
-			threads then you should add ThreadMultiRootAttribute to the relevant entry points (to
+			attribute. However if you have a library which can be called from multiple
+			threads then you should add ThreadSafeAttribute to the relevant entry points (to
 			get a list of entry points which are not decorated add a line like this to the config
 			file: &lt;add key = &quot;topic:Smokey.Internal.Rules.ThreadSafeAttrRule&quot; value = "Trace"/&gt;).
 			Similarly, if you have a method which is called indirectly from a thread (via a
-			delegate or event for example) then you should add a root attribute to that method.
-			
-			All methods in the assembly called by a multi root or two or more single root threads
-			must be decorated with ThreadSafeAttribute.
+			delegate or event for example) then you should add a thread attribute to that method.
 			</Description> 
 	
 			<Fix>
@@ -1739,9 +1737,9 @@
 			using System.Threading;
 
 			[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
-			internal sealed class ThreadSingleRootAttribute : Attribute
+			internal sealed class ThreadRootAttribute : Attribute
 			{		
-				public ThreadSingleRootAttribute(string name) 
+				public ThreadRootAttribute(string name) 
 				{
 					Name = name;
 				}
@@ -1749,24 +1747,18 @@
 				public string Name {get; private set;}
 			}
 
-			[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
-			internal sealed class ThreadMultiRootAttribute : Attribute
-			{		
-				public ThreadMultiRootAttribute(string name) 
-				{
-					Name = name;
-				}
-				
-				public string Name {get; private set;}
-			}
-
-			[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
+			[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
 			internal sealed class ThreadSafeAttribute : Attribute
 			{		
 			}
 
 			internal sealed class Game
 			{
+				[ThreadRoot("AI Finalizer")]	// finalizers may execute with different threads so we give this thread a unique name
+				~Game()
+				{
+				}
+				
 				public Game()
 				{
 					m_udp = new UdpClient;
@@ -1777,8 +1769,8 @@
 					m_aiThread.Start();
 				}
 							
-				// This always executes within one thread so we use ThreadSingleRoot.
-				[ThreadSingleRoot("AI")]
+				// This always executes within one thread so we use ThreadRoot.
+				[ThreadRoot("AI")]
 				private void DoAI()
 				{	
 					DoThink();
@@ -1790,8 +1782,8 @@
 				{
 				}
 				
-				// We only queue up one read at a time so we can get away with using ThreadSingleRoot.
-				[ThreadSingleRoot("Packet Recv")]
+				// We'd use ThreadSafe if we queued up multiple concurrent reads.
+				[ThreadRoot("Packet Recv")]
 				private void DoRecvPacket(IAsyncResult result)
 				{
 					DoSendMessage("a reply");

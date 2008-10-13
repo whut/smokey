@@ -53,8 +53,6 @@ namespace Smokey.Internal.Rules
 			m_methods.Clear();				// need to do this for unit tests
 			m_knownRoots.Clear();
 			m_safeMethods.Clear();
-			m_singles.Clear();
-			m_multies.Clear();
 			m_entryPoints.Clear();
 			
 			m_disabled = assembly.CustomAttributes.HasDisableRule(CheckID);
@@ -66,30 +64,29 @@ namespace Smokey.Internal.Rules
 				Log.DebugLine(this, "-----------------------------------"); 
 		}
 		
-		// TODO:
-		// get disable working
 		public void VisitMethod(BeginMethod begin)
 		{
 			if (!m_disabled)
 			{
 				Log.DebugLine(this, "{0}", begin.Info.Method);	
-				
-				string root1 = DoGetSingleRootName(begin.Info.Method);
-				string root2 = DoGetMultiRootName(begin.Info.Method);
-				MethodState state = new MethodState(begin.Info.Method, root1 != null, root2 != null);
+								
+				string root = DoGetRootName(begin.Info.Method);
+				MethodState state = new MethodState
+				{
+					Method = begin.Info.Method,
+					IsThreadRoot = root != null,
+					IsThreadSafe = DoIsMarkedThreadSafe(begin.Info.Method),
+					IsExternal = begin.Info.Method.ExternallyVisible(Cache),
+				};
 				m_methods.Add(begin.Info.Method, state);
 				
-				if (root1 != null)
+				if (root != null)
 				{
-					m_knownRoots.Add(state, root1);
-					if (m_singles.IndexOf(root1) < 0)
-						m_singles.Add(root1);
+					m_knownRoots.Add(state, root);
 				}
-				else if (root2 != null)
+				else if (state.IsThreadSafe && state.IsExternal)
 				{
-					m_knownRoots.Add(state, root2);
-					if (m_multies.IndexOf(root2) < 0)
-						m_multies.Add(root2);
+					m_knownRoots.Add(state, "*");
 				}
 				else
 				{
@@ -97,9 +94,9 @@ namespace Smokey.Internal.Rules
 					{
 						m_entryPoints.Add(begin.Info.Method);
 					}
-					else if (begin.Info.Method.ExternallyVisible(Cache))
+					else if (state.IsExternal)
 					{
-						Log.TraceLine(this, "Externally visible but not marked as a threat root:");
+						Log.TraceLine(this, "Externally visible but not marked as a thread:");
 						Log.TraceLine(this, "   {0}", begin.Info.Method);
 						m_entryPoints.Add(begin.Info.Method);
 					}
@@ -121,16 +118,8 @@ namespace Smokey.Internal.Rules
 				details += DoCheckForUnmarkedRoots(roots);
 				if (m_knownRoots.Count > 0)
 					details += DoCheckForUnsafeMethods(graph);
-				details += DoCheckForBadSafe();
-				
-				var both = m_singles.Intersect(m_multies);
-				if (both.Any())
-				{
-					details += "Roots marked as both single and multi:" + Environment.NewLine;
-					foreach (string root in both)
-						details += "   " + root + Environment.NewLine;
-				}
-				
+				details += DoCheckForBadSafe(roots);
+								
 				details = details.Trim();
 				if (details.Length > 0)
 				{
@@ -148,7 +137,7 @@ namespace Smokey.Internal.Rules
 			List<MethodDefinition> unmarkedRoots = DoGetUnmarkedRoots(roots);
 			if (unmarkedRoots.Any())
 			{
-				details += "Not decorated with a thread root attribute:" + Environment.NewLine;
+				details += "Not decorated with a thread attribute:" + Environment.NewLine;
 
 				foreach (MethodDefinition method in unmarkedRoots)
 				{
@@ -162,7 +151,7 @@ namespace Smokey.Internal.Rules
 		private string DoCheckForUnsafeMethods(CallGraph graph)	
 		{
 			foreach (var entry in m_knownRoots)
-				DoSetChains(entry.Value, entry.Key.Method, graph, new List<MethodDefinition>{entry.Key.Method}, entry.Key.MarkedAsMulti, 0);
+				DoSetChains(entry.Value, entry.Key.Method, graph, new List<MethodDefinition>{entry.Key.Method}, entry.Key.IsThreadSafe && entry.Key.IsExternal, 0);
 			
 			foreach (MethodDefinition m in m_entryPoints)
 				DoSetChains("Main", m, graph, new List<MethodDefinition>{m}, false, 0);
@@ -182,18 +171,19 @@ namespace Smokey.Internal.Rules
 			return details;
 		}
 		
-		private string DoCheckForBadSafe()
+		private string DoCheckForBadSafe(IEnumerable<MethodReference> roots)
 		{
 			string details = string.Empty;		
 			
 			foreach (MethodState state in m_safeMethods)	
 			{
-				if (!state.IsCalledFromMultiple)
-					details += "   " + state.Method + Environment.NewLine;
+				if (!state.IsCalledFromMultiple && !state.IsExternal)	
+					if (!roots.Any(r => r == state.Method))
+						details += "   " + state.Method + Environment.NewLine;
 			}
 			
 			if (details.Length > 0)
-				details = "Marked as unsafe, but called from a single thread: " + Environment.NewLine + details;
+				details = "Marked as safe, but called from a single thread: " + Environment.NewLine + details;
 												
 			return details;
 		}
@@ -238,7 +228,7 @@ namespace Smokey.Internal.Rules
 				MethodState state;
 				if (m_methods.TryGetValue(mref, out state))
 				{
-					if (!state.MarkedAsSingle && !state.MarkedAsMulti)
+					if (!state.IsThreadRoot && !state.IsThreadSafe)
 						unmarked.Add(state.Method);
 				}
 			}
@@ -246,11 +236,11 @@ namespace Smokey.Internal.Rules
 			return unmarked;
 		}
 		
-		private string DoGetSingleRootName(MethodDefinition method)
+		private string DoGetRootName(MethodDefinition method)
 		{								
 			foreach (CustomAttribute attr in method.CustomAttributes)
 			{	
-				if (attr.Constructor.ToString().Contains("ThreadSingleRootAttribute"))
+				if (attr.Constructor.ToString().Contains("ThreadRootAttribute"))
 				{
 					if (attr.ConstructorParameters.Count > 0)
 					{
@@ -261,26 +251,18 @@ namespace Smokey.Internal.Rules
 			
 			return null;
 		}
-		
-		private string DoGetMultiRootName(MethodDefinition method)
-		{								
-			foreach (CustomAttribute attr in method.CustomAttributes)
-			{	
-				if (attr.Constructor.ToString().Contains("ThreadMultiRootAttribute"))
-				{
-					if (attr.ConstructorParameters.Count > 0)
-					{
-						return attr.ConstructorParameters[0] as string;
-					}
-				}
-			}
-			
-			return null;
-		}
-		
+				
 		private bool DoIsMarkedThreadSafe(MethodDefinition method)
 		{								
 			foreach (CustomAttribute attr in method.CustomAttributes)
+			{	
+				if (attr.Constructor.ToString().Contains("ThreadSafe"))
+				{
+					return true;
+				}
+			}
+			
+			foreach (CustomAttribute attr in method.DeclaringType.CustomAttributes)
 			{	
 				if (attr.Constructor.ToString().Contains("ThreadSafe"))
 				{
@@ -295,17 +277,11 @@ namespace Smokey.Internal.Rules
 		#region Private Types -------------------------------------------------
 		private sealed class MethodState
 		{
-			public MethodState(MethodDefinition method, bool single, bool multi)
-			{
-				Method = method;
-				MarkedAsSingle = single;
-				MarkedAsMulti = multi;
-			}
-			
-			public MethodDefinition Method {get; private set;}
+			public MethodDefinition Method {get; set;}
 		
-			public bool MarkedAsSingle {get; private set;}
-			public bool MarkedAsMulti {get; private set;}
+			public bool IsThreadRoot {get; set;}
+			public bool IsThreadSafe {get; set;}
+			public bool IsExternal {get; set;}
 			
 			public bool IsCalledFrom(string root)
 			{
@@ -350,8 +326,6 @@ namespace Smokey.Internal.Rules
 		private Dictionary<MethodReference, MethodState> m_methods = new Dictionary<MethodReference, MethodState>();
 		private Dictionary<MethodState, string> m_knownRoots = new Dictionary<MethodState, string>();
 		private List<MethodState> m_safeMethods = new List<MethodState>();
-		private List<string> m_singles = new List<string>();
-		private List<string> m_multies = new List<string>();
 		
 		private List<MethodDefinition> m_entryPoints = new List<MethodDefinition>();
 		#endregion

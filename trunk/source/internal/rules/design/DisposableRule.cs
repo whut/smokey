@@ -57,7 +57,7 @@ namespace Smokey.Internal.Rules
 			m_hasFinalizer = false;
 			m_supressWasCalled = false;
 			m_hasVirtualDispose = false;
-			m_hasNonPrivateDispose = false;
+			m_hasPublicDispose = false;
 			m_hasNonProtectedDispose = false;
 			m_hasNonVirtualDispose = false;
 			m_disposeThrows = false;
@@ -145,8 +145,8 @@ namespace Smokey.Internal.Rules
 					m_hasVirtualDispose = true;
 				
 				m_isUnaryDispose = method.Matches("System.Void", "Dispose", "System.Boolean");
-				if (m_isUnaryDispose && m_type.IsSealed && !method.IsPrivate)
-					m_hasNonPrivateDispose = true;
+				if (m_isUnaryDispose && method.IsPublic)
+					m_hasPublicDispose = true;
 					
 				if (m_isUnaryDispose && !m_type.IsSealed && !method.IsFamily && !method.IsFamilyOrAssembly && !method.IsFamilyAndAssembly)
 					m_hasNonProtectedDispose = true;
@@ -310,8 +310,8 @@ namespace Smokey.Internal.Rules
 				if (m_hasVirtualDispose)
 					details += "Dispose() is virtual" + Environment.NewLine;
 				
-				if (m_hasNonPrivateDispose)
-					details += "The type is sealed, but Dispose(bool) is not private." + Environment.NewLine;
+				if (m_hasPublicDispose)
+					details += "Dispose(bool) is public." + Environment.NewLine;
 					
 				if (m_hasNonProtectedDispose)	
 					details += "The type is unsealed, but Dispose(bool) is not protected." + Environment.NewLine;
@@ -371,7 +371,7 @@ namespace Smokey.Internal.Rules
 		private List<string> m_illegalDisposeNames = new List<string>();
 		
 		private bool m_hasVirtualDispose;
-		private bool m_hasNonPrivateDispose;
+		private bool m_hasPublicDispose;
 		private bool m_hasNonProtectedDispose;
 		private bool m_hasNonVirtualDispose;
 		private bool m_disposeThrows;
