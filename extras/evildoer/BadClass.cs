@@ -70,6 +70,7 @@ namespace EvilDoer
 			thread = new Thread(this.DoThread);
 			thread.Name = "foo";
 			thread.Start();
+			thread.Abort();
 		}
 		
 		[ThreadSingleRoot("Bad Worker")]

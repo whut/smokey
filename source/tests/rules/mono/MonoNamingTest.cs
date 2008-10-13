@@ -132,6 +132,16 @@ namespace Smokey.Tests
 			private int m_name;
 		}
 
+		public class BadFieldName6
+		{
+			public void MethodName(int paramName)
+			{
+				Console.WriteLine("len: {0}", paramName + _first_name);			
+			}
+			
+			private int _first_name;
+		}
+
 		public class BadMethods1
 		{
 			public void badName(int paramName)
@@ -167,7 +177,7 @@ namespace Smokey.Tests
 		public MonoNamingTest() : base(
 			new string[]{"GoodCase", "IGoodInterface", "GoodSerializable"},
 			new string[]{"badClassName", "BadFieldName", 
-				"BadFieldName2", "BadFieldName3", "BadFieldName4", "BadFieldName5", 
+				"BadFieldName2", "BadFieldName3", "BadFieldName4", "BadFieldName5", "BadFieldName6",
 				"BadMethods1", "BadInterface"})	
 		{
 		}

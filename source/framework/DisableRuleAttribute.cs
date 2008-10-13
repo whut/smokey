@@ -11,21 +11,11 @@ namespace Smokey.Framework
 	{		
 		public DisableRuleAttribute(string id, string name) 
 		{
-			m_id = id;
-			m_name = name;
+			Id = id;
+			Name = name;
 		}
 		
-		public string ID
-		{
-			get {return m_id;}
-		}
-	
-		public string Name
-		{
-			get {return m_name;}
-		}
-	
-		private string m_id;
-		private string m_name;
+		public string Id {get; private set;}
+		public string Name {get; private set;}
 	}
 }

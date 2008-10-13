@@ -1810,4 +1810,28 @@
 			</CSharp>
 		</Translation>
 	</Violation>
+
+	<Violation checkID = "R1040" severity = "Warning" breaking = "false">
+		<Translation lang = "en" typeName = "ThreadAbort" category = "Reliability">			
+			<Cause>
+			Thread.Abort should be rarely used and only when you don't care about the
+			state your application lands in.
+			</Cause>
+		
+			<Description>
+			The problem with thread abort is that it raises an exception in the thread at
+			an arbitrary location. This means that the exception may be raised when your
+			thread is in the process of cleaning up resources inside a finally block which
+			makes it very difficult to ensure your application remains in a good state.
+			</Description> 
+	
+			<Fix>
+			If your program will exit after the thread is aborted and you don't care about
+			the data it's maintaining you can disable the rule with DisableRuleAttribute.
+			Otherwise exit the thread in a more controlled manner, for example by using a
+			volatile bool field that the thread checks periodically. See
+			&lt;http://www.interact-sw.co.uk/iangblog/2004/11/12/cancellation&gt; for more details.
+			</Fix>
+		</Translation>
+	</Violation>
 </Violations>
