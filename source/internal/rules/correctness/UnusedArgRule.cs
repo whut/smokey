@@ -50,7 +50,7 @@ namespace Smokey.Internal.Rules
 			Log.DebugLine(this, "-----------------------------------"); 
 			Log.DebugLine(this, "{0:F}", begin.Info.Instructions);				
 
-			m_needsCheck = begin.Info.Method.Body != null && begin.Info.Method.Body.Instructions.Count > 1;
+			m_needsCheck = begin.Info.Method.Body != null && begin.Info.Method.Body.Instructions.Count > 1 && !begin.Info.Method.IsCompilerGenerated();
 			m_args.Clear();
 
 			if (m_needsCheck)

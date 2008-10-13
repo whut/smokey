@@ -65,6 +65,7 @@ namespace EvilDoer
 			}
 		}
 		
+		// R1040/ThreadAbort
 		public void Run()
 		{
 			thread = new Thread(this.DoThread);

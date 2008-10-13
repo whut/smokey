@@ -204,4 +204,5 @@
 	<Expected checkID = "C1036" typeName = "EqualsMissesState" fullName = "EvilDoer.BadVisibleState"/>
 	<Expected checkID = "P1023" typeName = "UseIEquatable" fullName = "EvilDoer.BadVisibleState"/>
 	<Expected checkID = "R1039" typeName = "ThreadSafeAttr" fullName = "evildoer"/>
+	<Expected checkID = "R1040" typeName = "ThreadAbort" fullName = "System.Void EvilDoer.BadClass::Run()"/>
 </Expectations>

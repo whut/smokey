@@ -201,9 +201,10 @@ namespace Smokey.Framework.Support
 			return visible;
 		}
 		
-		/// <summary>Returns the first base class method which declares the specified method. 
-		/// Note that this may return an abstract method or the original method.</summary>
-		public static MethodDefinition GetPreviousMethod(this MethodDefinition method, AssemblyCache cache)
+		/// <summary>Returns the first base class (not including Object) method which declares the specified method. 
+		/// Note that this may return an abstract method, or the original method, or null if a base
+		/// type could not be found.</summary>
+		public static MethodDefinition GetBasestMethod(this MethodDefinition method, AssemblyCache cache)
 		{			
 			DBC.Pre(method != null, "method is null");
 			
@@ -215,15 +216,22 @@ namespace Smokey.Framework.Support
 				if (type != null)
 					type = cache.FindType(type.BaseType);
 				
-				if (type != null)
+				while (type != null && type.FullName != "System.Object")
 				{
 					MethodMatcher matcher = new MethodMatcher(method);
 
 					MethodDefinition[] candidates = type.Methods.GetMethod(method.Name);
 					foreach (MethodDefinition candidate in candidates)
+					{
 						if (candidate.IsVirtual && !candidate.IsFinal && matcher == candidate)
 							result = candidate;
+					}
+
+					type = cache.FindType(type.BaseType);
 				}
+				
+				if (type == null)
+					result = null;
 			}
 			
 			return result;

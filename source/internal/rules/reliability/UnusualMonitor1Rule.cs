@@ -277,7 +277,7 @@ namespace Smokey.Internal.Rules
 				Code code = instruction.Untyped.OpCode.Code;
 				if (code != Code.Call && code != Code.Callvirt)
 					break;
-				if (((Call) instruction).Target.ToString() != "System.Void Smokey.Internal.Ignore::set_Value(System.Object)")
+				if (((Call) instruction).Target.ToString().IndexOf("Ignore::set_Value") < 0 && ((Call) instruction).Target.ToString().IndexOf("Unused::set_Value") < 0)
 					break;
 
 				instruction = m_info.Instructions[index - 1];

@@ -37,43 +37,9 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 199 fxcop
 102 gendarme
 
-unused
-threaded
-
-* RedundantOperand
-	- figure out which instructions generate each argument
-	- fire if the two instruction ranges compare equal
-	- bail if the range includes a branch
-* ConstantResult
-	- method returns a constant value
-	- Equals, GetHashCode, CompareTo, relational operators, arithmetic operators
-	- return something real or add assert/throw
-* CompareTo returns number outside [-1, 1]?
-* Make sure CompareTo is included in the equals/hash cross check.
-* Drop Ignore, use Unused.Value.
-* ThreadSafeAttr
-	- ThreadSingleRoot, Main defaults to "Main", externally visible to "External"
-	- ThreadMultiRoot, finalizers, async callbacks
-	- ThreadSafe
-	- warn if methd which looks like a thread root is not decorated
-	- if have explicit thread roots then 
-		warn if method is used by multiple threads but not labeled thread safe
-		warn if method is used by one thread but labeled thread safe
-		print a call chain for each thread
-	- have a trace log for externally visible methods which are not decorated
-* | or & is used with an enum which is not decorated with [Flags].
-* Field is only used within one method.
-* Thread.Abort is evil (unless you're OK with shutting down the app):
-	http://www.interact-sw.co.uk/iangblog/2004/11/12/cancellation
-* Should be able to specify text files to spell check.
-* Can we add a grammar checker? Only if the text includes periods?
-* Type is only used by private methods of one type (so the first type can be made private).
-* UseJurassicNaming complains about static public fields. Also type P1`1
-* GetObjectData doesn't add all non-static fields and the field it doesn't add is not 
-  marked with: NonSerializedAttribute, OptionalFieldAttribute, XmlIgnoreAttribute, or 
-  DefaultValueAttribute
-* Mono naming xml is kinda weak. For example, leading underscore on fields.
-* Add more fxcop rules?
+* Do a checkin.
+* Remove ThreadMultiRoot. Replace ThreadSingleRoot with ThreadRoot. Allow ThreadSafe on roots.
+* Smoke sa again.
 * Get rid of ignoreList setting.
 * Smoke smokey.
 * Do a profile, if any inter-procedural rules stick out then rewrite them.
@@ -87,7 +53,9 @@ threaded
 	http://www.NDepend.com
 	http://www.ndepend.com/Features.aspx#CQL
 	WARN IF Count != 1 IN SELECT TYPES WHERE !IsImmutable AND FullNameIs "MyClassThatShouldbeImmutable"
-* Large property?
+* Large property? Loops?
+* Type is only used internally by a single type (so the first type can be made private).
+* Should be able to specify text files to spell check.
 * Add more fxcop rules.
 * Try to get release functest working, probably need to have a debug only section of expected.xml
 * Looks like we can use pkg-config to get at cecil.
@@ -113,6 +81,9 @@ threaded
 * Re-add MethodCanBeMadeStaticRule but disable it by default.
 * Watchdog timeout should be configurable.
 * Try profiling on linux.
+* Can we add a grammar checker? Only if the text includes periods?
+	GNU diction (doesn't seem especially useful)
+	http://www.languagetool.org/ (java tool, didnt try it)
 * (SerializationInfo, StreamingContext) ctor and GetObjectData, but not ISerializable.
 * Handle the CompilerGenerated types and methods in the dispatcher not the rules. This is tricky to
   do: we want to do stuff like visting the body of anonymous methods to see what they call for example.
