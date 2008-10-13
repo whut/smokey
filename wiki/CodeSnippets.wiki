@@ -108,6 +108,12 @@ internal class BaseClass : IDisposable
             throw new ObjectDisposedException(GetType().Name);
     }
 
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+    
     protected bool Disposed
     {
         get {return m_disposed;}
@@ -130,12 +136,6 @@ internal class BaseClass : IDisposable
             // may be used.
             m_disposed = true;
         }
-    }
-    
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
     }
     
     // resource fields go here
