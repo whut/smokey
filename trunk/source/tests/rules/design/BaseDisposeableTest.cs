@@ -104,6 +104,25 @@ namespace Smokey.Tests
 			}
 		}
 		
+		internal class Good5 : Good1, IDisposable	// this IDisposable doesn't count
+		{ 
+			public void Work()
+			{
+				Console.WriteLine("hey");
+			}
+		}
+		
+		public interface Good6a : IDisposable
+		{
+			string Site { get; set; }
+		}
+
+		public interface Good6b : Good6a, IDisposable
+		{
+			string BindingContext { get; set; }
+			string DataBindings { get; }
+		}
+
 		internal class Bad1 : IDisposable
 		{ 
 			protected bool Disposed
@@ -130,7 +149,7 @@ namespace Smokey.Tests
 
 		// test code
 		public BaseDisposeableTest() : base(
-			new string[]{"Good1", "Good2", "Good3", "Good4"},
+			new string[]{"Good1", "Good2", "Good3", "Good4", "Good5", "Good6a", "Good6b"},
 			new string[]{"Bad1"})	
 		{
 		}

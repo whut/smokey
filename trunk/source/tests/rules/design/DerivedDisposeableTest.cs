@@ -122,6 +122,14 @@ namespace Smokey.Tests
 			}	
 		}
 
+		internal class GoodDerived3 : GoodBase2, IDisposable
+		{ 
+			protected override void Dispose(bool disposing)
+			{
+				// base is abstract
+			}	
+		}
+
 		internal class GoodFinalizer : GoodBase3
 		{ 
 			~GoodFinalizer()					// base doesn't have a finalizer
@@ -257,7 +265,7 @@ namespace Smokey.Tests
 
 		// test code
 		public DerivedDisposeableTest() : base(
-			new string[]{"GoodBase1", "GoodBase2", "GoodBase3", "GoodDerived1", "GoodDerived2", "GoodFinalizer"},
+			new string[]{"GoodBase1", "GoodBase2", "GoodBase3", "GoodDerived1", "GoodDerived2", "GoodDerived3", "GoodFinalizer"},
 			new string[]{"NoBaseCall", "BadBaseCall1", "BadBaseCall2", "BadBaseCall3",
 				"HasFinalizer", "ReimplementsIDisposable", "HasDispose1", "HasDispose2"})	
 		{

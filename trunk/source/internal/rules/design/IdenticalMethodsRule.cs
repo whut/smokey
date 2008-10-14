@@ -40,10 +40,19 @@ namespace Smokey.Internal.Rules
 				
 		public override void Register(RuleDispatcher dispatcher) 
 		{
+			dispatcher.Register(this, "VisitAssembly");
 			dispatcher.Register(this, "VisitBegin");
 			dispatcher.Register(this, "VisitFini");
 		}
 		
+		public void VisitAssembly(AssemblyDefinition assembly)
+		{			
+			Unused.Value = assembly;
+			
+			Log.DebugLine(this, "+++++++++++++++++++++++++++++++++++"); 
+			m_table.Clear();		// need this for unit test
+		}
+
 		public void VisitBegin(BeginMethod begin)
 		{			
 			if (begin.Info.Method.Body != null && begin.Info.Method.Body.Instructions.Count >= 40)
@@ -102,14 +111,11 @@ namespace Smokey.Internal.Rules
 						{
 							Log.DebugLine(this, "checking {0} and {1}", methods[i].Info.Method, methods[j].Info.Method);
 						
-							if (methods[i].Info.Method.ToString().CompareTo(methods[j].Info.Method.ToString()) < 0)
+							if (DoMatch(methods[i], methods[j]))
 							{
-								if (DoMatch(methods[i], methods[j]))
-								{
-									Log.DebugLine(this, "   matched");
-									matches.Add(methods[j].Info.Method.ToString());
-									found.Add(j);
-								}
+								Log.DebugLine(this, "   matched");
+								matches.Add(methods[j].Info.Method.ToString());
+								found.Add(j);
 							}
 						}
 					}

@@ -91,4 +91,13 @@ namespace EvilDoer
 		
 		private IntPtr handle;
 	}
+
+	public class GoodDisposable3 : BaseGoodDisposable2, IDisposable
+	{		
+		public void Worker()
+		{
+			if (Disposed)		
+				throw new ObjectDisposedException(GetType().Name);
+		}
+	}
 }

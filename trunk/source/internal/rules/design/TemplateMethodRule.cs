@@ -56,7 +56,7 @@ namespace Smokey.Internal.Rules
 
 			MethodDefinition method = begin.Info.Method;	
 			if (method.IsVirtual && !method.IsFinal && method.IsNewSlot)
-				if (!m_type.IsSealed)
+				if (!m_type.IsSealed && !m_type.IsNestedPrivate)
 					if (method.Body != null)
 						if (method.Body.Instructions.Count >= m_limit/4)
 							m_needsCheck = true;

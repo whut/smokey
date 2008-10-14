@@ -2407,7 +2407,7 @@
 	
 			<Description>
 			This rule checks for several problems:
-			* All public methods (except Dispose) should throw ObjectDisposedException 
+			* All public methods (except Dispose, getters, and automatic setters) should throw ObjectDisposedException 
 			  if Dispose has been called. Note that this will ignore getter properties.
 			* Not all the disposable fields in the object are disposed.
 			* The type has a finalizer but Dispose() does not call GC.SuppressFinalize.
@@ -2638,7 +2638,6 @@
 			This rule checks for several problems:
 			* The Dispose(bool) override does not call the base method.
 			* The type overrides a finalizer (it should rely on the base class finalizer instead).
-			* Don't (re)implement IDisposable.
 			* Don't include a new or overriden Dispose() method.
 			</Description>
 	
