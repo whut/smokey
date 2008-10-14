@@ -1,4 +1,4 @@
-// Copyright (C) 2007 Jesse Jones
+// Copyright (C) 2008 Jesse Jones
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -20,15 +20,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
+using System.Threading;
 
-namespace EvilDoer
+namespace Smokey.Internal
 {
-	public static class Identical1
+	[Serializable]
+	[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
+	internal sealed class ThreadRootAttribute : Attribute
 	{		
+		public ThreadRootAttribute(string name) 
+		{
+			Name = name;
+		}
+		
+		public string Name {get; private set;}
 	}
 
-	public static class Identical2
+	[Serializable]
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
+	internal sealed class ThreadSafeAttribute : Attribute
 	{		
 	}
 }
