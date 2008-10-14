@@ -116,7 +116,7 @@ namespace Smokey.Internal
 		#region Fields --------------------------------------------------------
 		private Thread m_thread;
 		private Thread m_mainThread;
-		private readonly TimeSpan m_timeout = TimeSpan.FromSeconds(30);	// TODO: may want to make this configurable
+		private readonly TimeSpan m_timeout = TimeSpan.FromSeconds(45);	// TODO: may want to make this configurable
 		private readonly bool m_verbose;
 		private bool m_disposed = false;
 		

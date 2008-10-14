@@ -56,6 +56,9 @@ namespace Smokey.Tests
 				if (m_disposed)		
 					throw new ObjectDisposedException(GetType().Name);
 					
+				if (DidWork != null)
+					DidWork(this, EventArgs.Empty);
+					
 				m_writer.WriteLine("hey");
 			}
 
@@ -65,7 +68,9 @@ namespace Smokey.Tests
 					m_writer.Dispose();
 				m_disposed = true;
 			}
-			
+			 
+			public event EventHandler DidWork;
+
 			private bool m_disposed;
 			private StringWriter m_writer = new StringWriter();
 		}			
@@ -82,6 +87,12 @@ namespace Smokey.Tests
 				if (m_disposed)		
 					throw new ObjectDisposedException(GetType().Name);
 			}
+
+			public event EventHandler Event6
+			{
+				add {m_eventTable.Add(ms_nameKey, value);}
+				remove {m_eventTable.Remove(ms_nameKey);}
+			}
 		
 			public void Dispose()
 			{
@@ -96,6 +107,8 @@ namespace Smokey.Tests
 			}
 			
 			protected bool m_disposed; 
+			private Dictionary<object, EventHandler> m_eventTable = new Dictionary<object, EventHandler>();
+			private static object ms_nameKey = new object();
 		}			
 
 		public sealed class Good4 : Good3
@@ -275,6 +288,43 @@ namespace Smokey.Tests
 			
 			private bool m_disposed;
 			private int m_value;
+		}			
+
+		public class Good10 : IDisposable
+		{
+			~Good10()
+			{
+				Dispose(false);
+			}
+						
+			public void Work()
+			{
+				if (m_disposed)		
+					throw new ObjectDisposedException(GetType().Name);
+				++m_id;
+			}
+			
+			public int Id
+			{
+				get {return m_id;}
+			}
+		
+			public string Name {get; set;}
+
+			public void Dispose()
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			
+			protected virtual void Dispose(bool disposing)
+			{
+				if (!m_disposed)
+					m_disposed = true;
+			}
+			
+			protected bool m_disposed;
+			private int m_id;
 		}			
 
 		public class NoThrow1 : IDisposable
@@ -634,7 +684,7 @@ namespace Smokey.Tests
 		// test code
 		public DisposeableTest() : base(
 			new string[]{"Good1", "Good2", "Good3", "Good4", "Good5", "Good6", 
-				"Good7", "Good8", "Good9"},
+				"Good7", "Good8", "Good9", "Good10"},
 			new string[]{"NoThrow1", "NoThrow2", "FieldNotDisposed", "NoSuppress",
 				"BogusDisposeName1", "BogusDisposeName2", "BogusDisposeName3", "BogusDisposeName4", "BogusDisposeName5",
 				"VirtualDispose", "PublicDispose1", "PublicDispose2", "PrivateDispose",

@@ -98,6 +98,18 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitCompare(Compare op)
 		{
+			// Compiler sometimes generates this code to return true.
+			if (op.Index >= 2)
+			{
+				// ldc.i4.0 
+				// ldc.i4.0 
+				// ceq 
+				LoadConstantInt rhs = m_info.Instructions[op.Index - 1] as LoadConstantInt;
+				LoadConstantInt lhs = m_info.Instructions[op.Index - 2] as LoadConstantInt;
+				if (lhs != null && rhs != null && lhs.Value == 0 && rhs.Value == 0)
+					return;
+			}
+			
 			if (m_offset < 0)
 				DoCheck(op);
 		}

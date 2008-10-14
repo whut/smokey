@@ -66,7 +66,7 @@ namespace Smokey.Framework.Support.Advanced
 			if (!m_graph.TryGetValue(method, out list))
 			{
 				list = new List<MethodReference>();
-				m_graph.Add(method, list);
+				m_graph.Add(method, list);				// TODO: should we try to add overrides?
 			}		
 			
 			if (list.IndexOf(callee) < 0)

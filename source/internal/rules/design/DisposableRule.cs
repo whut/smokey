@@ -125,18 +125,18 @@ namespace Smokey.Internal.Rules
 				if (method.Name == "Dispose")	
 				{
 					if (method.ReturnType.ReturnType.FullName != "System.Void")
-						m_badDisposeNames.Add(method.ToString());
+						m_badDisposeNames.Add("   " + method.ToString());
 						
 					else if (method.Parameters.Count > 1)
-						m_badDisposeNames.Add(method.ToString());
+						m_badDisposeNames.Add("   " + method.ToString());
 						
 					else if (method.Parameters.Count == 1 && method.Parameters[0].ParameterType.FullName != "System.Boolean")
-						m_badDisposeNames.Add(method.ToString());
+						m_badDisposeNames.Add("   " + method.ToString());
 				}
 				
 				if (method.Name == "OnDispose" || method.Name == "DoDispose")
 					if (!method.IsPrivate)
-						m_illegalDisposeNames.Add(method.ToString());
+						m_illegalDisposeNames.Add("   " + method.ToString());
 
 				// The IDisposable pattern says that SuppressFinalize should only be called from Dispose().
 				m_isNullaryDispose = method.Matches("System.Void", "Dispose");
@@ -163,9 +163,11 @@ namespace Smokey.Internal.Rules
 					MethodAttributes attrs = method.Attributes;
 					if ((attrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public)
 					{
-						if (method.Name != "Dispose" && method.Name != "Close" && !method.Name.StartsWith("get_"))
+						if (method.Name != "Dispose" && method.Name != "Close")
 						{
-							m_needsThrowCheck = true;
+							if (!method.Name.StartsWith("get_") && !method.Name.StartsWith("add_") && !method.Name.StartsWith("remove_"))	// TODO: add an extension method to figure this out, probably can make this better by checking IsSpecialName
+								if (!method.CustomAttributes.Has("CompilerGeneratedAttribute"))
+									m_needsThrowCheck = true;
 						}
 					}
 				}
@@ -269,7 +271,7 @@ namespace Smokey.Internal.Rules
 			{
 				if (m_needsThrowCheck && !m_doesThrow)
 				{
-					m_noThrowMethods += end.Info.Method + Environment.NewLine;
+					m_noThrowMethods += "   " + end.Info.Method + Environment.NewLine;
 				}	
 			
 				// This is a tricky case because people may use arbitrary state to figure

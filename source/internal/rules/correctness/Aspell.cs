@@ -156,6 +156,9 @@ namespace Smokey.Internal.Rules
 			DoAdd("stdout");
 			DoAdd("xml");
 			
+			if (Settings.Has("ignoreList"))
+				Console.Error.WriteLine("the ignoreList setting is no longer supported: use dictionary instead");	// TODO: remove this (eventually)
+			
 			string path = Settings.Get("dictionary", string.Empty);
 			string[] entries = path.Split(':');
 			foreach (string s in entries)

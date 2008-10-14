@@ -78,7 +78,7 @@ namespace Smokey.Framework.Support
 			foreach (CustomAttribute attr in attrs)
 			{
 //				Log.InfoLine(true, "   {0}", attr.Constructor.DeclaringType.Name);
-				if (attr.Constructor.DeclaringType.Name == name)
+				if (attr.Constructor.DeclaringType.Name == name)	// note that this is the type name, not the full name
 					return true;
 			}
 			

@@ -128,7 +128,7 @@ namespace Smokey.Tests
 		
 		internal sealed class Bad3b
 		{
-			public static void Normalize(string s)
+			public static void Foo(string s)
 			{
 				Console.Error.WriteLine("value: {0}", s);		
 				Console.Error.WriteLine("sum: {0}, product: {1}", s + s, s.Substring(10));		

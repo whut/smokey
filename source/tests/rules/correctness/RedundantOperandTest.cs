@@ -85,11 +85,33 @@ namespace Smokey.Tests
 				return ReferenceEquals(a + b, a + b);
 			}
 		}
+		
+		public struct TablePosition 
+		{	
+			public int Column 
+			{
+				get {return column;}
+				set {column = value;}
+			}
+	
+			public int Row 
+			{
+				get {return row;}
+				set {row = value;}
+			}
+		
+			public bool Compare(TablePosition p1, TablePosition p2)
+			{
+				return !(p1.column == p2.column && p1.row == p2.row);
+			}
+
+			private int column, row;
+		}
 		#endregion
 		
 		// test code
 		public RedundantOperandTest() : base(
-			new string[]{"Cases.Good1", "Cases.Good2", "Cases.Good3"},
+			new string[]{"Cases.Good1", "Cases.Good2", "Cases.Good3", "TablePosition.Compare"},
 			new string[]{"Cases.Bad1", "Cases.Bad2", "Cases.Bad3", "Cases.Bad4", 
 				"Cases.Bad5", "Cases.Bad6", "Cases.Bad7"})	
 		{

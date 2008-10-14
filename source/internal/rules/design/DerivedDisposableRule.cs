@@ -129,8 +129,8 @@ namespace Smokey.Internal.Rules
 			if (m_hasFinalizer)
 				details += "Type has a finalizer" + Environment.NewLine;
 
-			if (m_disposable && end.Type.TypeImplements("System.IDisposable"))
-				details += "Type re-implements IDisposable" + Environment.NewLine;
+//			if (m_disposable && end.Type.TypeImplements("System.IDisposable"))
+//				details += "Type re-implements IDisposable" + Environment.NewLine;
 
 			if (m_hasDispose)
 				details += "Type has a Dispose() method" + Environment.NewLine;

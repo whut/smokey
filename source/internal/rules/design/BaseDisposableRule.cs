@@ -48,9 +48,13 @@ namespace Smokey.Internal.Rules
 		{
 			m_disposable = false;
 			
-			if (!begin.Type.IsSealed && !begin.Type.IsCompilerGenerated())
+			TypeDefinition baseType = Cache.FindType(begin.Type.BaseType);
+			
+			if (!begin.Type.IsSealed && !begin.Type.IsNestedPrivate && !begin.Type.IsCompilerGenerated())
 				if (begin.Type.TypeImplements("System.IDisposable"))
-					m_disposable = true;
+					if (baseType == null || !baseType.TypeOrBaseImplements("System.IDisposable", Cache))	// don't check types with redundent IDisposable declarations
+						if (!begin.Type.IsInterface)
+							m_disposable = true;
 			m_hasUnaryDispose = false;
 			
 			if (m_disposable)
