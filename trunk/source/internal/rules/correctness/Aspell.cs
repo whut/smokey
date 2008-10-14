@@ -156,11 +156,7 @@ namespace Smokey.Internal.Rules
 			DoAdd("stdout");
 			DoAdd("xml");
 			
-			string path = Settings.Get("ignoreList", string.Empty);	// TODO: remove this
-			if (path.Length > 0)
-				DoAddDictFile(path);
-
-			path = Settings.Get("dictionary", string.Empty);
+			string path = Settings.Get("dictionary", string.Empty);
 			string[] entries = path.Split(':');
 			foreach (string s in entries)
 				DoAddDictFile(s);

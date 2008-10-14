@@ -12,7 +12,7 @@ normally be Error. -->
 			</Description>
 	
 			<Fix>
-			Correct the spelling or use the -set:ignoreList command line switch.
+			Correct the spelling or use the -set:dictionary command line switch.
 			</Fix>
 		</Translation>
 	</Violation>	
@@ -496,7 +496,7 @@ normally be Error. -->
 			</Description>
 	
 			<Fix>
-			Correct the spelling or use the -set:ignoreList command line switch.
+			Correct the spelling or use the -set:dictionary command line switch.
 			</Fix>
 		</Translation>
 	</Violation>	

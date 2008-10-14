@@ -43,16 +43,18 @@ namespace Smokey.Tests
 		{
 			m_good.Clear();
 			m_bad.Clear();
-			m_used.Clear();
+			m_usedTypes.Clear();
 		}
 		
-		/// <summary>Good and bad names should be of the form "TestClass".</summary>
+		/// <summary>Good and bad names should be of the form "TestClass". If multiple types 
+		/// should be visited during a single test concatenate the type names with "+".</summary>
 		public AssemblyTest(string[] good, string[] bad) : this(good, bad, new string[0])
 		{
 		}
 																
-		/// <summary>Good, badm and used names should be of the form "TestClass". Used is a list
-		/// of type names that aren't checked, but are used during testing.</summary>
+		/// <summary>Good, bad, and used names should be of the form "TestClass". If multiple 
+		/// types should be visited during a single test concatenate the type names with "+". 
+		/// Used is a list of type names that aren't checked, but are used during testing.</summary>
 		public AssemblyTest(string[] good, string[] bad, string[] used) : this(good, bad, used, System.Reflection.Assembly.GetExecutingAssembly().Location)
 		{
 		}
@@ -62,9 +64,15 @@ namespace Smokey.Tests
 		{
 			try
 			{			
-				DoGetTypes(m_good, good);	
+				DoGetTypes(m_good, good);			
 				DoGetTypes(m_bad, bad);
-				DoGetTypes(m_used, used);
+
+				var temp = new List<List<TypeDefinition>>();
+				DoGetTypes(temp, used);
+				
+				foreach (var l in temp)
+					foreach (var t in l)
+						m_usedTypes.Add(t);
 			}
 			catch (Exception e)
 			{
@@ -78,63 +86,31 @@ namespace Smokey.Tests
 		public void Test()
 		{
 			// Test the good cases.
-			List<TypeDefinition> types = new List<TypeDefinition>(m_good);
-			types.AddRange(m_used);
+			List<List<TypeDefinition>> types = new List<List<TypeDefinition>>(m_good);
 			
-			AssemblyCache cache = new AssemblyCache(Assembly, types);
-			Rule rule = OnCreate(cache, this);		
-
-			foreach (TypeDefinition type in m_good)
+			foreach (List<TypeDefinition> cases in types)
 			{
-				RuleDispatcher dispatcher = new RuleDispatcher();
-				rule.Register(dispatcher);
-				m_failed = false;
+				cases.AddRange(m_usedTypes);
+				AssemblyCache cache = new AssemblyCache(Assembly, cases);
+				Rule rule = OnCreate(cache, this);		
 
-				dispatcher.Dispatch(Assembly);
-				dispatcher.Dispatch(type);
-				
-				foreach (MethodInfo info in cache.Methods)
-				{
-					if (info.Type.MetadataToken == type.MetadataToken)	
-						dispatcher.Dispatch(info);
-						
-					else if (m_used.Exists(e => e.MetadataToken == info.Type.MetadataToken))
-						dispatcher.Dispatch(info);
-				}
-			
-				dispatcher.DispatchCallGraph();
+				DoRunTest(rule, cases, cache);
 				if (m_failed)
-					Assert.Fail("good cases {0} should have passed", type.Name);
+					Assert.Fail("good cases {0} should have passed", string.Join("+", cases.Select(c => c.Name).ToArray()));
 			}
 			
 			// Test the bad cases.
-			types = new List<TypeDefinition>(m_bad);
-			types.AddRange(m_used);
+			types = new List<List<TypeDefinition>>(m_bad);
 			
-			cache = new AssemblyCache(Assembly, types);
-			rule = OnCreate(cache, this);		
-
-			foreach (TypeDefinition type in m_bad)
+			foreach (List<TypeDefinition> cases in types)
 			{
-				RuleDispatcher dispatcher = new RuleDispatcher();
-				rule.Register(dispatcher);
-				m_failed = false;
+				cases.AddRange(m_usedTypes);
+				AssemblyCache cache = new AssemblyCache(Assembly, cases);
+				Rule rule = OnCreate(cache, this);		
 
-				dispatcher.Dispatch(Assembly);
-				dispatcher.Dispatch(type);
-
-				foreach (MethodInfo info in cache.Methods)
-				{
-					if (info.Type.MetadataToken == type.MetadataToken)	
-						dispatcher.Dispatch(info);
-						
-					else if (m_used.Exists(e => e.MetadataToken == info.Type.MetadataToken))
-						dispatcher.Dispatch(info);
-				}
-	
-				dispatcher.DispatchCallGraph();
+				DoRunTest(rule, cases, cache);
 				if (!m_failed)
-					Assert.Fail("bad cases {0} should have failed", type.Name);
+					Assert.Fail("bad cases {0} should have failed", string.Join("+", cases.Select(c => c.Name).ToArray()));
 			}			
 		}
 		
@@ -145,12 +121,12 @@ namespace Smokey.Tests
 
 		public void TypeFailed(TypeDefinition type, string checkID, string details)
 		{
-			DBC.Fail("shouldn't get type failed for an assembly rule!");
+			m_failed = true;
 		}
 
 		public void MethodFailed(MethodDefinition method, string checkID, int offset, string details)	
 		{
-			DBC.Fail("shouldn't get method failed for an assembly rule!");
+			m_failed = true;
 		}
 
 		#region Protected Methods ---------------------------------------------
@@ -158,30 +134,58 @@ namespace Smokey.Tests
 		#endregion
 		
 		#region Private Methods -----------------------------------------------
-		private void DoGetTypes(List<TypeDefinition> types, string[] names)
+		private void DoRunTest(Rule rule, List<TypeDefinition> types, AssemblyCache cache)
+		{
+			RuleDispatcher dispatcher = new RuleDispatcher();
+			rule.Register(dispatcher);
+			m_failed = false;
+
+			dispatcher.Dispatch(new BeginTesting());
+			dispatcher.Dispatch(Assembly);
+			
+			foreach (TypeDefinition t in types)
+				dispatcher.Dispatch(t);
+
+			foreach (MethodInfo info in cache.Methods)
+			{
+				dispatcher.Dispatch(info);
+			}
+
+			dispatcher.DispatchCallGraph();
+			dispatcher.Dispatch(new EndTesting());
+		}
+		
+		private void DoGetTypes(List<List<TypeDefinition>> types, string[] names)
 		{
 			DBC.Assert(names.Distinct().Count() == names.Length, "duplicate name in " + string.Join(", ", names));
 
 			string testName = GetType().FullName;
 			
-			foreach (string name in names)
-			{				
-				if (name.IndexOf('.') < 0)
-				{
+			foreach (string composed in names)
+			{
+				string[] compose = composed.Split('+');
+				
+				List<TypeDefinition> inner = new List<TypeDefinition>();
+				foreach (string name in compose)
+				{				
+					DBC.Assert(name.IndexOf('.') < 0, "type name has a period");
+					
 					string fullName = string.Format("{0}/{1}", testName, name);
 					TypeDefinition type = Assembly.MainModule.Types[fullName];
 					DBC.Assert(type != null, "Couldn't find {0}", fullName);
-
-					types.Add(type);
+	
+					inner.Add(type);
 				}
+				
+				types.Add(inner);
 			}
 		}
 		#endregion 
 		
 		#region Fields --------------------------------------------------------
-		private List<TypeDefinition> m_good = new List<TypeDefinition>();
-		private List<TypeDefinition> m_bad = new List<TypeDefinition>();
-		private List<TypeDefinition> m_used = new List<TypeDefinition>();
+		private List<List<TypeDefinition>> m_good = new List<List<TypeDefinition>>();
+		private List<List<TypeDefinition>> m_bad = new List<List<TypeDefinition>>();
+		private List<TypeDefinition> m_usedTypes = new List<TypeDefinition>();
 		private bool m_failed;
 		#endregion
 	} 

@@ -60,6 +60,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitBegin(BeginMethod begin)
 		{
+			Log.DebugLine(this, "{0}", begin.Info.Method); 
 			m_wasStatic = false;	
 		
 			if (!begin.Info.Method.PrivatelyVisible(Cache))

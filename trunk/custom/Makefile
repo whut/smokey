@@ -33,7 +33,7 @@ check: ../bin/customtests.dll
 
 # -----------------------------------------------------------------------------
 # Other targets
-smokey_flags := --not-localized -set:naming:jurassic -set:ignoreList:../IgnoreList.txt
+smokey_flags := --not-localized -set:naming:jurassic -set:dictionary:../IgnoreList.txt
 smokey_flags += -exclude-check:D1004	# UseStrongName
 smoke: ../bin/custom.dll
 	@-$(MONO) --debug ../bin/smokey.exe $(smokey_flags) ../bin/custom.dll
