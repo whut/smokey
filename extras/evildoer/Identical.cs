@@ -25,106 +25,10 @@ using System.Collections.Generic;
 namespace EvilDoer
 {
 	public static class Identical1
-	{
-		public static void Print1(string s)
-		{
-			Console.Error.WriteLine(s);		// trivial methods are OK
-		}
-		
-		[DisableRule("R1034", "ValidateArgs1")]	
-		public static void Bad(string s)
-		{
-			Console.Error.WriteLine("value: {0}", s);		
-			Console.Error.WriteLine("sum: {0}, product: {1}", s + s, s.Substring(10));		
-			Console.Error.WriteLine("length: {0}", s.Length);
-			
-			int sum = 0;
-			foreach (char c in s)
-				sum += (int) c;
-			Console.Error.WriteLine("summation: {0}", sum);
-		} 		
-		
-		[DisableRule("R1034", "ValidateArgs1")]	
-		public static void Normalize(string s)
-		{
-			Console.Error.WriteLine("value: {0}", s);		
-			Console.Error.WriteLine("sum: {0}, product: {1}", s + s, s.Substring(10));		
-			Console.Error.WriteLine("length: {0}", s.Length);
-			
-			int sum = 0;
-			foreach (char c in s)
-				sum += (int) c;
-			Console.Error.WriteLine("summation: {0}", sum);
-
-			Console.Error.WriteLine("value: {0}", value);
-			Print1(s);
-		} 		
-		
-		private static int value;
+	{		
 	}
 
 	public static class Identical2
-	{
-		public static void Print1(string s)
-		{
-			Console.Error.WriteLine(s);		// trivial methods are OK
-		}
-		
-		[DisableRule("R1034", "ValidateArgs1")]	
-		public static void MyBad(string s)
-		{
-			Console.Error.WriteLine("value: {0}", s);		
-			Console.Error.WriteLine("sum: {0}, product: {1}", s + s, s.Substring(10));		
-			Console.Error.WriteLine("length: {0}", s.Length);
-			
-			int sum = 0;
-			foreach (char c in s)
-				sum += (int) c;
-			Console.Error.WriteLine("summation: {0}", sum);
-		} 		
-
-		// R1034/ValidateArgs1
-		internal static void MyBad2(string ms)
-		{
-			Console.Error.WriteLine("value: {0}", ms);		
-			Console.Error.WriteLine("sum: {0}, product: {1}", ms + ms, ms.Substring(10));		
-			Console.Error.WriteLine("length: {0}", ms.Length);
-			
-			int sum = 0;
-			foreach (char c in ms)
-				sum += (int) c;
-			Console.Error.WriteLine("summation: {0}", sum);
-		} 		
-
-		[DisableRule("R1034", "ValidateArgs1")]	
-		public static void MyBad3(string ms)
-		{
-			Console.Error.WriteLine("value: {0}", ms);		
-			Console.Error.WriteLine("sum: {0}, product: {1}", ms + ms, ms.Substring(10));		
-			Console.Error.WriteLine("length: {0}", ms.Length);
-			
-			int sumX = 0;
-			foreach (char c in ms)
-				sumX += (int) c;
-			Console.Error.WriteLine("summation: {0}", sumX);
-		} 		
-		
-		[DisableRule("R1034", "ValidateArgs1")]	
-		public static void Normalize(string s)
-		{
-			Console.Error.WriteLine("value: {0}", s);		
-			Console.Error.WriteLine("sum: {0}, product: {1}", s + s, s.Substring(10));		
-			Console.Error.WriteLine("length: {0}", s.Length);
-			
-			int sum = 0;
-			foreach (char c in s)
-				sum += (int) c;
-			Console.Error.WriteLine("summation: {0}", sum);
-
-			Console.Error.WriteLine("value: {0}", value);
-			Print1(s);
-		} 		
-		
-		private static int value;
+	{		
 	}
 }
