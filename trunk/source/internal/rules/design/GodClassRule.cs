@@ -34,13 +34,29 @@ namespace Smokey.Internal.Rules
 		public GodClassRule(AssemblyCache cache, IReportViolations reporter) 
 			: base(cache, reporter, "D1045")
 		{
+			m_maxTypes = 60;
 		}
-				
+
+#if TEST	
+		public GodClassRule(AssemblyCache cache, IReportViolations reporter, int maxTypes) 
+			: base(cache, reporter, "D1045")
+		{
+			m_maxTypes = maxTypes;
+		}
+#endif
+
 		public override void Register(RuleDispatcher dispatcher) 
 		{
 			dispatcher.Register(this, "VisitBegin");
+			dispatcher.Register(this, "VisitMethod");
+			dispatcher.Register(this, "VisitCast");
 			dispatcher.Register(this, "VisitCall");
+			dispatcher.Register(this, "VisitInit");
+			dispatcher.Register(this, "VisitLoadField");
+			dispatcher.Register(this, "VisitLoadStaticField");
 			dispatcher.Register(this, "VisitNew");
+			dispatcher.Register(this, "VisitStoreField");
+			dispatcher.Register(this, "VisitStoreStaticField");
 			dispatcher.Register(this, "VisitEnd");
 		}
 		
@@ -53,22 +69,55 @@ namespace Smokey.Internal.Rules
 			m_types.Clear();
 		}
 				
+		public void VisitMethod(BeginMethod begin)
+		{	
+//			Log.DebugLine(this, "{0:F}", begin.Info.Instructions);
+		}
+		
+		public void VisitCast(CastClass cast)
+		{	
+			DoAdd(cast.ToType);
+		}
+		
 		public void VisitCall(Call call)
 		{	
-			if (call.Target.DeclaringType != m_type)
-				DoAdd(call.Target.DeclaringType);
+			DoAdd(call.Target.DeclaringType);
+		}
+		
+		public void VisitInit(InitObj init)
+		{	
+			DoAdd(init.Type);
+		}
+		
+		public void VisitLoadField(LoadField field)
+		{	
+			DoAdd(field.Field.FieldType);
+		}
+		
+		public void VisitLoadStaticField(LoadStaticField field)
+		{	
+			DoAdd(field.Field.FieldType);
 		}
 		
 		public void VisitNew(NewObj obj)
 		{	
-			if (obj.Ctor.DeclaringType != m_type)
-				DoAdd(obj.Ctor.DeclaringType);
+			DoAdd(obj.Ctor.DeclaringType);
+		}
+		
+		public void VisitStoreField(StoreField field)
+		{	
+			DoAdd(field.Field.FieldType);
+		}
+		
+		public void VisitStoreStaticField(StoreStaticField field)
+		{	
+			DoAdd(field.Field.FieldType);
 		}
 		
 		public void VisitEnd(EndMethods end)
 		{
 			Log.DebugLine(this, "   {0} types", m_types.Count);
-			if (m_types.Count >= 40)
+			if (m_types.Count >= m_maxTypes)
 			{
 				Log.TraceLine(this, "{0} references {1} types:", m_type.FullName, m_types.Count);
 				foreach (string type in m_types)
@@ -81,27 +130,31 @@ namespace Smokey.Internal.Rules
 		
 		private void DoAdd(TypeReference type)
 		{
-			GenericInstanceType generic = type as GenericInstanceType;
-			if (generic != null)
+			if (type != m_type)
 			{
-				DoAdd(generic.GetOriginalType());
-				for (int i = 0; i < generic.GenericArguments.Count; ++i)
-					DoAdd(generic.GenericArguments[i]);
-			}
-			else
-			{
-				string name = type.FullName;
-			
-				if (name.IndexOf("CompilerGenerated") < 0 && m_types.IndexOf(name) < 0)
+				GenericInstanceType generic = type as GenericInstanceType;
+				if (generic != null)
 				{
-					Log.DebugLine(this, "   {0}", name);
-					m_types.Add(name);
+					DoAdd(generic.GetOriginalType());
+					for (int i = 0; i < generic.GenericArguments.Count; ++i)
+						DoAdd(generic.GenericArguments[i]);
+				}
+				else
+				{
+					string name = type.FullName;
+				
+					if (!type.IsCompilerGenerated() && m_types.IndexOf(name) < 0)
+					{
+						Log.DebugLine(this, "   {0}", name);
+						m_types.Add(name);
+					}
 				}
 			}
 		}
 		
 		private TypeReference m_type;
 		private List<string> m_types = new List<string>();
+		private int m_maxTypes;
 	}
 }
 

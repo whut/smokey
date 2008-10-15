@@ -68,6 +68,10 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitType(TypeDefinition type)
 		{
+			if (type.Name.Length >= 4)				// weird generated types like P1`1
+				if (char.IsLetter(type.Name[0]) && char.IsDigit(type.Name[1]) && type.Name[2] == '`' && char.IsDigit(type.Name[3]))
+					return;
+			
 			if (m_needsCheck)
 			{
 				// Type name must be PascalCase.
@@ -117,6 +121,9 @@ namespace Smokey.Internal.Rules
 				return;
 			
 			if (field.Name.IndexOf("<") >= 0)	// auto-property
+				return;
+			
+			if (field.Name[0] == '$')
 				return;
 			
 			// Protected and private fields must be divided_by_underscores. 

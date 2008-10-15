@@ -43,11 +43,19 @@ namespace Smokey.Framework.Support
 						
 			foreach (ModuleDefinition module in assembly.Modules) 
 			{
+				// Note that if the type is generic it will be listed once with a name like SomeType`1
+				// where the number of the number of generic arguments.
 				foreach (TypeDefinition type in module.Types)
 				{	
 					DoCheckForPublics(type);
 					
-					m_types.Add(type.MetadataToken, type);
+					TypeKey key = new TypeKey(type);
+					if (!m_types.ContainsKey(key))
+						m_types.Add(key, type);
+					else if (!type.FullName.Contains("CompilerGenerated"))
+						m_types[key] = type;								// replace Database`1/<>c__CompilerGenerated5 with Database`1
+						
+					Log.DebugLine(this, "adding {0}", type.FullName);
 					if (callback != null)
 						callback(string.Format("adding {0}", type.Name));
 		
@@ -67,14 +75,16 @@ namespace Smokey.Framework.Support
 		public AssemblyCache(AssemblyDefinition assembly, TypeDefinition baseType, List<MethodInfo> methods)
 		{			
 			DoCheckForPublics(baseType);	
-			m_types.Add(baseType.MetadataToken, baseType);
+			m_types.Add(new TypeKey(baseType), baseType);
+			Log.DebugLine(this, "adding {0}", baseType.FullName);
 				
 			foreach (MethodInfo method in methods)
 			{
-				if (!m_types.ContainsKey(method.Type.MetadataToken))
+				if (!m_types.ContainsKey(new TypeKey(method.Type)))
 				{
 					DoCheckForPublics(method.Type);	
-					m_types.Add(method.Type.MetadataToken, method.Type);
+					m_types.Add(new TypeKey(method.Type), method.Type);
+					Log.DebugLine(this, "adding {0}", method.Type.FullName);
 				}
 				
 				if (!m_methods.ContainsKey(method.Method.MetadataToken))
@@ -92,12 +102,13 @@ namespace Smokey.Framework.Support
 			}
 		}	
 
-		public AssemblyCache(AssemblyDefinition assembly, List<TypeDefinition> types)
+		public AssemblyCache(AssemblyDefinition assembly, IEnumerable<TypeDefinition> types)
 		{			
 			foreach (TypeDefinition type in types)
 			{
 				DoCheckForPublics(type);					
-				m_types.Add(type.MetadataToken, type);
+				m_types.Add(new TypeKey(type), type);
+				Log.DebugLine(this, "adding {0}", type.FullName);
 
 				List<MethodInfo> ml = new List<MethodInfo>();			
 				DoAddMethods(type, type.Constructors, ml);
@@ -108,7 +119,9 @@ namespace Smokey.Framework.Support
 			m_assembly = assembly;
 			
 			if (ms_externalTypes != null)
+			{
 				m_externalTypes = ms_externalTypes;	
+			}
 			else
 			{
 				DoLoadDependentAssemblies(null);
@@ -142,15 +155,16 @@ namespace Smokey.Framework.Support
 			}
 		}
 
-		/// <summary>Note that this may return a type defined in a dependent assembly.</summary>
-		/// <summary>Returns null if the type cannot be found.</summary>
+		/// <summary>Note that this may return a type defined in a dependent assembly. For
+		/// constructed generic types (List`1&lt;System.Int32&gt;) this will return the unconstructed
+		/// type (List`1). Returns null if the type cannot be found.</summary>
 		public TypeDefinition FindType(TypeReference tr)
 		{
 			TypeDefinition type = tr as TypeDefinition;
 			
 			if (tr != null && type == null)
 			{
-				if (!m_types.TryGetValue(tr.MetadataToken, out type) || !DoMatchType(type, tr))
+				if (!m_types.TryGetValue(new TypeKey(tr), out type) || !DoMatchType(type, tr))
 				{						
 					if (!m_externalTypes.TryGetValue(tr.FullName, out type))
 					{
@@ -166,8 +180,13 @@ namespace Smokey.Framework.Support
 			}
 			
 			if (type != null)
+			{
 				if (!DoMatchType(tr, type))
+				{
+					Log.DebugLine(this, "found type {0}, but it does not match {1}", type.FullName, tr.FullName);
 					type = null;
+				}
+			}
 			
 			return type;
 		}
@@ -365,9 +384,136 @@ namespace Smokey.Framework.Support
 		}
 		#endregion
 		
+		#region Private Types -------------------------------------------------
+		public struct TypeKey : IEquatable<TypeKey>
+		{
+			public TypeKey(TypeReference type)
+			{
+				m_type = type;
+			}
+								
+			public static bool operator==(TypeKey lhs, TypeKey rhs)
+			{
+				bool matches = false;
+				
+				// If the full name and the MetadataToken are the same then the
+				// two types are (probably) the same. It'd be nice to use the
+				// MetadataToken here, but there are different tokens for type
+				// references and type definitions even when they both refer
+				// to the same type.
+				if (lhs.Name == rhs.Name)
+				{
+					matches = true;
+				}
+				// Otherwise if they are both generic then they are (probably)
+				// equal if one is of the form SomeType`1 and the other is of
+				// the form SomeType`1<AnotherType>.
+				else if (lhs.IsGeneric && rhs.IsGeneric)
+				{
+					if (!lhs.IsConstructed())
+					{
+						matches = rhs.Name.StartsWith(lhs.Name);
+					}
+					else if (!rhs.IsConstructed())
+					{
+						matches = lhs.Name.StartsWith(rhs.Name);
+					}
+				}
+				
+				return matches;
+			}
+			
+			public static bool operator!=(TypeKey lhs, TypeKey rhs)
+			{
+				return !(lhs == rhs);
+			}
+
+			public override int GetHashCode()		
+			{
+				int hash;
+				
+				unchecked
+				{
+					if (IsGeneric)
+					{
+						// Note that we can't return different hash codes for List`1 and
+						// List`1<System.Int32> because they compare equal.
+						int i = Name.IndexOf('`');
+						if (i >= 0)
+							hash = Name.Substring(0, i).GetHashCode();
+						else
+							hash = Name.GetHashCode();
+					}
+					else
+					{
+						hash = Name.GetHashCode();
+					}
+				}
+				
+				return hash;
+			}
+			
+			public override bool Equals(object rhsObj)
+			{
+				if (rhsObj == null)						
+					return false;
+				
+				if (GetType() != rhsObj.GetType()) 
+					return false;
+			
+				TypeKey rhs = (TypeKey) rhsObj;					
+				return this == rhs;
+			}
+				
+			public bool Equals(TypeKey rhs)	
+			{					
+				return this == rhs;
+			}
+			
+			private string Name
+			{
+				get {return m_type.FullName;}
+			}
+											
+			private bool IsGeneric
+			{
+				get 
+				{
+					int i = Name.IndexOf('`');
+					return i >= 0 && i + 1 < Name.Length && char.IsDigit(Name[i + 1]);
+				}
+			}
+			
+			// Constructed generic types are those which have been given generic
+			// types. So List is not constructed (and the type name is List`1),
+			// but Dictionary<int, string> and Dictionary<T, string> are constructed
+			// types (and the names are Dictionary`2<System.Int32, System.String>
+			// and Dictionary`2<T, System.String>). The generic types we get from the
+			// assembly's module are not constructed, but most type usages are.
+			private bool IsConstructed()
+			{
+				bool constructed = false;
+				
+				int i = Name.IndexOf('`');
+				if (i >= 0 && i + 1 < Name.Length && char.IsDigit(Name[i + 1]))
+				{
+					++i;
+					while (i < Name.Length && char.IsDigit(Name[i]))
+						++i;
+						
+					constructed = i < Name.Length && Name[i] == '<';
+				}
+				
+				return constructed;
+			}
+
+			private readonly TypeReference m_type;
+		}
+		#endregion
+
 		#region Fields --------------------------------------------------------
 		private AssemblyDefinition m_assembly;	
-		private Dictionary<MetadataToken, TypeDefinition> m_types = new Dictionary<MetadataToken, TypeDefinition>();
+		private Dictionary<TypeKey, TypeDefinition> m_types = new Dictionary<TypeKey, TypeDefinition>();
 		private Dictionary<MetadataToken, MethodInfo> m_methods = new Dictionary<MetadataToken, MethodInfo>();
 		private Dictionary<TypeDefinition, List<MethodInfo>> m_typeMethods = new Dictionary<TypeDefinition, List<MethodInfo>>();
 		private Dictionary<string, TypeDefinition> m_externalTypes = new Dictionary<string, TypeDefinition>();

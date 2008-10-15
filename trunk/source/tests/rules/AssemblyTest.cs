@@ -143,8 +143,10 @@ namespace Smokey.Tests
 			dispatcher.Dispatch(new BeginTesting());
 			dispatcher.Dispatch(Assembly);
 			
+			dispatcher.Dispatch(new BeginTypes());
 			foreach (TypeDefinition t in types)
 				dispatcher.Dispatch(t);
+			dispatcher.Dispatch(new EndTypes());
 
 			foreach (MethodInfo info in cache.Methods)
 			{
@@ -160,16 +162,14 @@ namespace Smokey.Tests
 			DBC.Assert(names.Distinct().Count() == names.Length, "duplicate name in " + string.Join(", ", names));
 
 			string testName = GetType().FullName;
-			
+						
 			foreach (string composed in names)
 			{
 				string[] compose = composed.Split('+');
 				
 				List<TypeDefinition> inner = new List<TypeDefinition>();
 				foreach (string name in compose)
-				{				
-					DBC.Assert(name.IndexOf('.') < 0, "type name has a period");
-					
+				{									
 					string fullName = string.Format("{0}/{1}", testName, name);
 					TypeDefinition type = Assembly.MainModule.Types[fullName];
 					DBC.Assert(type != null, "Couldn't find {0}", fullName);

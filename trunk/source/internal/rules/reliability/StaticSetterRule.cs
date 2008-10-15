@@ -95,8 +95,11 @@ namespace Smokey.Internal.Rules
 			{
 				if (store.Field.DeclaringType.MetadataToken == m_info.Type.MetadataToken)
 				{
-					Log.DebugLine(this, "found store at {0:X2}", store.Untyped.Offset);	
-					m_setsState = true;
+					if (!DoAtomicField(store.Field) || !DoVolatileStore(store))
+					{
+						Log.DebugLine(this, "found store at {0:X2}", store.Untyped.Offset);	
+						m_setsState = true;
+					}
 				}
 			}
 		}
@@ -136,11 +139,51 @@ namespace Smokey.Internal.Rules
 				}
 			}
 			
+			details = details.Trim();
 			if (details.Length > 0)
 			{
 				Log.DebugLine(this, details);	
 				Reporter.AssemblyFailed(Cache.Assembly, CheckID, details);
 			}
+		}
+		
+		private bool DoAtomicField(FieldReference field)
+		{
+			bool atomic = false;
+			
+			// atomic if the field is the size of a a native int or smaller (and the write is aligned)
+			switch (field.FieldType.FullName)
+			{
+				case "System.Boolean":
+				case "System.Byte":
+				case "System.Char":
+				case "System.Int16":
+				case "System.Int32":
+				case "System.IntPtr":
+				case "System.SByte":
+				case "System.Single":
+				case "System.UInt16":
+				case "System.UInt32":
+				case "System.UIntPtr":
+					atomic = true;
+					break;
+					
+				default:
+					if (!field.FieldType.IsValueType)
+						atomic = true;					// reference type writes are atomic
+					break;
+			}
+						
+			return atomic;
+		}
+
+		// ldarg.0 
+        // volatile. 
+        // stsfld bool Smokey.Tests.StaticSetterTest/Static::ms_vatomic
+		private bool DoVolatileStore(StoreStaticField store)
+		{
+			TypedInstruction prior = m_info.Instructions[store.Index - 1];
+			return prior.Untyped.OpCode.Code == Code.Volatile;
 		}
 		
 		private bool DoFoundBadSetter(CallGraph graph, MethodReference method, List<string> chain)

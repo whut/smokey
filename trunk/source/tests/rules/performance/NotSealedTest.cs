@@ -20,50 +20,73 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Mono.Cecil;
-using Mono.Cecil.Cil;
+using NUnit.Framework;
 using System;
-using Smokey.Framework;
-using Smokey.Framework.Instructions;
+using System.Reflection;
 using Smokey.Framework.Support;
+using Smokey.Internal.Rules;
 
-namespace Smokey.Internal.Rules
-{	
-	internal sealed class NotSealedRule : Rule
-	{				
-		public NotSealedRule(AssemblyCache cache, IReportViolations reporter) 
-			: base(cache, reporter, "P1020")
-		{
+namespace Smokey.Tests
+{
+	[TestFixture]
+	public class NotSealedTest : AssemblyTest
+	{	
+		#region Test cases
+		private abstract class Good1			// not concrete
+		{		
 		}
-				
-		public override void Register(RuleDispatcher dispatcher) 
-		{
-			dispatcher.Register(this, "VisitType");
+
+		public class Good2						// externally visible
+		{		
 		}
-				
-		public void VisitType(TypeDefinition candidate)
-		{
-			if (!candidate.IsAbstract && !candidate.ExternallyVisible(Cache) && candidate.IsClass && !candidate.IsSealed)
+
+		private sealed class Good3				// sealed
+		{		
+		}
+
+		private class Good4						// has derived						
+		{		
+		}
+
+		private sealed class Good5 : Good4		// sealed
+		{		
+		}
+
+		private class Good6<T>						// has derived						
+		{		
+			public void Print(T foo)
 			{
-				if (candidate.FullName != "<Module>" && !candidate.IsCompilerGenerated())
-				{
-					Log.DebugLine(this, "checking {0}", candidate);	
-					
-					foreach (TypeDefinition type in Cache.Types)
-					{	
-						if (type.IsSubclassOf(candidate, Cache))
-						{
-//							Log.DebugLine(this, "   is base class for {0} [{1}]", type, type.BaseType);	
-							return;
-						}
-//						else
-//							Log.DebugLine(this, "   not a base class for {0} [{1}]", type, type.BaseType);	
-					}
-	
-//					Log.DebugLine(this, "   failed");	
-					Reporter.TypeFailed(candidate, CheckID, string.Empty);
-				}
+				Console.WriteLine(foo);
 			}
 		}
-	}
-}
 
+		private sealed class Good7 : Good6<string>	// sealed
+		{		
+		}
+
+		private class Bad1						
+		{		
+		}
+
+		private class Bad2<T>						
+		{		
+			public void Print(T foo)
+			{
+				Console.WriteLine(foo);
+			}
+		}
+		#endregion
+		
+		// test code
+		public NotSealedTest() : base(
+			new string[]{"Good1+Good2+Good3+Good4+Good5", "Good6`1+Good7"},
+			new string[]{"Good1+Bad1", "Good1+Bad2`1"})	
+		{
+		}
+						
+		protected override Rule OnCreate(AssemblyCache cache, IReportViolations reporter)
+		{
+			return new NotSealedRule(cache, reporter);
+		}
+	} 
+}
