@@ -21,13 +21,14 @@
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 using Smokey.Framework.Support.Advanced;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Smokey.Internal.Rules
 {	
@@ -43,6 +44,8 @@ namespace Smokey.Internal.Rules
 			dispatcher.Register(this, "VisitBegin");
 			dispatcher.Register(this, "VisitType");
 			dispatcher.Register(this, "VisitEndTypes");
+			dispatcher.Register(this, "VisitMethod");
+			dispatcher.Register(this, "VisitCall");
 			dispatcher.Register(this, "VisitNewObj");
 			dispatcher.Register(this, "VisitInitObj");
 			dispatcher.Register(this, "VisitFini");
@@ -51,7 +54,8 @@ namespace Smokey.Internal.Rules
 		public void VisitBegin(BeginTesting begin)
 		{						
 			Log.DebugLine(this, "++++++++++++++++++++++++++++++++++"); 
-			m_types.Clear();		// need this for unit tests
+			m_keys.Clear();		// need this for unit tests
+			m_types.Clear();
 			m_state = 0;
 		}
 		
@@ -64,10 +68,11 @@ namespace Smokey.Internal.Rules
 			{	
 				if (!type.IsCompilerGenerated())
 				{
-					DBC.Assert(m_types.IndexOf(type.FullName) < 0, "{0} is already in types", type.FullName);
+					var key = new AssemblyCache.TypeKey(type);
+					DBC.Assert(m_keys.IndexOf(key) < 0, "{0} is already in types", type.FullName);
 					Log.DebugLine(this, "adding {0}", type.FullName);
 					
-					m_types.Add(type.FullName);
+					m_keys.Add(key);
 				}
 			}
 		}
@@ -81,27 +86,39 @@ namespace Smokey.Internal.Rules
 			Log.DebugLine(this, "-------------"); 
 			Log.DebugLine(this, "VisitEndTypes");
 			
+			m_types.AddRange(m_keys.Select(k => k.Type.FullName));
 			m_types.Sort();
 			m_state = State.Calls;
 		}
 		
 		// These are visited after types.
+		public void VisitMethod(BeginMethod begin)
+		{
+//			Log.DebugLine(this, "{0}", begin.Info.Method);
+		}
+		
+		// call  System.Void Smokey.Tests.NotInstantiatedTest/Tuple2`2<T0,T1>::.ctor(T0,T1)
+		public void VisitCall(Call call)
+		{
+			DBC.Assert(m_state == State.Calls, "state is {0}", m_state);
+
+			if (m_types.Count > 0)
+			{
+				MethodInfo info = Cache.FindMethod(call.Target);
+				if (info != null && info.Method.IsConstructor)
+				{
+					DoRemoveTypes(info.Method.DeclaringType);
+				}
+			}
+		}
+				
 		public void VisitNewObj(NewObj newobj)
 		{
 			DBC.Assert(m_state == State.Calls, "state is {0}", m_state);
 
 			if (m_types.Count > 0)
 			{
-				TypeReference tr = newobj.Ctor.DeclaringType;
-				while (tr != null)
-				{
-					DoRemove(tr);
-					TypeDefinition type = Cache.FindType(tr);
-					if (type != null)
-						tr = Cache.FindType(type.BaseType);
-					else
-						tr = null;
-				}			
+				DoRemoveTypes(newobj.Ctor.DeclaringType);
 			}
 		}
 				
@@ -111,16 +128,7 @@ namespace Smokey.Internal.Rules
 
 			if (m_types.Count > 0)
 			{
-				TypeReference tr = init.Type;
-				while (tr != null)
-				{
-					DoRemove(tr);
-					TypeDefinition type = Cache.FindType(tr);
-					if (type != null)
-						tr = Cache.FindType(type.BaseType);
-					else
-						tr = null;
-				}			
+				DoRemoveTypes(init.Type);
 			}
 		}
 				
@@ -228,6 +236,19 @@ namespace Smokey.Internal.Rules
 			return false;
 		}
 		
+		private void DoRemoveTypes(TypeReference tr)
+		{
+			while (tr != null)
+			{
+				DoRemove(tr);
+				TypeDefinition type = Cache.FindType(tr);
+				if (type != null)
+					tr = Cache.FindType(type.BaseType);
+				else
+					tr = null;
+			}			
+		}
+		
 		private void DoRemove(TypeReference type)
 		{
 			string name = type.FullName;
@@ -235,13 +256,14 @@ namespace Smokey.Internal.Rules
 			int i = m_types.BinarySearch(name);
 			if (i >= 0)
 			{
-				Log.DebugLine(this, "found new {0}", name);
+				Log.DebugLine(this, "found reference to {0}", name);
 				m_types.RemoveAt(i);
 			}
 		}
 				
 		private enum State {Types, Calls, End};
 				
+		private List<AssemblyCache.TypeKey> m_keys = new List<AssemblyCache.TypeKey>();
 		private List<string> m_types = new List<string>();
 		private State m_state;
 	}

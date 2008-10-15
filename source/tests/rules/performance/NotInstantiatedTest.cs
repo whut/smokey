@@ -90,11 +90,40 @@ namespace Smokey.Tests
 				return new Bad2b();
 			}
 		}
+
+		// -------------------------
+		internal static class Tuple
+		{
+			public static Tuple2<T0, T1> Make<T0, T1>(T0 value0, T1 value1)
+			{
+				return new Tuple2<T0, T1>(value0, value1);
+			}
+		}
+		
+		internal struct Tuple2<T0, T1> 
+		{	
+			public Tuple2(T0 value0, T1 value1)
+			{
+				m_value0 = value0;
+				m_value1 = value1;
+			}
+			
+			public T0 First		{get {return m_value0;}}
+			public T1 Second	{get {return m_value1;}}
+									
+			public override string ToString()
+			{
+				return string.Format("[{0}, {1}]", m_value0, m_value1);
+			}
+											
+			private T0 m_value0;
+			private T1 m_value1;
+		}
 		#endregion
 		
 		// test code
 		public NotInstantiatedTest() : base(
-			new string[]{"Base+Good1a+Good1b", "Good2a+Good2b"},
+			new string[]{"Base+Good1a+Good1b", "Good2a+Good2b", "Tuple+Tuple2`2"},
 			new string[]{"Base+Bad1a+Bad1b", "Bad2a+Bad2b"})	
 		{
 		}
