@@ -40,23 +40,35 @@ namespace Smokey.Internal.Rules
 				
 		public override void Register(RuleDispatcher dispatcher) 
 		{
+			dispatcher.Register(this, "VisitBegin");
 			dispatcher.Register(this, "VisitType");
 			dispatcher.Register(this, "VisitEndTypes");
 			dispatcher.Register(this, "VisitNewObj");
+			dispatcher.Register(this, "VisitInitObj");
 			dispatcher.Register(this, "VisitFini");
 		}
 				
+		public void VisitBegin(BeginTesting begin)
+		{						
+			Log.DebugLine(this, "++++++++++++++++++++++++++++++++++"); 
+			m_types.Clear();		// need this for unit tests
+			m_state = 0;
+		}
+		
 		public void VisitType(TypeDefinition type)
 		{						
 			DBC.Assert(m_state == State.Types, "state is {0}", m_state);
 			Log.DebugLine(this, "{0}", type.FullName);
 
-			if (DoNotPublic(type) && DoInstantiable(type) && DoValidType(type))
+			if (!type.ExternallyVisible(Cache) && DoInstantiable(type) && DoValidType(type))
 			{	
-				DBC.Assert(m_types.IndexOf(type.FullName) < 0, "{0} is already in types", type.FullName);
-				Log.DebugLine(this, "adding {0}", type.FullName);
-				
-				m_types.Add(type.FullName);
+				if (!type.IsCompilerGenerated())
+				{
+					DBC.Assert(m_types.IndexOf(type.FullName) < 0, "{0} is already in types", type.FullName);
+					Log.DebugLine(this, "adding {0}", type.FullName);
+					
+					m_types.Add(type.FullName);
+				}
 			}
 		}
 		
@@ -92,16 +104,23 @@ namespace Smokey.Internal.Rules
 				}			
 			}
 		}
-		
-		private void DoRemove(TypeReference type)
+				
+		public void VisitInitObj(InitObj init)
 		{
-			string name = type.FullName;
-			
-			int i = m_types.BinarySearch(name);
-			if (i >= 0)
+			DBC.Assert(m_state == State.Calls, "state is {0}", m_state);
+
+			if (m_types.Count > 0)
 			{
-				Log.DebugLine(this, "found new {0}", name);
-				m_types.RemoveAt(i);
+				TypeReference tr = init.Type;
+				while (tr != null)
+				{
+					DoRemove(tr);
+					TypeDefinition type = Cache.FindType(tr);
+					if (type != null)
+						tr = Cache.FindType(type.BaseType);
+					else
+						tr = null;
+				}			
 			}
 		}
 				
@@ -122,35 +141,23 @@ namespace Smokey.Internal.Rules
 			}
 		}
 		
-		private bool DoNotPublic(TypeDefinition type)
-		{
-			bool notPublic = false;
-			
-			TypeAttributes vis = type.Attributes & TypeAttributes.VisibilityMask;
-			if (vis == TypeAttributes.NotPublic || 
-				vis == TypeAttributes.NestedPrivate || 
-				vis == TypeAttributes.NestedAssembly || 
-				vis == TypeAttributes.NestedFamANDAssem)
-			{
-					Log.DebugLine(this, "   not public");
-					notPublic = true;
-			}
-			else
-					Log.DebugLine(this, "   public");
-			
-			return notPublic;
-		}
-				
 		private bool DoInstantiable(TypeDefinition type)
 		{
 //			Log.DebugLine(this, "   {0} ctors", type.Constructors.Count);
-			foreach (MethodDefinition ctor in type.Constructors)
+			if (type.IsValueType)
 			{
-				MethodAttributes access = ctor.Attributes & MethodAttributes.MemberAccessMask;
-				if (access != MethodAttributes.Compilercontrolled && access != MethodAttributes.Private)
+				return true;
+			}
+			else
+			{
+				foreach (MethodDefinition ctor in type.Constructors)
 				{
-					Log.DebugLine(this, "   is instantiable");
-					return true;
+					MethodAttributes access = ctor.Attributes & MethodAttributes.MemberAccessMask;
+					if (access != MethodAttributes.Compilercontrolled && access != MethodAttributes.Private)
+					{
+						Log.DebugLine(this, "   is instantiable");
+						return true;
+					}
 				}
 			}
 			
@@ -159,12 +166,7 @@ namespace Smokey.Internal.Rules
 		
 		private bool DoValidType(TypeDefinition type)
 		{
-			if (type.IsValueType)
-			{
-				Log.DebugLine(this, "   value type");
-				return false;
-			}
-			else if (type.IsEnum)
+			if (type.IsEnum)
 			{
 				Log.DebugLine(this, "   enum");
 				return false;
@@ -224,6 +226,18 @@ namespace Smokey.Internal.Rules
 			}
 			
 			return false;
+		}
+		
+		private void DoRemove(TypeReference type)
+		{
+			string name = type.FullName;
+			
+			int i = m_types.BinarySearch(name);
+			if (i >= 0)
+			{
+				Log.DebugLine(this, "found new {0}", name);
+				m_types.RemoveAt(i);
+			}
 		}
 				
 		private enum State {Types, Calls, End};

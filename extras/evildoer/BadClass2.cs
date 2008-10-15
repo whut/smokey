@@ -184,6 +184,7 @@ namespace EvilDoer
 	// MS1006/ICloneable
 	// MS1018/VisibleFields
 	// R1011/HashMatchesEquals
+	// D1045/GodClass
 	public class BadClass2 : BaseBad, ICloneable
 	{			
 		// R1005/CtorCallsVirtual
@@ -394,6 +395,38 @@ namespace EvilDoer
 			o.Add(new Big.Type27());
 			o.Add(new Big.Type28());
 			o.Add(new Big.Type29());
+			o.Add(new Dictionary<Big.Type00, Big.Type00>());
+			o.Add(new Dictionary<Big.Type00, Big.Type01>());
+			o.Add(new Dictionary<Big.Type00, Big.Type02>());
+			o.Add(new Dictionary<Big.Type00, Big.Type03>());
+			o.Add(new Dictionary<Big.Type00, Big.Type04>());
+			o.Add(new Dictionary<Big.Type00, Big.Type05>());
+			o.Add(new Dictionary<Big.Type00, Big.Type06>());
+			o.Add(new Dictionary<Big.Type00, Big.Type07>());
+			o.Add(new Dictionary<Big.Type00, Big.Type08>());
+			o.Add(new Dictionary<Big.Type00, Big.Type09>());
+
+			o.Add(new Dictionary<Big.Type01, Big.Type00>());
+			o.Add(new Dictionary<Big.Type01, Big.Type01>());
+			o.Add(new Dictionary<Big.Type01, Big.Type02>());
+			o.Add(new Dictionary<Big.Type01, Big.Type03>());
+			o.Add(new Dictionary<Big.Type01, Big.Type04>());
+			o.Add(new Dictionary<Big.Type01, Big.Type05>());
+			o.Add(new Dictionary<Big.Type01, Big.Type06>());
+			o.Add(new Dictionary<Big.Type01, Big.Type07>());
+			o.Add(new Dictionary<Big.Type01, Big.Type08>());
+			o.Add(new Dictionary<Big.Type01, Big.Type09>());
+
+			o.Add(new Dictionary<Big.Type02, Big.Type00>());
+			o.Add(new Dictionary<Big.Type02, Big.Type01>());
+			o.Add(new Dictionary<Big.Type02, Big.Type02>());
+			o.Add(new Dictionary<Big.Type02, Big.Type03>());
+			o.Add(new Dictionary<Big.Type02, Big.Type04>());
+			o.Add(new Dictionary<Big.Type02, Big.Type05>());
+			o.Add(new Dictionary<Big.Type02, Big.Type06>());
+			o.Add(new Dictionary<Big.Type02, Big.Type07>());
+			o.Add(new Dictionary<Big.Type02, Big.Type08>());
+			o.Add(new Dictionary<Big.Type02, Big.Type09>());
 
 			Console.Error.WriteLine(o.Count);
 		}

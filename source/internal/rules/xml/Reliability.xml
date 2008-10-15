@@ -445,11 +445,14 @@
 		</Translation>
 	</Violation>	
 	
+	properly aligned, not larger than the native word size
+	references are treated as if they have native word size
+	
 	<Violation checkID = "R1014" severity = "Warning" breaking = "true">
 		<Translation lang = "en" typeName = "StaticSetter" category = "Reliability">			
 			<Cause>
-			A non-private static method which sets state and has no locking is called 
-			from a thread.
+			A non-private static method which non-atomically or non-volatilely sets state and 
+			has no locking is called from a thread.
 			</Cause>
 	
 			<Description>
@@ -1766,8 +1769,8 @@
 			using System.Net.Sockets;
 			using System.Threading;
 
-			[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
 			[Serializable]
+			[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
 			internal sealed class ThreadRootAttribute : Attribute
 			{		
 				public ThreadRootAttribute(string name) 
@@ -1778,8 +1781,8 @@
 				public string Name {get; private set;}
 			}
 
-			[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
 			[Serializable]
+			[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false)]
 			internal sealed class ThreadSafeAttribute : Attribute
 			{		
 			}

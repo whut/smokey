@@ -787,7 +787,7 @@ System.Collections.Generic.IDictionary
 			</Cause>
 	
 			<Description>
-			Type names should not match .NEt framework namespace names.
+			Type names should not match .NET framework namespace names.
 			</Description>
 	
 			<Fix>

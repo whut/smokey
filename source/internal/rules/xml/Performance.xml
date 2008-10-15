@@ -403,7 +403,7 @@
 		<Translation lang = "en" typeName = "NotInstantiated" category = "Performance">			
 			<Cause>
 			An instantiable non-public type is never instantiated. Note that this rule
-			ignores value types, enumerations, and delegates.
+			ignores enumerations, delegates, and attributes.
 			</Cause>
 		
 			<Description>
@@ -412,9 +412,9 @@
 			</Description>
 	
 			<Fix>
-			If the class is not used either remove it or #if it out. If the class has all
-			static methods and is used then make the class static (C# 2.0) or add a private
-			default constructor (C# 1.0). As a special case you can use DisableRuleAttribute
+			If the class is only used as a base class then make it abstract. If the class
+			has all static methods then make the class static. Otherwise remove or #if 
+			out the type. As a special case you can use DisableRuleAttribute
 			on a base class or interface to disable this rule for all derived classes.
 			</Fix>
 		</Translation>
@@ -626,7 +626,7 @@
 	<Violation checkID = "P1020" severity = "Warning" breaking = "false">
 		<Translation lang = "en" typeName = "NotSealed" category = "Performance">			
 			<Cause>
-			A concrete class has internal visibility and no derived classes, but is
+			A concrete class does not have external visibility, has no derived classes, but is
 			not sealed.
 			</Cause>
 		

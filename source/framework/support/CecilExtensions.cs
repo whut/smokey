@@ -493,7 +493,10 @@ namespace Smokey.Framework.Support
 		{
 			DBC.Pre(type != null, "type is null");
 
-			if (type.Name.Contains("CompilerGenerated"))
+			if (type.Name.Contains("CompilerGenerated"))		
+				return true;
+				
+			else if (type.Name.Contains("AnonType"))
 				return true;
 				
 			else if (type.FullName.Contains("<PrivateImplementationDetails>"))
@@ -523,17 +526,23 @@ namespace Smokey.Framework.Support
 			DBC.Pre(rhs != null, "rhs is null");
 			DBC.Pre(cache != null, "cache is null");
 				
+			if (lhs.FullName != "System.Object" && rhs.FullName == "System.Object")	// everything is a subclass of object
+				return true;
+	
 			while (lhs != null)
 			{
-				if (lhs.FullName != "System.Object" && rhs.FullName == "System.Object")	// everything is a subclass of object
-					return true;
-					
 				TypeDefinition type = cache.FindType(lhs);
+					
 				lhs = type != null && !type.IsInterface ? type.BaseType : null;
-				if (lhs != null && lhs.FullName == rhs.FullName)
-					return true;
+				if (lhs != null)
+				{
+					var key1 = new AssemblyCache.TypeKey(lhs);
+					var key2 = new AssemblyCache.TypeKey(rhs);
+					if (key1 == key2)
+						return true;
+				}
 			}
-			
+			 
 			return false;
 		}
 		

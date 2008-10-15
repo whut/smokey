@@ -24,7 +24,7 @@ install: smokey.exe.config
 	chmod -x $(INSTALL_DIR)/smokey.exe
 	if [[ ! -e $(INSTALL_DIR)/smokey.exe.config ]]; then cp smokey.exe.config $(INSTALL_DIR); fi
 	echo "#!/bin/sh" > $(INSTALL_DIR)/smoke
-	echo "exec -a smokey.exe $(MONO) $(INSTALL_DIR)/smokey.exe \x24@" >> $(INSTALL_DIR)/smoke
+	echo "exec -a smokey.exe $(MONO) --debug $(INSTALL_DIR)/smokey.exe \x24@" >> $(INSTALL_DIR)/smoke
 	chmod +x $(INSTALL_DIR)/smoke
 	
 uninstall:

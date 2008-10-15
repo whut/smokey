@@ -184,6 +184,56 @@ namespace Smokey.Tests
 			private Thread m_thread;
 		}		
 
+		[ThreadSafe]
+		private class Good6
+		{
+			public Good6()
+			{
+				m_thread1 = new Thread(this.DoThread1);
+				m_thread1.Start();
+
+				m_thread2 = new Thread(this.DoThread2);
+				m_thread2.Start();
+			}
+
+			public void Process()			
+			{
+				Console.WriteLine("hey");
+			}
+
+			[ThreadRoot("1")]
+			public void DoThread1()		
+			{
+				while (true)
+				{
+					DoWork();
+				}
+			}
+
+			[ThreadRoot("2")]
+			public void DoThread2()		
+			{
+				while (true)
+				{
+					DoWork();
+					DoSomeWork();
+				}
+			}
+			
+			private void DoWork()			
+			{
+				Console.WriteLine("hey");
+			}
+
+			private void DoSomeWork()			
+			{
+				Console.WriteLine("hey");
+			}
+
+			private Thread m_thread1;
+			private Thread m_thread2;
+		}		
+
 		private class Bad1
 		{
 			public Bad1()
@@ -337,7 +387,7 @@ namespace Smokey.Tests
 		
 		// test code
 		public ThreadSafeAttrTest() : base(
-			new string[]{"Good1", "Good2", "Good3", "Good4", "Good5"},
+			new string[]{"Good1", "Good2", "Good3", "Good4", "Good5", "Good6"},
 			new string[]{"Bad1", "Bad2", "Bad3", "Bad4", "Bad5", "Bad6"})	
 		{
 		}

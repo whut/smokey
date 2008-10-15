@@ -8,11 +8,11 @@ https://home.comcast.net/~jesse98/public/Mono.Cecil.dll
 https://home.comcast.net/~jesse98/public/smokey-0.4.0.0.tar.gz
 https://home.comcast.net/~jesse98/public/System.Xml.dll.txt
 
-mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll > tmp.txt
-mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/net_2_1/mscorlib.dll > tmp.txt
-mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.1/System.Core.dll > tmp.txt
-mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.1/System.Xml.Core.dll > tmp.txt
-mono --debug bin/smokey.exe -set:ignoreList:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.0/System.Windows.Forms.dll > tmp.txt
+mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll > tmp.txt
+mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/net_2_1/mscorlib.dll > tmp.txt
+mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.1/System.Core.dll > tmp.txt
+mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.1/System.Xml.Core.dll > tmp.txt
+mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/net_2_0/System.Windows.Forms.dll > tmp.txt
 
 mono bin/smokey.exe bin/smokey.exe	
 	27.065				1.1
@@ -20,12 +20,12 @@ mono bin/smokey.exe bin/smokey.exe
 	31.63 seconds		
 	2.818 seconds		
 	
-mono bin/smokey.exe -set:ignoreList:SysIgnore.txt /ex6/lib/mono/gac/System/2.0.0.0__b77a5c561934e089/System.dll > tmp.txt
+mono bin/smokey.exe -set:dictionary:SysIgnore.txt /ex6/lib/mono/gac/System/2.0.0.0__b77a5c561934e089/System.dll > tmp.txt
 	87.082 				1.0
 	19.159			
 	20.247
 	32.081
-mono bin/smokey.exe -set:ignoreList:SysIgnore.txt /ex6/lib/mono/gac/System/2.0.0.0__b77a5c561934e089/System.dll > tmp.txt
+mono bin/smokey.exe -set:dictionary:SysIgnore.txt /ex6/lib/mono/gac/System/2.0.0.0__b77a5c561934e089/System.dll > tmp.txt
 	62.015
 					
 <http://msdn2.microsoft.com/en-us/library/ee1hzekz(VS.80).aspx>
@@ -37,10 +37,6 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 199 fxcop
 102 gendarme
 
-* Smoke smokey.
-* Get rid of ignoreList setting.
-* Do a profile, if any inter-procedural rules stick out then rewrite them.
-* Smoke a few system assemblies.
 * Upgrade to mono 2.0
 * Do a release.
   
@@ -184,7 +180,6 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- argument isn't used
 	
 * Release checklist:
-	- remove ignoreList setting
 	- search for TODO
 	- use mono --debug bin/smokey.exe.exe -check-xml>tmp.txt
 	- make smoke>tmp.txt
@@ -195,7 +190,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- make RELEASE=1 fcheck
 	- profile
 		rm bin/smokey.exe				# nant doesn't rebuild if just a define changed
-		nant -D:profile=true app
+		make PROFILE=true app
 		look at stdout
 	- review severity and breaking of new rules
 	- make sure custom lib builds

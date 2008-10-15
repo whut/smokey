@@ -52,8 +52,31 @@ namespace Smokey.Tests
 				return ms_text;
 			}
 
+			public static void VAtomicSet(bool value)
+			{
+				ms_vatomic = value;
+			}
+						
+			public static void AtomicSet(bool value)
+			{
+				ms_atomic = value;
+			}
+			
+			public static int Foo()
+			{
+				int result = 0;
+				
+				object temp = ms_vatomic;
+				result += temp.GetHashCode();
+				result += ms_atomic.GetHashCode();
+
+				return result;
+			}
+			
 			private static object ms_lock = new object();
 			private static string ms_text = string.Empty;
+			private static volatile bool ms_vatomic;
+			private static bool ms_atomic;
 		}		
 
 		public class GoodCase1
@@ -131,6 +154,26 @@ namespace Smokey.Tests
 			private FileStream m_stream;
 			private Byte[] m_data = new Byte[100];
 			private static string ms_state;
+		}		
+
+		public class GoodCase5
+		{
+			public GoodCase5()
+			{
+				m_thread = new Thread(this.DoThread);
+				m_thread.Start();
+			}
+
+			public void DoThread(object instance)
+			{
+				while (true)
+				{
+					Static.VAtomicSet(true);
+					Console.WriteLine(Static.Value());
+				}
+			}
+
+			private Thread m_thread;
 		}		
 
 		public class BadCase1
@@ -287,13 +330,33 @@ namespace Smokey.Tests
 			private Byte[] m_data = new Byte[100];
 			private static string ms_state;
 		}		
+
+		public class BadCase9
+		{
+			public BadCase9()
+			{
+				m_thread = new Thread(this.DoThread);
+				m_thread.Start();
+			}
+
+			public void DoThread(object instance)
+			{
+				while (true)
+				{
+					Static.AtomicSet(true);					// atomic, but not volatile
+					Console.WriteLine(Static.Value());
+				}
+			}
+
+			private Thread m_thread;
+		}		
 		#endregion
 		
 		// test code
 		public StaticSetterTest() : base(
-			new string[]{"GoodCase1", "GoodCase2", "GoodCase3", "GoodCase4"},
+			new string[]{"GoodCase1", "GoodCase2", "GoodCase3", "GoodCase4", "GoodCase5"},
 			new string[]{"BadCase1", "BadCase2", "BadCase3", "BadCase4", "BadCase5",
-				"BadCase6", "BadCase7", "BadCase8"},
+				"BadCase6", "BadCase7", "BadCase8", "BadCase9"},
 			new string[]{"Static"})	
 		{
 		}

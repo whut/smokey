@@ -104,7 +104,7 @@ namespace Smokey.Internal.Rules
 					}
 				}
 				
-				if (DoIsMarkedThreadSafe(begin.Info.Method))
+				if (DoMethodIsMarkedThreadSafe(begin.Info.Method))
 					m_safeMethods.Add(state);
 			}
 		}
@@ -173,6 +173,8 @@ namespace Smokey.Internal.Rules
 			return details;
 		}
 		
+		// TODO: should also have a check for types marked thread safe, but none of the
+		// methods are called from multiple threads
 		private string DoCheckForBadSafe(IEnumerable<MethodReference> roots)
 		{
 			string details = string.Empty;		
@@ -253,9 +255,9 @@ namespace Smokey.Internal.Rules
 			
 			return null;
 		}
-				
-		private bool DoIsMarkedThreadSafe(MethodDefinition method)
-		{								
+		
+		private bool DoMethodIsMarkedThreadSafe(MethodDefinition method)
+		{
 			foreach (CustomAttribute attr in method.CustomAttributes)
 			{	
 				if (attr.Constructor.ToString().Contains("ThreadSafe"))
@@ -263,7 +265,14 @@ namespace Smokey.Internal.Rules
 					return true;
 				}
 			}
-			
+			return false;
+		}
+				
+		private bool DoIsMarkedThreadSafe(MethodDefinition method)
+		{								
+			if (DoMethodIsMarkedThreadSafe(method))
+				return true;
+				
 			foreach (CustomAttribute attr in method.DeclaringType.CustomAttributes)
 			{	
 				if (attr.Constructor.ToString().Contains("ThreadSafe"))
