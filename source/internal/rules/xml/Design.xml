@@ -2924,4 +2924,20 @@
 			</CSharp>
 		</Translation>
 	</Violation>
+
+	<Violation checkID = "D1068" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "ConfusingDispose" category = "Design">			
+			<Cause>
+			A type is not IDisposable but has a method named Dispose.
+			</Cause>
+	
+			<Description>
+			It's very confusing for a type to have a Dispose method, but not implement IDisposable.
+			</Description>
+	
+			<Fix>
+			Either make the class IDisposable or rename the Dispose method.			
+			</Fix>
+		</Translation>
+	</Violation>
 </Violations>

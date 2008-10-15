@@ -383,12 +383,21 @@ namespace Smokey.Tests
 
 			private Thread m_thread;
 		}		
+
+		[ThreadSafe]
+		private class Bad7
+		{
+			public void Process()			
+			{
+				Console.WriteLine("hey");
+			}
+		}		
 		#endregion
 		
 		// test code
 		public ThreadSafeAttrTest() : base(
 			new string[]{"Good1", "Good2", "Good3", "Good4", "Good5", "Good6"},
-			new string[]{"Bad1", "Bad2", "Bad3", "Bad4", "Bad5", "Bad6"})	
+			new string[]{"Bad1", "Bad2", "Bad3", "Bad4", "Bad5", "Bad6", "Bad7"})	
 		{
 		}
 						

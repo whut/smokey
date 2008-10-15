@@ -54,6 +54,8 @@ namespace Smokey.Internal.Rules
 			m_knownRoots.Clear();
 			m_safeMethods.Clear();
 			m_entryPoints.Clear();
+			m_safeTypes.Clear();
+			m_requiredSafeTypes.Clear();
 			
 			m_disabled = assembly.CustomAttributes.HasDisableRule(CheckID);
 		}
@@ -104,6 +106,10 @@ namespace Smokey.Internal.Rules
 					}
 				}
 				
+				if (DoTypeIsMarkedThreadSafe(begin.Info.Type))
+					if (m_safeTypes.IndexOf(begin.Info.Type) < 0)
+						m_safeTypes.Add(begin.Info.Type);
+				
 				if (DoMethodIsMarkedThreadSafe(begin.Info.Method))
 					m_safeMethods.Add(state);
 			}
@@ -121,6 +127,7 @@ namespace Smokey.Internal.Rules
 				if (m_knownRoots.Count > 0)
 					details += DoCheckForUnsafeMethods(graph);
 				details += DoCheckForBadSafe(roots);
+				details += DoCheckForBadSafeTypes();
 								
 				details = details.Trim();
 				if (details.Length > 0)
@@ -173,8 +180,6 @@ namespace Smokey.Internal.Rules
 			return details;
 		}
 		
-		// TODO: should also have a check for types marked thread safe, but none of the
-		// methods are called from multiple threads
 		private string DoCheckForBadSafe(IEnumerable<MethodReference> roots)
 		{
 			string details = string.Empty;		
@@ -188,6 +193,26 @@ namespace Smokey.Internal.Rules
 			
 			if (details.Length > 0)
 				details = "Marked as safe, but called from a single thread: " + Environment.NewLine + details;
+												
+			return details;
+		}
+		
+//		private List<TypeReference> m_safeTypes = new List<TypeReference>();
+//		private List<TypeReference> m_requiredSafeTypes = new List<TypeReference>();
+
+		private string DoCheckForBadSafeTypes()
+		{
+			string details = string.Empty;	
+			
+			var bad = m_safeTypes.Except(m_requiredSafeTypes);
+			
+			foreach (var type in bad)	
+			{
+				details += "   " + type.FullName + Environment.NewLine;
+			}
+			
+			if (details.Length > 0)
+				details = "Types marked as safe, but all methods are called from a single thread: " + Environment.NewLine + details;
 												
 			return details;
 		}
@@ -217,6 +242,9 @@ namespace Smokey.Internal.Rules
 														
 							state.SetCallChain(root, schain, multiple);
 							DoSetChains(root, state.Method, graph, schain, multiple, depth + 1);
+							
+							if (m_requiredSafeTypes.IndexOf(state.Method.DeclaringType) < 0)
+								m_requiredSafeTypes.Add(state.Method.DeclaringType);
 						}
 					}
 				}
@@ -265,15 +293,13 @@ namespace Smokey.Internal.Rules
 					return true;
 				}
 			}
+			
 			return false;
 		}
 				
-		private bool DoIsMarkedThreadSafe(MethodDefinition method)
-		{								
-			if (DoMethodIsMarkedThreadSafe(method))
-				return true;
-				
-			foreach (CustomAttribute attr in method.DeclaringType.CustomAttributes)
+		private bool DoTypeIsMarkedThreadSafe(TypeReference type)
+		{
+			foreach (CustomAttribute attr in type.CustomAttributes)
 			{	
 				if (attr.Constructor.ToString().Contains("ThreadSafe"))
 				{
@@ -281,6 +307,17 @@ namespace Smokey.Internal.Rules
 				}
 			}
 			
+			return false;
+		}
+				
+		private bool DoIsMarkedThreadSafe(MethodDefinition method)
+		{								
+			if (DoMethodIsMarkedThreadSafe(method))
+				return true;
+
+			if (DoTypeIsMarkedThreadSafe(method.DeclaringType))
+				return true;
+							
 			return false;
 		}
 		#endregion
@@ -339,6 +376,9 @@ namespace Smokey.Internal.Rules
 		private List<MethodState> m_safeMethods = new List<MethodState>();
 		
 		private List<MethodDefinition> m_entryPoints = new List<MethodDefinition>();
+
+		private List<TypeReference> m_safeTypes = new List<TypeReference>();
+		private List<TypeReference> m_requiredSafeTypes = new List<TypeReference>();
 		#endregion
 	}
 }
