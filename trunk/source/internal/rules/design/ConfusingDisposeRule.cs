@@ -19,34 +19,52 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Mono.Cecil;
 using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices; 
-using System.Threading;
+using Smokey.Framework;
+using Smokey.Framework.Support;
 
-namespace EvilDoer
-{
-	// C1035/HashButNoEquals
-	public class BadClass3
-	{	
-		public override int GetHashCode()
+namespace Smokey.Internal.Rules
+{	
+	internal sealed class ConfusingDisposeRule : Rule
+	{				
+		public ConfusingDisposeRule(AssemblyCache cache, IReportViolations reporter) 
+			: base(cache, reporter, "D1068")
 		{
-			return x;
+		}
+				
+		public override void Register(RuleDispatcher dispatcher) 
+		{
+			dispatcher.Register(this, "VisitBegin");
+			dispatcher.Register(this, "VisitMethod");
+			dispatcher.Register(this, "VisitEnd");
+		}
+				
+		public void VisitBegin(BeginType begin)
+		{		
+			Log.DebugLine(this, "-----------------------------------"); 
+			Log.DebugLine(this, "{0}", begin.Type);
+			
+			m_disposable = begin.Type.TypeOrBaseImplements("System.IDisposable", Cache);
+			m_hasDispose = false;
 		}
 		
-		public int X
-		{
-			get {return x;}
-			set {x = value;}
+		public void VisitMethod(MethodDefinition method)
+		{								
+			if (method.Name == "Dispose")
+				m_hasDispose = true;
 		}
 		
-		// D1068/ConfusingDispose
-		public void Dispose(string whatsUpBro)
-		{
+		public void VisitEnd(EndType end)
+		{		
+			if (!m_disposable && m_hasDispose)
+			{
+				Reporter.TypeFailed(end.Type, CheckID, string.Empty);
+			}
 		}
-							
-		private int x;
+		
+		private bool m_disposable;
+		private bool m_hasDispose;
 	}
 }
 

@@ -203,4 +203,5 @@
 	<Expected checkID = "R1039" typeName = "ThreadSafeAttr" fullName = "evildoer"/>
 	<Expected checkID = "R1040" typeName = "ThreadAbort" fullName = "System.Void EvilDoer.BadClass::Run()"/>
 	<Expected checkID = "R1042" typeName = "SerializableAttribute" fullName = "EvilDoer.BadException"/>
+	<Expected checkID = "D1068" typeName = "ConfusingDispose" fullName = "EvilDoer.BadClass3"/>
 </Expectations>

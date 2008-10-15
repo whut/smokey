@@ -19,34 +19,66 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Mono.Cecil;
+using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices; 
-using System.Threading;
+using System.Reflection;
+using Smokey.Framework.Support;
+using Smokey.Internal.Rules;
 
-namespace EvilDoer
+namespace Smokey.Tests
 {
-	// C1035/HashButNoEquals
-	public class BadClass3
+	[TestFixture]
+	public class ConfusingDisposeTest : TypeTest
 	{	
-		public override int GetHashCode()
-		{
-			return x;
-		}
-		
-		public int X
-		{
-			get {return x;}
-			set {x = value;}
-		}
-		
-		// D1068/ConfusingDispose
-		public void Dispose(string whatsUpBro)
-		{
-		}
-							
-		private int x;
-	}
-}
+		// test classes
+		internal sealed class Good1 : IDisposable
+		{		
+			public int Work(int x, int y)
+			{
+				return x + y;
+			}
 
+			public void Dispose()
+			{
+			}
+		}
+		
+		internal sealed class Bad1
+		{		
+			public int Work(int x, int y)
+			{
+				return x + y;
+			}
+
+			public void Dispose()
+			{
+			}
+		}
+		
+		internal sealed class Bad2
+		{		
+			public int Work(int x, int y)
+			{
+				return x + y;
+			}
+
+			public int Dispose(int x)
+			{
+				return x;
+			}
+		}
+		
+		// test code
+		public ConfusingDisposeTest() : base(
+			new string[]{"Good1"},
+			new string[]{"Bad1", "Bad2"})	
+		{
+		}
+						
+		protected override Rule OnCreate(AssemblyCache cache, IReportViolations reporter)
+		{
+			return new ConfusingDisposeRule(cache, reporter);
+		}
+	} 
+}
