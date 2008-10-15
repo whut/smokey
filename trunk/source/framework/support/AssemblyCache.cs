@@ -87,8 +87,8 @@ namespace Smokey.Framework.Support
 					Log.DebugLine(this, "adding {0}", method.Type.FullName);
 				}
 				
-				if (!m_methods.ContainsKey(method.Method.MetadataToken))
-					m_methods.Add(method.Method.MetadataToken, method);
+				if (!m_methods.ContainsKey(method.Method))
+					m_methods.Add(method.Method, method);
 			}
 
 			m_assembly = assembly;
@@ -232,24 +232,25 @@ namespace Smokey.Framework.Support
 			return assembly;
 		}
 		
-		/// <summary>Returns null if the method is defined in another assembly. Note also
-		/// that generic methods (or nested classes inside a generic) have one
-		/// token when they are defined and another when they are called with
-		/// a type.</summary>
+		/// <summary>Returns null if the method is defined in another assembly.</summary>
 		public MethodInfo FindMethod(MethodReference m)
 		{
 			DBC.Pre(m != null, "m is null");
-				
-			MethodInfo info;
-			if (m_methods.TryGetValue(m.MetadataToken, out info))
+			
+			MethodInfo info = null;
+			
+			TypeDefinition type = FindType(m.DeclaringType);
+			if (type != null)
 			{
-				if (m.ToString() == info.Method.ToString())
-					return info;
-				else
-					return null;
+				MethodDefinition method = type.Methods.GetMethod(m.Name, m.Parameters);
+				if (method == null)
+					method = type.Constructors.GetConstructor(!m.HasThis, m.Parameters);
+					
+				if (method != null)
+					Unused.Value = m_methods.TryGetValue(method, out info);
 			}
-			else
-				return null;
+
+			return info;
 		}
 		
 		/// <summary>Returns all the methods in type whose names are equal to name.</summary>
@@ -354,7 +355,7 @@ namespace Smokey.Framework.Support
 			foreach (MethodDefinition method in methods)
 			{
 				MethodInfo info = new MethodInfo(type, method);
-				m_methods.Add(method.MetadataToken, info);
+				m_methods.Add(method, info);
 				ml.Add(info);
 			}			
 		}
@@ -365,7 +366,7 @@ namespace Smokey.Framework.Support
 			foreach (MethodDefinition method in methods)
 			{
 				MethodInfo info = new MethodInfo(symbols, type, method);
-				m_methods.Add(method.MetadataToken, info);
+				m_methods.Add(method, info);
 				ml.Add(info);
 			}			
 		}
@@ -392,6 +393,11 @@ namespace Smokey.Framework.Support
 				m_type = type;
 			}
 								
+			public TypeReference Type
+			{
+				get {return m_type;}
+			}
+											
 			public static bool operator==(TypeKey lhs, TypeKey rhs)
 			{
 				bool matches = false;
@@ -514,7 +520,7 @@ namespace Smokey.Framework.Support
 		#region Fields --------------------------------------------------------
 		private AssemblyDefinition m_assembly;	
 		private Dictionary<TypeKey, TypeDefinition> m_types = new Dictionary<TypeKey, TypeDefinition>();
-		private Dictionary<MetadataToken, MethodInfo> m_methods = new Dictionary<MetadataToken, MethodInfo>();
+		private Dictionary<MethodDefinition, MethodInfo> m_methods = new Dictionary<MethodDefinition, MethodInfo>();
 		private Dictionary<TypeDefinition, List<MethodInfo>> m_typeMethods = new Dictionary<TypeDefinition, List<MethodInfo>>();
 		private Dictionary<string, TypeDefinition> m_externalTypes = new Dictionary<string, TypeDefinition>();
 		private Dictionary<string, AssemblyDefinition> m_assemblies = new Dictionary<string, AssemblyDefinition>();

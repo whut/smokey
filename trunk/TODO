@@ -42,6 +42,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
   
 * Are there any libraries which will help us get file and line numbers with .net?
 	http://blogs.msdn.com/jmstall/archive/2005/10/08/symbol-apis.aspx
+	maybe map files?
 * Look at ndepend, probably should add a link to it too:
 	http://www.NDepend.com
 	http://www.ndepend.com/Features.aspx#CQL
