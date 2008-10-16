@@ -147,6 +147,7 @@ namespace Smokey.Internal
 				Location loc = new Location();
 				loc.Name = assembly != null ? string.Format("Assembly: {0}", assembly.Name.Name) : string.Empty;
 				loc.Line = -1;
+				loc.Offset = -1;
 				loc.Details = details;
 				
 				Violation violation = ViolationDatabase.Get(checkID);

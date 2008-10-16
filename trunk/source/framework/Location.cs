@@ -30,33 +30,21 @@ namespace Smokey.Framework
 	{		
 		/// <summary>For example: /Users/jessejones/Source/Smokey/extras/evildoer/EvilPoint.cs.</summary>
 		/// <remarks>May be null.</remarks>
-		public string File
-		{
-			get {return m_file;}
-			set {m_file = value;}
-		}
+		public string File {get; set;}
 				
 		/// <summary>Start of the code, often points to opening brace.</summary>
 		/// <remarks>May be -1.</remarks>
-		public int Line
-		{
-			get {return m_line;}
-			set {m_line = value;}
-		}
+		public int Line {get; set;}
+				
+		/// <summary>Offset into the code.</summary>
+		/// <remarks>May be -1.</remarks>
+		public int Offset {get; set;}
 				
 		/// <summary>For example: System.Boolean EvilDoer.EvilPoint::Equals(EvilDoer.EvilPoint).</summary>
-		public string Name
-		{
-			get {return m_name;}
-			set {m_name = value;}
-		}
+		public string Name {get; set;}
 				
 		/// <summary>Rule specific optional data (eg misspelled words).</summary>
-		public string Details
-		{
-			get {return m_details;}
-			set {m_details = value;}
-		}
+		public string Details {get; set;}
 				
 		public override bool Equals(object rhsObj)
 		{
@@ -91,10 +79,5 @@ namespace Smokey.Framework
 			
 			return hash;
 		}
-
-		private string m_file;		
-		private int m_line;		
-		private string m_name;		
-		private string m_details;	
 	}
 }

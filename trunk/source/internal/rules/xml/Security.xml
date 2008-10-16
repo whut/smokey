@@ -806,4 +806,42 @@
 			</Fix>
 		</Translation>
 	</Violation>
+
+	<Violation checkID = "S1021" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "MutableField" category = "Security">			
+			<Cause>
+			An externally visible field is readonly, mutable, and not a value type.
+			</Cause>
+	
+			<Description>
+			Readonly prevents users of the type from replacing the field's contents
+			with a different object, but does not prevent them from changing the object.
+			Currently this rule fires only if the field type has a visible setter property
+			plus a few commonly used mutable types which do not have setters.
+			</Description>
+	
+			<Fix>
+			Make the type internal, the field private, use a property instead of a field, 
+			use an immutable type, or remove the readonly.
+			</Fix>
+		</Translation>
+	</Violation>
+
+	<Violation checkID = "S1022" severity = "Warning" breaking = "true">
+		<Translation lang = "en" typeName = "VisiblePointer" category = "Security">			
+			<Cause>
+			An externally visible IntPtr field is not readonly.
+			</Cause>
+	
+			<Description>
+			If the field is not readonly then arbitrary code can reseat the field to point
+			to a different native pointer opening up a potential security hole.
+			</Description>
+	
+			<Fix>
+			Make the type internal, the field private, use a property instead of a field, 
+			or make the field readonly.
+			</Fix>
+		</Translation>
+	</Violation>
 </Violations>

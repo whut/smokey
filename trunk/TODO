@@ -37,6 +37,10 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 199 fxcop
 102 gendarme
 
+* MutableField
+	- probably should take a quick pass over common types and special case any which are
+	  mutable, but have no setters, collections
+* VisiblePointer
 * Upgrade to mono 2.0
 * Do a release.
   
