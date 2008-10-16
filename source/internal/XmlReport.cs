@@ -88,6 +88,9 @@ namespace Smokey.Internal
 				
 				if (location.Line >= 0)
 					writer.WriteAttributeString("line", location.Line.ToString());
+
+				if (location.Offset >= 0)
+					writer.WriteAttributeString("offset", location.Offset.ToString());
 			}
 			
 			writer.WriteEndElement();

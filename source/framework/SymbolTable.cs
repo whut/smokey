@@ -70,6 +70,7 @@ namespace Smokey.Framework
 			
 			location.File = "<unknown>";			
 			location.Line = -1;					// TODO: not sure how to set this, could get close by using the first method...
+			location.Offset = -1;
 			location.Name = "Type: " + type.FullName;
 			location.Details = details;
 			
@@ -85,6 +86,7 @@ namespace Smokey.Framework
 			
 			location.Name = "Method: " + method.ToString();			
 			location.Line = -1;
+			location.Offset = offset;
 			location.Details = details;
 
 			if (m_methodEntries != null)

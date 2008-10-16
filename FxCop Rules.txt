@@ -159,20 +159,20 @@ Reliability
 	+Dispose objects before losing scope
 	+Do not lock on objects with weak identity
 	!Do not treat fibers as threads
-	Remove calls to GC.KeepAlive
-	Use SafeHandle to encapsulate native resources
+	!Remove calls to GC.KeepAlive					seems a little difficult to do this well, especially with base classes
+	+Use SafeHandle to encapsulate native resources
 
 Security
-	Aptca methods should only call aptca methods
-	Aptca types should only extend aptca base types
-	Array fields should not be read only
-	Call GC.KeepAlive when using native resources
-	Catch non-CLSCompliant exceptions in general handlers
-	Do not declare read only mutable reference types
-	Do not indirectly expose methods with link demands
-	Method security should be a superset of type
-	Override link demands should be identical to base
-	Pointers should not be visible
+	+Aptca methods should only call aptca methods
+	+Aptca types should only extend aptca base types
+	+Array fields should not be read only
+	+Call GC.KeepAlive when using native resources
+	!Catch non-CLSCompliant exceptions in general handlers	probably should add this
+	+Do not declare read only mutable reference types
+	+Do not indirectly expose methods with link demands
+	!Method security should be a superset of type			should add this
+	+Override link demands should be identical to base		SecureOverrides covers this?
+	+Pointers should not be visible
 	Review declarative security on value types
 	Review deny and permit only usage
 	Review imperative security

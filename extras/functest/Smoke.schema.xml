@@ -29,6 +29,7 @@
 		<xsd:attribute name = "details" type = "xsd:string"/>
 		<xsd:attribute name = "file" type = "xsd:string"/>
 		<xsd:attribute name = "line" type = "xsd:positiveInteger"/>
+		<xsd:attribute name = "offset" type = "xsd:positiveInteger"/>
 	</xsd:complexType>
 
   	<!-- Violation element -->

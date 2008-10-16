@@ -104,10 +104,11 @@ namespace Smokey.Internal
 					writer.WriteLine("File: {0}:{1}", loc.File, loc.Line);
 				else if (loc.File != null && loc.File.Length > 0)
 					writer.WriteLine("File: {0}", loc.File);
-				else
-					writer.WriteLine("File: <unknown>");
 					
 				writer.WriteLine(loc.Name);
+				if (loc.Offset >= 0 && loc.Line < 0)
+					writer.WriteLine("Offset: {0:X4}", loc.Offset);
+
 				if (loc.Details != null && loc.Details.Length > 0)
 					writer.WriteLine(loc.Details);
 				writer.WriteLine(" ");
