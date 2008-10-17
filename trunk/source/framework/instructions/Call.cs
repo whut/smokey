@@ -76,7 +76,21 @@ namespace Smokey.Framework.Instructions
 			}
 			return m_isThisCall.Value;
 		}
+		
+		/// <summary>Returns the index of the instruction which pushed the method call's
+		/// this argument onto the stack. May return -1 if a single such instruction
+		/// could not be found.</summary>
+		public int GetThisIndex(MethodInfo info)
+		{
+			DBC.Pre(Target.HasThis, "the method is static");
+			
+			if (!m_thisIndex.HasValue)
+				m_thisIndex = info.Tracker.GetStackIndex(Index, Target.Parameters.Count);
+			
+			return m_thisIndex.Value;
+		}
 				
 		private bool? m_isThisCall;
+		private int? m_thisIndex;
 	}
 }

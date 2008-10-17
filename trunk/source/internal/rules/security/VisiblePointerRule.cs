@@ -61,7 +61,7 @@ namespace Smokey.Internal.Rules
 		{
 			if (m_needsCheck)
 			{
-				if (!field.IsPrivate && !field.IsInitOnly)
+				if ((field.IsPublic || field.IsFamily || field.IsFamilyOrAssembly) && !field.IsInitOnly)
 				{
 					if (field.FieldType.FullName == "System.IntPtr" || field.FieldType.FullName == "System.UIntPtr")
 					{

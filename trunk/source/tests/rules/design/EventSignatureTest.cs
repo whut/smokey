@@ -54,20 +54,12 @@ namespace Smokey.Tests
 			
 			public delegate void Callback3(object sender, EventArgs e);
 			public event Callback3 Event3;
-
-			protected delegate void Callback4(Good sender, EventArgs e);
-			protected event Callback4 Event4;
-
-			protected delegate void Callback5(object sender);
-			protected event Callback5 Event5;
 			
 			public void Fire()
 			{
 				Event1(this, null);
 				Event2(this, null);
 				Event3(this, null);
-				Event4(this, null);
-				Event5(this);
 			}
 		}			
 		
@@ -96,6 +88,9 @@ namespace Smokey.Tests
 
 			public delegate void Callback8(object sender, EventArgs xxx);
 			public event Callback8 Event8;
+
+			protected delegate void Callback9(Bad sender, EventArgs e);
+			protected event Callback9 Event9;
 			
 			public void Fire()
 			{
@@ -107,16 +102,16 @@ namespace Smokey.Tests
 				Event6(this, null, 2);
 				Event7(this, null);
 				Event8(this, null);
+				Event9(this, null);
 			}
 		}			
 				
 		// test code
 		public EventSignatureTest() : base(
-			new string[]{"Good.Event1", "Good.Event2", "Good.Event3", 
-				"Good.Event4", "Good.Event5"},
+			new string[]{"Good.Event1", "Good.Event2", "Good.Event3"},
 			
 			new string[]{"Bad.Event1", "Bad.Event2", "Bad.Event3", "Bad.Event4",
-			"Bad.Event5", "Bad.Event6", "Bad.Event7", "Bad.Event8"},
+			"Bad.Event5", "Bad.Event6", "Bad.Event7", "Bad.Event8", "Bad.Event9"},
 			
 			new string[]{"NameChangedEventArgs"})	
 		{

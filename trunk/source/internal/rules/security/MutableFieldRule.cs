@@ -61,7 +61,7 @@ namespace Smokey.Internal.Rules
 		{
 			if (m_needsCheck)
 			{
-				if (!field.IsPrivate && field.IsInitOnly)
+				if ((field.IsPublic || field.IsFamily || field.IsFamilyOrAssembly) && field.IsInitOnly)
 				{
 					TypeDefinition type = Cache.FindType(field.FieldType);
 					Log.DebugLine(this, "field: {0}, type: {1}", field.Name, field.FieldType.FullName);		
