@@ -118,10 +118,9 @@ namespace Smokey.Internal.Rules
 		
 		public void VisitCall(Call call)
 		{
-			if (m_fields.Count > 0 && !m_info.Method.IsConstructor)
+			if (m_fields.Count > 0 && !m_info.Method.IsConstructor && call.Target.HasThis)
 			{
-				int numArgs = call.Target.Parameters.Count;
-				int index = m_info.Tracker.GetStackIndex(call.Index, numArgs);
+				int index = call.GetThisIndex(m_info);
 				
 				if (index >= 0)
 				{

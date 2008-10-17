@@ -184,8 +184,7 @@ namespace Smokey.Internal.Rules
 		{
 			if (call.Target.Name == "Invoke" && call.Target.HasThis)
 			{
-				int nth = call.Target.Parameters.Count;
-				int i = m_info.Tracker.GetStackIndex(call.Index, nth);
+				int i = call.GetThisIndex(m_info);
 				Log.DebugLine(this, "found invoke call at {0:X2}", call.Untyped.Offset);
 				
 				if (i >= 0)

@@ -227,6 +227,8 @@ namespace Smokey.Framework.Support
 			EndMethod end = new EndMethod();
 			end.Info = info;
 			DoVisit(end);
+			
+			info.Reset();			// free up large objects we won't use again
 		}
 		
 		internal void DispatchCallGraph()
@@ -337,8 +339,8 @@ namespace Smokey.Framework.Support
 					{
 						if (e.InnerException != null)
 							details += string.Format("--------- {0} Exception{1}", ee == e ? "Outer" : "Inner", Environment.NewLine);
-						details += string.Format("{0}", ee.Message);
-						details += string.Format("{0}", ee.StackTrace);
+						details += string.Format("{0}", ee.Message + Environment.NewLine);
+						details += string.Format("{0}", ee.StackTrace + Environment.NewLine);
 	
 						ee = ee.InnerException;
 					}
