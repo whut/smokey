@@ -182,7 +182,7 @@ namespace Smokey.Framework.Support
 		#endregion
 		
 		#region MethodDefinition ----------------------------------------------
-		/// <summary>Returns true if the method is public and its declaring type(s) are
+		/// <summary>Returns true if the method is public/family and its declaring type(s) are
 		/// public.</summary>
 		public static bool ExternallyVisible(this MethodDefinition method, AssemblyCache cache)	
 		{
@@ -191,7 +191,7 @@ namespace Smokey.Framework.Support
 				
 			bool visible = false;
 			
-			if ((method.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Public)
+			if (method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly)
 			{
 				TypeDefinition type = cache.FindType(method.DeclaringType);
 				if (type != null)

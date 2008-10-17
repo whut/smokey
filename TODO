@@ -37,13 +37,43 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 199 fxcop
 102 gendarme
 
-* MutableField
-	- probably should take a quick pass over common types and special case any which are
-	  mutable, but have no setters, collections
-* VisiblePointer
+Checked 229 rules in 47.742 seconds.
+
+
+* probably should do a checkin
+* AssemblyCache should store TypeDetails.
+* TypeDetails should have MethodDetails.
+* MethodInfo should be transient and store heavy stuff like the instructions, graph, and tracker.
+* Type and MethodDetails should cache stuff that takes a while to compute (like IsDisposable)
+* MethodDetails should have CanReturnNull and ArgCanBeNull.
+* Update NullResultRule to use ArgCanBeNull.
+	- StringUriOverloadRule should fire when smoke testing
+* Update other null rules to use CanReturnNull and ArgCanBeNull.
+* Smoke again.
+* Look at smoke target run time again.
 * Upgrade to mono 2.0
 * Do a release.
-  
+
+* Instead of explicitly iterating over base types all over might be better to provide
+  traversal methods which iterate over base classes and/or interfaces.
+* You can't marshal DateTime directly because its internal representation
+  is different between runtimes *and* profiles
+  https://bugzilla.novell.com/show_bug.cgi?id=325067
+* Might want a Informational setting:
+	- doesn't cause Smokey to fail
+	- review public types
+	- maybe too many bases, god class
+	- too many fields
+	- too many methods
+* Add an optional severity level:
+	- disabled by default
+	- will need a way to enable these (or override profiles/cmd line) from config file
+	- can enable em via style or personal profile
+	- be sure to list the optional rules in some place like config
+	- make sure text and html reports both handle optional rules correctly.
+* Optional rules:
+	- old StaticMethod
+	- some of the crappier FxCop rules (like no out parameters)
 * Are there any libraries which will help us get file and line numbers with .net?
 	http://blogs.msdn.com/jmstall/archive/2005/10/08/symbol-apis.aspx
 	maybe map files?
@@ -60,7 +90,6 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * InlineStaticInit kind of sucks.
 * Add a few more fxcop rules.
 * Add a few more gendarme rules.
-* IdenticalMethods isn't determinstic.
 * Might want a rule to verify that gui resources are localized.
 * RandomUsedOnce
 	/Users/jessejones/New_Files/mono-1.9/mcs/class/System.Web/System.Web/HttpRequest.cs:669
@@ -82,7 +111,6 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Can we add a grammar checker? Only if the text includes periods?
 	GNU diction (doesn't seem especially useful)
 	http://www.languagetool.org/ (java tool, didnt try it)
-* (SerializationInfo, StreamingContext) ctor and GetObjectData, but not ISerializable.
 * Handle the CompilerGenerated types and methods in the dispatcher not the rules. This is tricky to
   do: we want to do stuff like visting the body of anonymous methods to see what they call for example.
 * AssemblyResolver.Resolver.Resolve can be used to get a definition from a reference.
@@ -94,15 +122,6 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- important for languages like VB (and ruby?) that support named arguments
 * Need install.bat and uninstall.bat
 * Might want to support getting custom assembly paths from an environment variable.
-* Add an optional severity level:
-	- disabled by default
-	- will need a way to enable these (or override profiles/cmd line) from config file
-	- can enable em via style or personal profile
-	- be sure to list the optional rules in some place like config
-	- make sure text and html reports both handle optional rules correctly.
-* Optional rules:
-	- old StaticMethod
-	- some of the crappier FxCop rules (like no out parameters)
 * SealPublicRule
 	- no new protected members
 	- no new virtual methods
@@ -132,7 +151,6 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- don't need to do this if you're just calling into the system libs
 	- http://msdn2.microsoft.com/en-us/library/9kc0c6st(VS.80).aspx
 	- make this informational
-* Assembly description should include an overall version number.
 * Equals is called with a null argument.
 * A method that throws an exception on a null argument is called with null:
 	- could do this with a --inter-procedural option
