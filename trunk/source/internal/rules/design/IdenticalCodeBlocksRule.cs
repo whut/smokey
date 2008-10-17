@@ -32,15 +32,17 @@ using System.Text;
 namespace Smokey.Internal.Rules
 {	
 	internal struct CodeBlock
-	{
-		public readonly MethodInfo Info;
-		public readonly int Index;
-		
+	{		
 		public CodeBlock(MethodInfo info, int index)
 		{
-			Info = info;
+			Method = info.Method;
+			Instructions = info.Instructions;
 			Index = index;
 		}
+		
+		public MethodDefinition Method {get; private set;}
+		public TypedInstructionCollection Instructions {get; private set;}	
+		public int Index {get; private set;}
 
 		public override bool Equals(object rhsObj)
 		{
@@ -56,7 +58,7 @@ namespace Smokey.Internal.Rules
 		
 		public static bool operator==(CodeBlock lhs, CodeBlock rhs)
 		{
-			return lhs.Info == rhs.Info && lhs.Index == rhs.Index;
+			return lhs.Method == rhs.Method && lhs.Index == rhs.Index;
 		}
 		
 		public static bool operator!=(CodeBlock lhs, CodeBlock rhs)
@@ -70,7 +72,7 @@ namespace Smokey.Internal.Rules
 			
 			unchecked
 			{
-				hash = Info.GetHashCode() + Index.GetHashCode();
+				hash = Method.GetHashCode() + Index.GetHashCode();
 			}
 			
 			return hash;
@@ -157,8 +159,8 @@ namespace Smokey.Internal.Rules
 					{
 						if (DoMatch(entry.Value[0], entry.Value[i], entry.Key))
 						{
-							details += entry.Value[i].Info.Method.ToString() + " ";
-							DoSanitize(entry.Value[i].Info.Method);
+							details += entry.Value[i].Method.ToString() + " ";
+							DoSanitize(entry.Value[i].Method);
 						}
 						else
 							++i;
@@ -169,11 +171,11 @@ namespace Smokey.Internal.Rules
 						details = "Match:  " + details;
 						Log.DebugLine(this, details);
 						
-						int offset = block.Info.Instructions[block.Index].Untyped.Offset;
-						Reporter.MethodFailed(block.Info.Method, CheckID, offset, details);
+						int offset = block.Instructions[block.Index].Untyped.Offset;
+						Reporter.MethodFailed(block.Method, CheckID, offset, details);
 					}
 					
-					DoSanitize(block.Info.Method);
+					DoSanitize(block.Method);
 				}
 			}
 		}
@@ -186,7 +188,7 @@ namespace Smokey.Internal.Rules
 			{
 				for (int i = 0; i < entry.Value.Count;)
 				{
-					if (entry.Value[i].Info.Method.MetadataToken == method.MetadataToken)
+					if (entry.Value[i].Method.MetadataToken == method.MetadataToken)
 						entry.Value.RemoveAt(i);
 					else
 						++i;
@@ -222,14 +224,14 @@ namespace Smokey.Internal.Rules
 
 		private bool DoMatch(CodeBlock lhs, CodeBlock rhs, int count)
 		{
-			Log.DebugLine(this, "   lhs: {0} at {1:X2}", lhs.Info.Method, lhs.Info.Instructions[lhs.Index].Untyped.Offset);
-			Log.DebugLine(this, "   rhs: {0} at {1:X2}", rhs.Info.Method, rhs.Info.Instructions[rhs.Index].Untyped.Offset);
+			Log.DebugLine(this, "   lhs: {0} at {1:X2}", lhs.Method, lhs.Instructions[lhs.Index].Untyped.Offset);
+			Log.DebugLine(this, "   rhs: {0} at {1:X2}", rhs.Method, rhs.Instructions[rhs.Index].Untyped.Offset);
 			Log.DebugLine(this, "   count: {0}", count);
 			
 			for (int i = 0; i < count; ++i)
 			{
-				TypedInstruction left = lhs.Info.Instructions[lhs.Index + i];
-				TypedInstruction right = rhs.Info.Instructions[rhs.Index + i];
+				TypedInstruction left = lhs.Instructions[lhs.Index + i];
+				TypedInstruction right = rhs.Instructions[rhs.Index + i];
 				
 				LoadLocal load1 = left as LoadLocal;
 				LoadLocal load2 = right as LoadLocal;

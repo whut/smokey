@@ -37,25 +37,49 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 199 fxcop
 102 gendarme
 
-Checked 229 rules in 47.742 seconds.
 
-
-* probably should do a checkin
-* AssemblyCache should store TypeDetails.
-* TypeDetails should have MethodDetails.
-* MethodInfo should be transient and store heavy stuff like the instructions, graph, and tracker.
-* Type and MethodDetails should cache stuff that takes a while to compute (like IsDisposable)
-* MethodDetails should have CanReturnNull and ArgCanBeNull.
-* Update NullResultRule to use ArgCanBeNull.
-	- StringUriOverloadRule should fire when smoke testing
-* Update other null rules to use CanReturnNull and ArgCanBeNull.
 * Smoke again.
-* Look at smoke target run time again.
 * Upgrade to mono 2.0
 * Do a release.
 
 * Instead of explicitly iterating over base types all over might be better to provide
   traversal methods which iterate over base classes and/or interfaces.
+* AssemblyCache should store TypeData.
+* TypeData should have MethodData.
+* MethodInfo should be transient and store heavy stuff like the instructions, graph, and tracker.
+* Type and MethodData should cache stuff that takes a while to compute (like IsDisposable)
+* Arg can be null can use something like:
+	x       IL_0000:  ldarg.1 			// also need to check for reversed order
+	x       IL_0001:  ldnull 
+	x       IL_0002:  ceq 
+	x       IL_0004:  ldc.i4.0 
+	x       IL_0005:  ceq 
+			IL_0007:  ldstr "type is null"
+			IL_000c:  call void class Smokey.Framework.DBC::Pre(bool, string)
+			
+	y       IL_0011:  ldarg.2 
+	y       IL_0012:  call bool string::IsNullOrEmpty(string)
+	y       IL_0017:  ldc.i4.0 
+	y       IL_0018:  ceq 
+			IL_001a:  ldstr "name is null or empty"
+			IL_001f:  call void class Smokey.Framework.DBC::Pre(bool, string)
+	
+	
+	iterate over all the instructions		// maybe cap number visited
+		if store local then
+			break
+			
+		if assert call then				// assert, DBC::Pre, Check
+			get instructions composing arguments to the call
+			if instructions contain xxx or yyy then
+				that arg can't be null
+				
+	need to check for throws as well
+* MethodData should have CanReturnNull and ArgCanBeNull.
+	- check IsNullOrEmpty too
+* Update NullResultRule to use ArgCanBeNull.
+	- StringUriOverloadRule should fire when smoke testing
+* Update other null rules to use CanReturnNull and ArgCanBeNull.
 * You can't marshal DateTime directly because its internal representation
   is different between runtimes *and* profiles
   https://bugzilla.novell.com/show_bug.cgi?id=325067

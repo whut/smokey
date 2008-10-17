@@ -120,8 +120,7 @@ namespace Smokey.Internal.Rules
 		{
 			if (m_needsCheck && m_offset < 0 && call.Target.HasThis)
 			{
-				int numArgs = call.Target.Parameters.Count;
-				int index = m_info.Tracker.GetStackIndex(call.Index, numArgs);
+				int index = call.GetThisIndex(m_info);
 				
 				if (index >= 0)
 				{

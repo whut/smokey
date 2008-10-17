@@ -63,14 +63,14 @@ namespace Smokey.Internal.Rules
 				int hash = DoGetHash(begin.Info.Method);
 				Log.DebugLine(this, "{0} instructions, hash is {1}", begin.Info.Method.Body.Instructions.Count, hash);
 				
-				List<BeginMethod> methods;
+				List<MethodCapture> methods;
 				if (!m_table.TryGetValue(hash, out methods))
 				{
-					methods = new List<BeginMethod>();
+					methods = new List<MethodCapture>();
 					m_table.Add(hash, methods);
 				}
 				
-				methods.Add(begin);
+				methods.Add(new MethodCapture(begin.Info));
 			}
 		}
 
@@ -80,24 +80,7 @@ namespace Smokey.Internal.Rules
 			
 			string header = "Match:  ";
 			
-			// m_table is not deterministic so we need to make a new table which is deterministically ordered.
-			List<List<BeginMethod>> table = new List<List<BeginMethod>>(m_table.Values);
-			table.Sort((a, b) => 
-			{
-				if (a.Count > 0 && b.Count > 0)
-					return a[0].Info.Method.ToString().CompareTo(b[0].Info.Method.ToString());
-					
-				else if (a.Count == 0 && b.Count > 0)
-					return -1;
-					
-				else if (a.Count > 0 && b.Count == 0)
-					return 1;
-					
-				else
-					return 0; 
-			});
-
-			foreach (List<BeginMethod> methods in table)
+			foreach (List<MethodCapture> methods in m_table.Values)
 			{
 				List<int> found = new List<int>();
 						
@@ -109,12 +92,12 @@ namespace Smokey.Internal.Rules
 					{
 						if (found.IndexOf(j) < 0)
 						{
-							Log.DebugLine(this, "checking {0} and {1}", methods[i].Info.Method, methods[j].Info.Method);
+							Log.DebugLine(this, "checking {0} and {1}", methods[i].Method, methods[j].Method);
 						
 							if (DoMatch(methods[i], methods[j]))
 							{
 								Log.DebugLine(this, "   matched");
-								matches.Add(methods[j].Info.Method.ToString());
+								matches.Add(methods[j].Method.ToString());
 								found.Add(j);
 							}
 						}
@@ -126,7 +109,7 @@ namespace Smokey.Internal.Rules
 						string details = string.Format("{0}{1}", header, string.Join(Environment.NewLine, strs));
 						
 						Log.DebugLine(this, details);
-						Reporter.MethodFailed(methods[i].Info.Method, CheckID, 0, details);
+						Reporter.MethodFailed(methods[i].Method, CheckID, 0, details);
 					}
 				}
 			}
@@ -157,38 +140,38 @@ namespace Smokey.Internal.Rules
 			return hash;
 		}
 		
-		private bool DoMatch(BeginMethod lhs, BeginMethod rhs)
+		private bool DoMatch(MethodCapture lhs, MethodCapture rhs)
 		{
-			if (lhs.Info.Method.ReturnType.MetadataToken != rhs.Info.Method.ReturnType.MetadataToken)
+			if (lhs.Method.ReturnType.MetadataToken != rhs.Method.ReturnType.MetadataToken)
 			{
 				Log.DebugLine(this, "   return type differs");
 				return false;
 			}
 			
-			if (lhs.Info.Method.Parameters.Count != rhs.Info.Method.Parameters.Count)
+			if (lhs.Method.Parameters.Count != rhs.Method.Parameters.Count)
 			{
 				Log.DebugLine(this, "   numParams differs");
 				return false;
 			}
 			
-			for (int i = 0; i < lhs.Info.Method.Parameters.Count; ++i)
-				if (lhs.Info.Method.Parameters[i].ParameterType.MetadataToken != rhs.Info.Method.Parameters[i].ParameterType.MetadataToken)
+			for (int i = 0; i < lhs.Method.Parameters.Count; ++i)
+				if (lhs.Method.Parameters[i].ParameterType.MetadataToken != rhs.Method.Parameters[i].ParameterType.MetadataToken)
 				{
 					Log.DebugLine(this, "   param types differ");
 					return false;
 				}
 					
 
-			if (lhs.Info.Instructions.Length != rhs.Info.Instructions.Length)
+			if (lhs.Instructions.Length != rhs.Instructions.Length)
 			{
 				Log.DebugLine(this, "   numInstructions differs");
 				return false;
 			}
 			
-			for (int i = 0; i < lhs.Info.Instructions.Length; ++i)
+			for (int i = 0; i < lhs.Instructions.Length; ++i)
 			{
-				TypedInstruction left = lhs.Info.Instructions[i];
-				TypedInstruction right = rhs.Info.Instructions[i];
+				TypedInstruction left = lhs.Instructions[i];
+				TypedInstruction right = rhs.Instructions[i];
 				
 				if (!DoMatch(left, right))
 				{
@@ -325,8 +308,22 @@ namespace Smokey.Internal.Rules
 			
 			return false;
 		}
+		
+		// Need to save this stuff because the dispatcher will free up MethodInfo
+		// instructions after visiting it.
+		private sealed class MethodCapture
+		{
+			public MethodCapture(MethodInfo info)
+			{
+				Method = info.Method;
+				Instructions = info.Instructions;
+			}
+			
+			public MethodDefinition Method {get; private set;}		// will always have a body
+			public TypedInstructionCollection Instructions {get; private set;}	
+		}
 				
-		private Dictionary<int, List<BeginMethod>> m_table = new Dictionary<int, List<BeginMethod>>();
+		private Dictionary<int, List<MethodCapture>> m_table = new Dictionary<int, List<MethodCapture>>();
 	}
 }
 

@@ -33,11 +33,11 @@ namespace Smokey.Framework.Support
 	/// <summary>Precomputed objects used by method rules.</summary>
 	public class MethodInfo
 	{
-		public readonly TypeDefinition Type;
-		public readonly MethodDefinition Method;		// will always have a body
-		public readonly TypedInstructionCollection Instructions;	
-		public readonly ControlFlowGraph Graph;
-		public readonly Tracker Tracker;
+		public TypeDefinition Type {get; private set;}
+		public MethodDefinition Method {get; private set;}		// will always have a body
+		public TypedInstructionCollection Instructions {get; private set;}	
+		public ControlFlowGraph Graph {get; private set;}
+		public Tracker Tracker {get; private set;}
 
 		internal MethodInfo(SymbolTable symbols, TypeDefinition type, MethodDefinition method)
 		{
@@ -68,6 +68,13 @@ namespace Smokey.Framework.Support
 			}
 		}
 #endif
+		
+		public void Reset()
+		{
+			Instructions = null;
+			Graph = null;
+			Tracker = null;
+		}
 
 		public override bool Equals(object rhsObj)
 		{

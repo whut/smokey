@@ -96,7 +96,7 @@ namespace Smokey.Internal.Rules
 				// See if an arg is being used as a this pointer,
 				if (call.Target.HasThis)
 				{
-					int index = m_info.Tracker.GetStackIndex(call.Index, call.Target.Parameters.Count);
+					int index = call.GetThisIndex(m_info);
 					if (index >= 0)
 					{					
 						LoadArg load = m_info.Instructions[index] as LoadArg;
