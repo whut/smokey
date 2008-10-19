@@ -29,6 +29,7 @@ using Smokey.Framework.Support;
 using System;
 using System.Collections.Generic;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal abstract class BaseValidateArgsRule : Rule
@@ -217,4 +218,4 @@ namespace Smokey.Internal.Rules
 		}
 	}
 }
-
+#endif

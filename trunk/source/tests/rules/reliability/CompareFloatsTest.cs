@@ -271,3 +271,4 @@ namespace Smokey.Tests
 		}
 	} 
 }
+#endif

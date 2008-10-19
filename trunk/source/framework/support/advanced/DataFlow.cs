@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
+#if OLD
 namespace Smokey.Framework.Support.Advanced
 {			
 	/// <summary>Used with <c>DataFlow</c> to represent arbitrary state and the methods
@@ -290,5 +291,4 @@ namespace Smokey.Framework.Support.Advanced
 		#endregion
 	}
 }
-
-
+#endif

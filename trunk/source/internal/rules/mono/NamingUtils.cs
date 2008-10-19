@@ -22,6 +22,7 @@
 using System;
 using Smokey.Framework;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal static class NamingUtils
@@ -151,4 +152,4 @@ namespace Smokey.Internal.Rules
 		#endregion
 	}
 }
-
+#endif

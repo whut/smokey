@@ -32,6 +32,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Runtime.Serialization;
 
+#if OLD
 namespace Smokey.Tests
 {
 	[TestFixture]
@@ -108,3 +109,4 @@ namespace Smokey.Tests
 		}
 	} 
 }
+#endif

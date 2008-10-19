@@ -28,6 +28,7 @@ using Smokey.Framework.Instructions;
 using Smokey.Framework.Support.Advanced;
 using Smokey.Framework.Support.Advanced.Values;
 
+#if OLD
 namespace Smokey.Framework.Support
 {	
 	/// <summary>Precomputed objects used by method rules.</summary>
@@ -113,3 +114,4 @@ namespace Smokey.Framework.Support
 		private Tracker m_tracker;
 	}
 }
+#endif

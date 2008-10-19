@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {
 	// Mapping from a set of field names to the set of methods using those fields.
@@ -303,4 +304,4 @@ namespace Smokey.Internal.Rules
 		private MethodDefinition m_method;
 	}
 }
-
+#endif

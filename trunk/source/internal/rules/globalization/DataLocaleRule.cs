@@ -28,6 +28,7 @@ using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class DataLocaleRule : Rule
@@ -105,3 +106,4 @@ namespace Smokey.Internal.Rules
 		private bool m_foundLocale;
 	}
 }
+#endif

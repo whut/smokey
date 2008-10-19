@@ -29,6 +29,7 @@ using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 using Smokey.Framework.Support.Advanced;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {		
 	internal sealed class TransparentAssertRule2 : Rule
@@ -152,3 +153,4 @@ namespace Smokey.Internal.Rules
 		private bool m_failed;
 	}
 }
+#endif

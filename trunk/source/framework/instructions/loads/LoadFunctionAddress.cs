@@ -24,6 +24,7 @@ using Mono.Cecil.Cil;
 using System;
 using System.Text;
 
+#if OLD
 namespace Smokey.Framework.Instructions
 {	
 	/// <summary>Represents Ldftn and Ldvirtftn.</summary>
@@ -50,3 +51,4 @@ namespace Smokey.Framework.Instructions
 		public readonly MethodReference Method;
 	}
 }
+#endif

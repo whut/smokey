@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class PreferredTermRule : Rule
@@ -185,4 +186,4 @@ namespace Smokey.Internal.Rules
 			"signoff", "writeable"};
 	}
 }
-
+#endif

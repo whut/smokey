@@ -27,6 +27,7 @@ using Smokey.Framework;
 using Smokey.Framework.Support;
 using Smokey.Framework.Instructions;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class HungarianRule : Rule
@@ -147,4 +148,4 @@ namespace Smokey.Internal.Rules
 		};
 	}
 }
-
+#endif

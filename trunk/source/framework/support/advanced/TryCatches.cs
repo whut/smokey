@@ -26,6 +26,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Smokey.Framework.Instructions;
 
+#if OLD
 namespace Smokey.Framework.Support.Advanced
 {	
 	/// <summary>used by TryCatch and CatchBlock.</summary>
@@ -316,3 +317,4 @@ namespace Smokey.Framework.Support.Advanced
 		#endregion
 	}
 }
+#endif

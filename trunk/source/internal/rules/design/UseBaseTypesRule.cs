@@ -27,6 +27,7 @@ using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class UseBaseTypesRule : Rule
@@ -279,4 +280,4 @@ namespace Smokey.Internal.Rules
 		private List<List<TypeReference>> m_types = new List<List<TypeReference>>();	// null => arg is ok
 	}
 }
-
+#endif

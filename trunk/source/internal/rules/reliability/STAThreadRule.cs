@@ -27,6 +27,7 @@ using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	[DisableRule("M1000", "UseJurassicNaming")]	// this should be enabled, but i dont want to try svn moving a file with only case changes
@@ -69,4 +70,4 @@ namespace Smokey.Internal.Rules
 		}
 	}
 }
-
+#endif

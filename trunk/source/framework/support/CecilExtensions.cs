@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using SR = System.Reflection;
 
+#if OLD
 namespace Smokey.Framework.Support
 {
 	/// <summary>Some helpful Cecil related methods.</summary>
@@ -835,3 +836,4 @@ namespace Smokey.Framework.Support
 		#endregion
 	}
 } 
+#endif

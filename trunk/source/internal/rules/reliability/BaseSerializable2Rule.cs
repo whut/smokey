@@ -27,6 +27,7 @@ using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class BaseSerializable2Rule : Rule
@@ -106,4 +107,4 @@ namespace Smokey.Internal.Rules
 		private MethodDefinition m_method;
 	}
 }
-
+#endif

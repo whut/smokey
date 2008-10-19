@@ -26,6 +26,7 @@ using Smokey.Framework.Support;
 using System;
 using System.Collections.Generic;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class EqualityOperatorRule : Rule
@@ -83,4 +84,4 @@ namespace Smokey.Internal.Rules
 		private TypeDefinition m_type;
 	}
 }
-
+#endif

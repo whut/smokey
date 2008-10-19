@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class UnusedFieldRule : Rule
@@ -182,4 +183,4 @@ namespace Smokey.Internal.Rules
 		private Dictionary<FieldReference, State> m_fields = new Dictionary<FieldReference, State>();
 	}
 }
-
+#endif

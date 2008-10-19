@@ -30,6 +30,7 @@ using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class UseDefaultInitRule : Rule
@@ -124,4 +125,4 @@ namespace Smokey.Internal.Rules
 		private int m_offset;
 	}
 }
-
+#endif

@@ -26,6 +26,7 @@ using System.Reflection;
 using Smokey.Framework.Support;
 using Smokey.Internal.Rules;
 
+#if OLD
 namespace Smokey.Tests
 {
 	[TestFixture]
@@ -97,3 +98,4 @@ g'day");
 		}
 	} 
 }
+#endif

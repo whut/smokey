@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class NoStaticRemoveRule : Rule
@@ -268,3 +269,4 @@ namespace Smokey.Internal.Rules
 		private Dictionary<string, List<string>> m_removers = new Dictionary<string, List<string>>();
 	}
 }
+#endif

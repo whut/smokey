@@ -27,6 +27,7 @@ using Smokey.Framework.Support.Advanced;
 using System;
 using System.Collections.Generic;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class ClassPrefixRule : Rule
@@ -162,4 +163,4 @@ namespace Smokey.Internal.Rules
 		private Dictionary<string, List<string>> m_table = new Dictionary<string, List<string>>();
 	}
 }
-
+#endif

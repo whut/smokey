@@ -28,6 +28,7 @@ using System.Collections.Generic;
 //using System.Diagnostics;
 using System.Text;
 
+#if OLD
 namespace Smokey.Framework.Support.Advanced
 {			
 	/// <summary>Finds the basic blocks and wires them together based on the control flow.</summary>
@@ -491,3 +492,4 @@ namespace Smokey.Framework.Support.Advanced
 		#endregion
 	}
 }
+#endif

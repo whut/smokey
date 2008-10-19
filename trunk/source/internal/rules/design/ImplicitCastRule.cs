@@ -26,6 +26,7 @@ using Smokey.Framework.Support;
 using System;
 using System.Collections.Generic;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class ImplicitCastRule : Rule
@@ -79,4 +80,4 @@ namespace Smokey.Internal.Rules
 		private bool m_failed;
 	}
 }
-
+#endif

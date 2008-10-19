@@ -28,6 +28,7 @@ using Smokey.Framework.Support;
 using System;
 using System.Collections.Generic;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class TemplateMethodRule : Rule
@@ -109,4 +110,4 @@ namespace Smokey.Internal.Rules
 		private int m_limit = 120;	// increase to make fewer methods fail
 	}
 }
-
+#endif

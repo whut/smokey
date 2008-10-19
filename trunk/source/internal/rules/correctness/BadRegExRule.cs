@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class BadRegExRule : Rule

@@ -29,6 +29,7 @@ using Smokey.Framework.Support;
 using Smokey.Framework.Support.Advanced;
 using Smokey.Framework.Support.Advanced.Values;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal abstract class EqualsCantCastRule : Rule
@@ -196,4 +197,4 @@ namespace Smokey.Internal.Rules
 		}
 	}
 }
-
+#endif

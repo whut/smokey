@@ -29,6 +29,7 @@ using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 using Smokey.Framework.Support.Advanced.Values;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class FloatZeroDivideRule : Rule
@@ -131,3 +132,4 @@ namespace Smokey.Internal.Rules
 		private MethodInfo m_info;
 	}
 }
+#endif

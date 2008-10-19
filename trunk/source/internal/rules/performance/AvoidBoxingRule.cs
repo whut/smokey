@@ -26,6 +26,7 @@ using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	// The idea for this rule comes from John Robbins. See:
@@ -77,4 +78,4 @@ namespace Smokey.Internal.Rules
 		private int m_maxBoxes = Settings.Get("maxBoxes", 3);
 	}
 }
-
+#endif

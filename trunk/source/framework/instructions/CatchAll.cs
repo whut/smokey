@@ -23,6 +23,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
+#if OLD
 namespace Smokey.Framework.Instructions
 {			
 	/// <summary>An instruction that we haven't given a good type to yet.</summary>
@@ -33,3 +34,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
+#endif

@@ -29,6 +29,7 @@ using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 using Smokey.Framework.Support.Advanced;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {		
 	internal sealed class SealedInheritanceDemandRule : Rule
@@ -71,4 +72,4 @@ namespace Smokey.Internal.Rules
 		}
 	}
 }
-
+#endif
