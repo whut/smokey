@@ -118,45 +118,21 @@ namespace Smokey.Framework
 
 		[Conditional("DEBUG")]
 		public static void FastPre(bool f, string s)									{if (!f) throw new PreconditionException(s);}
-#if !DEBUG		// Conditional doesn't work with template methods in mono 1.2.5			
-		[Conditional("DEBUG")]
-		public static void FastPre<A1>(bool f, string format, A1 arg1)					{if (!f) throw new PreconditionException(string.Format(format, arg1));}
-		[Conditional("DEBUG")]
-		public static void FastPre<A1, A2>(bool f, string format, A1 arg1, A2 arg2)		{if (!f) throw new PreconditionException(string.Format(format, arg1, arg2));}
-#endif
 		[Conditional("DEBUG")]
 		public static void FastPre(bool f, string format, params object[] args)			{if (!f) throw new PreconditionException(string.Format(format, args));}
 
 		[Conditional("DEBUG")]
 		public static void FastPost(bool f, string s)									{if (!f) throw new PostconditionException(s);}
-#if !DEBUG					
-		[Conditional("DEBUG")]
-		public static void FastPost<A1>(bool f, string format, A1 arg1)					{if (!f) throw new PostconditionException(string.Format(format, arg1));}
-		[Conditional("DEBUG")]
-		public static void FastPost<A1, A2>(bool f, string format, A1 arg1, A2 arg2)	{if (!f) throw new PostconditionException(string.Format(format, arg1, arg2));}
-#endif
 		[Conditional("DEBUG")]
 		public static void FastPost(bool f, string format, params object[] args)		{if (!f) throw new PostconditionException(string.Format(format, args));}
 
 		[Conditional("DEBUG")]
 		public static void FastAssert(bool f, string s)									{if (!f) throw new AssertException(s);}
-#if !DEBUG					
-		[Conditional("DEBUG")]
-		public static void FastAssert<A1>(bool f, string format, A1 arg1)				{if (!f) throw new AssertException(string.Format(format, arg1));}
-		[Conditional("DEBUG")]
-		public static void FastAssert<A1, A2>(bool f, string format, A1 arg1, A2 arg2)	{if (!f) throw new AssertException(string.Format(format, arg1, arg2));}
-#endif
 		[Conditional("DEBUG")]
 		public static void FastAssert(bool f, string format, params object[] args)		{if (!f) throw new AssertException(string.Format(format, args));}
 
 		[Conditional("DEBUG")]
 		public static void FastFail(string s)											{throw new AssertException(s);}
-#if !DEBUG					
-		[Conditional("DEBUG")]
-		public static void FastFail<A1>(string format, A1 arg1)							{throw new AssertException(string.Format(format, arg1));}
-		[Conditional("DEBUG")]
-		public static void FastFail<A1, A2>(string format, A1 arg1, A2 arg2)			{throw new AssertException(string.Format(format, arg1, arg2));}
-#endif
 		[Conditional("DEBUG")]
 		public static void FastFail(string format, params object[] args)				{throw new AssertException(string.Format(format, args));}
 	}

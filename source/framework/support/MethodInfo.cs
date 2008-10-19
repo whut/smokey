@@ -36,21 +36,12 @@ namespace Smokey.Framework.Support
 		public TypeDefinition Type {get; private set;}
 		public MethodDefinition Method {get; private set;}		// will always have a body
 		public TypedInstructionCollection Instructions {get; private set;}	
-		public ControlFlowGraph Graph {get; private set;}
-		public Tracker Tracker {get; private set;}
 
 		internal MethodInfo(SymbolTable symbols, TypeDefinition type, MethodDefinition method)
 		{
 			Type = type;
 			Method = method;
 			Instructions = new TypedInstructionCollection(symbols, Method);
-			
-			if (method.Body != null)
-			{
-				Graph = new ControlFlowGraph(Instructions);
-				Tracker = new Tracker(Instructions);
-				Tracker.Analyze(Graph);
-			}
 		}
 		
 #if TEST
@@ -59,21 +50,39 @@ namespace Smokey.Framework.Support
 			Type = type;
 			Method = method;
 			Instructions = new TypedInstructionCollection(new SymbolTable(), Method);
-			
-			if (method.Body != null)
-			{
-				Graph = new ControlFlowGraph(Instructions);
-				Tracker = new Tracker(Instructions);
-				Tracker.Analyze(Graph);
-			}
 		}
 #endif
 		
+		public ControlFlowGraph Graph 
+		{
+			get
+			{
+				if (m_graph == null && Method.Body != null)
+					m_graph = new ControlFlowGraph(Instructions);
+					
+				return m_graph;
+			}
+		}
+		
+		public Tracker Tracker
+		{
+			get
+			{
+				if (m_tracker == null && Method.Body != null)
+				{
+					m_tracker = new Tracker(Instructions);
+					Tracker.Analyze(Graph);
+				}
+				
+				return m_tracker;
+			}
+		}
+
 		public void Reset()
 		{
 			Instructions = null;
-			Graph = null;
-			Tracker = null;
+			m_graph = null;
+			m_tracker = null;
 		}
 
 		public override bool Equals(object rhsObj)
@@ -99,5 +108,8 @@ namespace Smokey.Framework.Support
 			
 			return hash;
 		}
+		
+		private ControlFlowGraph m_graph;
+		private Tracker m_tracker;
 	}
 }
