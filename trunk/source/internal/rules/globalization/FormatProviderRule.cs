@@ -60,7 +60,7 @@ namespace Smokey.Internal.Rules
 			m_offset = -1;
 			m_bad = null;
 			m_info = begin.Info;
-			m_needsCheck = !begin.Info.Type.IsCompilerGenerated();	// TODO: why are we even called for these?
+			m_needsCheck = !begin.Info.Method.IsCompilerGenerated();	// TODO: why are we even called for these?
 		}
 
 		public void VisitCall(Call call)

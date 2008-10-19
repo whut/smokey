@@ -37,25 +37,25 @@ namespace Smokey.Framework.Instructions
 			switch (untyped.OpCode.Code)
 			{
 				case Code.Stloc_0:
-					Name = symbols.LocalName(method, 0);
+					Name = symbols.LocalName(method, untyped, 0);
 					Type = method.Body.Variables[Variable].VariableType;
 					break;
 					
 				case Code.Stloc_1:
 					Variable = 1;
-					Name = symbols.LocalName(method, 1);
+					Name = symbols.LocalName(method, untyped, 1);
 					Type = method.Body.Variables[Variable].VariableType;
 					break;
 					
 				case Code.Stloc_2:
 					Variable = 2;
-					Name = symbols.LocalName(method, 2);
+					Name = symbols.LocalName(method, untyped, 2);
 					Type = method.Body.Variables[Variable].VariableType;
 					break;
 					
 				case Code.Stloc_3:
 					Variable = 3;
-					Name = symbols.LocalName(method, 3);
+					Name = symbols.LocalName(method, untyped, 3);
 					Type = method.Body.Variables[Variable].VariableType;
 					break;
 					
@@ -72,7 +72,7 @@ namespace Smokey.Framework.Instructions
 						Variable = (int) untyped.Operand;
 						Type = method.Body.Variables[Variable].VariableType;
 					}
-					Name = symbols.LocalName(method, Variable);
+					Name = symbols.LocalName(method, untyped, Variable);
 					break;
 					
 				default:

@@ -27,7 +27,7 @@ using System.Threading;
 
 // R1014/StaticSetter
 namespace EvilDoer
-{
+{		
 	public static class BadNames
 	{
 		// D1022/ObsoleteMessage

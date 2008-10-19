@@ -33,7 +33,7 @@ internal_files := $(strip $(shell find source/internal -name "*.cs" -print))
 
 rules_files := $(strip $(shell find source/internal/rules -name "*.cs" -print))
 test_files := $(strip $(shell find source/tests -name "*.cs" -print))
-extra_test_files := source/internal/AssertTraceListener.cs source/internal/Break.cs source/internal/GetOptions.cs source/internal/Unused.cs source/internal/ThreadAttributes.cs source/internal/Reformat.cs
+extra_test_files := source/internal/AssertTraceListener.cs source/internal/Tuple.cs source/internal/Break.cs source/internal/GetOptions.cs source/internal/Unused.cs source/internal/ThreadAttributes.cs source/internal/Reformat.cs
 
 xml_files := $(strip $(shell find source/internal/rules/xml -name "*.xml" -print))
 
@@ -51,7 +51,7 @@ check: bin/tests.dll bin/tests.dll.config
 	$(NUNIT) -nologo -config=bin/tests.dll.config bin/tests.dll
 
 check1: bin/tests.dll bin/tests.dll.config
-	$(NUNIT) -nologo -config=bin/tests.dll.config -fixture=Smokey.Tests.EventSignatureTest bin/tests.dll
+	$(NUNIT) -nologo -config=bin/tests.dll.config -fixture=Smokey.Tests.StaticSetterTest bin/tests.dll
 
 ftest_asms := bin/evildoer.dll,bin/NoSecurity.exe,bin/APTCA.dll,bin/APTCA2.dll,bin/APTCA3.dll
 fcheck: bin/smokey.exe $(subst $(comma), ,$(ftest_asms)) bin/FullTrust.dll bin/functest.exe
@@ -74,7 +74,7 @@ bin/exe_resources: $(xml_files) IgnoreList.txt SysIgnore.txt
 	@echo $(xml_files) | sed "s/source/-resource:source/g" >> bin/exe_resources
 
 bin/exe_references:
-	@echo "-reference:Mono.CompilerServices.SymbolWriter.dll,Mono.Cecil.dll,System.Configuration.dll" > bin/exe_references
+	@echo "-reference:Mono.Cecil.dll,System.Configuration.dll" > bin/exe_references
 
 bin/smokey.exe: keys bin/app_flags bin/exe_references bin/exe_resources bin/exe_files
 	@./gen_version.sh $(version) source/internal/AssemblyVersion.cs
@@ -86,7 +86,7 @@ bin/tests_files: $(tests_files)
 	@echo "$(tests_files)" > bin/tests_files
 
 bin/tests_references: 
-	@echo "-reference:Mono.CompilerServices.SymbolWriter.dll,Mono.Cecil.dll,System.Configuration.dll,System.Data.dll,System.Windows.Forms.dll" > bin/tests_references
+	@echo "-reference:Mono.Cecil.dll.dll,System.Configuration.dll,System.Data.dll,System.Windows.Forms.dll" > bin/tests_references
 
 bin/tests.dll: bin/csc_flags bin/tests_references bin/tests_files 
 	$(CSC) -out:bin/tests.dll $(CSC_FLAGS) -define:TEST -pkg:mono-nunit -target:library @bin/tests_references @bin/tests_files 

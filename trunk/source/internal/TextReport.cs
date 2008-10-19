@@ -102,7 +102,7 @@ namespace Smokey.Internal
 			{
 				if (loc.Line >= 0)
 					writer.WriteLine("File: {0}:{1}", loc.File, loc.Line);
-				else if (loc.File != null && loc.File.Length > 0)
+				else if (loc.File != null && loc.File.Length > 0 && loc.File != "<unknown>")
 					writer.WriteLine("File: {0}", loc.File);
 					
 				writer.WriteLine(loc.Name);

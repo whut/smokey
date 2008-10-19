@@ -311,9 +311,9 @@ namespace Smokey.Framework.Support
 			if (IsCompilerGenerated(method.DeclaringType))
 				return true;
 				
-//			if (method.ToString().Contains("CompilerGenerated"))
-//				return true;
-				
+			else if (method.Name[0] == '<')	// with 2.0 started getting weird names like <ArrayToStr>m__0
+				return true;
+								
 			return false;
 		}		
 
@@ -497,6 +497,9 @@ namespace Smokey.Framework.Support
 				return true;
 				
 			else if (type.Name.Contains("AnonType"))
+				return true;
+				
+			else if (type.Name.Contains("AnonStore"))
 				return true;
 				
 			else if (type.FullName.Contains("<PrivateImplementationDetails>"))

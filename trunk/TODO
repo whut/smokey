@@ -36,10 +36,11 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 224 rules
 199 fxcop
 102 gendarme
-
-
-* Smoke again.
+	
 * Upgrade to mono 2.0
+	- look at changes
+	- look at new gendarme
+	- look at Monodevelop
 * Do a release.
 
 * Instead of explicitly iterating over base types all over might be better to provide
