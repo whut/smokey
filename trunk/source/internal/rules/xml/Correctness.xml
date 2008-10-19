@@ -816,9 +816,8 @@ normally be Error. -->
 			<CSharp>
 			internal static class Unused
 			{
-				public static void Arg(params object[] args)
-				{
-				}
+				[DisableRule("C1022", "UseSetterValue")]
+				set {}
 			}
 			
 			internal static class Worker 

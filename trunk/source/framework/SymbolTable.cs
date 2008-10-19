@@ -33,6 +33,7 @@ using System.Runtime.Serialization;
 
 namespace Smokey.Framework
 {		
+	[DisableRule("D1001", "ClassCanBeMadeStatic")]		// TODO: make it static
 	internal sealed class SymbolTable
 	{				
 		public Location Location(TypeDefinition type, string details)
@@ -90,24 +91,7 @@ namespace Smokey.Framework
 			
 			return name;
 		}
-				
-		private Scope DoFindScope(ScopeCollection scopes, Instruction instruction)
-		{
-			Scope result = null;
-			
-			for (int i = 0; i < scopes.Count && result == null; ++i)
-			{
-				Scope candidate = scopes[i];
-
-				if (candidate.Start.Offset <= instruction.Offset && instruction.Offset <= candidate.End.Offset)
-					result = candidate;
-				else
-					result = DoFindScope(candidate.Scopes, instruction);
-			}
-				
-			return result;
-		}
-		
+						
 		private Tuple2<string, int> DoFindFileLine(TypeDefinition type)
 		{
 			var methods = new List<MethodDefinition>(type.Constructors.Count + type.Methods.Count);
@@ -153,7 +137,7 @@ namespace Smokey.Framework
 				if (type != null)
 				{
 					var temp = DoFindFileLine(type);
-					Tuple.Make(temp.First, -1);
+					result = Tuple.Make(temp.First, -1);
 				}
 			}
 			

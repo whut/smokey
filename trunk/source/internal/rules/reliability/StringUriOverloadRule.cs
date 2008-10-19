@@ -154,7 +154,7 @@ namespace Smokey.Internal.Rules
 			return null;
 		}
 		
-		private class Entry
+		private sealed class Entry
 		{
 			public Entry(MethodDefinition uri)
 			{

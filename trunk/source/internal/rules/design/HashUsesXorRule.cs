@@ -46,7 +46,7 @@ namespace Smokey.Internal.Rules
 		public void VisitBegin(BeginMethod method)
 		{
 			m_offset = -1;
-			m_needsCheck = method.Info.Method.Reuses("System.Int32", "GetHashCode");
+			m_needsCheck = method.Info.Method.Reuses("System.Int32", "GetHashCode") && !method.Info.Method.IsCompilerGenerated();
 			
 			if (m_needsCheck)
 			{

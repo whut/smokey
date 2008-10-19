@@ -271,7 +271,7 @@ namespace Smokey.Internal
 		#endregion
 		
 		#region Private Types
-		private class Option
+		private sealed class Option
 		{	
 			public Option(string key, string value, string help, bool requiresArg, params string[] aliaii)
 			{

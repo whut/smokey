@@ -94,7 +94,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 		
-		private TypeReference DoGetThisType(Call call)	// TODO: may want to make this a method on Call
+		private TypeReference DoGetThisType(Call call)	
 		{
 			TypeReference self = null;
 			

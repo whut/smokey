@@ -66,6 +66,7 @@ namespace Smokey.Internal.Rules
 					m_needsCheck = true;
 		}
 		
+		[DisableRule("D1042", "IdenticalMethods")]		// TODO: matches NetNaming
 		public void VisitType(TypeDefinition type)
 		{
 			if (type.Name.Length >= 4)				// weird generated types like P1`1

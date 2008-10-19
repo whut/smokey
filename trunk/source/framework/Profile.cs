@@ -191,7 +191,7 @@ namespace Smokey.Framework
 		#endregion
 		
 		#region Private types
-		private class Total
+		private sealed class Total
 		{
 			public TimeSpan Elapsed;
 			public int Count;
@@ -244,7 +244,7 @@ namespace Smokey.Framework
 			}
 		}
 		
-		private class Task				// note that this has to be a class or we get cycles in the object layout
+		private sealed class Task				// note that this has to be a class or we get cycles in the object layout
 		{
 			public readonly Task Parent;
 			public readonly string Name;

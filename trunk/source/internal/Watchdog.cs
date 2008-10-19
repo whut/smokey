@@ -52,6 +52,7 @@ namespace Smokey.Internal
 		}
 				
 		// Joins the thread.
+		[DisableRule("D1042", "IdenticalMethods")]	// TODO: should have a base class for progress and watchdog
 		public void Shutdown()
 		{
 			if (m_disposed)        
@@ -116,7 +117,7 @@ namespace Smokey.Internal
 		#region Fields --------------------------------------------------------
 		private Thread m_thread;
 		private Thread m_mainThread;
-		private readonly TimeSpan m_timeout = TimeSpan.FromSeconds(45);	// TODO: may want to make this configurable
+		private readonly TimeSpan m_timeout = TimeSpan.FromSeconds(45);	
 		private readonly bool m_verbose;
 		private bool m_disposed = false;
 		

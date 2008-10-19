@@ -26,6 +26,7 @@ namespace Smokey.Framework
 {	
 	/// <summary>Represents the location of an error. Contents will vary according to
 	/// the rule type.</summary>
+	[DisableRule("MS1019", "LargeStruct")]		// we're 20 bytes with the addition of offset
 	public struct Location
 	{		
 		/// <summary>For example: /Users/jessejones/Source/Smokey/extras/evildoer/EvilPoint.cs.</summary>

@@ -259,7 +259,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 		
-		private class CompareTokens : IComparer<MethodReference>
+		private sealed class CompareTokens : IComparer<MethodReference>
 		{
 			public int Compare(MethodReference lhs, MethodReference rhs)
 			{
@@ -270,7 +270,7 @@ namespace Smokey.Internal.Rules
 			}
 		}
 		
-		private class CompareNames : IComparer<MethodReference>
+		private sealed class CompareNames : IComparer<MethodReference>
 		{
 			public int Compare(MethodReference lhs, MethodReference rhs)
 			{

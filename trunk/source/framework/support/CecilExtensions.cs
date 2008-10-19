@@ -502,6 +502,9 @@ namespace Smokey.Framework.Support
 			else if (type.Name.Contains("AnonStore"))
 				return true;
 				
+			else if (type.Name.Contains(">c__"))
+				return true;
+				
 			else if (type.FullName.Contains("<PrivateImplementationDetails>"))
 				return true;
 				

@@ -210,6 +210,7 @@ namespace Smokey.Internal.Rules
 		// 05: stloc.N    V_0
 		// 06: ldloc.N    V_0
 		// 07: call       System.Void System.Threading.Monitor::Enter(System.Object)
+		[DisableRule("D1042", "IdenticalMethods")]		// TODO: matches RecursiveLock1Rule
 		private bool DoMatchLock1(int index)
 		{
 			bool match = false;
@@ -256,6 +257,7 @@ namespace Smokey.Internal.Rules
 		// 06: stloc.N    V_0
 		// 07: ldloc.N    V_0
 		// 08: call       System.Void System.Threading.Monitor::Enter(System.Object)
+		[DisableRule("D1042", "IdenticalMethods")]		// TODO: matches RecursiveLock2Rule
 		private bool DoMatchLock2(int index)
 		{
 			bool match = false;
@@ -302,7 +304,7 @@ namespace Smokey.Internal.Rules
 			return match;
 		}
 				
-		private class Entry
+		private sealed class Entry
 		{
 			public readonly Dictionary<MethodDefinition, List<MethodReference>> Calls;	// methods called while the lock is held
 			public readonly Dictionary<MethodReference, string> ExternalCalls;			// methods that call a delegate or fire an event

@@ -482,7 +482,7 @@
 					}
 				}
 				
-				public static string Text {get;}
+				public static string Text {get; private set;}
 				
 				private static object ms_lock = new object();
 			}			
@@ -1298,9 +1298,9 @@
 			
 			// --------------------------------------------------------
 			
-			/// &lt;summary&gt;Thrown by Dbc.Assert and FastAssert.&lt;/summary&gt;
+			/// &lt;summary&gt;Thrown by DBC.Assert and FastAssert.&lt;/summary&gt;
 			[Serializable]
-			public sealed class AssertException : Exception
+			public class AssertException : Exception
 			{
 				public AssertException(string text) : base(text) 
 				{
@@ -1315,7 +1315,7 @@
 				}
 			}
 			
-			/// &lt;summary&gt;Thrown by Dbc.Pre and FastPre.&lt;/summary&gt;
+			/// &lt;summary&gt;Thrown by DBC.Pre and FastPre.&lt;/summary&gt;
 			[Serializable]
 			public sealed class PreconditionException : AssertException
 			{
@@ -1332,7 +1332,7 @@
 				}
 			}
 			
-			/// &lt;summary&gt;Thrown by Dbc.Post and FastPost.&lt;/summary&gt;
+			/// &lt;summary&gt;Thrown by DBC.Post and FastPost.&lt;/summary&gt;
 			[Serializable]
 			public sealed class PostconditionException : AssertException
 			{
@@ -1357,17 +1357,17 @@
 			/// to call the method correctly and the method guarantees to some work
 			/// if called correctly (or throw an exception if it is unable to do so).&lt;/para&gt;
 			///
-			/// &lt;para&gt;The client side of the contract is checked by the Dbc.Pre methods. The
-			/// method side of the contract is checked with Dbc.Post methods. The Dbc.
+			/// &lt;para&gt;The client side of the contract is checked by the DBC.Pre methods. The
+			/// method side of the contract is checked with DBC.Post methods. The DBC.
 			/// Assert methods can be used to verify that the state of the world is as
 			/// expected within a method. There are also Fast versions of these methods
 			/// which are compiled out in release. These should only be used for code
 			/// that is known to be time critical.&lt;/para&gt;
 			///
-			/// &lt;para&gt;Dbc also makes use of invariants, but these are outside the scope of the
-			/// Dbc class. See http://archive.eiffel.com/doc/manuals/technology/contract/
+			/// &lt;para&gt;DBC also makes use of invariants, but these are outside the scope of the
+			/// DBC class. See http://archive.eiffel.com/doc/manuals/technology/contract/
 			/// for more details.&lt;/para&gt;&lt;/remarks&gt;
-			public static class Dbc
+			public static class DBC
 			{		
 				public static void Pre(bool f, string s)									{if (!f) throw new PreconditionException(s);}
 				public static void Pre&lt;A1&gt;(bool f, string format, A1 arg1)					{if (!f) throw new PreconditionException(string.Format(format, arg1));}
@@ -1500,7 +1500,7 @@
 			
 			// --------------------------------------------------------
 			
-			/// &lt;summary&gt;Thrown by Dbc.Assert and FastAssert.&lt;/summary&gt;
+			/// &lt;summary&gt;Thrown by DBC.Assert and FastAssert.&lt;/summary&gt;
 			[Serializable]
 			public class AssertException : Exception
 			{
@@ -1517,7 +1517,7 @@
 				}
 			}
 			
-			/// &lt;summary&gt;Thrown by Dbc.Pre and FastPre.&lt;/summary&gt;
+			/// &lt;summary&gt;Thrown by DBC.Pre and FastPre.&lt;/summary&gt;
 			[Serializable]
 			public sealed class PreconditionException : AssertException
 			{
@@ -1534,7 +1534,7 @@
 				}
 			}
 			
-			/// &lt;summary&gt;Thrown by Dbc.Post and FastPost.&lt;/summary&gt;
+			/// &lt;summary&gt;Thrown by DBC.Post and FastPost.&lt;/summary&gt;
 			[Serializable]
 			public sealed class PostconditionException : AssertException
 			{
@@ -1559,17 +1559,17 @@
 			/// to call the method correctly and the method guarantees to some work
 			/// if called correctly (or throw an exception if it is unable to do so).&lt;/para&gt;
 			///
-			/// &lt;para&gt;The client side of the contract is checked by the Dbc.Pre methods. The
-			/// method side of the contract is checked with Dbc.Post methods. The Dbc.
+			/// &lt;para&gt;The client side of the contract is checked by the DBC.Pre methods. The
+			/// method side of the contract is checked with DBC.Post methods. The DBC.
 			/// Assert methods can be used to verify that the state of the world is as
 			/// expected within a method. There are also Fast versions of these methods
 			/// which are compiled out in release. These should only be used for code
 			/// that is known to be time critical.&lt;/para&gt;
 			///
-			/// &lt;para&gt;Dbc also makes use of invariants, but these are outside the scope of the
-			/// Dbc class. See http://archive.eiffel.com/doc/manuals/technology/contract/
+			/// &lt;para&gt;DBC also makes use of invariants, but these are outside the scope of the
+			/// DBC class. See http://archive.eiffel.com/doc/manuals/technology/contract/
 			/// for more details.&lt;/para&gt;&lt;/remarks&gt;
-			public static class Dbc
+			public static class DBC
 			{		
 				public static void Pre(bool f, string s)									{if (!f) throw new PreconditionException(s);}
 				public static void Pre&lt;A1&gt;(bool f, string format, A1 arg1)					{if (!f) throw new PreconditionException(string.Format(format, arg1));}
@@ -1796,7 +1796,7 @@
 				
 				public Game()
 				{
-					m_udp = new UdpClient;
+					m_udp = new UdpClient();
 					m_udp.BeginReceive(this.DoRecvPacket, null);
 					
 					m_aiThread = new Thread(this.DoAI);
