@@ -33,16 +33,33 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 
 /Library/Frameworks/Mono.framework/Versions/1.9/lib/mono/gac/gtk-sharp/2.10.0.0__35e10195dab3c99f/gtk-sharp.dll			  
 
-224 rules
+232 rules
 199 fxcop
 102 gendarme
-	
-* Upgrade to mono 2.0
-	- look at changes
-	- look at new gendarme
-	- look at Monodevelop
-* Do a release.
 
+mono --debug bin/smokey.exe ../shield-anvil/bin/shield-anvil.exe	36.677 seconds
+
+gmcs -out:bin/profile-aop.exe -reference:Mono.Cecil.dll -checked+ -debug+ -warn:4 -warnaserror+ ProfileAOP.cs
+mono --debug bin/profile-aop.exe
+mono --debug bin/smokey2.exe ../shield-anvil/bin/shield-anvil.exe>tmp.txt
+
+* Look at slow rules:
+	IgnoredReturnRule              01.808    9642
+	WinFormsVoodooRule             01.638    6853
+	NullDerefRule                  01.272    36986
+	DataLocaleRule                 00.855    10331
+	CollectionToStringRule         00.853    9642
+	ExitCodeRule                   00.827    13255
+	RecursiveLock1Rule             00.816    8644
+	UnprotectedEventRule           00.806    9642
+	BadExitRule                    00.8      8248
+	UnusualMonitor2Rule            00.786    9642
+	UnusedMethodRule               00.757    9420
+	UnrelatedEqualsRule            00.755    9642
+* Do a release
+
+* Tuple3 should have been flagged as unused.
+* Make SymbolTable static.
 * Instead of explicitly iterating over base types all over might be better to provide
   traversal methods which iterate over base classes and/or interfaces.
 * AssemblyCache should store TypeData.
@@ -81,6 +98,21 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 * Update NullResultRule to use ArgCanBeNull.
 	- StringUriOverloadRule should fire when smoke testing
 * Update other null rules to use CanReturnNull and ArgCanBeNull.
+* Gendarme rules <http://www.mono-project.com/Gendarme#Rules>:
+	AvoidAssemblyVersionMismatchRule
+	AvoidCallingProblematicMethodsRule
+	DoNotForgetNotImplementedMethodsRule
+	DoNotUseLockedRegionOutsideMethodRule
+	AttributeStringLiteralsShouldParseCorrectlyRule
+	DoNotRoundIntegersRule
+	ReviewDoubleAssignmentRule
+	ReviewSelfAssignmentRule
+	ReviewUseOfInt64BitsToDoubleRule
+	ConsiderConvertingFieldToNullableRule
+	EnumsShouldDefineAZeroValueRule
+	MainShouldNotBePublicRule
+	DoNotCastIntPtrToInt32Rule
+	UsePreferredTermsRule
 * You can't marshal DateTime directly because its internal representation
   is different between runtimes *and* profiles
   https://bugzilla.novell.com/show_bug.cgi?id=325067
@@ -229,7 +261,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	
 * Release checklist:
 	- search for TODO
-	- use mono --debug bin/smokey.exe.exe -check-xml>tmp.txt
+	- do mono --debug bin/smokey.exe -check-xml>tmp.txt
 	- make smoke>tmp.txt
 	- make check
 	- make fcheck
@@ -237,7 +269,6 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 	- make RELEASE=1 check
 	- make RELEASE=1 fcheck
 	- profile
-		rm bin/smokey.exe				# nant doesn't rebuild if just a define changed
 		make PROFILE=true app
 		look at stdout
 	- review severity and breaking of new rules
