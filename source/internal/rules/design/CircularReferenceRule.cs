@@ -28,6 +28,7 @@ using Smokey.Framework.Support.Advanced;
 using System;
 using System.Collections.Generic;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class CircularReferenceRule : Rule
@@ -148,3 +149,4 @@ namespace Smokey.Internal.Rules
 		private Dictionary<TypeReference, List<TypeReference>> m_table = new Dictionary<TypeReference, List<TypeReference>>();
 	}
 }
+#endif

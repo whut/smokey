@@ -23,6 +23,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
+#if OLD
 namespace Smokey.Framework.Instructions
 {		
 	/// <summary>Represents Brfalse, Brfalse_S, Brtrue, Brtrue_S, Beq, Beq_S, Bge, Bge_S, 
@@ -35,3 +36,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
+#endif

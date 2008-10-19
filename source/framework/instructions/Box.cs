@@ -25,6 +25,7 @@ using System;
 using System.Diagnostics;
 using System.Text;
 
+#if OLD
 namespace Smokey.Framework.Instructions
 {			
 	/// <summary>Represents Box.</summary>
@@ -42,3 +43,4 @@ namespace Smokey.Framework.Instructions
 		public readonly TypeReference Type;
 	}
 }
+#endif

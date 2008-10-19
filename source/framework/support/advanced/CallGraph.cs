@@ -25,6 +25,7 @@ using Smokey.Internal;
 using System;
 using System.Collections.Generic;
 
+#if OLD
 namespace Smokey.Framework.Support.Advanced
 {			
 	/// <summary>List of all the methods every method calls.</summary>
@@ -78,3 +79,4 @@ namespace Smokey.Framework.Support.Advanced
 		#endregion
 	}
 }
+#endif

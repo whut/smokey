@@ -22,6 +22,7 @@
 using Mono.Cecil;
 using System;
 
+#if OLD
 namespace Smokey.Framework.Support
 {				
 	// ------------------------------------------------------------------------
@@ -92,5 +93,4 @@ namespace Smokey.Framework.Support
 		private MethodInfo m_info;
 	}
 }
-
-
+#endif

@@ -32,6 +32,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
+#if OLD
 namespace Smokey.Tests
 {
 	[TestFixture]
@@ -111,3 +112,4 @@ namespace Smokey.Tests
 		}
 	} 
 }
+#endif

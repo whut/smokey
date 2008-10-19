@@ -28,6 +28,7 @@ using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class SpecialFolderRule : Rule
@@ -119,3 +120,4 @@ namespace Smokey.Internal.Rules
 		private Dictionary<Environment.SpecialFolder, string[]> m_globs = new Dictionary<Environment.SpecialFolder, string[]>();
 	}
 }
+#endif

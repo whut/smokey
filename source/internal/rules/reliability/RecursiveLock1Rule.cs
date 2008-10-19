@@ -30,6 +30,7 @@ using Smokey.Framework.Support.Advanced;
 using System;
 using System.Collections.Generic;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class RecursiveLock1Rule : Rule
@@ -338,4 +339,4 @@ namespace Smokey.Internal.Rules
 		private Dictionary<TypeDefinition, Entry> m_table = new Dictionary<TypeDefinition, Entry>();
 	}
 }
-
+#endif

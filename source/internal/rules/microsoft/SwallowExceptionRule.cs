@@ -26,6 +26,7 @@ using Smokey.Framework;
 using Smokey.Framework.Support;
 using Smokey.Framework.Support.Advanced;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class SwallowExceptionRule : Rule
@@ -78,4 +79,4 @@ namespace Smokey.Internal.Rules
 		}
 	}
 }
-
+#endif

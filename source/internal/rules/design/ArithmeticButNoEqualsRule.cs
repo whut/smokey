@@ -24,6 +24,7 @@ using System;
 using Smokey.Framework;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class ArithmeticButNoEqualsRule : Rule
@@ -83,4 +84,4 @@ namespace Smokey.Internal.Rules
 		private bool m_hasEquals;
 	}
 }
-
+#endif

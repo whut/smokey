@@ -25,6 +25,7 @@ using System;
 using Smokey.Framework;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class DeepInheritanceRule : Rule
@@ -70,4 +71,4 @@ namespace Smokey.Internal.Rules
 		}
 	}
 }
-
+#endif

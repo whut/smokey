@@ -31,6 +31,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class FormatProviderRule : Rule
@@ -223,3 +224,4 @@ namespace Smokey.Internal.Rules
 		};
 	}
 }
+#endif

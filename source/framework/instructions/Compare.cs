@@ -25,6 +25,7 @@ using System;
 using System.Diagnostics;
 using System.Text;
 
+#if OLD
 namespace Smokey.Framework.Instructions
 {		
 	/// <summary>Represents Ceq, Cgt, Cgt_Un, Clt, 
@@ -39,3 +40,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
+#endif

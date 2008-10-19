@@ -23,6 +23,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
+#if OLD
 namespace Smokey.Framework.Instructions
 {		
 	/// <summary>Represents Stelem_I, Stelem_I1, Stelem_I2, Stelem_I4, 
@@ -39,3 +40,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
+#endif

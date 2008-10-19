@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class IdenticalMethodsRule : Rule
@@ -326,4 +327,4 @@ namespace Smokey.Internal.Rules
 		private Dictionary<int, List<MethodCapture>> m_table = new Dictionary<int, List<MethodCapture>>();
 	}
 }
-
+#endif

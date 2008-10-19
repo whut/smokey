@@ -29,6 +29,7 @@ using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 using Smokey.Framework.Support.Advanced;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {		
 	internal sealed class VisiblePointerRule : Rule
@@ -85,4 +86,4 @@ namespace Smokey.Internal.Rules
 		private List<string> m_badFields = new List<string>();
 	}
 }
-
+#endif

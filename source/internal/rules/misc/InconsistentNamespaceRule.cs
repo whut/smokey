@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {		
 	internal sealed class InconsistentNamespaceRule : Rule
@@ -128,4 +129,4 @@ namespace Smokey.Internal.Rules
 		}
 	}
 }
-
+#endif

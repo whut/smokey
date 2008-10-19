@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class NotInstantiatedRule : Rule
@@ -270,4 +271,4 @@ namespace Smokey.Internal.Rules
 		private State m_state;
 	}
 }
-
+#endif

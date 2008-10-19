@@ -28,6 +28,7 @@ using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class DisposeableRule : Rule
@@ -393,3 +394,4 @@ namespace Smokey.Internal.Rules
 		private List<FieldReference> m_ownedFields = new List<FieldReference>();
 	}
 }
+#endif

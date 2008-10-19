@@ -28,6 +28,7 @@ using System.Reflection;
 using Smokey.Framework.Support;
 using Smokey.Internal.Rules;
 
+#if OLD
 namespace Smokey.Tests
 {
 	[TestFixture]
@@ -85,3 +86,4 @@ namespace Smokey.Tests
 		}
 	} 
 }
+#endif

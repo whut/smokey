@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class StringUri1Rule : Rule
@@ -127,4 +128,4 @@ namespace Smokey.Internal.Rules
 		private string[] m_bad = new[] {"uri", "Uri", "urn", "Urn", "url", "Url"};
 	}
 }
-
+#endif

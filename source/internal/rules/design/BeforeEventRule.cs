@@ -24,6 +24,7 @@ using System;
 using Smokey.Framework;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class BeforeEventRule : Rule
@@ -66,4 +67,4 @@ namespace Smokey.Internal.Rules
 		private string[] m_bad = new string[]{"before", "after"};
 	}
 }
-
+#endif

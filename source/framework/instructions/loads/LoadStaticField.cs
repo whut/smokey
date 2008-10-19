@@ -24,6 +24,7 @@ using Mono.Cecil.Cil;
 using System;
 using System.Text;
 
+#if OLD
 namespace Smokey.Framework.Instructions
 {	
 	/// <summary>Represents Ldsfld.</summary>
@@ -49,3 +50,4 @@ namespace Smokey.Framework.Instructions
 		public readonly FieldReference Field;
 	}
 }
+#endif

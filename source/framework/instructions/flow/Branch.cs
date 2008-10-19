@@ -23,6 +23,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
+#if OLD
 namespace Smokey.Framework.Instructions
 {		
 	/// <summary>Represents UnconditionalBranch and
@@ -52,3 +53,4 @@ namespace Smokey.Framework.Instructions
 		private TypedInstruction m_target;
 	}
 }
+#endif

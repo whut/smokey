@@ -29,6 +29,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {
 	[Serializable]

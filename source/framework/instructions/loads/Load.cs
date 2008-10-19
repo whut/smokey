@@ -23,6 +23,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
+#if OLD
 namespace Smokey.Framework.Instructions
 {		
 	/// <summary>Represents Ldelem_I1, Ldelem_U1, Ldelem_I2, Ldelem_U2, Ldelem_I4, Ldelem_U4, 
@@ -40,3 +41,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
+#endif

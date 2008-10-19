@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using Smokey.Framework;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {		
 	internal abstract class BaseAptca : Rule
@@ -100,4 +101,4 @@ namespace Smokey.Internal.Rules
 		private Dictionary<AssemblyDefinition, bool> m_fullTrust = new Dictionary<AssemblyDefinition, bool>();
 	}
 }
-
+#endif

@@ -27,6 +27,7 @@ using Smokey.Framework.Support;
 using System;
 using System.Collections.Generic;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class Const1Rule : Rule
@@ -173,4 +174,4 @@ namespace Smokey.Internal.Rules
 		private List<string> m_candidates = new List<string>();
 	}
 }
-
+#endif

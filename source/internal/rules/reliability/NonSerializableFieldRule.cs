@@ -27,6 +27,7 @@ using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class NonSerializableFieldRule : Rule
@@ -95,4 +96,4 @@ namespace Smokey.Internal.Rules
 		private string m_details;
 	}
 }
-
+#endif

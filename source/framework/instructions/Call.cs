@@ -24,6 +24,7 @@ using Mono.Cecil.Cil;
 using System;
 using Smokey.Framework.Support;
 
+#if OLD
 namespace Smokey.Framework.Instructions
 {				
 	/// <summary>Represents Call and Callvirt.</summary>
@@ -95,3 +96,4 @@ namespace Smokey.Framework.Instructions
 		private int? m_thisIndex;
 	}
 }
+#endif
