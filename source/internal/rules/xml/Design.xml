@@ -156,7 +156,7 @@
 					Name = name;
 				}
 					
-				public string Name {get;}
+				public string Name {get; private set;}
 			}
 			
 			public interface ITool
@@ -375,12 +375,12 @@
 			{		
 				public PlatformAttribute(string name) 
 				{
-					Nname = name;
+					Name = name;
 				}
 				
 				// Name appears in the contructor so it is a required argument
 				// and only needs a getter.
-				public string Name {get;}
+				public string Name {get; private set;}
 			
 				// Vendor does not appear in the ctor so it is an optional
 				// argument and needs both a getter and a setter.
@@ -496,7 +496,7 @@
 				// Implement the IEnumerator interface member explicitly.
 				object IEnumerator.Current
 				{
-					get {return m_current;}
+					get {return m_current; private set;}
 				}
 				
 				public bool MoveNext()
@@ -1073,7 +1073,7 @@
 					base.GetObjectData(info, context);
 				}
 				
-				public string Info {get;}
+				public string Info {get; private set;}
 			}  			
    			</CSharp>
 		</Translation>
@@ -1342,8 +1342,8 @@
 					return new Size(pt.X, pt.Y);
 				}
 				
-				public int Width {get;}
-				public int Height {get;}
+				public int Width {get; private set;}
+				public int Height {get; private set;}
 			}			
 
 			public struct Point
@@ -1356,8 +1356,8 @@
 				
 				// cast methods elided
 				
-				public int X {get;}
-				public int Y {get;}
+				public int X {get; private set;}
+				public int Y {get; private set;}
 			}			
 			</CSharp>
 		</Translation>
@@ -2595,7 +2595,7 @@
 					// allocate more resources (in addition to base's)
 				}
 				
-				public void Work()
+				public void MoreWork()
 				{
 					// All public methods (except Dispose) should throw 
 					// ObjectDisposedException if Dispose has been called.
@@ -2710,7 +2710,7 @@
 					// allocate more resources (in addition to base's)
 				}
 				
-				public void Work()
+				public void MoreWork()
 				{
 					// All public methods (except Dispose) should throw 
 					// ObjectDisposedException if Dispose has been called.
@@ -2891,6 +2891,9 @@
 				
 					[DllImport("aspell")]
 					public static extern void delete_aspell_speller(AspellHandle handle);
+
+					[DllImport("aspell")]
+					public static extern IntPtr to_aspell_speller(AspellCanHaveErrorHandle ths);
 				}
 				
 				// And here is our managed class which wraps all of the unmanaged glue code. Note

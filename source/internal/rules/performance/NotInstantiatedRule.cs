@@ -53,6 +53,8 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitBegin(BeginTesting begin)
 		{						
+			Unused.Value = begin;
+			
 			Log.DebugLine(this, "++++++++++++++++++++++++++++++++++"); 
 			m_keys.Clear();		// need this for unit tests
 			m_types.Clear();

@@ -71,11 +71,12 @@ namespace Smokey.Internal.Rules
 
 			Log.DebugLine(this, "checking:");
 			Log.Indent();
-			Log.DebugLine(this, "{0:F}", info.Instructions);
 			
 			// If the class isn't sealed then,
-			if (info.Method.Body != null)
+			if (info.Method.Body != null && info.Instructions != null)
 			{
+				Log.DebugLine(this, "{0:F}", info.Instructions);
+
 				// loop through every instruction,
 				for (int i = 0; i < info.Instructions.Length && offset < 0; ++i)
 				{

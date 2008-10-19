@@ -82,6 +82,7 @@ namespace Smokey.Framework.Instructions
 		/// could not be found.</summary>
 		public int GetThisIndex(MethodInfo info)
 		{
+			DBC.Pre(info != null, "info is null");
 			DBC.Pre(Target.HasThis, "the method is static");
 			
 			if (!m_thisIndex.HasValue)

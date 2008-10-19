@@ -321,7 +321,7 @@ namespace Smokey.Internal.Rules
 			}
  		}
 		
-		private class Entry
+		private sealed class Entry
 		{
 			public readonly Dictionary<MethodReference, List<FieldReference>> Locked;	// fields the method locks
 			public readonly Dictionary<Source, List<MethodReference>> Calls;			// methods called while the lock is held

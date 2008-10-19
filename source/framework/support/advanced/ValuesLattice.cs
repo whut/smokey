@@ -633,7 +633,7 @@ namespace Smokey.Framework.Support.Advanced
 				{
 					// Preserve zero values because if a value may be null we want to use it
 					// so we catch more potential failures. TODO: this is a good idea but it
-					// results int too many false positives, for example:
+					// results in too many false positives, for example:
 					// string s = null;
 					// if (flag)
 					//    s = "hey";

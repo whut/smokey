@@ -25,12 +25,13 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Smokey.Framework.Support;
+using Smokey.Internal;
 using Smokey.Internal.Rules;
 
 namespace Smokey.Tests
 {
 	[TestFixture]
-	public class IgnoredReturnTest : MethodTest
+	internal class IgnoredReturnTest : MethodTest
 	{	
 		#region Test classes
 		public class Cases

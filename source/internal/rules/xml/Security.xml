@@ -491,7 +491,7 @@
 	<Violation checkID = "S1009" severity = "Warning" breaking = "true">
 		<Translation lang = "en" typeName = "InternalInterface" category = "Security">			
 			<Cause>
-			An inheritable and externally visible type has an overrideable method implementation of an internal
+			An inheritable and externally visible type has an overridable method implementation of an internal
 			interface.
 			</Cause>
 	
@@ -694,7 +694,7 @@
 	<Violation checkID = "S1016" severity = "Error" breaking = "false">
 		<Translation lang = "en" typeName = "SecureOverrides" category = "Security">			
 			<Cause>
-			An externally visible unsealed type is protected with a link demand, has an overrideable method,
+			An externally visible unsealed type is protected with a link demand, has an overridable method,
 			and neither the type nor method is protected with an inheritance demand.
 			</Cause>
 	
@@ -707,7 +707,7 @@
 			</Description>
 	
 			<Fix>
-			Add an inheritance demand to the type or the overrideable methods.
+			Add an inheritance demand to the type or the overridable methods.
 			</Fix>
 	
 			<CSharp>
@@ -747,7 +747,7 @@
 			</Description>
 	
 			<Fix>
-			Remove the inheritance demand or make the method overrideable.
+			Remove the inheritance demand or make the method overridable.
 			</Fix>
 		</Translation>
 	</Violation>

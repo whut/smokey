@@ -445,7 +445,7 @@
 					Address = address;
 				}
 				
-				public string Address {get;}
+				public string Address {get; private set;}
 			}
 			</CSharp>
 		</Translation>
@@ -596,7 +596,7 @@
 			</Cause>
 		
 			<Description>
-			By convention default constructible immutable types are provided with
+			By convention default constructable immutable types are provided with
 			a public Empty field so that clients can avoid creating multiple identical
 			empty instances.
 			</Description>

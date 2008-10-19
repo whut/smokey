@@ -429,11 +429,11 @@ namespace Smokey.Framework.Support
 				// the form SomeType`1<AnotherType>.
 				else if (lhs.IsGeneric && rhs.IsGeneric)
 				{
-					if (!lhs.IsConstructed())
+					if (!lhs.DoIsConstructed())
 					{
 						matches = rhs.Name.StartsWith(lhs.Name);
 					}
-					else if (!rhs.IsConstructed())
+					else if (!rhs.DoIsConstructed())
 					{
 						matches = lhs.Name.StartsWith(rhs.Name);
 					}
@@ -509,7 +509,7 @@ namespace Smokey.Framework.Support
 			// types (and the names are Dictionary`2<System.Int32, System.String>
 			// and Dictionary`2<T, System.String>). The generic types we get from the
 			// assembly's module are not constructed, but most type usages are.
-			private bool IsConstructed()
+			private bool DoIsConstructed()
 			{
 				bool constructed = false;
 				

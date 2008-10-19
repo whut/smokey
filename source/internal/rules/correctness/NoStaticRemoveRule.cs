@@ -231,7 +231,7 @@ namespace Smokey.Internal.Rules
 			return true;		// non-generic collection
 		}
 		
-		private class Entry
+		private sealed class Entry
 		{
 			public Entry(string key)
 			{

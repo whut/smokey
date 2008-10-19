@@ -19,6 +19,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using Smokey.Framework;
 using System;
 
 namespace Smokey.Internal
@@ -70,6 +71,7 @@ namespace Smokey.Internal
 			return this == rhs;
 		}
 		
+		[DisableRule("P1003", "AvoidBoxing")]
 		public static bool operator==(Tuple2<T0, T1> lhs, Tuple2<T0, T1> rhs)
 		{
 			return DoCompare(lhs.First, rhs.First) && DoCompare(lhs.Second, rhs.Second);
@@ -137,6 +139,7 @@ namespace Smokey.Internal
 			return this == rhs;
 		}
 		
+		[DisableRule("P1003", "AvoidBoxing")]
 		public static bool operator==(Tuple3<T0, T1, T2> lhs, Tuple3<T0, T1, T2> rhs)
 		{
 			return DoCompare(lhs.First, rhs.First) && 

@@ -159,7 +159,7 @@ namespace Smokey.Internal.Rules
 			return count;
 		}
 		
-		private class Info
+		private sealed class Info
 		{
 			public Info(TypeDefinition defined)
 			{
