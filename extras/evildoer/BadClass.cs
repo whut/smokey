@@ -48,8 +48,8 @@ namespace EvilDoer
 		public string Key {get {return key;}}
 		
 		private string key;
-	}			
-		
+	}		
+			
 	// P1007/NonGenericCollections
 	// R1000/DisposableFields
 	// S1007/UnmanagedCodeSecurity

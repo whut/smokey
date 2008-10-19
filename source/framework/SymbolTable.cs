@@ -20,291 +20,182 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Mono.Cecil;
-using Mono.Cecil.Metadata;
-using Mono.CompilerServices.SymbolWriter;
+using Mono.Cecil.Cil;
+
+using Smokey.Internal;
 
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 
 namespace Smokey.Framework
-{
-	using MethodEntries = Dictionary<MetadataToken, SymbolTable.MethodInfo>;
-		
-	// Uses the (undocumented) Mono.CompilerServices to extract file and line
-	// info from mdb files, and Cecil to process the meta data in the image
-	// file. See /Users/jessejones/New_Files/mono-1.2.6/mcs/class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
+{		
 	internal sealed class SymbolTable
 	{				
-#if TEST
-		public SymbolTable()
-		{		
-		}
-#endif
-
-		[DisableRule("P1011", "UseDefaultInit")]		// we reset m_methodEntries to null
-		public SymbolTable(string imagePath)
-		{		
-			Profile.Start("SymbolTable ctor");
-			try
-			{
-				if (File.Exists(imagePath + ".mdb"))	// MonoSymbolFile.ReadSymbolFile uses the Assembly.Location which isn't always right
-					DoLoadImage(imagePath);
-				else
-					Console.WriteLine("mdb file is missing so there will be no file and line numbers");
-			}
-			catch (Exception e)
-			{
-				Log.ErrorLine(this, "Couldn't load the {0} symbol file.", imagePath);
-				Log.ErrorLine(this, e.Message);
-				m_methodEntries = null;
-			}
-			Profile.Stop("SymbolTable ctor");
-		}
-		
 		public Location Location(TypeDefinition type, string details)
 		{
-			Location location = new Location();
-			
-			location.File = "<unknown>";			
-			location.Line = -1;					// TODO: not sure how to set this, could get close by using the first method...
+			var info = DoFindFileLine(type);
+
+			Location location = new Location();			
+			location.File = info.First;			
+			location.Line = info.Second;
 			location.Offset = -1;
 			location.Name = "Type: " + type.FullName;
 			location.Details = details;
-			
-			if (m_methodEntries != null)
-				DoLocation(type, ref location);
-					
+								
 			return 	location;
 		}
 		
 		public Location Location(MethodDefinition method, int offset, string details)
-		{
+		{			
+			var info = DoFindFileLine(method, offset);
+
 			Location location = new Location();
-			
+			location.File = info.First;			
+			location.Line = info.Second;
 			location.Name = "Method: " + method.ToString();			
-			location.Line = -1;
 			location.Offset = offset;
 			location.Details = details;
-
-			if (m_methodEntries != null)
-				DoLocation(method, offset, ref location);
 					
 			return location;
 		}
 		
-		public string LocalName(MethodDefinition method, int index)
+		public string LocalName(MethodDefinition method, Instruction instruction, int index)
 		{
 			string name = "V_" + index;
 
-			if (m_methodEntries != null)
-				name = DoLocalName(method, index);
+			if (HaveLocalNames(method))
+				name = DoLocalName(method, instruction, index);
 								
 			return name;
 		}
 				
 		public bool HaveLocalNames(MethodDefinition method)
 		{
-			MethodInfo info;
-			if (m_methodEntries != null && m_methodEntries.TryGetValue(method.MetadataToken, out info))
-			{	
-				return !info.Entry.LocalNamesAmbiguous;
-			}
-			
-			return false;
+			return method.Body != null && method.Body.Variables != null;
 		}
 				
 		#region Private Methods -----------------------------------------------
-		private void DoLoadImage(string imagePath)	// note that we're careful only to use Mono.CompilerServices.SymbolWriter within helper methods so the CLR does not load it unless we need it
-		{
-			if (m_methodEntries == null)
-				m_methodEntries = new MethodEntries();
-				
-			Assembly assembly = Assembly.LoadFrom(imagePath);	// note that a reflection only load doesn't seem to work
-			MonoSymbolFile symbols = MonoSymbolFile.ReadSymbolFile(assembly);	// use this ctor so that we can verify that the mdb file matches the assembly
-			
-			for (int i = 1; i <= symbols.MethodCount; ++i)		// 1-based...
-			{
-				MethodEntry method = symbols.GetMethod(i);
-				m_methodEntries.Add(new MetadataToken(method.Token), new MethodInfo(method));
-			}
-		}
-
-		private void DoLocation(TypeDefinition type, ref Location location)
-		{
-			List<MetadataToken> tokens = new List<MetadataToken>();
-			foreach (MethodDefinition method in type.Methods)
-				tokens.Add(method.MetadataToken);
-			foreach (MethodDefinition method in type.Constructors)
-				tokens.Add(method.MetadataToken);
-			
-			if (tokens.Count > 0)
-			{
-				List<string> files = new List<string>();
-				foreach (MetadataToken token in tokens)
-				{
-					MethodInfo info;
-					if (m_methodEntries.TryGetValue(token, out info))
-						if (files.IndexOf(info.File) < 0)	// classes may be defined in multiple files...
-							files.Add(info.File);
-				}
-				location.File = string.Join(" ", files.ToArray());	
-			}
-		}
-		
-		private void DoLocation(MethodDefinition method, int offset, ref Location location)
-		{
-			MethodInfo info;
-			if (m_methodEntries.TryGetValue(method.MetadataToken, out info))
-			{
-				location.File = info.File;	
-				
-				if (info.Lines.Length > 0)
-				{					
-					int index = Array.BinarySearch(info.Lines, new LineInfo(offset, 0));
-					if (index >= 0)
-						location.Line = info.Lines[index].Line;
-					else if (~index - 1 >= 0 && ~index - 1 < info.Lines.Length)
-						location.Line = info.Lines[~index - 1].Line;
-					else
-						location.Line = -1;
-				}
-				else
-					location.Line = -1;
-			}
-		}
-		
-		private string DoLocalName(MethodDefinition method, int index)
+		private string DoLocalName(MethodDefinition method, Instruction instruction, int index)
 		{
 			string name = "V_" + index;
-			
-			MethodInfo info;
-			if (m_methodEntries.TryGetValue(method.MetadataToken, out info))
-			{	
-				if (!info.Entry.LocalNamesAmbiguous)
-				{
-					foreach (LocalVariableEntry local in info.Entry.Locals)
-					{
-						if (local.Index == index)
-							return local.Name;
-					}
-
-					Log.TraceLine(this, "failed to find variable {0}", index);
-				}
-				else
-					Log.TraceLine(this, "{0} local variable names are ambiguous", info.Entry.SourceFile.FileName);
-			}
+						
+			if (index < method.Body.Variables.Count)
+				name = method.Body.Variables[index].Name;
 			else
-				Log.TraceLine(this, "failed to find entries for {0}", method);
+				Log.ErrorLine(this, "Instruction at {0:X2} in {1} has a bad index {2}", instruction.Offset, method, index);
 			
 			return name;
 		}
-		#endregion
-		
-		#region Private Types -------------------------------------------------
-		private struct LineInfo : IComparable<LineInfo>
+				
+		private Scope DoFindScope(ScopeCollection scopes, Instruction instruction)
 		{
-			public int Offset;
-			public int Line;
+			Scope result = null;
 			
-			public LineInfo(int offset, int line)
+			for (int i = 0; i < scopes.Count && result == null; ++i)
 			{
-				Offset = offset;
-				Line = line;
-			}
+				Scope candidate = scopes[i];
 
-			public int CompareTo(LineInfo rhs)
-			{
-				if (Offset < rhs.Offset)
-					return -1;
-				else if (Offset > rhs.Offset)
-					return +1;
+				if (candidate.Start.Offset <= instruction.Offset && instruction.Offset <= candidate.End.Offset)
+					result = candidate;
 				else
-					return 0;
-			}	
-	
-			public static bool operator==(LineInfo lhs, LineInfo rhs)
-			{
-				return lhs.Offset == rhs.Offset;
+					result = DoFindScope(candidate.Scopes, instruction);
 			}
-			
-			public static bool operator!=(LineInfo lhs, LineInfo rhs)
-			{
-				return !(lhs == rhs);
-			}    
-
-			public override bool Equals(object rhsObj)
-			{
-				if (rhsObj == null)  
-					return false;
 				
-				if (GetType() != rhsObj.GetType()) 
-					return false;
-			
-				LineInfo rhs = (LineInfo) rhsObj;                    
-				return Offset == rhs.Offset;
-			}
-					
-			public override int GetHashCode()
-			{
-				return Offset;
-			}
+			return result;
 		}
-
-		private struct MethodInfo
-		{
-			public string File;
-			public LineInfo[] Lines;	// used to map offsets into a method to line numbers in a source file
-			public MethodEntry Entry;
-			
-			public MethodInfo(MethodEntry entry)
-			{
-				Entry = entry;
-				File = entry.SourceFile.FileName;			
-				
-				List<LineInfo> lines = new List<LineInfo>(entry.LineNumbers.Length);
-				foreach (LineNumberEntry line in entry.LineNumbers)
-				{
-					lines.Add(new LineInfo(line.Offset, line.Row));
-				}
-				
-				Lines = lines.ToArray();
-				lines.Sort();
-			}
-
-			public static bool operator==(MethodInfo lhs, MethodInfo rhs)
-			{
-				return lhs.Entry == rhs.Entry;
-			}
-			
-			public static bool operator!=(MethodInfo lhs, MethodInfo rhs)
-			{
-				return !(lhs == rhs);
-			}    
-
-			public override bool Equals(object rhsObj)
-			{
-				if (rhsObj == null)   
-					return false;
-				
-				if (GetType() != rhsObj.GetType()) 
-					return false;
-			
-				MethodInfo rhs = (MethodInfo) rhsObj;                    
-				return Entry == rhs.Entry;
-			}
-				
-			public override int GetHashCode()
-			{
-				return Entry.GetHashCode();
-			}
-		}
-		#endregion
 		
-		#region Fields --------------------------------------------------------
-		private MethodEntries m_methodEntries;
+		private Tuple2<string, int> DoFindFileLine(TypeDefinition type)
+		{
+			var methods = new List<MethodDefinition>(type.Constructors.Count + type.Methods.Count);
+			foreach (MethodDefinition m in type.Constructors)		// these aren't IEnumerable<T> so we need to explicitly loop
+				methods.Add(m);
+			foreach (MethodDefinition m in type.Methods)
+				methods.Add(m);
+			
+			var infos = from method in methods
+							let info = DoGetFileLine(method, 0)
+							where info.First != "<unknown>"
+							group info by info.First;
+			
+			Tuple2<string, int> result = Tuple.Make("<unknown>", -1);
+			if (infos.Count() == 1)
+			{
+				// If the methods and constructors are all in a single file then
+				// we can get a good line number.
+				var lines = from info in infos.First()
+							orderby info.Second ascending 
+							select info.Second;
+				result = Tuple.Make(infos.First().Key, lines.First());
+			}
+			else if (infos.Count() > 1)
+			{
+				// But if the type is spread across multiple files we can't
+				// return a meaningful line number.
+				var files = from info in infos 
+							select info.Key;
+				result = Tuple.Make(string.Join(" ", files.ToArray()), -1);
+			}
+			
+			return result;
+		}
+				
+		private Tuple2<string, int> DoFindFileLine(MethodDefinition method, int offset)
+		{
+			Tuple2<string, int> result = DoGetFileLine(method, offset);
+			
+			if (result.First == "<unknown>")
+			{
+				TypeDefinition type = method.DeclaringType as TypeDefinition;
+				if (type != null)
+				{
+					var temp = DoFindFileLine(type);
+					Tuple.Make(temp.First, -1);
+				}
+			}
+			
+			return result;
+		}
+		
+		private Tuple2<string, int> DoGetFileLine(MethodDefinition method, int offset)
+		{
+			Tuple2<string, int> result = Tuple.Make("<unknown>", -1);
+
+			if (method.Body != null) 
+			{
+				Instruction instruction = DoFindInstruction(method, offset);
+				if (instruction != null)
+				{
+					while (instruction != null && instruction.SequencePoint == null)
+						instruction = instruction.Next;
+					
+					if (instruction != null)			// unfortunately it's fairly common for methods to have no sequence point
+					{
+						SequencePoint spt = instruction.SequencePoint;
+						string url = spt.Document != null ? spt.Document.Url : null;
+						result = Tuple.Make(url ?? "<unknown>", spt.StartLine);		// TODO: maybe StartColumn too
+					}
+				}
+			}
+						
+			return result;
+		}
+		
+		private Instruction DoFindInstruction(MethodDefinition method, int offset)
+		{
+			for (int i = 0; i < method.Body.Instructions.Count; ++i)		// might want to do a binary search
+			{
+				if (method.Body.Instructions[i].Offset == offset)
+					return method.Body.Instructions[i];
+			}
+			
+			Log.ErrorLine(this, "Couldn't find the instruction for {0} at offset {1:X2}", method, offset);
+			
+			return null;
+		}
 		#endregion
 	}
 }

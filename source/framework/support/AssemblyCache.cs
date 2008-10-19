@@ -40,9 +40,22 @@ namespace Smokey.Framework.Support
 			Profile.Start("AssemblyCache ctor");
 			m_symbols = symbols;
 			m_assembly = assembly;
+			
+			// For some reason we have to force the Mdb assembly to load. If we don't it
+			// isn't found.
+			Unused.Value = typeof(Mono.Cecil.Mdb.MdbFactory);
 						
 			foreach (ModuleDefinition module in assembly.Modules) 
 			{
+				try
+				{
+					module.LoadSymbols();
+				}
+				catch
+				{
+					Console.Error.WriteLine("Couldn't load symbols so there will be no file or line numbers.");
+				}
+				
 				// Note that if the type is generic it will be listed once with a name like SomeType`1
 				// where the number of the number of generic arguments.
 				foreach (TypeDefinition type in module.Types)

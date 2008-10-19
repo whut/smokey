@@ -47,7 +47,7 @@ namespace Smokey.Framework.Instructions
 						Variable = (int) untyped.Operand;
 						Type = method.Body.Variables[Variable].VariableType;
 					}
-					Name = symbols.LocalName(method, Variable);
+					Name = symbols.LocalName(method, untyped, Variable);
 					break;
 										
 				default:

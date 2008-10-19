@@ -108,7 +108,7 @@ namespace Smokey.App
 			DBC.Assert(resolver != null, "assemblyDef.Resolver isn't a BaseAssemblyResolver");
 			resolver.AddSearchDirectory(dir);
 				
-			m_symbols = new SymbolTable(imagePath);
+			m_symbols = new SymbolTable();
 			AssemblyCache cache = new AssemblyCache(m_symbols, assemblyDef, m_callback);
 
 			var assembly = System.Reflection.Assembly.GetExecutingAssembly();					

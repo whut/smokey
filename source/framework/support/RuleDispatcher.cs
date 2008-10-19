@@ -82,7 +82,7 @@ namespace Smokey.Framework.Support
 #if DEBUG
 			Rule r;
 			if (m_registered.TryGetValue(rule.CheckID, out r))
-				DBC.Assert(r == rule, "multiple rules have id {0}", rule.CheckID);
+				DBC.Assert(rule.Equals(r), "multiple rules have id {0}", rule.CheckID);
 			else
 				m_registered.Add(rule.CheckID, rule);
 #endif

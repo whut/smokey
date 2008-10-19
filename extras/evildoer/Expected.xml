@@ -133,10 +133,10 @@
 	<Expected checkID = "D1049" typeName = "IdenticalCodeBlocks" fullName = "System.Void EvilDoer.SameMethod::Gamma(System.Int32,System.Int32)"/>
 
 	<Expected checkID = "MS1029" typeName = "ClassPrefix" fullName = "evildoer"/>
-	<Expected checkID = "MS1030" typeName = "MS1030" fullName = "Hungarian.Bad4"/>
-	<Expected checkID = "MS1030" typeName = "MS1030" fullName = "Hungarian.Bad3"/>
-	<Expected checkID = "MS1030" typeName = "MS1030" fullName = "Hungarian.Bad2"/>
-	<Expected checkID = "MS1030" typeName = "MS1030" fullName = "Hungarian.Bad1"/>
+	<Expected checkID = "MS1030" typeName = "Hungarian" fullName = "Hungarian.Bad4"/>
+	<Expected checkID = "MS1030" typeName = "Hungarian" fullName = "Hungarian.Bad3"/>
+	<Expected checkID = "MS1030" typeName = "Hungarian" fullName = "Hungarian.Bad2"/>
+	<Expected checkID = "MS1030" typeName = "Hungarian" fullName = "Hungarian.Bad1"/>
 	<Expected checkID = "PO1009" typeName = "WinFormsVoodoo" fullName = "evildoer"/>
 	<Expected checkID = "D1050" typeName = "UnusedField" fullName = "evildoer"/>
 	<Expected checkID = "P1008" typeName = "StructOverrides" fullName = "EvilDoer.XWindowAttributes"/>

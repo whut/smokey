@@ -60,7 +60,7 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitBegin(BeginMethod begin)
 		{
-			Log.DebugLine(this, "{0}", begin.Info.Method); 
+			Log.DebugLine(this, "{0:F}", begin.Info.Instructions); 
 			m_wasStatic = false;	
 		
 			if (!begin.Info.Method.PrivatelyVisible(Cache))
@@ -171,6 +171,8 @@ namespace Smokey.Internal.Rules
 				default:
 					if (!field.FieldType.IsValueType)
 						atomic = true;					// reference type writes are atomic
+					else if (field.FieldType.FullName.Contains("modreq(System.Runtime.CompilerServices.IsVolatile)"))
+						atomic = true;
 					break;
 			}
 						
