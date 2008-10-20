@@ -26,7 +26,6 @@ using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class TooManyLocalsRule : Rule
@@ -55,4 +54,4 @@ namespace Smokey.Internal.Rules
 		}
 	}
 }
-#endif
+

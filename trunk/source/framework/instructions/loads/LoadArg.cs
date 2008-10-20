@@ -24,7 +24,6 @@ using Mono.Cecil.Cil;
 using System;
 using System.Text;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {	
 	/// <summary>Represents Ldarg_0, Ldarg_1,
@@ -101,4 +100,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
-#endif
+

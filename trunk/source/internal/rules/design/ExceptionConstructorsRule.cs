@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using Smokey.Framework;
 using Smokey.Framework.Support;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {		
 	internal sealed class ExceptionConstructorsRule : Rule
@@ -103,4 +102,4 @@ namespace Smokey.Internal.Rules
 		private bool m_foundSerialized;
 	}
 }
-#endif
+

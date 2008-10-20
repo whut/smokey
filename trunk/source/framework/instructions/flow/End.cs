@@ -23,7 +23,6 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {	
 	/// <summary>Represents Ret, Endfinally, Endfilter, Rethrow, and Throw.</summary>
@@ -36,4 +35,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
-#endif
+

@@ -25,7 +25,6 @@ using System;
 using System.Diagnostics;
 using System.Text;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {			
 	/// <summary>Represents Unbox and Unbox_Any</summary>
@@ -44,4 +43,4 @@ namespace Smokey.Framework.Instructions
 		public readonly TypeReference FromType;
 }
 }
-#endif
+

@@ -28,7 +28,6 @@ using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class IgnoredReturnRule : Rule
@@ -60,9 +59,9 @@ namespace Smokey.Internal.Rules
 			{
 				if (call.Target.ReturnType.ReturnType.FullName != "System.Void")
 				{
-					if (DoValidMethod(call.Target))
+					if (call.Untyped.Next != null && call.Untyped.Next.OpCode.Code == Code.Pop)
 					{
-						if (call.Untyped.Next != null && call.Untyped.Next.OpCode.Code == Code.Pop)
+						if (DoValidMethod(call.Target))
 						{
 							m_offset = call.Untyped.Offset;
 							m_details += call.Target + " ";
@@ -199,4 +198,3 @@ namespace Smokey.Internal.Rules
 		private string m_details;
 	}
 }
-#endif

@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using Smokey.Framework;
 using Smokey.Framework.Support;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class LargeNamespaceRule : Rule
@@ -85,4 +84,4 @@ namespace Smokey.Internal.Rules
 		private Dictionary<string, int> m_counts = new Dictionary<string, int>();		
 	}
 }
-#endif
+

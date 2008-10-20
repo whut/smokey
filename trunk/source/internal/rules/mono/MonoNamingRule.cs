@@ -25,7 +25,6 @@ using System;
 using Smokey.Framework;
 using Smokey.Framework.Support;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {		
 	// Based on <http://www.mono-project.com/Coding_Guidelines>.
@@ -210,4 +209,4 @@ namespace Smokey.Internal.Rules
 		private bool m_needsCheck;
 	}
 }
-#endif
+

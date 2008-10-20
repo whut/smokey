@@ -31,7 +31,6 @@ using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 
-#if OLD
 namespace Smokey.Tests
 {
 	[TestFixture]
@@ -85,4 +84,4 @@ namespace Smokey.Tests
 		}
 	} 
 }
-#endif
+

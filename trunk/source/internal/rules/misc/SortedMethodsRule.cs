@@ -26,7 +26,6 @@ using Smokey.Framework.Support;
 using System;
 using System.Collections.Generic;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {		
 	internal sealed class SortedMethodsRule : Rule
@@ -145,4 +144,4 @@ namespace Smokey.Internal.Rules
 		private string m_details;
 	}
 }
-#endif
+

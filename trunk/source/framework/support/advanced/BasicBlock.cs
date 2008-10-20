@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using System.Text;
 using Smokey.Framework.Instructions;
 
-#if OLD
 namespace Smokey.Framework.Support.Advanced
 {			
 	/// <summary>A sequence of instructions with no branches in (except for possibly 
@@ -307,4 +306,4 @@ namespace Smokey.Framework.Support.Advanced
 		#endregion 
 	}
 }
-#endif
+

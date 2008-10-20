@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-#if OLD
 namespace Smokey.Framework.Support.Advanced
 {	
 	// Classes used with DataFlow to track the state of arguments, locals, and
@@ -257,4 +256,4 @@ namespace Smokey.Framework.Support.Advanced
 		}
 	}
 }
-#endif
+

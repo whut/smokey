@@ -30,7 +30,6 @@ using Smokey.Framework.Support.Advanced;
 using System;
 using System.Collections.Generic;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class StringUriOverloadRule : Rule
@@ -181,4 +180,4 @@ namespace Smokey.Internal.Rules
 		private Dictionary<MethodDefinition, Entry> m_table = new Dictionary<MethodDefinition, Entry>();	// string method -> entry
 	}
 }
-#endif
+

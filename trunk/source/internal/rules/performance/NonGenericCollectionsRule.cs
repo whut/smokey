@@ -25,7 +25,6 @@ using System;
 using Smokey.Framework;
 using Smokey.Framework.Support;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class NonGenericCollectionsRule : Rule
@@ -78,4 +77,4 @@ namespace Smokey.Internal.Rules
 			"System.Collections.Stack"};
 	}
 }
-#endif
+

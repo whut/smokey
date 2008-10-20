@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using Smokey.Framework;
 using Smokey.Framework.Support;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class TypeNamespaceRule : Rule
@@ -55,4 +54,4 @@ namespace Smokey.Internal.Rules
 		private string[] m_bad = new string[]{"COLLECTIONS", "FORMS", "SYSTEM", "UI"};
 	}
 }
-#endif
+

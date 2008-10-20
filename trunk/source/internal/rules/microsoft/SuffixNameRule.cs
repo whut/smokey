@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using Smokey.Framework;
 using Smokey.Framework.Support;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class SuffixNameRule : Rule
@@ -128,4 +127,4 @@ namespace Smokey.Internal.Rules
 		}
 	}
 }
-#endif
+

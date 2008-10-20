@@ -24,7 +24,6 @@ using Mono.Cecil.Cil;
 using System;
 using System.Text;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {	
 	/// <summary>Represents Ldloca_S and Ldloca.</summary>
@@ -81,4 +80,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
-#endif
+

@@ -28,7 +28,6 @@ using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 using Smokey.Internal;
 
-#if OLD
 namespace Smokey.Framework.Support.Advanced
 {			
 	/// <summary>Tracks various properties of methods.</summary>
@@ -123,4 +122,4 @@ namespace Smokey.Framework.Support.Advanced
 		#endregion
 	}
 }
-#endif
+

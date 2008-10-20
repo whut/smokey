@@ -29,7 +29,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class EqualsMissesStateRule : Rule
@@ -299,4 +298,3 @@ namespace Smokey.Internal.Rules
 		#endregion
 	}
 }
-#endif

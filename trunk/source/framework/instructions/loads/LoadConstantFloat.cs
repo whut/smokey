@@ -23,7 +23,6 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {		
 	/// <summary>Represents Ldc_R4 and
@@ -54,4 +53,4 @@ namespace Smokey.Framework.Instructions
 		public readonly double Value;
 	}
 }
-#endif
+

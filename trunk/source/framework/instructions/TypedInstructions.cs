@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Text;
 using Smokey.Framework.Support.Advanced;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {	
 	/// <summary>Contains all of the TypedInstructionCollection in a method.</summary>
@@ -685,4 +684,4 @@ namespace Smokey.Framework.Instructions
 		#endregion
 	}
 }
-#endif
+

@@ -29,7 +29,6 @@ using System;
 using System.Net;
 using System.Reflection;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {		
 	[DisableRule("R1000", "DisposableFields")]
@@ -169,4 +168,4 @@ namespace Smokey.Internal.Rules
 		private DateTime m_startTime;
 	}
 }
-#endif
+

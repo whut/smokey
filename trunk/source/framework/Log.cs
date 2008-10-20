@@ -175,7 +175,6 @@ namespace Smokey.Framework
 		public static void TraceLine<T, A1, A2>(T instance, string format, A1 arg1, A2 arg2)	{DoLog(Level.Trace, DoGetType(instance), format, arg1, arg2);}
 		public static void TraceLine<T>(T instance, string format, params object[] args)		{DoLog(Level.Trace, DoGetType(instance), format, args);}
 
-#if DEBUG					
 		[Conditional("DEBUG")]
 		public static void DebugLine<T>(T instance)												{DoWriteLine(Level.Debug, DoGetType(instance));}
 		[Conditional("DEBUG")]
@@ -188,14 +187,6 @@ namespace Smokey.Framework
 		public static void DebugLine<T, A1, A2>(T instance, string format, A1 arg1, A2 arg2)	{DoLog(Level.Debug, DoGetType(instance), format, arg1, arg2);}
 		[Conditional("DEBUG")]
 		public static void DebugLine<T>(T instance, string format, params object[] args)		{DoLog(Level.Debug, DoGetType(instance), format, args);}
-#else	// Conditional doesn't work on 1.2.5 with template methods...
-		[Conditional("DEBUG")]
-		public static void DebugLine(object instance)											{}
-		[Conditional("DEBUG")]
-		public static void DebugLine(object instance, string arg1)								{}
-		[Conditional("DEBUG")]		
-		public static void DebugLine(object instance, string format, params object[] args)		{}
-#endif
 
 		#region Private Methods	-----------------------------------------------
 		// Converting arguments to strings can be quite expensive so we use these helpers to

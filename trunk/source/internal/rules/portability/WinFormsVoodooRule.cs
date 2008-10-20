@@ -28,7 +28,6 @@ using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 using Smokey.Framework.Support.Advanced;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class WinFormsVoodooRule : Rule
@@ -46,17 +45,19 @@ namespace Smokey.Internal.Rules
 				
 		public void VisitCall(Call call)
 		{
-			if (!m_foundRun && call.Target.ToString().Contains("System.Windows.Forms.Application::Run"))
+			string target = call.Target.ToString();
+			
+			if (!m_foundRun && target.Contains("System.Windows.Forms.Application::Run"))
 			{
 				Log.DebugLine(this, "found Application::Run call");
 				m_foundRun = true;
 			}
-			else if (!m_foundStyle && call.Target.ToString().Contains("System.Windows.Forms.Application::EnableVisualStyles"))
+			else if (!m_foundStyle && target.Contains("System.Windows.Forms.Application::EnableVisualStyles"))
 			{
 				Log.DebugLine(this, "found Application::EnableVisualStyles call");
 				m_foundStyle = true;
 			}
-			else if (!m_foundCompatible && call.Target.ToString().Contains("System.Windows.Forms.Application::SetCompatibleTextRenderingDefault"))
+			else if (!m_foundCompatible && target.Contains("System.Windows.Forms.Application::SetCompatibleTextRenderingDefault"))
 			{
 				Log.DebugLine(this, "found Application::SetCompatibleTextRenderingDefault call");
 				m_foundCompatible = true;
@@ -81,4 +82,4 @@ namespace Smokey.Internal.Rules
 		private bool m_foundCompatible;
 	}
 }
-#endif
+

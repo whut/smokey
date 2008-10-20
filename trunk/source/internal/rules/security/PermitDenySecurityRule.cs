@@ -29,7 +29,6 @@ using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 using Smokey.Framework.Support.Advanced;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {		
 	internal sealed class PermitDenySecurityRule : Rule
@@ -91,4 +90,4 @@ namespace Smokey.Internal.Rules
 		private int m_offset;
 	}
 }
-#endif
+

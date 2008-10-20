@@ -24,7 +24,6 @@ using Mono.Cecil.Cil;
 using System;
 using System.Text;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {		
 	/// <summary>Represents Stloc_0, Stloc_1, Stloc_2, Stloc_3, Stloc_S, and Stloc.</summary>
@@ -103,4 +102,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
-#endif
+

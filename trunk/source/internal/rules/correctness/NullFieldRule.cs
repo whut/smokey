@@ -30,7 +30,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class NullFieldRule : Rule
@@ -106,4 +105,3 @@ namespace Smokey.Internal.Rules
 		private List<string> m_fields = new List<string>();
 	}
 }
-#endif

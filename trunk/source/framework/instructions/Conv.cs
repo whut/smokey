@@ -23,7 +23,6 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {			
 	/// <summary>Represents Conv_I1, Conv_I2, Conv_I4, Conv_I8, Conv_R4, Conv_R8, 
@@ -43,4 +42,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
-#endif
+

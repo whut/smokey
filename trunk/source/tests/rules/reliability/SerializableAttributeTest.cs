@@ -30,7 +30,6 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 
-#if OLD
 namespace Smokey.Tests
 {
 	[TestFixture]
@@ -121,4 +120,4 @@ namespace Smokey.Tests
 		}
 	} 
 }
-#endif
+

@@ -23,7 +23,6 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {			
 	/// <summary>Represents Castclass and Isinst.</summary>
@@ -42,4 +41,4 @@ namespace Smokey.Framework.Instructions
 		public readonly TypeReference ToType;
 	}
 }
-#endif
+
