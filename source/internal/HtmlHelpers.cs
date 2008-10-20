@@ -289,7 +289,7 @@ span.string {color: #008040;}
 		#endregion
 				
 		#region Fields
-		private static string[] ms_keywords = new string[]{"#define",  "#if",  "#elif",  "#else",  "#endif",  "#endregion",  "#error",  "#line",  "#pragma",  "#region",  
+		private static string[] ms_keywords = new string[]{"#define",  "#if",  "#elif",  "#else",  "",  "#endregion",  "#error",  "#line",  "#pragma",  "#region",  
 "#undef",  "#warning",  "abstract",  "as",  "base",  "bool",  "break",  "byte",  "case",  "catch",  "char",  "checked",  
 "class",  "const",  "continue",  "decimal",  "default",  "delegate",  "do",  "double",  "else",  "enum",  "event",  
 "explicit",  "extern",  "false",  "finally",  "fixed",  "float",  "for",  "foreach",  "get",  "goto",  "if",  "implicit",  

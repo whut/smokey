@@ -22,7 +22,6 @@
 using Mono.Cecil;
 using System;
 
-#if OLD
 namespace Smokey.Framework.Support
 {	
 	/// <summary>Used to compare two MethodReferences for equality.</summary>
@@ -150,4 +149,4 @@ namespace Smokey.Framework.Support
 		private MethodReference m_method;
 	}
 }
-#endif
+

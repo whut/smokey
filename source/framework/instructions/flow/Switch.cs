@@ -24,7 +24,6 @@ using Mono.Cecil.Cil;
 using System;
 using System.Text;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {		
 	/// <summary>Represents Switch.</summary>
@@ -59,4 +58,4 @@ namespace Smokey.Framework.Instructions
 		private TypedInstruction[] m_targets;
 	}
 }
-#endif
+

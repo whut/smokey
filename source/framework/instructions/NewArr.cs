@@ -23,7 +23,6 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {			
 	/// <summary>Represents Newarr.</summary>
@@ -41,4 +40,4 @@ namespace Smokey.Framework.Instructions
 		public readonly TypeReference Type;
 	}
 }
-#endif
+

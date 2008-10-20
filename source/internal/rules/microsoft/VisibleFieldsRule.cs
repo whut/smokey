@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using Smokey.Framework;
 using Smokey.Framework.Support;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {		
 	internal sealed class VisibleFieldsRule : Rule
@@ -124,4 +123,4 @@ namespace Smokey.Internal.Rules
 		private List<string> m_visible = new List<string>();
 	}
 }
-#endif
+

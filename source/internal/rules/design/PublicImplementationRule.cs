@@ -28,7 +28,6 @@ using Smokey.Framework.Support.Advanced;
 using System;
 using System.Collections.Generic;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class PublicImplementationRule : Rule
@@ -187,4 +186,4 @@ namespace Smokey.Internal.Rules
 		private Dictionary<MethodReference, Info> m_candidates = new Dictionary<MethodReference, Info>();
 	}
 }
-#endif
+

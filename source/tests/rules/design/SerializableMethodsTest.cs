@@ -27,7 +27,6 @@ using System;
 using System.Runtime.Serialization;
 using System.Reflection;
 
-#if OLD
 namespace Smokey.Tests
 {
 	[TestFixture]
@@ -98,4 +97,4 @@ namespace Smokey.Tests
 		}
 	} 
 }
-#endif
+

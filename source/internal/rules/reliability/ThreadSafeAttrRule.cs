@@ -29,7 +29,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class ThreadSafeAttrRule : Rule
@@ -383,4 +382,4 @@ namespace Smokey.Internal.Rules
 		#endregion
 	}
 }
-#endif
+

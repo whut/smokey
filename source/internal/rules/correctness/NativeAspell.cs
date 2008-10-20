@@ -24,7 +24,6 @@ using System.Runtime.InteropServices;
 using Smokey.Framework;
 using Smokey.Framework.Support;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {
 	internal static partial class NativeMethods

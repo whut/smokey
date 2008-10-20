@@ -23,7 +23,6 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {			
 	/// <summary>Represents Add, Add_Ovf, Add_Ovf_Un, Div, Div_Un, Mul, Mul_Ovf, Mul_Ovf_Un
@@ -38,4 +37,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
-#endif
+

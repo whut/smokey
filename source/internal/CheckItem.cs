@@ -273,6 +273,7 @@ namespace Smokey.Internal
 #if DEBUG
 						m_checkIDs.Add(rule.CheckID);
 #endif
+
 					}
 					catch (Exception e)
 					{

@@ -24,7 +24,6 @@ using Mono.Cecil.Cil;
 using System;
 using System.Text;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {	
 	/// <summary>Represents Ldelema, Ldsflda, Ldtoken, LoadArgAddress,
@@ -38,4 +37,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
-#endif
+

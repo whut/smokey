@@ -29,7 +29,6 @@ using System;
 //using System.Collections.Generic;
 //using System.Linq;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class ThreadAbortRule : Rule
@@ -78,4 +77,4 @@ namespace Smokey.Internal.Rules
 		private int m_offset;
 	}
 }
-#endif
+

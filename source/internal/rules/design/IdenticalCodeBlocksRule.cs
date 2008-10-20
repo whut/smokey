@@ -29,7 +29,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal struct CodeBlock
@@ -314,4 +313,4 @@ namespace Smokey.Internal.Rules
 		private Dictionary<int, List<CodeBlock>> m_table = new Dictionary<int, List<CodeBlock>>();
 	}
 }
-#endif
+

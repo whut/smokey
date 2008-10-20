@@ -23,7 +23,6 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {		
 	/// <summary>Represents Ldc_I4_M1, Ldc_I4_0, 
@@ -99,4 +98,4 @@ namespace Smokey.Framework.Instructions
 		public readonly long Value;
 	}
 }
-#endif
+

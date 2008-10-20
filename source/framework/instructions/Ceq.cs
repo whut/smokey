@@ -23,7 +23,6 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {			
 	/// <summary>Represents Ceq.</summary>
@@ -37,4 +36,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
-#endif
+

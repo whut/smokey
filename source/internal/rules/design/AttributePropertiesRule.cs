@@ -27,7 +27,6 @@ using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class AttributePropertiesRule : Rule
@@ -167,4 +166,4 @@ namespace Smokey.Internal.Rules
 		private List<string> m_setters = new List<string>();
 	}
 }
-#endif
+

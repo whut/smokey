@@ -31,7 +31,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 
-#if OLD
 namespace Smokey.Tests
 {
 	[TestFixture]
@@ -140,4 +139,4 @@ namespace Smokey.Tests
 		}
 	} 
 }
-#endif
+

@@ -24,7 +24,6 @@ using Mono.Cecil.Cil;
 using System;
 using System.Text;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {	
 	/// <summary>Represents Ldarga and Ldarga_S.</summary>
@@ -73,4 +72,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
-#endif
+

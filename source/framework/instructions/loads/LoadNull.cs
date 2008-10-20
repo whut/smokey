@@ -25,7 +25,6 @@ using System;
 using System.Diagnostics;
 using System.Text;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {		
 	/// <summary>Represents Ldnull.</summary>
@@ -38,4 +37,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
-#endif
+

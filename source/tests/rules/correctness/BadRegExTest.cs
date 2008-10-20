@@ -28,7 +28,6 @@ using Smokey.Framework.Support;
 using Smokey.Internal.Rules;
 using System.Text.RegularExpressions;
 
-#if OLD
 namespace Smokey.Tests
 {
 	[TestFixture]
@@ -106,4 +105,4 @@ namespace Smokey.Tests
 		}
 	} 
 }
-#endif
+

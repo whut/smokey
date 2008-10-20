@@ -29,7 +29,6 @@ using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 using Smokey.Framework.Support.Advanced;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class StaticSetterRule : Rule
@@ -235,4 +234,4 @@ namespace Smokey.Internal.Rules
 		private List<MethodReference> m_visited = new List<MethodReference>();
 	}
 }
-#endif
+

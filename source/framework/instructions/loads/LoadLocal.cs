@@ -24,7 +24,6 @@ using Mono.Cecil.Cil;
 using System;
 using System.Text;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {		
 	/// <summary>Represents Ldloc_0, Ldloc_1,
@@ -107,4 +106,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
-#endif
+

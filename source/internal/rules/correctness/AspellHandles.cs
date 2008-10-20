@@ -24,7 +24,6 @@ using Smokey.Framework;
 using System;
 using System.Runtime.InteropServices;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {
 	internal sealed class AspellConfigHandle : SafeHandle

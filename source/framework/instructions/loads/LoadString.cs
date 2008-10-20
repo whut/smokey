@@ -23,7 +23,6 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {			
 	/// <summary>Represents Ldstr.</summary>
@@ -56,4 +55,4 @@ namespace Smokey.Framework.Instructions
 		}
 	}
 }
-#endif
+

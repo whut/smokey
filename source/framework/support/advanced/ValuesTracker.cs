@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.Text;
 using Smokey.Framework.Instructions;
 
-#if OLD
 namespace Smokey.Framework.Support.Advanced
 {	
 	namespace Values
@@ -378,4 +377,4 @@ namespace Smokey.Framework.Support.Advanced
 		}
 	}
 }
-#endif
+

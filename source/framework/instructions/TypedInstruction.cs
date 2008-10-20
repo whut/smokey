@@ -23,7 +23,6 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 
-#if OLD
 namespace Smokey.Framework.Instructions
 {	
 	/// <summary>Base class for typed Cecil instructions.</summary> 
@@ -62,4 +61,4 @@ namespace Smokey.Framework.Instructions
 		#endregion
 	}
 }
-#endif
+

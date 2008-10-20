@@ -25,7 +25,6 @@ using Smokey.Framework;
 using Smokey.Framework.Instructions;
 using Smokey.Framework.Support;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class AvoidReRegisterForFinalizeRule : Rule
@@ -60,4 +59,4 @@ namespace Smokey.Internal.Rules
 		MethodDefinition m_method;
 	}
 }
-#endif
+

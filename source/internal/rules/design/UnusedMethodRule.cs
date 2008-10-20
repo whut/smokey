@@ -29,7 +29,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-#if OLD
 namespace Smokey.Internal.Rules
 {	
 	internal sealed class UnusedMethodRule : Rule
@@ -295,4 +294,4 @@ namespace Smokey.Internal.Rules
 		private bool m_checkCtors;
 	}
 }
-#endif
+
