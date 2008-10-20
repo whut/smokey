@@ -264,18 +264,21 @@ namespace Smokey.Internal.Rules
 		{
 			if (m_needsCheck && m_method != null)
 			{
-				if (field.DeclaringType.FullName == m_type.FullName)
+				if (!field.Name.Contains("$"))
 				{
-					Partition p = m_partitions.Find(x => x.Fields.IndexOf(field.Name) >= 0);
-					if (p != null)
+					if (field.DeclaringType.FullName == m_type.FullName)
 					{
-						if (p.Methods.IndexOf(m_method) < 0)
-							p.Methods.Add(m_method);
-					}
-					else
-					{
-						p = new Partition(field.Name, m_method);					
-						m_partitions.Add(p);
+						Partition p = m_partitions.Find(x => x.Fields.IndexOf(field.Name) >= 0);
+						if (p != null)
+						{
+							if (p.Methods.IndexOf(m_method) < 0)
+								p.Methods.Add(m_method);
+						}
+						else
+						{
+							p = new Partition(field.Name, m_method);					
+							m_partitions.Add(p);
+						}
 					}
 				}
 			}
