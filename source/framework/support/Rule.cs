@@ -40,23 +40,17 @@ namespace Smokey.Framework.Support
 			DBC.Pre(reporter != null, "reporter is null");
 			DBC.Pre(!string.IsNullOrEmpty(checkID), "checkID is null or empty");
 
-			m_cache = cache;
-			m_reporter = reporter;
-			m_checkID = checkID;
+			Cache = cache;
+			Reporter = reporter;
+			CheckID = checkID;
+			Runtime = TargetRuntime.NET_1_0;
 		}
 		
 		public abstract void Register(RuleDispatcher dispatcher);
 	
-		public AssemblyCache Cache 			{get {return m_cache;}}
-		public IReportViolations Reporter 	{get {return m_reporter;}}
-		public string CheckID 				{get {return m_checkID;}}
-		public TargetRuntime Runtime 		{get {return m_runtime;} set {m_runtime = value;}}
-		
-		#region Fields		
-		AssemblyCache m_cache;
-		private IReportViolations m_reporter;
-		private string m_checkID;
-		private TargetRuntime m_runtime = TargetRuntime.NET_1_0;
-		#endregion
+		public AssemblyCache Cache 			{get; private set;}
+		public IReportViolations Reporter 	{get; private set;}
+		public string CheckID 				{get; private set;}
+		public TargetRuntime Runtime 		{get; protected set;}
 	}
 }

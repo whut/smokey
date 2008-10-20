@@ -72,6 +72,8 @@ namespace Smokey.Internal.Rules
 			// For each field,
 			foreach (FieldDefinition field in type.Fields)
 			{
+				Log.WarningLine(this, "checking field of type {0}{1}", new string(' ', 3*level), field.FieldType.FullName);
+				
 				// if it isn't static,
 				if (!field.IsStatic)
 				{
@@ -87,7 +89,7 @@ namespace Smokey.Internal.Rules
 							// otherwise if it's one of our types we can figure the
 							// size out,
 							TypeDefinition t = cache.FindType(field.FieldType);
-							if (t != null)
+							if (t != null && t.FullName != type.FullName)	// TODO: shouldn't need the name check (but mscorlib.dll infinitely recurses w/o it)
 							{
 								if (t.IsEnum || !t.IsValueType)
 									size += 4;

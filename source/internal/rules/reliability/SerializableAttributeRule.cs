@@ -43,7 +43,7 @@ namespace Smokey.Internal.Rules
 
 		public void VisitType(TypeDefinition type)
 		{
-			if (!type.IsSerializable && !type.IsEnum && !type.IsValueType)
+			if (!type.IsSerializable && !type.IsEnum && !type.IsValueType && !type.IsNestedPrivate)
 			{
 				if (type.BaseType != null && type.BaseType.FullName.IndexOf("Delegate") < 0)
 				{

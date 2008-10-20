@@ -8,11 +8,12 @@ https://home.comcast.net/~jesse98/public/Mono.Cecil.dll
 https://home.comcast.net/~jesse98/public/smokey-0.4.0.0.tar.gz
 https://home.comcast.net/~jesse98/public/System.Xml.dll.txt
 
-mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll > tmp.txt
-mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/net_2_1/mscorlib.dll > tmp.txt
-mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.1/System.Core.dll > tmp.txt
-mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Library/Frameworks/Mono.framework/Libraries/mono/2.1/System.Xml.Core.dll > tmp.txt
-mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/net_2_0/System.Windows.Forms.dll > tmp.txt
+mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Volumes/LaCie/Mono/mono-2.0/mcs/class/lib/net_2_0/System.Drawing.Design.dll > tmp.txt
+mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Volumes/LaCie/Mono/mono-2.0/mcs/class/lib/net_2_0/System.Drawing.dll > tmp.txt
+mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Volumes/LaCie/Mono/mono-2.0/mcs/class/lib/net_2_1/mscorlib.dll > tmp.txt
+mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Volumes/LaCie/Mono/mono-2.0/mcs/class/lib/net_2_1/System.Core.dll > tmp.txt
+mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Volumes/LaCie/Mono/mono-2.0/mcs/class/lib/net_2_1/System.Xml.Core.dll > tmp.txt
+mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Volumes/LaCie/Mono/mono-2.0/mcs/class/lib/net_2_0/System.Windows.Forms.dll > tmp.txt
 
 mono bin/smokey.exe bin/smokey.exe	
 	27.065				1.1
@@ -43,20 +44,26 @@ gmcs -out:bin/profile-aop.exe -reference:Mono.Cecil.dll -checked+ -debug+ -warn:
 mono --debug bin/profile-aop.exe
 mono --debug bin/smokey2.exe ../shield-anvil/bin/shield-anvil.exe>tmp.txt
 
-* Look at slow rules:
-	IgnoredReturnRule              01.808    9642
-	WinFormsVoodooRule             01.638    6853
-	NullDerefRule                  01.272    36986
-	DataLocaleRule                 00.855    10331
-	CollectionToStringRule         00.853    9642
-	ExitCodeRule                   00.827    13255
-	RecursiveLock1Rule             00.816    8644
-	UnprotectedEventRule           00.806    9642
-	BadExitRule                    00.8      8248
-	UnusualMonitor2Rule            00.786    9642
-	UnusedMethodRule               00.757    9420
-	UnrelatedEqualsRule            00.755    9642
-* Do a release
+* Do a release:
+	- use svn log -r 1:HEAD > CHANGE_LOG
+	- update CHANGES file
+	- update version number in the make file and zap build_num
+	- install
+	- update README and wiki
+	- mono --debug bin/smokey.exe -generate-html-violations:violations
+	- smoke -profile=system -html -out:report.html /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll
+		don't use custom.dll
+	- update SmokeyVersion on old web site
+	- upload
+		report.html
+		violations
+		smokey_bin
+		smokey_src
+		latest cecil
+	- send an announcement
+	- make sure everything is checked in
+	- do the following (be sure to fix the versions):
+		svn copy file:///Users/jessejones/projects/Smokey file:///Users/jessejones/projects/releases/smokey-1.X.0.0 -m "Tagging 1.X.0.0"
 
 * Tuple3 should have been flagged as unused.
 * Make SymbolTable static.
