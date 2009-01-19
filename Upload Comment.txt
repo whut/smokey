@@ -3,42 +3,43 @@ Smokey is a command line tool used to analyze assemblies and report problems. Pr
 You can download Smokey from the web site: 
 <http://code.google.com/p/smokey/>. The web site also has an html report for one of the System assemblies and a list of all of Smokey's rules.
 
-This release of Smokey has 220 rules which is more than FxCop and twice as many as Gendarme.
+This release of Smokey has 233 rules.
 
-Changes from Smokey 1.2.0.0:
-* Added nine new rules:
-	- ArgumentException1, ArgumentException constructed with an arg name.
-	- ArgumentException2, ArgumentNullException or ArgumentOutOfRangeException constructed without an arg name.
-	- AvoidReRegisterForFinalize, don't use GC.ReRegisterForFinalize.
-	- HashUsesXor, don't use xor to combine hashes.
-	- IdentifierCasing, two externally visible names differ only by case.
-	- PropertyMatchesAccessor, type has a Foo property and a GetFoo or SetFoo method.
-	- PropertyReturnsCollection, property returns a mutable collection.
-	- TooManyLocals, method has over 64 local variables.
-	- UnusedArg, non-empty method doesn't use an argument.
-* Removed DisposeDoesStaticRemoveRule.
-* AttributesNeedUsageRule doesn't complain if the type is abstract.
-* NonSerializableFieldRule doesn't complain if the type implements ISerializable.
-* CastOpAlternativeTestRule doesn't complain if the type is only missing 
-  FromFooType.
-* Const2Rule only complains if the type is public.
-* UnusedMethodRule:
-	- Can now disable the rule for derived ctors by decorating a base class ctor.
-	- Don't complain if the method is decorated with an attribute which disables 
-	  the rule.
-	- Don't complain about the () and (SerializationInfo, StreamingContext) 
-	  constructors if the type is serializeable.
-	- Don't complain about inner exception constructors.
-	- Don't complain about custom event add/remove methods.
-	- Sort results by declaring type and method name, not by return type.
-* Fields that are collections of IntPtr are now considered to be native types. 
-  This affects DisposableButNoFinalizerRule, IDisposableWithoutSuppressFinalizeRule,
-  and DisposeNativeResourcesRule.
-* Don't terminate if a custom rule can't be loaded.
-* Fixed Dispose language in the rules to make it clear that managed fields can always
-  be used but finalizeable fields cannot.
-* Sped up unit tests a huge amount (mainly by instantiating one AssemblyDefinitions 
-  instead of over 200).
-* Switched to make files instead of nant.
+Changes from Smokey 1.3.0.0:
+* Added nineteen new rules:
+    - BaseDisposable, should have Dispose(bool) method.
+    - ConfusingDispose, not IDisposable but has Dispose method.
+    - ConstantResult, Equals, GetHashCode, or relational operator always returns a constant.
+    - DerivedDisposable, Dispose(bool) should call base, don't have a finalizer.
+    - Disposable, checks for eleven problems including improper naming, a Dispose method throwing, and Dispose(bool) using a field without a null check.
+    - EqualsMissesState, Equals does not check a field exposed by a trivial get/set property.
+    - Finalizeable, empty, throws, or not IDisposable.
+    - HashButNoEquals, overrides GetHashCode, but not Equals.
+    - InvalidEnumFlags, marked as flags but all values are sequential.
+    - ISerializableMethods, not ISerializable but has (SerializationInfo, StreamingContext) ctor.
+    - MutableField, externally visible field is readonly, mutable, and not a value type.
+    - PreferSafeHandle, has a finalizer and an IntPtr field.
+    - RedundantOperand, selected binary operator or method is invoked but both arguments are computed using identical code.
+    - SerializableAttribute, exception class is not marked with SerializableAttribute. 
+    - ThreadAbort, Thread.Abort was called.
+    - ThreadName, thread was instantiated but not given a name.
+    - ThreadSafeAttr, thread root was not marked with ThreadRootAttribute/ThreadSafeAttribute, or method called from multiple threads was not marked with ThreadSafeAttribute.
+    - UseIEquatable, defines Equals but isn't IEquatable<T>.
+    - VisiblePointer, externally visible IntPtr field is not readonly.
+* Removed some rules (these have been folded into the new more general disposable rules):
+    - BaseDisposable
+    - DisposeFields
+    - EmptyFinalizer
+    - IDisposableWithoutSuppressFinalize
+    - NoObjectDisposedException
+    - OverridenFinalizer
+* Removed DisposableButNoFinalizer rule (DisposeNativeResources handles it).
+* Removed ignoreList setting (use dictionary setting instead).
+* Write a message to stderr if aspell isn't installed (instead of reporting a bug in smokey).
+* GodClass rule fires for over 60 types instead of over 40 types.
+* Smokey now does a better job resolving generic types.
+* File and line numbers are now retrieved using Cecil instead of the undocumented Mono.CompilerServices.SymbolWriter, atlhough Cecil doesn't seem to be as accurate as the old code.
+* Lot's of minor bug fixes, including fixes for automatic properties and mono 2.0.
+
 
 Ê -- Jesse

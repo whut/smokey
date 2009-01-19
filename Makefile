@@ -37,7 +37,7 @@ extra_test_files := source/internal/AssertTraceListener.cs source/internal/Tuple
 
 xml_files := $(strip $(shell find source/internal/rules/xml -name "*.xml" -print))
 
-base_version := 1.3.xxx.0										# major.minor.build.revision
+base_version := 1.4.xxx.0										# major.minor.build.revision
 version := $(shell ./get_version.sh $(base_version) build_num)	# this will increment the build number stored in build_num
 version := $(strip $(version))
 
@@ -74,7 +74,7 @@ bin/exe_resources: $(xml_files) IgnoreList.txt SysIgnore.txt
 	@echo $(xml_files) | sed "s/source/-resource:source/g" >> bin/exe_resources
 
 bin/exe_references:
-	@echo "-reference:Mono.Cecil.dll,System.Configuration.dll" > bin/exe_references
+	@echo "-reference:Mono.Cecil.dll,Mono.Cecil.Mdb.dll,System.Configuration.dll" > bin/exe_references
 
 bin/smokey.exe: keys bin/app_flags bin/exe_references bin/exe_resources bin/exe_files
 	@./gen_version.sh $(version) source/internal/AssemblyVersion.cs
@@ -86,7 +86,7 @@ bin/tests_files: $(tests_files)
 	@echo "$(tests_files)" > bin/tests_files
 
 bin/tests_references: 
-	@echo "-reference:Mono.Cecil.dll.dll,System.Configuration.dll,System.Data.dll,System.Windows.Forms.dll" > bin/tests_references
+	@echo "-reference:Mono.Cecil.dll,System.Configuration.dll,System.Data.dll,System.Windows.Forms.dll" > bin/tests_references
 
 bin/tests.dll: bin/csc_flags bin/tests_references bin/tests_files 
 	$(CSC) -out:bin/tests.dll $(CSC_FLAGS) -define:TEST -pkg:mono-nunit -target:library @bin/tests_references @bin/tests_files 
