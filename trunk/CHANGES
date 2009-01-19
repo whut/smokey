@@ -1,3 +1,42 @@
+-- Version 1.4.0.0 (r128) ----
+* Added nineteen new rules:
+	- BaseDisposable
+	- ConfusingDispose
+	- ConstantResult
+	- DerivedDisposable
+	- Disposable
+	- EqualsMissesState
+	- Finalizeable
+	- HashButNoEquals
+	- InvalidEnumFlags
+	- ISerializableMethods
+	- MutableField
+	- PreferSafeHandle
+	- RedundantOperand
+	- SerializableAttribute
+	- ThreadAbort
+	- ThreadName
+	- ThreadSafeAttr
+	- UseIEquatable
+	- VisiblePointer
+* Removed some rules (these have been folded into the new more general disposable rules):
+	- BaseDisposable
+	- DisposeFields
+	- EmptyFinalizer
+	- IDisposableWithoutSuppressFinalize
+	- NoObjectDisposedException
+	- OverridenFinalizer
+* Removed DisposableButNoFinalizer rule (DisposeNativeResources handles it).
+* Removed ignoreList setting (use dictionary instead).
+* Write a message to stderr if aspell isn't installed (instead of reporting a 
+  bug in smokey).
+* GodClass rule fires for over 60 types instead of over 40 types.
+* Smokey now does a better job resolving generic types.
+* File and line numbers are now retrieved using Cecil instead of the undocumented
+  Mono.CompilerServices.SymbolWriter, atlhough Cecil doesn't seem to be as accurate
+  as the old code.
+* Lot's of minor bug fixes, including fixes for automatic properties and mono 2.0.
+  
 -- Version 1.3.0.0 (r76) ----
 
 * Added nine new rules:

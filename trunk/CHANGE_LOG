@@ -697,3 +697,561 @@ Index: custom/nant.build
 
 
 ------------------------------------------------------------------------
+r77 | jesjones@mindspring.com | 2008-06-12 00:45:23 -0700 (Thu, 12 Jun 2008) | 10 lines
+
+Index: CHANGES
+Index: README
+* Updated.
+
+Index: Makefile
+Index: extras/Makefile
+* Moved install and uninstall targets into their own make file so we can use it for
+  the binary distro.
+  
+
+------------------------------------------------------------------------
+r82 | jesjones@mindspring.com | 2008-08-10 14:36:48 -0700 (Sun, 10 Aug 2008) | 3 lines
+
+Added InvalidEnumFlagsRule.
+
+
+------------------------------------------------------------------------
+r83 | jesjones@mindspring.com | 2008-08-10 20:23:11 -0700 (Sun, 10 Aug 2008) | 3 lines
+
+Added HashButNoEqualsRule.
+
+
+------------------------------------------------------------------------
+r84 | jesjones@mindspring.com | 2008-08-11 19:51:54 -0700 (Mon, 11 Aug 2008) | 24 lines
+
+Index: source/internal/rules/design/ThreadNameRule.cs
+Index: source/internal/rules/xml/Design.xml
+Index: source/tests/rules/design/ThreadNameTest.cs
+* Added ThreadNameRule.
+
+Index: source/internal/rules/microsoft/NetNamingRule.cs
+Index: source/internal/rules/mono/MonoNamingRule.cs
+Index: custom/source/rules/PrivateNeedsDoRule.cs
+* Ignore methods that start with a '<'.
+
+Index: source/internal/rules/microsoft/SynchronizedAttributeRule.cs
+* Ignore add_ and remove_ methods.
+
+Index: source/internal/rules/design/ExceptionConstructorsRule.cs
+* Ignore internal and private types.
+
+Index: source/internal/rules/correctness/Aspell.cs
+* Write a message to stderr if aspell isn't installed (instead of reporting
+  a bug in smokey).
+  
+Index: source/internal/rules/misc/JurassicNamingRule.cs
+* Ignore public fields.
+
+
+------------------------------------------------------------------------
+r85 | jesjones@mindspring.com | 2008-10-09 01:13:06 -0700 (Thu, 09 Oct 2008) | 3 lines
+
+Special case enums (they are serializable but not decorated with ISerializable).
+
+
+------------------------------------------------------------------------
+r86 | jesjones@mindspring.com | 2008-10-09 02:04:48 -0700 (Thu, 09 Oct 2008) | 7 lines
+
+* Fixed quite a few rules that were only supposed to fire for externally visible 
+  types to not fire for public types nested in an internal type.
+* InternalExceptionRule prints the first four externally visible types in the assembly
+  which makes it a lot easier to figure out what's going on for assemblies which should
+  not have externally visible types.
+
+
+------------------------------------------------------------------------
+r87 | jesjones@mindspring.com | 2008-10-09 14:26:38 -0700 (Thu, 09 Oct 2008) | 14 lines
+
+Index: source/internal/rules/security/TransparentAssertRule1.cs
+Index: source/internal/rules/security/TransparentAssertRule2.cs
+* No longer throws when -only-type switch is used.
+
+Index: source/internal/rules/design/GodClassRule.cs
+* Special case generics so we treat the original generic type and the generic
+  arguments separately.
+  
+Index: source/internal/rules/reliability/NonSerializableFieldRule.cs
+* Enums are serializeable even though they are not ISerializable.
+
+Index: source/internal/CheckItem.cs
+* Log the number of rules we found so we can get a better count of our rules.
+
+------------------------------------------------------------------------
+r88 | jesjones@mindspring.com | 2008-10-09 20:04:15 -0700 (Thu, 09 Oct 2008) | 5 lines
+
+* Replaced some existing rules with new, more general, rules. The new rules are DisposableRule, 
+  DerivedDisposableRule, FinalizeableRule and in this first pass do pretty much what the old 
+  rules do although the new rules are more efficient.
+* TypeTest will now visit methods so we can test inter-procedural rules.
+
+------------------------------------------------------------------------
+r89 | jesjones@mindspring.com | 2008-10-09 20:10:37 -0700 (Thu, 09 Oct 2008) | 8 lines
+
+* Removed the rules which were replaced:
+  BaseDisposableRule
+  DisposeFieldsRule
+  EmptyFinalizerRule
+  IDisposableWithoutSuppressFinalizeRule
+  NoObjectDisposedExceptionRule
+  OverridenFinalizerRule
+
+------------------------------------------------------------------------
+r90 | jesjones@mindspring.com | 2008-10-10 00:18:49 -0700 (Fri, 10 Oct 2008) | 12 lines
+
+* DisposableRule now also checks for
+	- The type has a method named Dispose with an unusual signature.
+	- The type has non-private methods named OnDispose or DoDispose.
+	- Dispose() should not be virtual (although Dispose(bool) may be).
+	- If the type is sealed and has Dispose(bool) then it should be private.
+	- If the type is not sealed and has Dispose(bool) then it should be protected and virtual.
+	- A Dispose method throws an exception it does not catch. 
+	- A struct has unmanaged fields. 
+	- Dispose(bool) needs to check to see if a field is null before using it.
+* RuleDispatcher does a better job logging inner exceptions when a rule throws.
+
+
+------------------------------------------------------------------------
+r91 | jesjones@mindspring.com | 2008-10-10 18:08:23 -0700 (Fri, 10 Oct 2008) | 7 lines
+
+* Added BaseDisposableRule.
+* DerivedDisposableRule now checks for:
+	- don't (re)implement IDisposable.
+	- don't include a new or overriden Dispose() method.
+* FinalizerRule now checks for:
+	- the finalizer throws but does not catch.
+	- the type does not implement IDisposable. 
+------------------------------------------------------------------------
+r92 | jesjones@mindspring.com | 2008-10-10 18:40:04 -0700 (Fri, 10 Oct 2008) | 3 lines
+
+Reorganized CecilExtensions.
+
+
+------------------------------------------------------------------------
+r93 | jesjones@mindspring.com | 2008-10-10 20:20:23 -0700 (Fri, 10 Oct 2008) | 3 lines
+
+Removing this
+
+
+------------------------------------------------------------------------
+r94 | jesjones@mindspring.com | 2008-10-10 20:22:00 -0700 (Fri, 10 Oct 2008) | 6 lines
+
+* DisposeNativeResources now fires if the type is not IDisposable instead of checking
+  for Dispose methods.
+* The code that checks to see if a field is owned by a type now catches more cases.
+  This affects the Disposable and DisposableFields rules.
+  
+
+------------------------------------------------------------------------
+r95 | jesjones@mindspring.com | 2008-10-10 20:47:22 -0700 (Fri, 10 Oct 2008) | 6 lines
+
+* Renamed ClassOrBaseImplements TypeOrBaseImplements.
+* Renamed Implements TypeImplements.
+* Removed IsDisposable class (use TypeOrBaseImplements).
+
+
+
+------------------------------------------------------------------------
+r96 | jesjones@mindspring.com | 2008-10-10 21:00:48 -0700 (Fri, 10 Oct 2008) | 3 lines
+
+* Removed DisposableButNoFinalizer rule (DisposeNativeResources handles it).
+
+
+------------------------------------------------------------------------
+r99 | jesjones@mindspring.com | 2008-10-11 01:27:21 -0700 (Sat, 11 Oct 2008) | 12 lines
+
+Index: source/internal/rules/design/PreferSafeHandleRule.cs
+Index: source/tests/rules/design/PreferSafeHandleTest.cs
+Index: source/internal/rules/xml/Design.xml
+* Added.
+
+Index: source/internal/rules/xml/Portability.xml
+Index: source/internal/rules/xml/Security.xml
+* Made NativeMethods class partial in the example code.
+
+Index: source/internal/rules/design/DisposableRule.cs
+* Don't complain about getters missing throwing ObjectDisposedException.
+
+------------------------------------------------------------------------
+r100 | jesjones@mindspring.com | 2008-10-11 10:23:43 -0700 (Sat, 11 Oct 2008) | 5 lines
+
+Index: source/internal/rules/correctness/Aspell.cs
+Index: source/internal/rules/correctness/AspellHandles.cs
+* Uses SafeHandle.
+
+
+------------------------------------------------------------------------
+r101 | jesjones@mindspring.com | 2008-10-11 10:35:23 -0700 (Sat, 11 Oct 2008) | 3 lines
+
+Index: source/internal/rules/security/SecureOverridesRule.cs
+* Method has to be overridable as well as virtual.
+
+------------------------------------------------------------------------
+r102 | jesjones@mindspring.com | 2008-10-11 12:21:48 -0700 (Sat, 11 Oct 2008) | 4 lines
+
+* Uses the new Matches and Reuses extension methods so we can do a more consistent job
+  of matching standard methods like Equals and GetHashCode.
+  
+
+------------------------------------------------------------------------
+r103 | jesjones@mindspring.com | 2008-10-11 19:02:06 -0700 (Sat, 11 Oct 2008) | 5 lines
+
+Index: source/internal/rules/correctness/EqualsMissesStateRule.cs
+Index: source/tests/rules/correctness/EqualsMissesStateTest.cs
+Index: source/internal/rules/xml/Correctness.xml
+* Added.
+
+------------------------------------------------------------------------
+r104 | jesjones@mindspring.com | 2008-10-12 00:33:34 -0700 (Sun, 12 Oct 2008) | 17 lines
+
+Index: source/internal/rules/performance/UseIEquatableRule.cs
+Index: source/tests/rules/performance/UseIEquatableTest.cs
+* Added.
+
+Index: source/internal/rules/mono/MonoNamingRule.cs
+Index: source/internal/rules/misc/JurassicNamingRule.cs
+* Works better with the fields generated by automatic properties.
+
+Index: source/internal/rules/xml/Performance.xml
+Index: source/internal/rules/xml/Microsoft.xml
+Index: source/internal/rules/xml/Security.xml
+Index: source/internal/rules/xml/Design.xml
+Index: source/internal/rules/xml/Reliability.xml
+Index: source/internal/rules/xml/Correctness.xml
+* Tweaked the GetHashCode examples.
+* Use automatic properties.
+
+------------------------------------------------------------------------
+r105 | jesjones@mindspring.com | 2008-10-12 14:29:10 -0700 (Sun, 12 Oct 2008) | 12 lines
+
+Index: source/internal/rules/correctness/ConstantResultRule.cs
+Index: source/tests/rules/correctness/ConstantResultTest.cs
+Index: source/internal/rules/xml/Correctness.xml
+* Added.
+
+Index: source/internal/rules/correctness/RedundantOperandRule.cs
+Index: source/tests/rules/correctness/RedundantOperandTest.cs
+* Added.
+ 	
+Index: source/internal/rules/microsoft/EqualsRequiresNullCheckRule.cs
+* Checks Equals(T) methods when T implements IEquatable<T>.
+
+------------------------------------------------------------------------
+r106 | jesjones@mindspring.com | 2008-10-12 14:40:35 -0700 (Sun, 12 Oct 2008) | 4 lines
+
+Removed Ignore. Changed Unused so that it has a Value setter instead of an Args
+method.
+
+
+------------------------------------------------------------------------
+r107 | jesjones@mindspring.com | 2008-10-12 22:01:36 -0700 (Sun, 12 Oct 2008) | 6 lines
+
+Index: source/internal/rules/reliability/ThreadSafeAttrRule.cs
+Index: source/tests/rules/reliability/ThreadSafeAttrTest.cs
+Index: source/internal/rules/xml/Reliability.xml
+* Added.
+
+
+------------------------------------------------------------------------
+r109 | jesjones@mindspring.com | 2008-10-12 23:05:23 -0700 (Sun, 12 Oct 2008) | 9 lines
+
+Index: source/internal/rules/reliability/ThreadAbortRule.cs
+Index: source/tests/rules/reliability/ThreadAbortTest.cs
+Index: source/internal/rules/xml/Reliability.xml
+* Added.
+ 	
+Index: source/framework/DisableRuleAttribute.cs
+* Use automatic properties.
+
+
+------------------------------------------------------------------------
+r111 | jesjones@mindspring.com | 2008-10-13 11:42:56 -0700 (Mon, 13 Oct 2008) | 9 lines
+
+Index: source/internal/rules/design/SealedProtectedRule.cs
+* Rewrote to remove some false positives.
+
+Index: source/internal/rules/reliability/UnusualMonitor1Rule.cs
+* Fixed a false positive with static locks.
+
+Index: source/internal/rules/correctness/UnusedArgRule.cs
+* Ignore delegate methods.
+
+------------------------------------------------------------------------
+r112 | jesjones@mindspring.com | 2008-10-13 13:43:24 -0700 (Mon, 13 Oct 2008) | 9 lines
+
+Index: source/internal/rules/reliability/ThreadSafeAttrRule.cs
+* Replaced ThreadSingleRootAttribute with ThreadRootAttribute.
+* Removed ThreadMultiRootAttribute (use ThreadSafeAttribute instead).
+* ThreadSafeAttribute can now be applied to classes and structs.
+
+Index: source/internal/rules/design/DisposableRule.cs
+* Instead of checking for private Dispose(bool) in sealed types check for public
+  Dispose() in all types.
+
+------------------------------------------------------------------------
+r113 | jesjones@mindspring.com | 2008-10-13 16:49:44 -0700 (Mon, 13 Oct 2008) | 50 lines
+
+Index: source/internal/rules/reliability/SerializableAttributeRule.cs
+* Added.
+
+Index: source/internal/rules/reliability/ISerializableMethodsRule.cs
+* Added.
+ 
+Index: source/internal/rules/design/ExceptionConstructorsRule.cs
+* No longer complains about missing default ctors.
+
+Index: source/internal/rules/design/TooManyArgsRule.cs
+* Ignore private methods.
+
+Index: source/internal/rules/correctness/NoSerializableAttributeRule.cs
+* Checks all types, not just the externally visible ones.
+
+Index: source/internal/rules/correctness/UnrelatedEqualsRule.cs
+Index: source/internal/rules/correctness/NanTestRule.cs
+Index: source/internal/rules/correctness/EqualsMissesStateRule.cs
+Index: source/internal/rules/correctness/StringIndexOfRule.cs
+Index: source/internal/rules/correctness/ArrayIndexOfRule.cs
+Index: source/internal/rules/misc/SortedMethodsRule.cs
+Index: source/internal/GetOptions.cs
+Index: source/internal/Watchdog.cs
+Index: source/internal/Unused.cs
+Index: source/internal/Progress.cs
+Index: source/framework/DisableRuleAttribute.cs
+Index: source/framework/StringExtensions.cs
+Index: source/framework/support/CecilExtensions.cs
+Index: source/framework/support/advanced/BasicBlock.cs
+Index: source/framework/support/advanced/ClassifyMethod.cs
+Index: source/framework/support/advanced/ValuesState.cs
+Index: source/framework/DBC.cs
+Index: source/internal/rules/correctness/Aspell.cs
+Index: source/internal/rules/correctness/AspellHandles.cs
+Index: source/internal/rules/reliability/UnusualMonitor1Rule.cs
+Index: source/internal/rules/reliability/ThreadSafeAttrRule.cs
+Index: source/internal/rules/design/ThreadNameRule.cs
+Index: source/internal/rules/design/FinalizeableRule.cs
+Index: source/internal/rules/design/DisposableRule.cs
+Index: source/internal/rules/design/SchizoidTypeRule.cs
+Index: source/internal/rules/portability/SpecialFolderRule.cs
+Index: source/internal/AssertTraceListener.cs
+Index: IgnoreList.txt
+* Smoke target tweaks.
+
+Index: source/tests/rules/TypeTest.cs
+* Visit constructors.
+
+
+
+------------------------------------------------------------------------
+r114 | jesjones@mindspring.com | 2008-10-13 20:03:08 -0700 (Mon, 13 Oct 2008) | 3 lines
+
+Removing this.
+
+
+------------------------------------------------------------------------
+r115 | jesjones@mindspring.com | 2008-10-13 20:03:58 -0700 (Mon, 13 Oct 2008) | 12 lines
+
+Index: source/internal/rules/correctness/Aspell.cs
+Index: source/internal/rules/xml/Correctness.xml
+* Removed ignoreList setting (use dictionary instead).
+
+Index: source/tests/rules/AssemblyTest.cs
+* Can now test multiple types at once.
+
+Index: extras/evildoer/Identical.cs
+Index: source/tests/rules/design/IdenticalMethodsTest.cs
+* Made these tests a unit test instead of part of ftest.
+
+ 
+------------------------------------------------------------------------
+r116 | jesjones@mindspring.com | 2008-10-14 00:05:51 -0700 (Tue, 14 Oct 2008) | 19 lines
+
+Index: source/internal/rules/design/TemplateMethodRule.cs
+* Ignore private types.
+
+Index: source/internal/rules/design/IdenticalMethodsRule.cs
+* Don't require the method names to match.
+
+Index: source/internal/rules/design/DisposableRule.cs
+* Ignore event add_ and remove_ methods.
+
+Index: source/internal/rules/design/BaseDisposableRule.cs
+* Ignore types that re-implement IDisposable.
+
+Index: source/internal/rules/design/DerivedDisposableRule.cs
+* Don't warn about re-implementing IDisposable (but still do for new Dispose() methods).
+
+Index: source/internal/rules/correctness/RedundantOperandRule.cs
+* Special case some code used to return a true value.
+ 			
+
+------------------------------------------------------------------------
+r117 | jesjones@mindspring.com | 2008-10-14 22:18:54 -0700 (Tue, 14 Oct 2008) | 31 lines
+
+Index: source/internal/rules/reliability/StaticSetterRule.cs
+* Don't fire if the write is volatile and atomic.
+
+Index: source/internal/rules/design/GodClassRule.cs
+* Fire for over 60 types instead of over 40 types.
+* Checks more instruction types for type references.
+* Skips compiler generated types.
+
+Index: source/internal/rules/microsoft/NetNamingRule.cs
+Index: source/internal/rules/mono/MonoNamingRule.cs
+Index: source/internal/rules/misc/JurassicNamingRule.cs
+* Skip fields starting with $ and types like P1`1.
+
+Index: source/internal/rules/performance/NotInstantiatedRule.cs
+* Skip compiler generated types.
+
+Index: source/tests/rules/AssemblyTest.cs
+* Visit BeginTypes and EndTypes.
+
+Index: source/internal/rules/reliability/ThreadSafeAttrRule.cs
+* If the type is marked thread safe don't complain if some of its methods are
+  only called from a single thread.
+  
+Index: source/framework/support/CecilExtensions.cs
+* Treat anonymous types as compiler generated.
+* IsSubClass uses new TypeKey class so it works better with generics.
+
+Index: source/framework/support/AssemblyCache.cs
+* Does a better job finding type definitions for generics.
+ 		
+ 
+------------------------------------------------------------------------
+r118 | jesjones@mindspring.com | 2008-10-15 00:14:00 -0700 (Wed, 15 Oct 2008) | 10 lines
+
+Index: source/internal/rules/design/ConfusingDisposeRule.cs
+Index: source/tests/rules/design/ConfusingDisposeTest.cs
+Index: source/internal/rules/xml/Design.xml
+* Added.
+
+Index: source/internal/rules/reliability/ThreadSafeAttrRule.cs
+* Checks for types marked thread safe, but all of its methods are called
+  from one thread. 
+  
+
+------------------------------------------------------------------------
+r119 | jesjones@mindspring.com | 2008-10-15 01:23:41 -0700 (Wed, 15 Oct 2008) | 8 lines
+
+Index: source/internal/rules/performance/NotInstantiatedRule.cs
+* Do a better job with generic structs.
+
+Index: source/framework/support/AssemblyCache.cs
+* FindMethod no longer uses MetadataToken's (doesn't really work with generics). Instead
+  it finds the type definition and then asks it for the method definition.
+
+
+------------------------------------------------------------------------
+r120 | jesjones@mindspring.com | 2008-10-16 15:49:14 -0700 (Thu, 16 Oct 2008) | 20 lines
+
+Index: source/internal/rules/security/MutableFieldRule.cs
+Index: source/tests/rules/security/MutableFieldTest.cs
+Index: source/internal/rules/xml/Security.xml
+* Added.
+
+Index: source/internal/rules/security/VisiblePointerRule.cs
+Index: source/tests/rules/security/VisiblePointerTest.cs
+
+Index: source/internal/TextReport.cs
+Index: source/internal/CheckItem.cs
+Index: source/internal/XmlReport.cs
+Index: source/framework/SymbolTable.cs
+Index: source/framework/Location.cs
+* Don't print "File: <unknown>" any more.
+* Do print the offset into the method if we don't know the line number.
+
+Index: source/framework/support/RuleDispatcher.cs
+* Don't print "Outer Exception" if there is no inner exception.
+
+
+------------------------------------------------------------------------
+r121 | jesjones@mindspring.com | 2008-10-16 21:23:16 -0700 (Thu, 16 Oct 2008) | 7 lines
+
+Index: source/framework/instructions/Call.cs
+* Added GetThisIndex.
+
+Index: source/framework/support/CecilExtensions.cs
+* ExternallyVisible(Method) now returns true if the method is family.
+
+
+------------------------------------------------------------------------
+r122 | jesjones@mindspring.com | 2008-10-16 22:08:48 -0700 (Thu, 16 Oct 2008) | 14 lines
+
+Index: source/internal/rules/globalization/FormatProviderRule.cs
+Index: source/internal/rules/correctness/NoStaticRemoveRule.cs
+Index: source/internal/rules/reliability/RecursiveLock2Rule.cs
+Index: source/internal/rules/reliability/ValidateArgsRule.cs
+Index: source/internal/rules/design/UseBaseTypesRule.cs
+* Use new Call.GetThisIndex method.
+
+Index: source/framework/support/MethodInfo.cs
+Index: source/framework/support/RuleDispatcher.cs
+Index: source/internal/rules/design/IdenticalCodeBlocksRule.cs
+Index: source/internal/rules/design/IdenticalMethodsRule.cs
+* Reset MethodInfo::Instructions, Graph, and Tracker to null aftr visiting the method.
+  Should free up quite a bit of memory for large assemblies.
+
+------------------------------------------------------------------------
+r123 | jesjones@mindspring.com | 2008-10-18 20:28:00 -0700 (Sat, 18 Oct 2008) | 14 lines
+
+Index: source/framework/SymbolTable.cs
+* Rewrote using Cecil instead of the undocumented Mono.CompilerServices.SymbolWriter.
+  Unfortunately Cecil won't always give us line numbers.
+
+Index: source/framework/support/CecilExtensions.cs
+* Catch a few more weird names as mono 2.0 compiler generated names.
+
+Index: source/internal/rules/reliability/StaticSetterRule.cs
+* Volatile fields have weird names with mono 2.0.
+ 						
+Index: source/internal/rules/globalization/FormatProviderRule.cs
+* Check to see if the method instead of just the type is compiler generated.
+
+
+------------------------------------------------------------------------
+r124 | jesjones@mindspring.com | 2008-10-19 01:09:41 -0700 (Sun, 19 Oct 2008) | 6 lines
+
+Index: source/internal/rules/design/HashUsesXorRule.cs
+* Skip compiler generated methods.
+ 			 		 			
+Index: source/framework/support/CecilExtensions.cs
+* Update IsCompilerGenerated for mono 2.0.
+
+------------------------------------------------------------------------
+r125 | jesjones@mindspring.com | 2008-10-19 14:20:41 -0700 (Sun, 19 Oct 2008) | 6 lines
+
+Index: source/framework/support/MethodInfo.cs
+* Lazily create ControlFlowGraph and Tracker.
+
+Index: source/framework/DBC.cs
+* Can rely on Conditional now.
+
+------------------------------------------------------------------------
+r126 | jesjones@mindspring.com | 2008-10-19 15:08:57 -0700 (Sun, 19 Oct 2008) | 4 lines
+
+Starting big rewrite: disabled rules, unit tests for rules, cecil extensions, and 
+typed instructions.
+
+
+------------------------------------------------------------------------
+r127 | jesjones@mindspring.com | 2008-10-19 21:23:39 -0700 (Sun, 19 Oct 2008) | 3 lines
+
+Deferring the rewrite for now.
+
+
+------------------------------------------------------------------------
+r128 | jesjones@mindspring.com | 2008-10-19 22:44:00 -0700 (Sun, 19 Oct 2008) | 7 lines
+
+Index: source/internal/rules/design/SchizoidTypeRule.cs
+* Ignore field names containing a "$".
+
+Index: source/internal/rules/reliability/SerializableAttributeRule.cs
+* Ignore private types.
+
+
+------------------------------------------------------------------------

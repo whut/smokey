@@ -12,7 +12,7 @@ mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Volumes/LaCie/Mono/mo
 mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Volumes/LaCie/Mono/mono-2.0/mcs/class/lib/net_2_0/System.Drawing.dll > tmp.txt
 mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Volumes/LaCie/Mono/mono-2.0/mcs/class/lib/net_2_1/mscorlib.dll > tmp.txt
 mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Volumes/LaCie/Mono/mono-2.0/mcs/class/lib/net_2_1/System.Core.dll > tmp.txt
-mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Volumes/LaCie/Mono/mono-2.0/mcs/class/lib/net_2_1/System.Xml.Core.dll > tmp.txt
+mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Volumes/LaCie/Mono/mono-2.0/mcs/class/lib/net_2_1/System.Xml.dll > tmp.txt
 mono --debug bin/smokey.exe -set:dictionary:SysIgnore.txt /Volumes/LaCie/Mono/mono-2.0/mcs/class/lib/net_2_0/System.Windows.Forms.dll > tmp.txt
 
 mono bin/smokey.exe bin/smokey.exe	
@@ -34,7 +34,7 @@ Essential .NET Volume 1, The Common Language Runtime - Don Box
 
 /Library/Frameworks/Mono.framework/Versions/1.9/lib/mono/gac/gtk-sharp/2.10.0.0__35e10195dab3c99f/gtk-sharp.dll			  
 
-232 rules
+233 rules
 199 fxcop
 102 gendarme
 
@@ -45,26 +45,20 @@ mono --debug bin/profile-aop.exe
 mono --debug bin/smokey2.exe ../shield-anvil/bin/shield-anvil.exe>tmp.txt
 
 * Do a release:
-	- use svn log -r 1:HEAD > CHANGE_LOG
-	- update CHANGES file
-	- update version number in the make file and zap build_num
-	- install
-	- update README and wiki
-	- mono --debug bin/smokey.exe -generate-html-violations:violations
-	- smoke -profile=system -html -out:report.html /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll
-		don't use custom.dll
-	- update SmokeyVersion on old web site
-	- upload
-		report.html
-		violations
-		smokey_bin
-		smokey_src
-		latest cecil
 	- send an announcement
 	- make sure everything is checked in
 	- do the following (be sure to fix the versions):
 		svn copy file:///Users/jessejones/projects/Smokey file:///Users/jessejones/projects/releases/smokey-1.X.0.0 -m "Tagging 1.X.0.0"
 
+* ThreadSafeAttr:
+	- should not warn if a public type is ThreadSafe but the methods are called from one thread.
+	- didn't complain about methods Managed.Call calls (like DrainBuffer)
+	- rule is a bit dicy because it's hard methods that need to be thread safe often call methods that
+	  do not need to be thread safe (because instances are not shared between threads)
+	- maybe we should have a WeakThreadSafeAttribute for methods which can be called from any thread, but
+	  only if the instance is not shared between threads
+* Could short circuit method rules by testing a precomputed flahs which is set if the method has soemthing
+  like a call instruction.
 * Tuple3 should have been flagged as unused.
 * Make SymbolTable static.
 * Instead of explicitly iterating over base types all over might be better to provide
@@ -293,15 +287,16 @@ mono --debug bin/smokey2.exe ../shield-anvil/bin/shield-anvil.exe>tmp.txt
 	- install
 	- update README and wiki
 	- mono --debug bin/smokey.exe -generate-html-violations:violations
-	- smoke -profile=system -html -out:report.html /Users/jessejones/New_Files/mono-1.9/mcs/class/lib/default/System.Drawing.dll
+	- mono bin/smokey.exe -out:report.html /Volumes/LaCie/Mono/mono-2.0/mcs/class/lib/net_2_0/System.Drawing.Design.dll
 		don't use custom.dll
+	- update Upload Comment
 	- update SmokeyVersion on old web site
+	- make RELEASE=1 tar
 	- upload
 		report.html
 		violations
 		smokey_bin
 		smokey_src
-		latest cecil
 	- send an announcement
 	- make sure everything is checked in
 	- do the following (be sure to fix the versions):

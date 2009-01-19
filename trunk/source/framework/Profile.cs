@@ -25,9 +25,7 @@ using System.Diagnostics;
 using System.Text;
 
 namespace Smokey.Framework
-{
-	using TaskMap = Dictionary<string, Profile.Task>;
-	
+{	
 	/// <summary>Simple profiler, especially useful on OS X where mono's profiler
 	/// doesn't seem to work well due to the lack of addr2line.</summary>
 	public static class Profile
@@ -248,7 +246,7 @@ namespace Smokey.Framework
 		{
 			public readonly Task Parent;
 			public readonly string Name;
-			public TaskMap SubTasks;
+			public Dictionary<string, Profile.Task> SubTasks;
 			public TimeSpan Elapsed;	// total elapsed time for this task (and its subtasks)
 			public DateTime StartTime;
 			public int Count;
@@ -257,7 +255,7 @@ namespace Smokey.Framework
 			{
 				Parent = parent;
 				Name = name;
-				SubTasks = new TaskMap();
+				SubTasks = new Dictionary<string, Profile.Task>();
 				StartTime = DateTime.Now;
 				Count = 1;
 			}

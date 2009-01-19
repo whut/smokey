@@ -26,10 +26,10 @@ check: ../bin/customtests.dll
 # -----------------------------------------------------------------------------
 # Generated targets
 ../bin/custom.dll: ../bin/csc_flags ../bin/smokey.exe source/rules/Rules.xml source/*.cs source/rules/*.cs
-	$(CSC) -out:../bin/custom.dll $(CSC_FLAGS) -target:library -r:../bin/smokey.exe,Mono.Cecil.dll -res:source/rules/Rules.xml source/*.cs  source/rules/*.cs
+	$(CSC) -out:../bin/custom.dll $(CSC_FLAGS) -target:library -r:../bin/smokey.exe,../Mono.Cecil.dll -res:source/rules/Rules.xml source/*.cs  source/rules/*.cs
 
 ../bin/customtests.dll: ../bin/csc_flags ../bin/tests.dll source/rules/Rules.xml source/rules/*.cs source/tests/*.cs
-	$(CSC) -out:../bin/customtests.dll $(CSC_FLAGS) -define:TEST -pkg:mono-nunit -target:library -r:../bin/tests.dll,Mono.Cecil.dll -res:source/rules/Rules.xml source/rules/*.cs source/tests/*.cs
+	$(CSC) -out:../bin/customtests.dll $(CSC_FLAGS) -define:TEST -pkg:mono-nunit -target:library -r:../bin/tests.dll,../Mono.Cecil.dll -res:source/rules/Rules.xml source/rules/*.cs source/tests/*.cs
 
 # -----------------------------------------------------------------------------
 # Other targets

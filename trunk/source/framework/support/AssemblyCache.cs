@@ -20,6 +20,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Mono.Cecil;
+using Mono.Cecil.Mdb;
 using Mono.Cecil.Metadata;
 using Smokey.Internal;
 using System;
