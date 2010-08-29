@@ -1,6 +1,0 @@
-#summary Personal notes on a variety of subjects
-
-C#
-C++
-Shell
-etc
